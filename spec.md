@@ -1,8 +1,8 @@
 # Spécification fonctionnelle et technique — Application iOS d’albums photo et vidéo
 
-> **Version :** 2.0  
+> **Version :** 2.1<br>
 > **Date :** 27 juillet 2026  
-> **Statut :** prêt pour développement  
+> **Statut :** prêt pour développement — validation iPad temporaire<br>
 > **Plateformes :** iPhone et iPad  
 > **Version minimale :** iOS 26 et iPadOS 26  
 > **Technologies principales :** Swift et SwiftUI
@@ -28,6 +28,9 @@ Les règles de développement suivantes sont normatives :
 4. `DEV-004` — Conserver les données de l’utilisateur avant toute considération esthétique.
 5. `DEV-005` — Implémenter l’application selon une architecture locale d’abord avec synchronisation différée.
 6. `DEV-006` — Écrire les tests du domaine avant ou en même temps que les fonctionnalités correspondantes.
+7. `DEV-007` — Une exigence impossible à vérifier dans l’environnement disponible DOIT conserver l’état `BLOQUÉ` ou `NON TESTÉ` ; elle NE DOIT PAS être considérée comme réussie, abandonnée ou implicitement hors périmètre.
+8. `DEV-008` — Chaque campagne manuelle sur iPad DOIT enregistrer le commit, la build ou copie testée, l’appareil, les versions d’iPadOS et de Swift Playgrounds, les scénarios exécutés, les résultats, les preuves, les anomalies et les contrôles non exécutés.
+9. `DEV-009` — La phase temporaire sans macOS/Xcode PEUT produire des prototypes et builds internes, mais elle NE DOIT PAS autoriser une publication publique.
 
 ---
 
@@ -155,6 +158,54 @@ Le format de données local est conçu dès le lot 0 pour accueillir les fonctio
 | `REL-003` | La version 1.1 DOIT hériter de toutes les exigences 1.0 et la version 1.2 de toutes les exigences 1.0 et 1.1. |
 | `REL-004` | Les préfixes `CHK`, `TBL`, `HIS`, `SYN`, `ICL` et `CNF` DOIVENT entrer en vigueur en version 1.1. |
 | `REL-005` | Le préfixe `GPH` DOIT entrer en vigueur en version 1.2. |
+
+## 2.8 Stratégie temporaire de validation sans Mac
+
+Le projet suit deux phases d’environnement distinctes. Cette organisation
+modifie le moment où certaines preuves sont obtenues, mais elle ne réduit pas
+le périmètre fonctionnel ni les critères de qualité.
+
+### Phase A — développement progressif et validation manuelle sur iPad
+
+Cette phase est retenue tant que le travail est effectué de manière
+occasionnelle sans accès rentable à un Mac :
+
+1. le code est écrit et versionné depuis Windows, VS Code et WSL ;
+2. GitHub reste l’unique source de vérité ;
+3. l’App Playground est compilé et exécuté sur l’iPad ;
+4. les premières versions sont des prototypes ou builds internes ;
+5. chaque session disponible exécute la campagne manuelle de la section 30.5 ;
+6. les contrôles indisponibles sont inscrits dans le registre de validation
+   différée, sans être marqués comme réussis.
+
+| ID | Exigence |
+|---|---|
+| `ENV-001` | Le rythme intermittent de la phase A NE DOIT PAS imposer la location continue d’un Mac ; les validations macOS/Xcode DOIVENT être regroupées dans une campagne ultérieure. |
+| `ENV-002` | Chaque contrôle d’un commit candidat testé sur iPad DOIT avoir un résultat reproductible dans le suivi : `RÉUSSI`, `ÉCHOUÉ`, `BLOQUÉ`, `NON TESTÉ` ou `NON APPLICABLE`. |
+| `ENV-003` | Une fonction dépendant d’une capacité absente de Swift Playgrounds, notamment une configuration CloudKit, un type de document exporté ou un retour OAuth, DOIT rester bloquée jusqu’à une preuve sur un environnement compatible. |
+| `ENV-004` | Un parcours réussi sur iPad NE DOIT PAS être extrapolé à l’iPhone, aux simulateurs, à la signature de distribution, aux tests automatisés Apple, à Instruments ou à l’accessibilité du PDF. |
+| `ENV-005` | Les sources, ressources et configurations générées par Swift Playgrounds DOIVENT rester versionnées et préparées pour une ouverture ou migration déterministe dans Xcode. |
+
+Une **version viable sur iPad** est un jalon interne, et non une version
+publique. Elle doit permettre, sur un même commit, de créer un album, ajouter
+au moins une photo et une vidéo, modifier un commentaire et un sticker, fermer
+et relancer l’application sans perte, lire l’album, lancer le diaporama et
+effectuer les exports réellement disponibles. Toute étape non encore
+implémentée ou bloquée est explicitement listée.
+
+### Phase B — qualification ponctuelle avec macOS et Xcode
+
+Dès qu’une version viable sur iPad existe, ou plus tôt si un blocage empêche
+de progresser, une session ponctuelle sur un Mac local, prêté, distant ou
+hébergé doit être organisée. Elle n’a pas besoin d’être permanente ni
+quotidienne.
+
+| ID | Exigence |
+|---|---|
+| `ENV-006` | Avant toute publication publique, le commit candidat DOIT être ouvert et compilé avec la version de Xcode compatible avec les SDK ciblés. |
+| `ENV-007` | La campagne macOS/Xcode DOIT exécuter la qualification différée de la section 30.6 et enregistrer ses preuves dans le suivi. |
+| `ENV-008` | Toute correction réalisée pendant la campagne macOS/Xcode DOIT revenir dans GitHub et la campagne DOIT être relancée sur le nouveau commit candidat. |
+| `ENV-009` | Si une capacité obligatoire reste impossible à signer, compiler ou tester, la version concernée NE DOIT PAS être publiée tant que le blocage n’est pas résolu ou que la spécification n’est pas explicitement révisée. |
 
 ---
 
@@ -1641,6 +1692,8 @@ App/
 | `ARC-008` | Le rendu de page utilisé par l’éditeur, la lecture, le diaporama et le PDF DOIT partager les mêmes fonctions géométriques pures. |
 | `ARC-014` | Une version publique NE DOIT PAS exposer les écrans ou commandes d’un lot ultérieur ; les capacités de schéma inutilisées PEUVENT déjà être présentes. |
 | `ARC-015` | Les fonctionnalités différées DOIVENT être activées par version de produit ou configuration de build testée, et non par une condition dispersée dans les vues. |
+| `ARC-016` | Le domaine et les services externes DOIVENT rester séparés afin que les tests Linux, les doubles de test et les implémentations Apple utilisent les mêmes contrats. |
+| `ARC-017` | Le package produit avec Swift Playgrounds NE DOIT PAS dépendre d’un état local non versionné nécessaire à son ouverture ultérieure dans Xcode. |
 
 ## 23.3 Protocoles principaux
 
@@ -2077,6 +2130,82 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 
 `TST-004` — Les tests visuels et d’accessibilité qui ne sont pas automatisables DOIVENT utiliser une procédure, un résultat attendu et une preuve enregistrée.
 
+## 30.5 Campagne manuelle temporaire sur iPad
+
+`TST-009` — Chaque commit candidat significatif testé pendant la phase A DOIT
+faire l’objet d’une fiche de session conforme à `DEV-008`. Un test interrompu
+ou impossible à exécuter est `BLOQUÉ` ou `NON TESTÉ`, jamais `RÉUSSI`.
+
+`TST-010` — La vérification rapide suivante DOIT être rejouée sur chaque build
+interne candidate :
+
+- compilation sans erreur et lancement en plein écran
+- ouverture de la bibliothèque et du dernier album
+- création d’un album et d’au moins une page
+- ajout, remplacement puis suppression annulée d’une photo et d’une vidéo
+- modification d’un commentaire et d’un sticker
+- fermeture, passage en arrière-plan, terminaison de l’app puis relance
+- vérification de la persistance après chaque relance
+- lecture, navigation manuelle et diaporama
+- export, partage et réimport des formats déjà implémentés
+- portrait, paysage et fenêtre étroite
+- modes clair et sombre
+- une taille Dynamic Type élevée et un parcours VoiceOver essentiel
+- Réduire les animations
+- fonctionnement sans réseau pour les données locales
+- annulation utilisateur et au moins un cas d’erreur pertinent
+
+`TST-011` — Lorsqu’un chantier touche les médias, la campagne DOIT utiliser un
+corpus non personnel et couvrir les formats applicables parmi HEIC, RAW, Live
+Photo, GIF, HDR, ralenti et vidéo 4K, ainsi qu’un fichier invalide, une vidéo
+supérieure à dix minutes, le remplacement, la suppression, la lecture et le
+mode silencieux. Les éléments du corpus indisponibles DOIVENT être inscrits
+dans le registre différé.
+
+`TST-012` — Lorsqu’un chantier touche le stockage ou les documents, la campagne
+DOIT vérifier la relance, l’import/export, un package valide, un package
+dégradé, l’annulation, un média manquant et un manque d’espace lorsque ce cas
+peut être reproduit sans risque. Une interruption impossible à injecter
+manuellement reste réservée à la section 30.6.
+
+`TST-013` — La campagne iPad DOIT conserver, pour chaque scénario :
+
+1. le résultat attendu et le résultat observé ;
+2. l’un des états `RÉUSSI`, `ÉCHOUÉ`, `BLOQUÉ`, `NON TESTÉ` ou
+   `NON APPLICABLE` ;
+3. une capture, une vidéo, un journal ou une note expliquant pourquoi aucune
+   preuve visuelle n’est pertinente ;
+4. le lien de l’anomalie pour chaque échec ;
+5. la liste cumulative des validations différées vers macOS/Xcode, iPhone ou
+   un autre appareil.
+
+## 30.6 Qualification différée avec macOS et Xcode
+
+`TST-014` — Avant une version publique, et dès la première version viable sur
+iPad lorsque l’environnement peut être réservé, la campagne ponctuelle
+macOS/Xcode DOIT couvrir au minimum :
+
+- ouverture du package ou projet sans configuration locale implicite
+- compilation propre des configurations Debug et Release
+- exécution des suites unitaires, d’intégration et d’interface Apple
+- exécution de la matrice iPhone et iPad définie par `TST-003`
+- reprise des contrôles `BLOQUÉ` et `NON TESTÉ` de la phase A
+- validation de la signature, des entitlements, du type `.photoalbum`, de
+  CloudKit et du retour OAuth applicables à la version
+- tests d’interruption, de migrations et de packages hostiles
+- mesures Instruments de mémoire, CPU, énergie, stockage et temps de lancement
+- inspection du PDF balisé et contrôles d’accessibilité indisponibles sur iPad
+- archive Release, validation de l’archive et envoi TestFlight
+- test de la build TestFlight sur iPad et sur au moins un iPhone compatible
+
+`TST-015` — La campagne macOS/Xcode DOIT produire le commit exact, la version de
+Xcode et des SDK, la destination de chaque test, les rapports de suites, les
+mesures, les anomalies et la décision de publication.
+
+`TST-016` — La disponibilité future d’un Mac NE DOIT PAS conduire à reporter
+les tests de domaine compatibles Linux ni les vérifications manuelles
+réalisables sur iPad au moment de chaque fonctionnalité.
+
 ---
 
 # 31. Ordre de réalisation
@@ -2091,8 +2220,12 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 - schéma `.photoalbum` avec fichiers d’exemple
 - prototype CloudKit page par page
 - matrice de traçabilité initiale
+- registre initial des validations iPad et des validations différées
 
-**Sortie :** les prototypes prouvent les risques principaux, les formats sont relus et les décisions d’architecture sont enregistrées.
+**Sortie :** les prototypes réalisables prouvent les risques principaux, les
+formats sont relus et les décisions d’architecture sont enregistrées. Un
+prototype impossible dans Swift Playgrounds reste explicitement bloqué et
+rejoint la campagne macOS/Xcode ; il n’est pas réputé réussi.
 
 ## Lot 1 — Création locale
 
@@ -2154,10 +2287,19 @@ Ce lot s’exécute avant chaque version publique et comprend :
 - sécurité des packages
 - tests de reprise après interruption
 - documentation et matrice de traçabilité
+- reprise de toutes les validations différées de la phase iPad
+- qualification macOS/Xcode définie par `TST-014` et `TST-015`
 
 `LOT-001` — Chaque lot DOIT laisser le projet compilable, testable et démontrable.
 
 `LOT-002` — Une version publique NE DOIT PAS être produite tant que son lot Qualité ne satisfait pas la définition de terminé.
+
+`LOT-003` — Pendant la phase A, un lot PEUT fournir des incréments internes
+partiellement qualifiés sur iPad si les validations manquantes sont identifiées
+et si son état n’est pas présenté comme terminé.
+
+`LOT-004` — Le lot Qualité d’une version publique NE DOIT PAS être déclaré
+terminé avant la campagne macOS/Xcode et les tests iPhone applicables.
 
 ---
 
@@ -2204,6 +2346,11 @@ Ce lot s’exécute avant chaque version publique et comprend :
 `DONE-003` — Une version publique est terminée lorsque tous ses lots, son lot Qualité, ses scénarios d’acceptation et toutes ses exigences associées sont validés.
 
 `DONE-004` — Le passage des seuls scénarios d’acceptation NE SUFFIT PAS si une exigence normative associée reste sans validation.
+
+`DONE-005` — Une version viable sur iPad constitue uniquement un candidat
+interne. Elle NE DOIT PAS être confondue avec une fonctionnalité, un lot ou une
+version publique terminée tant que les validations différées applicables ne
+sont pas passées.
 
 ---
 
