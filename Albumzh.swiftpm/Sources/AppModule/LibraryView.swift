@@ -15,8 +15,10 @@ final class LibraryViewModel {
     var albums: [Album] = []
     var isCreatingAlbum = false
     var proposedName = ""
+    var isRenamingAlbum = false
     var albumBeingRenamed: Album?
     var proposedRename = ""
+    var isConfirmingTrash = false
     var albumPendingTrash: Album?
     var errorMessage: String?
     private var undoRenames: [RenameAction] = []
@@ -53,6 +55,23 @@ final class LibraryViewModel {
     func beginRenaming(_ album: Album) {
         albumBeingRenamed = album
         proposedRename = album.name
+        isRenamingAlbum = true
+    }
+
+    func cancelRenaming() {
+        isRenamingAlbum = false
+        albumBeingRenamed = nil
+        proposedRename = ""
+    }
+
+    func beginMovingToTrash(_ album: Album) {
+        albumPendingTrash = album
+        isConfirmingTrash = true
+    }
+
+    func cancelMovingToTrash() {
+        isConfirmingTrash = false
+        albumPendingTrash = nil
     }
 
     func renameAlbum() async {
@@ -71,12 +90,13 @@ final class LibraryViewModel {
                 )
             )
             redoRenames.removeAll()
-            albumBeingRenamed = nil
-            proposedRename = ""
+            cancelRenaming()
             albums = try await service.albums()
         } catch AlbumValidationError.emptyName {
+            cancelRenaming()
             errorMessage = "Le nom de l’album ne peut pas être vide."
         } catch {
+            cancelRenaming()
             errorMessage = "Impossible de renommer l’album."
         }
     }
@@ -86,9 +106,10 @@ final class LibraryViewModel {
 
         do {
             _ = try await service.moveAlbumToTrash(album.id)
-            albumPendingTrash = nil
+            cancelMovingToTrash()
             albums = try await service.albums()
         } catch {
+            cancelMovingToTrash()
             errorMessage = "Impossible de déplacer l’album dans la corbeille."
         }
     }
@@ -190,7 +211,7 @@ struct LibraryView: View {
                                         systemImage: "trash",
                                         role: .destructive
                                     ) {
-                                        model.albumPendingTrash = album
+                                        model.beginMovingToTrash(album)
                                     }
                                 }
                             }
@@ -241,36 +262,28 @@ struct LibraryView: View {
             }
             .alert(
                 "Renommer l’album",
-                isPresented: Binding(
-                    get: { model.albumBeingRenamed != nil },
-                    set: {
-                        if !$0 {
-                            model.albumBeingRenamed = nil
-                            model.proposedRename = ""
-                        }
-                    }
-                )
+                isPresented: $model.isRenamingAlbum
             ) {
                 TextField("Nom", text: $model.proposedRename)
-                Button("Annuler", role: .cancel) {}
+                Button("Annuler", role: .cancel) {
+                    model.cancelRenaming()
+                }
                 Button("Renommer") {
                     Task { await model.renameAlbum() }
                 }
             } message: {
                 Text("Saisissez le nouveau nom de l’album.")
             }
-            .confirmationDialog(
+            .alert(
                 "Placer cet album dans la corbeille ?",
-                isPresented: Binding(
-                    get: { model.albumPendingTrash != nil },
-                    set: { if !$0 { model.albumPendingTrash = nil } }
-                ),
-                titleVisibility: .visible
+                isPresented: $model.isConfirmingTrash
             ) {
+                Button("Annuler", role: .cancel) {
+                    model.cancelMovingToTrash()
+                }
                 Button("Placer dans la corbeille", role: .destructive) {
                     Task { await model.movePendingAlbumToTrash() }
                 }
-                Button("Annuler", role: .cancel) {}
             } message: {
                 Text(
                     "L’album pourra être restauré pendant trente jours."

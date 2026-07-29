@@ -50,10 +50,13 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-003` | Lot 1 | Ajout et persistance d’une page | `ACPT-100`, `PAG-001`, `PAG-002`, `APP-005` | `2030d7c` | 🟢 `RÉUSSI` |
 | `IPAD-L1-004` | Lot 1 | Rendu du fond Album classique | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010` | `9a35365` | 🟢 `RÉUSSI` |
 | `IPAD-L1-005` | Lot 1 | Identification du mode édition | `APP-002` | `9a35365` | 🟢 `RÉUSSI` |
-| `IPAD-L1-006` | Lot 1 | Compilation et régression du groupe bibliothèque | `LOT-001`, `ACPT-100` | `35c9f12` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-007` | Lot 1 | Renommage, annulation et rétablissement | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `35c9f12` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-008` | Lot 1 | Confirmation et mise en corbeille | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `35c9f12` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-009` | Lot 1 | Restauration durable depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `35c9f12` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-006` | Lot 1 | Compilation et régression du groupe bibliothèque | `LOT-001`, `ACPT-100` | `35c9f12` | 🟢 `RÉUSSI` |
+| `IPAD-L1-007` | Lot 1 | Renommage, annulation et rétablissement | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `35c9f12` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-008` | Lot 1 | Confirmation et mise en corbeille | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `35c9f12` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-009` | Lot 1 | Restauration durable depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `35c9f12` | 🟠 `BLOQUÉ` |
+| `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `COMMIT-LOT1-DIALOG-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-DIALOG-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-DIALOG-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -133,7 +136,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
   4. revenir à la bibliothèque.
 - Résultat attendu : aucune erreur de compilation ou de lancement et aucune
   régression visible sur les fonctions précédemment validées.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 28 juillet 2026.
 
 ### `IPAD-L1-007` — Renommage, annulation et rétablissement
 
@@ -148,7 +151,9 @@ nouvelle ligne de régression avec un nouvel identifiant.
   6. fermer complètement puis relancer l’application.
 - Résultat attendu : chaque nom apparaît au moment attendu et
   « Voyage Guatemala » persiste après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ` le 28 juillet 2026.
+- Observation : la saisie et la validation fonctionnent, mais le nouveau nom
+  n’apparaît pas dans la grille ; Annuler et Rétablir restent désactivés.
 
 ### `IPAD-L1-008` — Confirmation et mise en corbeille
 
@@ -165,7 +170,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 - Résultat attendu : l’annulation ne change rien ; après confirmation l’album
   est absent de la bibliothèque, non modifiable et toujours présent dans la
   corbeille après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ` le 28 juillet 2026.
+- Observation : l’alerte s’annule en touchant à l’extérieur mais n’affiche pas
+  de bouton « Annuler » ; après confirmation l’album reste dans la
+  bibliothèque et la corbeille est vide.
 
 ### `IPAD-L1-009` — Restauration durable depuis la corbeille
 
@@ -181,6 +189,46 @@ nouvelle ligne de régression avec un nouvel identifiant.
   corbeille.
 - Résultat attendu : l’album et tout son contenu sont restaurés sans perte et
   le résultat persiste après relance.
+- Résultat : 🟠 `BLOQUÉ` le 28 juillet 2026, car `IPAD-L1-008` n’a pas placé
+  l’album dans la corbeille.
+
+### `IPAD-L1-010` — Régression du renommage corrigé
+
+- Préconditions : récupérer le commit `COMMIT-LOT1-DIALOG-FIX`, compiler
+  l’application et disposer d’un album nommé « Guatemala ».
+- Étapes :
+  1. renommer l’album en « Voyage Guatemala » ;
+  2. vérifier immédiatement le nouveau nom dans la grille ;
+  3. utiliser « Annuler le renommage » puis vérifier « Guatemala » ;
+  4. utiliser « Rétablir le renommage » puis vérifier « Voyage Guatemala » ;
+  5. relancer l’application.
+- Résultat attendu : les trois changements de nom apparaissent immédiatement
+  et « Voyage Guatemala » persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-011` — Régression de la mise en corbeille corrigée
+
+- Préconditions : disposer de « Voyage Guatemala » dans la bibliothèque.
+- Étapes :
+  1. choisir « Supprimer » dans le menu contextuel ;
+  2. vérifier la présence du bouton « Annuler », le toucher et confirmer que
+     l’album reste visible ;
+  3. recommencer, confirmer « Placer dans la corbeille » et vérifier que
+     l’album disparaît immédiatement ;
+  4. ouvrir la corbeille puis relancer l’application.
+- Résultat attendu : l’annulation explicite ne modifie rien ; la confirmation
+  déplace l’album dans la corbeille où il reste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-012` — Restauration après correction
+
+- Préconditions : `IPAD-L1-011` réussi avec l’album dans la corbeille.
+- Étapes :
+  1. restaurer l’album ;
+  2. vérifier son retour dans la bibliothèque et son absence de la corbeille ;
+  3. ouvrir l’album et vérifier son nom, ses pages et son fond ;
+  4. relancer l’application et refaire les vérifications.
+- Résultat attendu : l’album complet reste restauré après relance.
 - Résultat : ⚪ `NON TESTÉ`.
 
 ## Prochaine campagne
