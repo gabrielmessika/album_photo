@@ -54,9 +54,9 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-007` | Lot 1 | Renommage, annulation et rétablissement | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `35c9f12` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-008` | Lot 1 | Confirmation et mise en corbeille | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `35c9f12` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-009` | Lot 1 | Restauration durable depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `35c9f12` | 🟠 `BLOQUÉ` |
-| `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `a44a4f1` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `a44a4f1` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `a44a4f1` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `a44a4f1` | 🟢 `RÉUSSI` |
+| `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
+| `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
 
 ## Détail des tests
 
@@ -204,7 +204,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
   5. relancer l’application.
 - Résultat attendu : les trois changements de nom apparaissent immédiatement
   et « Voyage Guatemala » persiste après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 28 juillet 2026.
 
 ### `IPAD-L1-011` — Régression de la mise en corbeille corrigée
 
@@ -218,7 +218,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
   4. ouvrir la corbeille puis relancer l’application.
 - Résultat attendu : l’annulation explicite ne modifie rien ; la confirmation
   déplace l’album dans la corbeille où il reste après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 28 juillet 2026.
 
 ### `IPAD-L1-012` — Restauration après correction
 
@@ -229,7 +229,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
   3. ouvrir l’album et vérifier son nom, ses pages et son fond ;
   4. relancer l’application et refaire les vérifications.
 - Résultat attendu : l’album complet reste restauré après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 28 juillet 2026.
 
 ## Prochaine campagne
 

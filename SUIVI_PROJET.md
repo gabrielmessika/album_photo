@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Régression générale iPad réussie ; renommage et corbeille échoués à cause du cycle de vie des dialogues, correctif local à revalider | Exécuter `IPAD-L1-010` à `IPAD-L1-012` |
+| Lot 1 — Création locale | 🟡 En cours | Création, pages, renommage, corbeille et restauration validés sur iPad ; suppression définitive et autres fonctions du lot restent à développer | Préparer le prochain groupe de fonctions du lot 1 |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -126,11 +126,11 @@ Objectif : rendre possible la création locale et durable d’albums.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, création, ouverture et relance validées sur iPad ; libellé du mode édition ajouté et à revalider |
-| Création et renommage | 🟡 | `ACPT-100`, `ALB-007`, `ALB-021`, `UND-011` — renommage échoué sur iPad dans `IPAD-L1-007` ; correctif du dialogue à revalider |
-| Corbeille et restauration des albums | 🟡 | `ACPT-102` — mise en corbeille échouée et restauration bloquée ; alerte corrigée, suppression définitive et expiration non commencées |
+| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, création, ouverture, fond et relance validés sur iPad ; commandes de couverture et export absentes |
+| Création et renommage | 🟡 | `ACPT-100`, `ALB-007`, `ALB-021`, `UND-011` — renommage, Annuler/Rétablir et persistance validés dans `IPAD-L1-010` |
+| Corbeille et restauration des albums | 🟡 | `ACPT-102` — confirmation, corbeille et restauration durable validées dans `IPAD-L1-011` et `012` ; suppression définitive et expiration non commencées |
 | Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001`, `PAG-002` — ajout et persistance validés sous Linux et sur iPad ; suppression et réorganisation non commencées |
-| Fonds d’album | 🟡 | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-008`, `BG-010` — identifiant normatif et rendu à spirales ajoutés ; validation iPad requise |
+| Fonds d’album | 🟡 | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-008`, `BG-010` — fond classique et régression validés sur iPad ; catalogue et changement de fond absents |
 | Couverture automatique et manuelle | ⬜ | `ACPT-103` |
 | Dépôt d’assets adressé par contenu | ⬜ | Section 18 |
 | Journal local transactionnel | 🟡 | `ACPT-100`, `ACPT-114` — premier journal JSON rejouable ; campagne d’interruption manquante |
@@ -303,7 +303,7 @@ Ce lot est répété avant chaque version publique.
 | Projet compilable | 🟡 | Noyau compilé sous Linux et App Playground compilé sur iPad au commit `ec8842a` ; nouvel incrément à revalider |
 | Application iPhone et iPad | 🟡 | Bibliothèque et premier éditeur validés partiellement sur iPad ; iPhone non testé |
 | Code Swift formaté | 🟡 | Premier incrément Swift présent ; contrôle de format automatisé absent |
-| Tests unitaires, intégration et interface | 🟡 | 12 tests Linux réussis ; iPad : `006` réussi, `007`–`008` échoués, `009` bloqué, régressions `010`–`012` à exécuter |
+| Tests unitaires, intégration et interface | 🟡 | 12 tests Linux réussis ; régressions iPad `IPAD-L1-010` à `012` réussies |
 | Assets de démonstration libres de droits | ⬜ | À sourcer et documenter |
 | Schéma CloudKit documenté | ⬜ | Lot 4 |
 | Configuration Google sans secret | ⬜ | Lot 5 |
@@ -370,6 +370,7 @@ tableau.
 
 | Date | Version | Build | Commit | Environnement | Résultat | Preuve |
 |---|---|---|---|---|---|---|
+| 2026-07-28 | Correctif dialogues Lot 1 | — | `a44a4f1` | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | RÉUSSI — renommage, Annuler/Rétablir, corbeille et restauration durable | `IPAD-L1-010` à `IPAD-L1-012` |
 | 2026-07-28 | Groupe bibliothèque Lot 1 | — | `35c9f12` | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | ÉCHOUÉ — compilation et régression réussies ; renommage non appliqué, corbeille vide, restauration bloquée | `IPAD-L1-006` à `IPAD-L1-009` |
 | 2026-07-28 | Correctif visuel Lot 1 | — | `9a35365` | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | RÉUSSI avec preuve globale — fond et mode édition jugés améliorés | Retour utilisateur « c’est mieux maintenant » ; limites détaillées dans `IPAD-L1-004` et `IPAD-L1-005` |
 | 2026-07-28 | Incrément pages Lot 1 | — | Copie iPad de la branche, commit non communiqué | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | ÉCHOUÉ — album et pages persistent, mais fond à spirales absent et mode édition non identifiable | Compte rendu utilisateur du 28 juillet 2026 ; correctif local à revalider |
@@ -399,16 +400,17 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | ID | Exigence | Sévérité | État | Description | Lien |
 |---|---|---|---|---|---|
 | `ANO-001` | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010`, `APP-002` | Moyenne | 🟢 Corrigée | L’éditeur iPad ne rendait pas le fond à spirales et n’identifiait pas le mode édition ; correctif jugé meilleur sur iPad, avec limites de preuve consignées | `IPAD-L1-004`, `IPAD-L1-005` |
-| `ANO-002` | `ALB-007`, `ALB-021`, `UND-011` | Élevée | 🟡 Correctif à valider | Le dialogue libérait l’album avant l’exécution asynchrone : le nom restait inchangé et la pile demeurait vide | `IPAD-L1-007`, régression `IPAD-L1-010` |
-| `ANO-003` | `ALB-008`, `ALB-017` à `ALB-019`, `ACPT-102` | Élevée | 🟡 Correctif à valider | La confirmation libérait l’album avant la commande et le dialogue iPad n’affichait pas Annuler ; alerte explicite et sélection durable ajoutées | `IPAD-L1-008`, régressions `IPAD-L1-011`, `IPAD-L1-012` |
+| `ANO-002` | `ALB-007`, `ALB-021`, `UND-011` | Élevée | 🟢 Corrigée | Le dialogue libérait l’album avant l’exécution asynchrone ; sélection durable validée avec renommage, Annuler et Rétablir | `IPAD-L1-007`, régression réussie `IPAD-L1-010` |
+| `ANO-003` | `ALB-008`, `ALB-017` à `ALB-019`, `ACPT-102` | Élevée | 🟢 Corrigée | La confirmation libérait l’album avant la commande et masquait Annuler ; alerte explicite, corbeille et restauration validées | `IPAD-L1-008`, régressions réussies `IPAD-L1-011`, `IPAD-L1-012` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter la campagne de régression `IPAD-L1-010` à `IPAD-L1-012` sur le commit
-   indiqué dans `suivi_tests.md`.
+1. Préparer un nouveau groupe cohérent du lot 1, avec suppression/annulation de
+   pages et autres fonctions associées, puis créer sa campagne dans
+   `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -429,6 +431,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-07-28 | Codex | Validation des correctifs de renommage et de corbeille ; clôture de `ANO-002` et `ANO-003` | `ALB-007`, `ALB-008`, `ALB-017` à `ALB-019`, `ALB-021`, `UND-011`, `ACPT-102` | `IPAD-L1-010`, `IPAD-L1-011` et `IPAD-L1-012` RÉUSSIS sur iPad au commit `a44a4f1` ; versions exactes de l’environnement toujours non communiquées |
 | 2026-07-28 | Codex | Enregistrement des résultats `IPAD-L1-006` à `IPAD-L1-009` et correction du cycle de vie des sélections dans les dialogues de renommage et de corbeille ; alerte de suppression avec Annuler explicite | `ALB-007`, `ALB-008`, `ALB-017` à `ALB-019`, `ALB-021`, `UND-011`, `ACPT-102` | Correctif `a44a4f1` ; `006` RÉUSSI, `007` et `008` ÉCHOUÉS, `009` BLOQUÉ sur iPad ; 12 tests Linux et analyse SwiftUI réussis ; `010` à `012` NON TESTÉS |
 | 2026-07-28 | Codex | Groupe bibliothèque : renommage avec Annuler/Rétablir, confirmation de suppression, corbeille locale durable et restauration ; ajout de quatre contrôles iPad | `ALB-007`, `ALB-008`, `ALB-011`, `ALB-017` à `ALB-019`, `ALB-021`, `UND-011`, `ACPT-102`, `APP-005`, `LOC-011` | Commit `35c9f12` ; `swift test` sous WSL/Swift 6.3.3 : 12 tests réussis ; analyse SwiftUI réussie ; campagne `IPAD-L1-006` à `IPAD-L1-009` à exécuter |
 | 2026-07-28 | Codex | Ajout de repères colorés aux cinq états et à chaque résultat de `suivi_tests.md`, avec règle correspondante dans `AGENTS.md` | Suivi des campagnes manuelles, sans changement fonctionnel | Relecture du registre et `git diff --check` ; aucun test applicatif requis |
