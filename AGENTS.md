@@ -9,8 +9,10 @@ Ces instructions s’appliquent à tout le dépôt `album_photo`.
 - [`README.md`](README.md) décrit l’installation et le fonctionnement hybride
   Windows/WSL, GitHub et iPad.
 - [`SUIVI_PROJET.md`](SUIVI_PROJET.md) est le tableau de bord opérationnel.
+- [`suivi_tests.md`](suivi_tests.md) est le registre détaillé des campagnes
+  manuelles et de leurs résultats par commit et environnement.
 
-Lire les sections pertinentes de ces trois documents avant toute modification.
+Lire les sections pertinentes de ces quatre documents avant toute modification.
 Ne pas simplifier, remplacer ou supprimer une exigence normative sans demande
 explicite de l’utilisateur et sans documenter la décision.
 
@@ -82,6 +84,35 @@ Ne jamais marquer une tâche 🟢 sur la seule base d’un code écrit :
 5. Mettre à jour la documentation affectée.
 6. Mettre obligatoirement à jour `SUIVI_PROJET.md`.
 7. Vérifier `git diff --check` et relire le diff avant de rendre la tâche.
+
+## Campagnes manuelles regroupées
+
+Afin de limiter les transferts et manipulations dans Swift Playgrounds,
+préparer par défaut plusieurs fonctionnalités cohérentes d’un même lot avant
+de demander une nouvelle campagne iPad. Le regroupement ne doit pas mélanger
+des lots incompatibles, masquer un risque d’intégrité ni retarder un contrôle
+nécessaire après une modification dangereuse de la persistance.
+
+Pour chaque remise nécessitant une validation manuelle :
+
+1. ajouter dans `suivi_tests.md` tous les tests à exécuter ;
+2. attribuer à chacun un identifiant unique, stable et jamais réutilisé ;
+3. indiquer le commit exact, les préconditions, les étapes, le résultat
+   attendu et les exigences de `spec.md` couvertes ;
+4. afficher le repère coloré défini dans `suivi_tests.md` devant chaque état et
+   initialiser les nouveaux contrôles à ⚪ `NON TESTÉ` ;
+5. permettre à l’utilisateur de répondre avec l’identifiant suivi de `OK`,
+   `BLOQUÉ` ou de la description du bug ;
+6. après chaque retour, mettre à jour le résultat, la preuve et
+   l’environnement dans `suivi_tests.md` ;
+7. reporter les anomalies, blocages et effets sur l’avancement dans
+   `SUIVI_PROJET.md` ;
+8. créer un nouvel identifiant de test de régression lorsqu’un changement rend
+   une preuve antérieure insuffisante.
+
+Ne jamais transformer un retour global ou ambigu en réussite détaillée sans
+consigner explicitement la limite de preuve. Un test automatisé Linux ne
+remplace pas un test manuel Apple et réciproquement.
 
 Le compte rendu final doit mentionner :
 

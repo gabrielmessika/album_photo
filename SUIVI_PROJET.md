@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | `ACPT-100` couvert par 8 tests Linux ; album et deux pages persistent sur iPad, rendu du fond et mode édition corrigés mais à revalider | Valider le correctif visuel sur iPad |
+| Lot 1 — Création locale | 🟡 En cours | `ACPT-100` couvert par 8 tests Linux ; création, pages, fond et mode édition validés partiellement sur iPad | Préparer plusieurs fonctions du prochain incrément |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -75,7 +75,7 @@ pas la rédaction préalable de la spécification ou de la documentation.
 |---|---|---|---|
 | Spécification fonctionnelle et technique 2.1 | 🟢 | [`spec.md`](spec.md), sections 2.8, 30.5 et 30.6 | Garder les identifiants normatifs stables |
 | Guide du flux Windows/WSL/GitHub/iPad | 🟢 | [`README.md`](README.md), scénario en deux phases | Le réviser après le premier test réel |
-| Checklist iPad et registre des validations différées | 🟢 | `TST-009` à `TST-016` et registre ci-dessous | Créer la première fiche lors de la première build |
+| Checklist iPad et registre des validations différées | 🟢 | `TST-009` à `TST-016`, [`suivi_tests.md`](suivi_tests.md) et registre ci-dessous | Ajouter les tests de chaque campagne groupée |
 | Tableau de suivi du projet | 🟢 | Ce document | Le maintenir à chaque changement |
 | Instructions de travail pour Codex | 🟢 | [`AGENTS.md`](AGENTS.md) | Vérifier leur application à chaque tâche |
 | Licence du dépôt | ⬜ | Aucun fichier `LICENSE` | Choisir la licence ou confirmer le caractère privé |
@@ -106,7 +106,7 @@ Objectif : prouver les risques techniques avant de développer le produit.
 | Valider le type de document sur iPad | 🟠 | `PKG-001`, `PKG-002`, `IMP-001` | Ouverture depuis Fichiers et partage |
 | Prototyper CloudKit page par page | 🟠 | `SYN-001` à `SYN-003` | Go/no-go sur entitlements et conteneur |
 | Vérifier la faisabilité OAuth Google | 🟠 | `CFG-001` à `CFG-003`, lot 5 | Go/no-go sur le schéma de retour |
-| Créer la matrice de traçabilité initiale | ⬜ | `TST-001` | Fichier exigences–tests–versions |
+| Créer la matrice de traçabilité initiale | 🟡 | `TST-001` | Premier registre exigences–tests manuels dans `suivi_tests.md` ; matrice exhaustive à créer |
 | Enregistrer les décisions d’architecture | ⬜ | Sortie du lot 0 | ADR datées et approuvées |
 | Créer la CI du domaine | ⬜ | Tests unitaires multiplateformes | Workflow GitHub vert |
 
@@ -292,7 +292,7 @@ Ce lot est répété avant chaque version publique.
 | Performance | ⬜ | Section 27 | Mesurer, ne pas supposer |
 | Localisation | ⬜ | Section 28 | Français et anglais |
 | Documentation d’architecture | ⬜ | `DEL-001` | ADR et README technique |
-| Traçabilité | ⬜ | `TST-001` | Exigence vers test ou procédure |
+| Traçabilité | 🟡 | `TST-001` | Registre manuel initial dans `suivi_tests.md` ; couverture exhaustive à créer |
 | CI Linux | ⬜ | Tests du domaine | Ne couvre pas les SDK Apple |
 | CI ou build macOS | ⏸️ | `ENV-006`, `TST-014` | Différée jusqu’à une version viable sur iPad, obligatoire avant publication |
 
@@ -301,7 +301,7 @@ Ce lot est répété avant chaque version publique.
 | Livrable attendu par `DEL-001` | État | Emplacement ou action |
 |---|---|---|
 | Projet compilable | 🟡 | Noyau compilé sous Linux et App Playground compilé sur iPad au commit `ec8842a` ; nouvel incrément à revalider |
-| Application iPhone et iPad | 🟡 | Bibliothèque validée partiellement sur iPad ; iPhone et nouvel éditeur non testés |
+| Application iPhone et iPad | 🟡 | Bibliothèque et premier éditeur validés partiellement sur iPad ; iPhone non testé |
 | Code Swift formaté | 🟡 | Premier incrément Swift présent ; contrôle de format automatisé absent |
 | Tests unitaires, intégration et interface | 🟡 | 8 tests de domaine/persistance réussis sous Linux ; validation manuelle iPad partielle |
 | Assets de démonstration libres de droits | ⬜ | À sourcer et documenter |
@@ -370,6 +370,7 @@ tableau.
 
 | Date | Version | Build | Commit | Environnement | Résultat | Preuve |
 |---|---|---|---|---|---|---|
+| 2026-07-28 | Correctif visuel Lot 1 | — | `9a35365` | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | RÉUSSI avec preuve globale — fond et mode édition jugés améliorés | Retour utilisateur « c’est mieux maintenant » ; limites détaillées dans `IPAD-L1-004` et `IPAD-L1-005` |
 | 2026-07-28 | Incrément pages Lot 1 | — | Copie iPad de la branche, commit non communiqué | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | ÉCHOUÉ — album et pages persistent, mais fond à spirales absent et mode édition non identifiable | Compte rendu utilisateur du 28 juillet 2026 ; correctif local à revalider |
 | 2026-07-28 | Incrément création Lot 1 | — | `ec8842a` | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | RÉUSSI — compilation, création d’un album, fermeture et relance avec album retrouvé | Compte rendu utilisateur du 28 juillet 2026 |
 | 2026-07-28 | Noyau Lot 1 | — | Branche `feature/lot1-creation-locale` | WSL, Swift 6.3.3, x86_64 Linux | RÉUSSI — 8 tests ; ne valide pas l’app iOS | Sortie `swift test` |
@@ -396,15 +397,15 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 
 | ID | Exigence | Sévérité | État | Description | Lien |
 |---|---|---|---|---|---|
-| `ANO-001` | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010`, `APP-002` | Moyenne | 🟡 Correctif à valider | L’éditeur iPad ne rendait pas le fond à spirales et n’identifiait pas le mode édition ; rendu, identifiant normatif et libellé ajoutés localement | Branche `feature/lot1-creation-locale` |
+| `ANO-001` | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010`, `APP-002` | Moyenne | 🟢 Corrigée | L’éditeur iPad ne rendait pas le fond à spirales et n’identifiait pas le mode édition ; correctif jugé meilleur sur iPad, avec limites de preuve consignées | `IPAD-L1-004`, `IPAD-L1-005` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Valider sur iPad que chaque page affiche le fond à spirales et que
-   « Mode édition » est visible, puis relancer l’app et revérifier le rendu.
+1. Préparer un groupe cohérent de fonctionnalités du lot 1 et ajouter tous ses
+   contrôles identifiés dans `suivi_tests.md` avant la prochaine campagne iPad.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -425,6 +426,8 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-07-28 | Codex | Ajout de repères colorés aux cinq états et à chaque résultat de `suivi_tests.md`, avec règle correspondante dans `AGENTS.md` | Suivi des campagnes manuelles, sans changement fonctionnel | Relecture du registre et `git diff --check` ; aucun test applicatif requis |
+| 2026-07-28 | Codex | Création du registre `suivi_tests.md` avec identifiants stables et adoption de campagnes iPad regroupant plusieurs fonctionnalités ; mise à jour des instructions et du README | `TST-001`, `TST-005`, `TST-009` à `TST-016`, méthode de validation du lot 1 | Relecture croisée de `AGENTS.md`, `README.md`, `SUIVI_PROJET.md` et `suivi_tests.md` ; aucun test applicatif requis pour ce changement documentaire |
 | 2026-07-28 | Codex | Correction du rendu absent du fond Album classique et ajout d’un indicateur explicite du mode édition ; normalisation de l’identifiant du thème avec repli visuel pour les anciennes données | `APP-002`, `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-008`, `BG-010`, `ACPT-100` | Persistance des deux pages RÉUSSIE sur iPad d’après l’utilisateur ; correctif analysé syntaxiquement et tests Linux exécutés ; rendu corrigé NON TESTÉ sur iPad |
 | 2026-07-28 | Codex | Ajout de l’ouverture d’un album et de la création persistante d’une page après la page active ; enregistrement de la première validation iPad | `ACPT-100`, `ALB-006`, `PAG-001`, `PAG-002`, `APP-005`, `LOC-011` | `swift test` sous WSL/Swift 6.3.3 : 8 tests réussis ; création et relance du commit `ec8842a` réussies sur iPad ; ajout de page NON TESTÉ sur iPad |
 | 2026-07-28 | Codex | Démarrage du lot 1 : noyau partagé, modèle Album/Page, création persistante journalisée, bibliothèque SwiftUI et tests | `ACPT-100`, `ALB-001` à `ALB-004`, `ALB-009`, `ALB-011` à `ALB-016`, `APP-001`, `APP-005`, `ARC-001` à `ARC-005`, `LOC-002`, `LOC-004`, `LOC-011`, `DAT-001` à `DAT-004` | `swift test` sous WSL/Swift 6.3.3 : 5 tests réussis ; build et validation iPad/iPhone/macOS NON TESTÉES |

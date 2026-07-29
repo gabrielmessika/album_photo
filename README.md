@@ -10,12 +10,14 @@ diaporama et de les exporter en PDF ou sous la forme d’un document
 
 La spécification normative complète se trouve dans [`spec.md`](spec.md).
 L’avancement, les risques, les validations et les prochaines actions sont tenus
-à jour dans [`SUIVI_PROJET.md`](SUIVI_PROJET.md).
+à jour dans [`SUIVI_PROJET.md`](SUIVI_PROJET.md). Les campagnes manuelles à
+effectuer et leurs résultats détaillés sont enregistrés dans
+[`suivi_tests.md`](suivi_tests.md).
 
 ## État du projet
 
 - Spécification : version 2.1, prête pour le développement avec validation iPad temporaire.
-- Implémentation : pas encore commencée.
+- Implémentation : lot 1 en cours, création locale et ajout de pages persistants.
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application prévu : App Playground Swift au format `.swiftpm`.
 - Dépôt GitHub :
@@ -88,10 +90,13 @@ TestFlight iPad + iPhone -> App Review
 Il n’est pas prévu de louer un Mac en continu ni de travailler sur le code tous
 les jours. Le développement avance par sessions indépendantes :
 
-1. choisir une petite fonctionnalité et son scénario d’acceptation ;
-2. la développer sur le PC, puis pousser un commit identifiable sur GitHub ;
+1. choisir un groupe cohérent de fonctionnalités et leurs scénarios
+   d’acceptation ;
+2. les développer et les tester sur le PC, puis pousser un commit identifiable
+   sur GitHub ;
 3. récupérer exactement ce commit sur l’iPad ;
-4. exécuter la checklist iPad et enregistrer les résultats ;
+4. exécuter les contrôles identifiés dans `suivi_tests.md` et communiquer
+   chaque résultat avec son identifiant ;
 5. corriger lors d’une session ultérieure si nécessaire ;
 6. inscrire tout contrôle impossible dans le registre des validations
    différées de `SUIVI_PROJET.md`.
