@@ -54,9 +54,9 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-007` | Lot 1 | Renommage, annulation et rétablissement | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `35c9f12` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-008` | Lot 1 | Confirmation et mise en corbeille | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `35c9f12` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-009` | Lot 1 | Restauration durable depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `35c9f12` | 🟠 `BLOQUÉ` |
-| `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `COMMIT-LOT1-DIALOG-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-DIALOG-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-DIALOG-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `a44a4f1` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `a44a4f1` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `a44a4f1` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -194,7 +194,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 
 ### `IPAD-L1-010` — Régression du renommage corrigé
 
-- Préconditions : récupérer le commit `COMMIT-LOT1-DIALOG-FIX`, compiler
+- Préconditions : récupérer le commit `a44a4f1`, compiler
   l’application et disposer d’un album nommé « Guatemala ».
 - Étapes :
   1. renommer l’album en « Voyage Guatemala » ;
