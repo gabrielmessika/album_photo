@@ -4,7 +4,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class LibraryViewModel {
-    private let service: AlbumService
+    let service: AlbumService
 
     var albums: [Album] = []
     var isCreatingAlbum = false
@@ -66,24 +66,32 @@ struct LibraryView: View {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(model.albums) { album in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(.brown.gradient)
-                                            .aspectRatio(4 / 3, contentMode: .fit)
+                                NavigationLink {
+                                    AlbumEditorView(album: album, service: model.service)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(.brown.gradient)
+                                                .aspectRatio(4 / 3, contentMode: .fit)
+                                            Text(album.name)
+                                                .font(.title3.bold())
+                                                .foregroundStyle(.white)
+                                                .multilineTextAlignment(.center)
+                                                .padding()
+                                        }
                                         Text(album.name)
-                                            .font(.title3.bold())
-                                            .foregroundStyle(.white)
-                                            .multilineTextAlignment(.center)
-                                            .padding()
-                                    }
-                                    Text(album.name)
-                                        .font(.headline)
-                                    Text(album.updatedAt, format: .dateTime.day().month().year())
+                                            .font(.headline)
+                                        Text(
+                                            album.updatedAt,
+                                            format: .dateTime.day().month().year()
+                                        )
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
+                                    }
+                                    .accessibilityElement(children: .combine)
                                 }
-                                .accessibilityElement(children: .combine)
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding()

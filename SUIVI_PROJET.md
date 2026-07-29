@@ -44,9 +44,9 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 
 | Périmètre | État | Avancement constaté | Prochaine condition |
 |---|---|---|---|
-| Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground disponibles | Relever l’environnement iPad et valider le squelette |
+| Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Premier incrément de `ACPT-100` implémenté ; 5 tests Linux réussis, aucune validation iPad | Ajouter une page puis valider création et relance sur iPad |
+| Lot 1 — Création locale | 🟡 En cours | `ACPT-100` couvert par 8 tests Linux ; création et relance validées sur iPad, ajout de page à revalider | Valider les deux pages après relance sur iPad |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -93,10 +93,10 @@ Objectif : prouver les risques techniques avant de développer le produit.
 
 | Tâche | État | Exigences ou sortie | Preuve attendue |
 |---|---|---|---|
-| Créer l’App Playground universel | 🟡 | `DEC-01`, `LOT-001` | Squelette `Albumzh.swiftpm` versionné ; compilation iPad non exécutée |
+| Créer l’App Playground universel | 🟡 | `DEC-01`, `LOT-001` | `Albumzh.swiftpm` compilé sur iPad au commit `ec8842a` ; familles et orientations à relever |
 | Activer iPhone et iPad, portrait et paysage | ⬜ | `DEC-17`, `TST-003` | Exécution et captures |
 | Définir l’organisation des modules | 🟡 | `ARC-001` à `ARC-017` | Noyau partagé et AppModule séparés ; ADR et validation Apple manquants |
-| Isoler le domaine testable sous WSL | 🟡 | `ARC-002`, `ARC-003`, `DEV-006` | Package Swift partagé compilé et 5 tests réussis sous Linux |
+| Isoler le domaine testable sous WSL | 🟡 | `ARC-002`, `ARC-003`, `DEV-006` | Package Swift partagé compilé et 8 tests réussis sous Linux |
 | Prototyper l’édition riche | ⬜ | `TXT-001` à `TXT-006` | Sélection, collage, brouillon, annulation et sérialisation |
 | Prototyper l’animation de page interactive | ⬜ | Section 10 | Démonstration gestes et interruption |
 | Définir le modèle du domaine | 🟡 | Section 22 | Premier sous-ensemble Album/Page et invariants de création testés |
@@ -126,10 +126,10 @@ Objectif : rendre possible la création locale et durable d’albums.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Bibliothèque des albums | 🟡 | `ACPT-100` — grille adaptative, état vide et tri implémentés ; build iPad requise |
-| Création et renommage | 🟡 | `ACPT-100` — création implémentée et testée sous Linux ; renommage non commencé |
+| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, création et relance validées sur iPad au commit `ec8842a` ; ouverture de l’éditeur à revalider |
+| Création et renommage | 🟡 | `ACPT-100` — création validée sous Linux et sur iPad ; renommage non commencé |
 | Corbeille et restauration des albums | ⬜ | `ACPT-102` |
-| Pages : ajout, suppression et réorganisation | ⬜ | `ACPT-104` |
+| Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001`, `PAG-002` — ajout après la page active testé sous Linux ; suppression et réorganisation non commencées |
 | Fonds d’album | ⬜ | Sections 7 et 8 |
 | Couverture automatique et manuelle | ⬜ | `ACPT-103` |
 | Dépôt d’assets adressé par contenu | ⬜ | Section 18 |
@@ -300,10 +300,10 @@ Ce lot est répété avant chaque version publique.
 
 | Livrable attendu par `DEL-001` | État | Emplacement ou action |
 |---|---|---|
-| Projet compilable | 🟡 | Noyau compilé sous Linux ; App Playground à compiler sur iPad |
-| Application iPhone et iPad | 🟡 | Interface bibliothèque écrite ; aucune validation Apple |
+| Projet compilable | 🟡 | Noyau compilé sous Linux et App Playground compilé sur iPad au commit `ec8842a` ; nouvel incrément à revalider |
+| Application iPhone et iPad | 🟡 | Bibliothèque validée partiellement sur iPad ; iPhone et nouvel éditeur non testés |
 | Code Swift formaté | 🟡 | Premier incrément Swift présent ; contrôle de format automatisé absent |
-| Tests unitaires, intégration et interface | 🟡 | 5 tests de domaine/persistance réussis sous Linux ; tests Apple absents |
+| Tests unitaires, intégration et interface | 🟡 | 8 tests de domaine/persistance réussis sous Linux ; validation manuelle iPad partielle |
 | Assets de démonstration libres de droits | ⬜ | À sourcer et documenter |
 | Schéma CloudKit documenté | ⬜ | Lot 4 |
 | Configuration Google sans secret | ⬜ | Lot 5 |
@@ -370,7 +370,8 @@ tableau.
 
 | Date | Version | Build | Commit | Environnement | Résultat | Preuve |
 |---|---|---|---|---|---|---|
-| 2026-07-28 | Noyau Lot 1 | — | Branche `feature/lot1-creation-locale` | WSL, Swift 6.3.3, x86_64 Linux | RÉUSSI — 5 tests ; ne valide pas l’app iOS | Sortie `swift test` |
+| 2026-07-28 | Incrément création Lot 1 | — | `ec8842a` | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | RÉUSSI — compilation, création d’un album, fermeture et relance avec album retrouvé | Compte rendu utilisateur du 28 juillet 2026 |
+| 2026-07-28 | Noyau Lot 1 | — | Branche `feature/lot1-creation-locale` | WSL, Swift 6.3.3, x86_64 Linux | RÉUSSI — 8 tests ; ne valide pas l’app iOS | Sortie `swift test` |
 
 ## Registre des validations différées
 
@@ -394,21 +395,20 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 
 | ID | Exigence | Sévérité | État | Description | Lien |
 |---|---|---|---|---|---|
-| — | — | — | — | Aucune anomalie active détectée par les tests Linux ; app Apple non testée | — |
+| — | — | — | — | Aucune anomalie active détectée ; validation Apple limitée au premier incrément sur iPad | — |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Compiler la branche `feature/lot1-creation-locale` dans Swift Playgrounds
-   et exécuter une création puis une relance sur iPad.
+1. Valider sur iPad l’ouverture de « Guatemala », l’ajout d’une page, la
+   fermeture de l’app puis la présence des deux pages après relance.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
-3. Ajouter la commande de page nécessaire pour couvrir complètement
-   `ACPT-100`, avec test de relance après deux pages.
-4. Ajouter l’injection d’interruption au journal local.
-5. Créer la matrice de traçabilité initiale et l’ADR d’organisation des modules.
+3. Ajouter l’injection d’interruption au journal local.
+4. Créer la matrice de traçabilité initiale et l’ADR d’organisation des modules.
+5. Commencer `ACPT-102` avec la mise en corbeille et la restauration.
 6. Choisir le bundle ID définitif et confirmer l’adhésion Apple Developer.
 7. Prototyper la déclaration et l’ouverture du document `.photoalbum`.
 8. Prototyper l’éditeur riche défini par `TXT-006`.
@@ -424,6 +424,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-07-28 | Codex | Ajout de l’ouverture d’un album et de la création persistante d’une page après la page active ; enregistrement de la première validation iPad | `ACPT-100`, `ALB-006`, `PAG-001`, `PAG-002`, `APP-005`, `LOC-011` | `swift test` sous WSL/Swift 6.3.3 : 8 tests réussis ; création et relance du commit `ec8842a` réussies sur iPad ; ajout de page NON TESTÉ sur iPad |
 | 2026-07-28 | Codex | Démarrage du lot 1 : noyau partagé, modèle Album/Page, création persistante journalisée, bibliothèque SwiftUI et tests | `ACPT-100`, `ALB-001` à `ALB-004`, `ALB-009`, `ALB-011` à `ALB-016`, `APP-001`, `APP-005`, `ARC-001` à `ARC-005`, `LOC-002`, `LOC-004`, `LOC-011`, `DAT-001` à `DAT-004` | `swift test` sous WSL/Swift 6.3.3 : 5 tests réussis ; build et validation iPad/iPhone/macOS NON TESTÉES |
 | 2026-07-27 | Codex | Passage de la spécification en 2.1 et formalisation du scénario temporaire iPad, de la checklist manuelle et de la qualification macOS/Xcode différée | `DEV-007` à `DEV-009`, `ENV-001` à `ENV-009`, `TST-009` à `TST-016` | Relecture documentaire et `git diff --check` ; aucun build ni test applicatif, implémentation non commencée |
 | 2026-07-27 | Codex | Création et revue du suivi de projet et des instructions `AGENTS.md` ; ajout du lien depuis le README | Préparation | Contrôle des identifiants normatifs et `git diff --check` ; aucun test applicatif, changement documentaire uniquement |

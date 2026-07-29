@@ -2,6 +2,9 @@ import Foundation
 
 public enum AlbumValidationError: Error, Equatable {
     case emptyName
+    case albumNotFound
+    case pageNotFound
+    case albumIsTrashed
 }
 
 public struct AlbumService: Sendable {
@@ -35,6 +38,32 @@ public struct AlbumService: Sendable {
             createdAt: now,
             firstPageID: firstPageID
         )
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func addPage(
+        to albumID: UUID,
+        after activePageID: UUID,
+        now: Date = Date(),
+        pageID: UUID = UUID(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        let storedAlbums = try await repository.loadAlbums()
+        guard var album = storedAlbums.first(where: { $0.id == albumID }) else {
+            throw AlbumValidationError.albumNotFound
+        }
+        guard album.trashedAt == nil else {
+            throw AlbumValidationError.albumIsTrashed
+        }
+        guard let activeIndex = album.pages.firstIndex(
+            where: { $0.id == activePageID }
+        ) else {
+            throw AlbumValidationError.pageNotFound
+        }
+
+        album.pages.insert(Page(id: pageID), at: activeIndex + 1)
+        album.updatedAt = now
         try await repository.save(album, commandID: commandID)
         return album
     }

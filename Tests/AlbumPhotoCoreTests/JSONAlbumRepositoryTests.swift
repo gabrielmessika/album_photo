@@ -24,6 +24,39 @@ struct JSONAlbumRepositoryTests {
         #expect(albums == [created])
     }
 
+    @Test("ACPT-100 retrouve l’album et ses deux pages après relance")
+    func persistsAddedPageAcrossRepositoryInstances() async throws {
+        let directory = temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let service = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        let firstPageID = UUID()
+        let secondPageID = UUID()
+        let album = try await service.createAlbum(
+            named: "Guatemala",
+            now: Date(timeIntervalSince1970: 1_000),
+            firstPageID: firstPageID
+        )
+
+        _ = try await service.addPage(
+            to: album.id,
+            after: firstPageID,
+            now: Date(timeIntervalSince1970: 2_000),
+            pageID: secondPageID
+        )
+
+        let relaunchedService = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        let relaunchedAlbum = try #require(
+            await relaunchedService.albums().first
+        )
+        #expect(relaunchedAlbum.name == "Guatemala")
+        #expect(relaunchedAlbum.backgroundID == Album.classicSpiralBackgroundID)
+        #expect(relaunchedAlbum.pages.map(\.id) == [firstPageID, secondPageID])
+    }
+
     private func temporaryDirectory() -> URL {
         FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

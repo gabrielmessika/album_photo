@@ -56,6 +56,47 @@ struct AlbumServiceTests {
 
         #expect(try await service.albums().map(\.name) == ["Récent", "Ancien"])
     }
+
+    @Test("PAG-002 insère une page après la page active")
+    func addsPageAfterActivePage() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let firstPageID = UUID()
+        let secondPageID = UUID()
+        let thirdPageID = UUID()
+        let album = try await service.createAlbum(
+            named: "Guatemala",
+            firstPageID: firstPageID
+        )
+        let withSecondPage = try await service.addPage(
+            to: album.id,
+            after: firstPageID,
+            pageID: secondPageID
+        )
+
+        let withInsertedPage = try await service.addPage(
+            to: album.id,
+            after: firstPageID,
+            pageID: thirdPageID
+        )
+
+        #expect(withSecondPage.pages.map(\.id) == [firstPageID, secondPageID])
+        #expect(
+            withInsertedPage.pages.map(\.id)
+                == [firstPageID, thirdPageID, secondPageID]
+        )
+    }
+
+    @Test("PAG-002 refuse une page active étrangère à l’album")
+    func rejectsUnknownActivePage() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+
+        await #expect(throws: AlbumValidationError.pageNotFound) {
+            try await service.addPage(to: album.id, after: UUID())
+        }
+    }
 }
 
 private actor InMemoryAlbumRepository: AlbumRepository {
@@ -67,7 +108,11 @@ private actor InMemoryAlbumRepository: AlbumRepository {
     }
 
     func save(_ album: Album, commandID: UUID) {
-        albums.append(album)
+        if let index = albums.firstIndex(where: { $0.id == album.id }) {
+            albums[index] = album
+        } else {
+            albums.append(album)
+        }
         savedAlbum = album
     }
 }
