@@ -5,6 +5,8 @@ public enum AlbumValidationError: Error, Equatable {
     case albumNotFound
     case pageNotFound
     case albumIsTrashed
+    case cannotDeleteOnlyPage
+    case invalidPageOrder
 }
 
 public struct AlbumService: Sendable {
@@ -74,6 +76,67 @@ public struct AlbumService: Sendable {
         album.updatedAt = now
         try await repository.save(album, commandID: commandID)
         return album
+    }
+
+    public func deletePage(
+        from albumID: UUID,
+        pageID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        guard album.pages.count > 1 else {
+            throw AlbumValidationError.cannotDeleteOnlyPage
+        }
+        guard let index = album.pages.firstIndex(where: { $0.id == pageID }) else {
+            throw AlbumValidationError.pageNotFound
+        }
+
+        album.pages.remove(at: index)
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func reorderPages(
+        in albumID: UUID,
+        orderedPageIDs: [UUID],
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        let existingIDs = album.pages.map(\.id)
+        guard
+            orderedPageIDs.count == existingIDs.count,
+            Set(orderedPageIDs) == Set(existingIDs)
+        else {
+            throw AlbumValidationError.invalidPageOrder
+        }
+
+        let pagesByID = Dictionary(uniqueKeysWithValues: album.pages.map { ($0.id, $0) })
+        album.pages = orderedPageIDs.compactMap { pagesByID[$0] }
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func applyEditorSnapshot(
+        _ snapshot: Album,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        _ = try await editableAlbum(id: snapshot.id)
+        guard !snapshot.pages.isEmpty else {
+            throw AlbumValidationError.cannotDeleteOnlyPage
+        }
+        guard Set(snapshot.pages.map(\.id)).count == snapshot.pages.count else {
+            throw AlbumValidationError.invalidPageOrder
+        }
+
+        var restored = snapshot
+        restored.updatedAt = now
+        try await repository.save(restored, commandID: commandID)
+        return restored
     }
 
     public func renameAlbum(

@@ -57,6 +57,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `a44a4f1` | 🟢 `RÉUSSI` |
 | `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
 | `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
+| `IPAD-L1-013` | Lot 1 | Compilation et régression du groupe pages | `LOT-001`, `ACPT-100`, `ACPT-102` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-014` | Lot 1 | Suppression et protection des pages | `PAG-006` à `PAG-008`, `PAG-010` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-015` | Lot 1 | Annulation et rétablissement de session | `UND-001` à `UND-004`, `UND-010`, `UND-012` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -230,6 +234,69 @@ nouvelle ligne de régression avec un nouvel identifiant.
   4. relancer l’application et refaire les vérifications.
 - Résultat attendu : l’album complet reste restauré après relance.
 - Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 28 juillet 2026.
+
+### `IPAD-L1-013` — Compilation et régression du groupe pages
+
+- Préconditions : récupérer le commit `COMMIT-LOT1-PAGES` et ouvrir
+  `Albumzh.swiftpm` dans Swift Playgrounds.
+- Étapes :
+  1. compiler et lancer l’application ;
+  2. vérifier la bibliothèque, le renommage et la corbeille ;
+  3. ouvrir un album existant et vérifier ses pages et son fond.
+- Résultat attendu : aucune erreur de compilation ou de lancement et aucune
+  régression sur les fonctions déjà validées.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-014` — Suppression et protection des pages
+
+- Préconditions : ouvrir un album contenant trois pages.
+- Étapes :
+  1. sélectionner la page 2 puis toucher « Supprimer la page » ;
+  2. vérifier la confirmation et toucher « Annuler » ;
+  3. vérifier que les trois pages sont toujours présentes ;
+  4. recommencer et confirmer la suppression ;
+  5. vérifier que l’ancienne page 3 devient la page active et est renumérotée
+     page 2 ;
+  6. supprimer une autre page pour n’en conserver qu’une ;
+  7. vérifier que « Supprimer la page » est désactivé ;
+  8. relancer l’application.
+- Résultat attendu : aucune suppression sans confirmation, la page suivante
+  devient active, la dernière page est protégée et l’état persiste.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-015` — Annulation et rétablissement de session
+
+- Préconditions : ouvrir un album contenant au moins deux pages.
+- Étapes :
+  1. vérifier que « Annuler » et « Rétablir » sont initialement désactivés ;
+  2. ajouter une page et vérifier que « Annuler » devient actif ;
+  3. annuler puis vérifier la disparition de la page ajoutée ;
+  4. rétablir puis vérifier son retour ;
+  5. annuler de nouveau, effectuer une nouvelle modification et vérifier que
+     « Rétablir » redevient désactivé ;
+  6. passer l’application en arrière-plan puis revenir ;
+  7. vérifier que les deux boutons sont désactivés sans perte des commandes
+     déjà validées.
+- Résultat attendu : la pile suit les actions de la session, une nouvelle
+  branche supprime le rétablissement et l’arrière-plan clôt la pile.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-016` — Réorganisation durable des pages
+
+- Préconditions : disposer exactement de cinq pages.
+- Étapes :
+  1. ouvrir « Gérer les pages » ;
+  2. déplacer la page 5 en deuxième position avec la poignée de déplacement ;
+  3. vérifier la renumérotation immédiate puis fermer le gestionnaire ;
+  4. sélectionner la deuxième page et la supprimer ;
+  5. toucher une fois « Annuler » et vérifier que la page revient en deuxième
+     position ;
+  6. toucher une seconde fois « Annuler » et vérifier l’ordre initial ;
+  7. relancer l’application et vérifier les cinq pages dans l’ordre initial.
+- Résultat attendu : la réorganisation constitue une action unique, les deux
+  annulations restaurent successivement la page puis l’ordre, et le résultat
+  final persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
 
 ## Prochaine campagne
 

@@ -86,6 +86,55 @@ struct JSONAlbumRepositoryTests {
         #expect(try await afterRestoreRelaunch.trashedAlbums().isEmpty)
     }
 
+    @Test("ACPT-104 réorganise, supprime puis annule les deux actions")
+    func persistsPageActionsAndUndoAcrossRelaunch() async throws {
+        let directory = temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let service = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        let pageIDs = (0..<5).map { _ in UUID() }
+        var album = try await service.createAlbum(
+            named: "Guatemala",
+            firstPageID: pageIDs[0]
+        )
+        for pageID in pageIDs.dropFirst() {
+            album = try await service.addPage(
+                to: album.id,
+                after: album.pages.last!.id,
+                pageID: pageID
+            )
+        }
+        let initialSnapshot = album
+
+        let reordered = try await service.reorderPages(
+            in: album.id,
+            orderedPageIDs: [
+                pageIDs[0],
+                pageIDs[4],
+                pageIDs[1],
+                pageIDs[2],
+                pageIDs[3]
+            ]
+        )
+        let deleted = try await service.deletePage(
+            from: album.id,
+            pageID: pageIDs[4]
+        )
+        #expect(deleted.pages.map(\.id) == Array(pageIDs.dropLast()))
+
+        let restoredDeletion = try await service.applyEditorSnapshot(reordered)
+        #expect(restoredDeletion.pages.map(\.id) == reordered.pages.map(\.id))
+        let restoredOrder = try await service.applyEditorSnapshot(initialSnapshot)
+        #expect(restoredOrder.pages.map(\.id) == pageIDs)
+
+        let relaunchedService = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        let relaunched = try #require(await relaunchedService.albums().first)
+        #expect(relaunched.pages.map(\.id) == pageIDs)
+    }
+
     private func temporaryDirectory() -> URL {
         FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

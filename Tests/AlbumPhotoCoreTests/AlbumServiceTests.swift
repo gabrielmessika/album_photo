@@ -155,6 +155,83 @@ struct AlbumServiceTests {
         #expect(try await service.albums().map(\.id) == [album.id])
         #expect(try await service.trashedAlbums().isEmpty)
     }
+
+    @Test("PAG-007 protège la dernière page")
+    func refusesToDeleteOnlyPage() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+
+        await #expect(throws: AlbumValidationError.cannotDeleteOnlyPage) {
+            try await service.deletePage(
+                from: album.id,
+                pageID: album.pages[0].id
+            )
+        }
+    }
+
+    @Test("PAG-006 et PAG-010 suppriment la page demandée")
+    func deletesRequestedPage() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let firstPageID = UUID()
+        let secondPageID = UUID()
+        let album = try await service.createAlbum(
+            named: "Guatemala",
+            firstPageID: firstPageID
+        )
+        _ = try await service.addPage(
+            to: album.id,
+            after: firstPageID,
+            pageID: secondPageID
+        )
+
+        let updated = try await service.deletePage(
+            from: album.id,
+            pageID: firstPageID
+        )
+
+        #expect(updated.pages.map(\.id) == [secondPageID])
+    }
+
+    @Test("PAG-004 et PAG-005 enregistrent un ordre complet valide")
+    func reordersPages() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let firstPageID = UUID()
+        let secondPageID = UUID()
+        let thirdPageID = UUID()
+        let album = try await service.createAlbum(
+            named: "Guatemala",
+            firstPageID: firstPageID
+        )
+        _ = try await service.addPage(
+            to: album.id,
+            after: firstPageID,
+            pageID: secondPageID
+        )
+        _ = try await service.addPage(
+            to: album.id,
+            after: secondPageID,
+            pageID: thirdPageID
+        )
+
+        let reordered = try await service.reorderPages(
+            in: album.id,
+            orderedPageIDs: [thirdPageID, firstPageID, secondPageID]
+        )
+
+        #expect(
+            reordered.pages.map(\.id)
+                == [thirdPageID, firstPageID, secondPageID]
+        )
+        await #expect(throws: AlbumValidationError.invalidPageOrder) {
+            try await service.reorderPages(
+                in: album.id,
+                orderedPageIDs: [firstPageID]
+            )
+        }
+    }
 }
 
 private actor InMemoryAlbumRepository: AlbumRepository {

@@ -17,7 +17,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 ## État du projet
 
 - Spécification : version 2.1, prête pour le développement avec validation iPad temporaire.
-- Implémentation : lot 1 en cours, création locale et ajout de pages persistants.
+- Implémentation : lot 1 en cours, gestion locale des albums et des pages.
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application prévu : App Playground Swift au format `.swiftpm`.
 - Dépôt GitHub :
