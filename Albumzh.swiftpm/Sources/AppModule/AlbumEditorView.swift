@@ -44,6 +44,11 @@ struct AlbumEditorView: View {
 
     var body: some View {
         VStack(spacing: 20) {
+            Label("Mode édition", systemImage: "pencil")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
+
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 16) {
                     ForEach(Array(model.album.pages.enumerated()), id: \.element.id) {
@@ -53,8 +58,9 @@ struct AlbumEditorView: View {
                             model.activePageID = page.id
                         } label: {
                             VStack(spacing: 8) {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.background)
+                                AlbumPageBackground(
+                                    backgroundID: model.album.backgroundID
+                                )
                                     .aspectRatio(4 / 5, contentMode: .fit)
                                     .frame(width: 220)
                                     .overlay {

@@ -20,7 +20,7 @@ public struct Page: Identifiable, Codable, Sendable, Equatable {
 
 public struct Album: Identifiable, Codable, Sendable, Equatable {
     public static let currentSchemaVersion = 1
-    public static let classicSpiralBackgroundID = "builtin.classic-spiral"
+    public static let classicSpiralBackgroundID = "album.classicSpiral"
 
     public let schemaVersion: Int
     public let id: UUID

@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | `ACPT-100` couvert par 8 tests Linux ; création et relance validées sur iPad, ajout de page à revalider | Valider les deux pages après relance sur iPad |
+| Lot 1 — Création locale | 🟡 En cours | `ACPT-100` couvert par 8 tests Linux ; album et deux pages persistent sur iPad, rendu du fond et mode édition corrigés mais à revalider | Valider le correctif visuel sur iPad |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -126,11 +126,11 @@ Objectif : rendre possible la création locale et durable d’albums.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, création et relance validées sur iPad au commit `ec8842a` ; ouverture de l’éditeur à revalider |
+| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, création, ouverture et relance validées sur iPad ; libellé du mode édition ajouté et à revalider |
 | Création et renommage | 🟡 | `ACPT-100` — création validée sous Linux et sur iPad ; renommage non commencé |
 | Corbeille et restauration des albums | ⬜ | `ACPT-102` |
-| Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001`, `PAG-002` — ajout après la page active testé sous Linux ; suppression et réorganisation non commencées |
-| Fonds d’album | ⬜ | Sections 7 et 8 |
+| Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001`, `PAG-002` — ajout et persistance validés sous Linux et sur iPad ; suppression et réorganisation non commencées |
+| Fonds d’album | 🟡 | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-008`, `BG-010` — identifiant normatif et rendu à spirales ajoutés ; validation iPad requise |
 | Couverture automatique et manuelle | ⬜ | `ACPT-103` |
 | Dépôt d’assets adressé par contenu | ⬜ | Section 18 |
 | Journal local transactionnel | 🟡 | `ACPT-100`, `ACPT-114` — premier journal JSON rejouable ; campagne d’interruption manquante |
@@ -370,6 +370,7 @@ tableau.
 
 | Date | Version | Build | Commit | Environnement | Résultat | Preuve |
 |---|---|---|---|---|---|---|
+| 2026-07-28 | Incrément pages Lot 1 | — | Copie iPad de la branche, commit non communiqué | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | ÉCHOUÉ — album et pages persistent, mais fond à spirales absent et mode édition non identifiable | Compte rendu utilisateur du 28 juillet 2026 ; correctif local à revalider |
 | 2026-07-28 | Incrément création Lot 1 | — | `ec8842a` | iPad, versions appareil/iPadOS/Swift Playgrounds non communiquées | RÉUSSI — compilation, création d’un album, fermeture et relance avec album retrouvé | Compte rendu utilisateur du 28 juillet 2026 |
 | 2026-07-28 | Noyau Lot 1 | — | Branche `feature/lot1-creation-locale` | WSL, Swift 6.3.3, x86_64 Linux | RÉUSSI — 8 tests ; ne valide pas l’app iOS | Sortie `swift test` |
 
@@ -395,15 +396,15 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 
 | ID | Exigence | Sévérité | État | Description | Lien |
 |---|---|---|---|---|---|
-| — | — | — | — | Aucune anomalie active détectée ; validation Apple limitée au premier incrément sur iPad | — |
+| `ANO-001` | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010`, `APP-002` | Moyenne | 🟡 Correctif à valider | L’éditeur iPad ne rendait pas le fond à spirales et n’identifiait pas le mode édition ; rendu, identifiant normatif et libellé ajoutés localement | Branche `feature/lot1-creation-locale` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Valider sur iPad l’ouverture de « Guatemala », l’ajout d’une page, la
-   fermeture de l’app puis la présence des deux pages après relance.
+1. Valider sur iPad que chaque page affiche le fond à spirales et que
+   « Mode édition » est visible, puis relancer l’app et revérifier le rendu.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -424,6 +425,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-07-28 | Codex | Correction du rendu absent du fond Album classique et ajout d’un indicateur explicite du mode édition ; normalisation de l’identifiant du thème avec repli visuel pour les anciennes données | `APP-002`, `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-008`, `BG-010`, `ACPT-100` | Persistance des deux pages RÉUSSIE sur iPad d’après l’utilisateur ; correctif analysé syntaxiquement et tests Linux exécutés ; rendu corrigé NON TESTÉ sur iPad |
 | 2026-07-28 | Codex | Ajout de l’ouverture d’un album et de la création persistante d’une page après la page active ; enregistrement de la première validation iPad | `ACPT-100`, `ALB-006`, `PAG-001`, `PAG-002`, `APP-005`, `LOC-011` | `swift test` sous WSL/Swift 6.3.3 : 8 tests réussis ; création et relance du commit `ec8842a` réussies sur iPad ; ajout de page NON TESTÉ sur iPad |
 | 2026-07-28 | Codex | Démarrage du lot 1 : noyau partagé, modèle Album/Page, création persistante journalisée, bibliothèque SwiftUI et tests | `ACPT-100`, `ALB-001` à `ALB-004`, `ALB-009`, `ALB-011` à `ALB-016`, `APP-001`, `APP-005`, `ARC-001` à `ARC-005`, `LOC-002`, `LOC-004`, `LOC-011`, `DAT-001` à `DAT-004` | `swift test` sous WSL/Swift 6.3.3 : 5 tests réussis ; build et validation iPad/iPhone/macOS NON TESTÉES |
 | 2026-07-27 | Codex | Passage de la spécification en 2.1 et formalisation du scénario temporaire iPad, de la checklist manuelle et de la qualification macOS/Xcode différée | `DEV-007` à `DEV-009`, `ENV-001` à `ENV-009`, `TST-009` à `TST-016` | Relecture documentaire et `git diff --check` ; aucun build ni test applicatif, implémentation non commencée |

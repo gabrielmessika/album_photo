@@ -36,6 +36,7 @@ struct AlbumServiceTests {
         #expect(album.name == "Guatemala")
         #expect(album.pages.count == 1)
         #expect(album.backgroundID == Album.classicSpiralBackgroundID)
+        #expect(album.backgroundID == "album.classicSpiral")
         #expect(album.preferredDisplayMode == .doublePage)
         #expect(album.createdAt == date)
         #expect(await repository.savedAlbum?.id == album.id)
