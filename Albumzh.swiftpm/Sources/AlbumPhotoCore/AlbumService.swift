@@ -1,0 +1,41 @@
+import Foundation
+
+public enum AlbumValidationError: Error, Equatable {
+    case emptyName
+}
+
+public struct AlbumService: Sendable {
+    private let repository: any AlbumRepository
+
+    public init(repository: any AlbumRepository) {
+        self.repository = repository
+    }
+
+    public func albums() async throws -> [Album] {
+        try await repository.loadAlbums()
+            .filter { $0.trashedAt == nil }
+            .sorted { $0.updatedAt > $1.updatedAt }
+    }
+
+    public func createAlbum(
+        named proposedName: String,
+        now: Date = Date(),
+        id: UUID = UUID(),
+        firstPageID: UUID = UUID(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        let name = proposedName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else {
+            throw AlbumValidationError.emptyName
+        }
+
+        let album = Album(
+            id: id,
+            name: name,
+            createdAt: now,
+            firstPageID: firstPageID
+        )
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+}

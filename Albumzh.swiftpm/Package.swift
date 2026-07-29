@@ -33,9 +33,14 @@ let package = Package(
         )
     ],
     targets: [
+        .target(
+            name: "AlbumPhotoCore",
+            path: "Sources/AlbumPhotoCore"
+        ),
         .executableTarget(
             name: "AppModule",
-            path: ".",
+            dependencies: ["AlbumPhotoCore"],
+            path: "Sources/AppModule",
             swiftSettings: [
                 .enableUpcomingFeature("BareSlashRegexLiterals")
             ]

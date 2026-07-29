@@ -23,8 +23,8 @@ dépôt, conformément à [`AGENTS.md`](AGENTS.md).
 | Build Apple | Phase A sur Swift Playgrounds/iPad ; qualification Xcode/macOS ponctuelle en phase B |
 | Distribution | App Store Connect et TestFlight |
 | Version publique visée en premier | `1.0` |
-| Phase courante | Préparation du projet — phase A temporaire sur iPad, avant le lot 0 |
-| Dernière mise à jour | 27 juillet 2026 |
+| Phase courante | Lot 1 démarré par un incrément `ACPT-100` ; sorties du lot 0 encore incomplètes |
+| Dernière mise à jour | 28 juillet 2026 |
 | Dernier auteur du suivi | Codex |
 
 ## Légende des états
@@ -44,9 +44,9 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 
 | Périmètre | État | Avancement constaté | Prochaine condition |
 |---|---|---|---|
-| Préparation et documentation | 🟡 En cours | Spécification, README, suivi, scénario iPad temporaire et instructions Codex disponibles | Relever l’environnement iPad et créer le squelette `.swiftpm` |
-| Lot 0 — Prototypes et contrats | ⬜ Non commencé | Aucun prototype ni code d’application | Amorcer l’App Playground sur iPad |
-| Lot 1 — Création locale | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer les sorties du lot 0 |
+| Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground disponibles | Relever l’environnement iPad et valider le squelette |
+| Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
+| Lot 1 — Création locale | 🟡 En cours | Premier incrément de `ACPT-100` implémenté ; 5 tests Linux réussis, aucune validation iPad | Ajouter une page puis valider création et relance sur iPad |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -93,15 +93,15 @@ Objectif : prouver les risques techniques avant de développer le produit.
 
 | Tâche | État | Exigences ou sortie | Preuve attendue |
 |---|---|---|---|
-| Créer l’App Playground universel | ⬜ | `DEC-01`, `LOT-001` | Projet `.swiftpm` compilé sur iPad |
+| Créer l’App Playground universel | 🟡 | `DEC-01`, `LOT-001` | Squelette `Albumzh.swiftpm` versionné ; compilation iPad non exécutée |
 | Activer iPhone et iPad, portrait et paysage | ⬜ | `DEC-17`, `TST-003` | Exécution et captures |
-| Définir l’organisation des modules | ⬜ | `ARC-001` à `ARC-017` | ADR et arborescence compilable sous Swift Playgrounds puis Xcode |
-| Isoler le domaine testable sous WSL | ⬜ | `ARC-002`, `ARC-003`, `DEV-006` | Package Swift et tests Linux |
+| Définir l’organisation des modules | 🟡 | `ARC-001` à `ARC-017` | Noyau partagé et AppModule séparés ; ADR et validation Apple manquants |
+| Isoler le domaine testable sous WSL | 🟡 | `ARC-002`, `ARC-003`, `DEV-006` | Package Swift partagé compilé et 5 tests réussis sous Linux |
 | Prototyper l’édition riche | ⬜ | `TXT-001` à `TXT-006` | Sélection, collage, brouillon, annulation et sérialisation |
 | Prototyper l’animation de page interactive | ⬜ | Section 10 | Démonstration gestes et interruption |
-| Définir le modèle du domaine | ⬜ | Section 22 | Modèles, invariants et tests |
+| Définir le modèle du domaine | 🟡 | Section 22 | Premier sous-ensemble Album/Page et invariants de création testés |
 | Définir la sérialisation canonique | ⬜ | `DAT-020` à `DAT-028` | Golden files et empreintes stables |
-| Prototyper le journal transactionnel | ⬜ | `LOC-011` à `LOC-026` | Tests d’injection d’interruption |
+| Prototyper le journal transactionnel | 🟡 | `LOC-011` à `LOC-026` | Journal de création et relance testés ; injection d’interruption à ajouter |
 | Créer le schéma `.photoalbum` v1 | ⬜ | `PKG-001` à `PKG-021` | Schéma JSON et corpus d’exemples |
 | Valider le type de document sur iPad | 🟠 | `PKG-001`, `PKG-002`, `IMP-001` | Ouverture depuis Fichiers et partage |
 | Prototyper CloudKit page par page | 🟠 | `SYN-001` à `SYN-003` | Go/no-go sur entitlements et conteneur |
@@ -126,14 +126,14 @@ Objectif : rendre possible la création locale et durable d’albums.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Bibliothèque des albums | ⬜ | `ACPT-100` |
-| Création et renommage | ⬜ | `ACPT-100` |
+| Bibliothèque des albums | 🟡 | `ACPT-100` — grille adaptative, état vide et tri implémentés ; build iPad requise |
+| Création et renommage | 🟡 | `ACPT-100` — création implémentée et testée sous Linux ; renommage non commencé |
 | Corbeille et restauration des albums | ⬜ | `ACPT-102` |
 | Pages : ajout, suppression et réorganisation | ⬜ | `ACPT-104` |
 | Fonds d’album | ⬜ | Sections 7 et 8 |
 | Couverture automatique et manuelle | ⬜ | `ACPT-103` |
 | Dépôt d’assets adressé par contenu | ⬜ | Section 18 |
-| Journal local transactionnel | ⬜ | `ACPT-100`, `ACPT-114` |
+| Journal local transactionnel | 🟡 | `ACPT-100`, `ACPT-114` — premier journal JSON rejouable ; campagne d’interruption manquante |
 | Import de photos avec PhotosPicker | ⬜ | `ACPT-106` |
 | Import et lecture des vidéos | ⬜ | `ACPT-106`, `ACPT-110` |
 | Normalisation des formats média | ⬜ | `ACPT-106` |
@@ -283,8 +283,8 @@ Ce lot est répété avant chaque version publique.
 
 | Chantier | État | Référence | Remarque |
 |---|---|---|---|
-| Architecture et injection | ⬜ | Section 23 | Les vues ne doivent pas écrire en base |
-| Persistance locale | ⬜ | Section 18 | Priorité à l’intégrité des données |
+| Architecture et injection | 🟡 | Section 23 | Vue → ViewModel → service injecté → dépôt actor pour le premier incrément |
+| Persistance locale | 🟡 | Section 18 | Snapshot atomique et journal rejouable pour la création ; périmètre incomplet |
 | Gestion des assets | ⬜ | Sections 18 et 22.8 | SHA-256 et déduplication |
 | Sécurité des imports | ⬜ | Section 20.5 | Validation avant staging |
 | Confidentialité | ⬜ | Section 25 | Aucun secret ni média personnel dans Git |
@@ -300,10 +300,10 @@ Ce lot est répété avant chaque version publique.
 
 | Livrable attendu par `DEL-001` | État | Emplacement ou action |
 |---|---|---|
-| Projet compilable | ⬜ | À créer au lot 0 |
-| Application iPhone et iPad | ⬜ | À créer |
-| Code Swift formaté | ⬜ | À créer |
-| Tests unitaires, intégration et interface | ⬜ | À créer |
+| Projet compilable | 🟡 | Noyau compilé sous Linux ; App Playground à compiler sur iPad |
+| Application iPhone et iPad | 🟡 | Interface bibliothèque écrite ; aucune validation Apple |
+| Code Swift formaté | 🟡 | Premier incrément Swift présent ; contrôle de format automatisé absent |
+| Tests unitaires, intégration et interface | 🟡 | 5 tests de domaine/persistance réussis sous Linux ; tests Apple absents |
 | Assets de démonstration libres de droits | ⬜ | À sourcer et documenter |
 | Schéma CloudKit documenté | ⬜ | Lot 4 |
 | Configuration Google sans secret | ⬜ | Lot 5 |
@@ -356,8 +356,8 @@ tableau.
 | Élément | Développement | Production | État |
 |---|---|---|---|
 | Dépôt GitHub | Public, branche `main` | Tags de release | 🟢 |
-| WSL 2 et VS Code | À vérifier sur le PC utilisateur | Sans objet | 🟡 |
-| Swift Linux | À installer ou vérifier | Sans objet | ⬜ |
+| WSL 2 et VS Code | Développement effectué sous WSL ; version de VS Code non relevée | Sans objet | 🟡 |
+| Swift Linux | Swift 6.3.3 vérifié | Sans objet | 🟢 |
 | Swift Playgrounds | Version à relever | Version stable validée | 🟡 |
 | Bundle ID | À choisir | À réserver | ⬜ |
 | Équipe Apple | À confirmer | Adhésion active requise | ⬜ |
@@ -370,7 +370,7 @@ tableau.
 
 | Date | Version | Build | Commit | Environnement | Résultat | Preuve |
 |---|---|---|---|---|---|---|
-| — | — | — | — | — | Aucune build à ce jour | — |
+| 2026-07-28 | Noyau Lot 1 | — | Branche `feature/lot1-creation-locale` | WSL, Swift 6.3.3, x86_64 Linux | RÉUSSI — 5 tests ; ne valide pas l’app iOS | Sortie `swift test` |
 
 ## Registre des validations différées
 
@@ -394,27 +394,27 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 
 | ID | Exigence | Sévérité | État | Description | Lien |
 |---|---|---|---|---|---|
-| — | — | — | — | Aucune anomalie applicative : l’implémentation n’a pas commencé | — |
+| — | — | — | — | Aucune anomalie active détectée par les tests Linux ; app Apple non testée | — |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
-   Playgrounds.
-2. Choisir Working Copy ou la méthode ZIP pour les transferts intermittents.
-3. Choisir le bundle ID définitif et confirmer l’adhésion Apple Developer.
-4. Créer l’App Playground `AlbumPhoto.swiftpm` sur l’iPad.
-5. Importer le squelette dans une branche Git et ouvrir une pull request.
-6. Exécuter et archiver la première fiche manuelle iPad.
-7. Définir l’architecture du domaine et son mode de test sous WSL.
-8. Créer la matrice de traçabilité initiale et y relier la checklist iPad.
-9. Prototyper la déclaration et l’ouverture du document `.photoalbum`.
-10. Prototyper l’éditeur riche défini par `TXT-006`.
-11. Enregistrer comme bloquée toute capacité Swift Playgrounds indisponible.
-12. Après une première version viable, identifier un iPhone de test et
-    réserver une campagne macOS/Xcode ponctuelle.
+1. Compiler la branche `feature/lot1-creation-locale` dans Swift Playgrounds
+   et exécuter une création puis une relance sur iPad.
+2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
+   Playgrounds dans la fiche de validation.
+3. Ajouter la commande de page nécessaire pour couvrir complètement
+   `ACPT-100`, avec test de relance après deux pages.
+4. Ajouter l’injection d’interruption au journal local.
+5. Créer la matrice de traçabilité initiale et l’ADR d’organisation des modules.
+6. Choisir le bundle ID définitif et confirmer l’adhésion Apple Developer.
+7. Prototyper la déclaration et l’ouverture du document `.photoalbum`.
+8. Prototyper l’éditeur riche défini par `TXT-006`.
+9. Enregistrer comme bloquée toute capacité Swift Playgrounds indisponible.
+10. Après une première version viable, identifier un iPhone de test et
+   réserver une campagne macOS/Xcode ponctuelle.
 
 ## Journal des mises à jour
 
@@ -424,6 +424,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-07-28 | Codex | Démarrage du lot 1 : noyau partagé, modèle Album/Page, création persistante journalisée, bibliothèque SwiftUI et tests | `ACPT-100`, `ALB-001` à `ALB-004`, `ALB-009`, `ALB-011` à `ALB-016`, `APP-001`, `APP-005`, `ARC-001` à `ARC-005`, `LOC-002`, `LOC-004`, `LOC-011`, `DAT-001` à `DAT-004` | `swift test` sous WSL/Swift 6.3.3 : 5 tests réussis ; build et validation iPad/iPhone/macOS NON TESTÉES |
 | 2026-07-27 | Codex | Passage de la spécification en 2.1 et formalisation du scénario temporaire iPad, de la checklist manuelle et de la qualification macOS/Xcode différée | `DEV-007` à `DEV-009`, `ENV-001` à `ENV-009`, `TST-009` à `TST-016` | Relecture documentaire et `git diff --check` ; aucun build ni test applicatif, implémentation non commencée |
 | 2026-07-27 | Codex | Création et revue du suivi de projet et des instructions `AGENTS.md` ; ajout du lien depuis le README | Préparation | Contrôle des identifiants normatifs et `git diff --check` ; aucun test applicatif, changement documentaire uniquement |
 | 2026-07-27 | Codex | Rédaction du guide détaillé Windows/WSL/GitHub/iPad | Préparation, outillage et publication | Relecture documentaire et `git diff --check` |
