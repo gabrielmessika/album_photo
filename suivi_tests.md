@@ -50,6 +50,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-003` | Lot 1 | Ajout et persistance d’une page | `ACPT-100`, `PAG-001`, `PAG-002`, `APP-005` | `2030d7c` | 🟢 `RÉUSSI` |
 | `IPAD-L1-004` | Lot 1 | Rendu du fond Album classique | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010` | `9a35365` | 🟢 `RÉUSSI` |
 | `IPAD-L1-005` | Lot 1 | Identification du mode édition | `APP-002` | `9a35365` | 🟢 `RÉUSSI` |
+| `IPAD-L1-006` | Lot 1 | Compilation et régression du groupe bibliothèque | `LOT-001`, `ACPT-100` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-007` | Lot 1 | Renommage, annulation et rétablissement | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-008` | Lot 1 | Confirmation et mise en corbeille | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-009` | Lot 1 | Restauration durable depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -118,8 +122,68 @@ nouvelle ligne de régression avec un nouvel identifiant.
   28 juillet 2026.
 - Limite de preuve : le détail des trois étapes n’a pas été fourni séparément.
 
+### `IPAD-L1-006` — Compilation et régression du groupe bibliothèque
+
+- Préconditions : récupérer le commit `COMMIT-LOT1-BATCH-ALBUM` et ouvrir
+  `Albumzh.swiftpm` dans Swift Playgrounds.
+- Étapes :
+  1. compiler et lancer l’application ;
+  2. vérifier que les albums existants apparaissent ;
+  3. ouvrir un album et vérifier ses pages et son fond ;
+  4. revenir à la bibliothèque.
+- Résultat attendu : aucune erreur de compilation ou de lancement et aucune
+  régression visible sur les fonctions précédemment validées.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-007` — Renommage, annulation et rétablissement
+
+- Préconditions : disposer dans la bibliothèque d’un album nommé
+  « Guatemala ».
+- Étapes :
+  1. effectuer un appui long sur la carte et choisir « Renommer » ;
+  2. saisir « Voyage Guatemala » et valider ;
+  3. vérifier le nouveau nom dans la grille ;
+  4. utiliser « Annuler le renommage » et vérifier le retour à « Guatemala » ;
+  5. utiliser « Rétablir le renommage » et vérifier « Voyage Guatemala » ;
+  6. fermer complètement puis relancer l’application.
+- Résultat attendu : chaque nom apparaît au moment attendu et
+  « Voyage Guatemala » persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-008` — Confirmation et mise en corbeille
+
+- Préconditions : disposer de l’album « Voyage Guatemala » avec au moins deux
+  pages.
+- Étapes :
+  1. effectuer un appui long sur sa carte et choisir « Supprimer » ;
+  2. vérifier qu’une confirmation explicite apparaît puis annuler ;
+  3. vérifier que l’album est toujours dans la bibliothèque ;
+  4. recommencer et confirmer « Placer dans la corbeille » ;
+  5. vérifier que l’album disparaît de la bibliothèque ;
+  6. ouvrir « Corbeille » et vérifier que l’album y apparaît ;
+  7. fermer complètement puis relancer l’application et rouvrir la corbeille.
+- Résultat attendu : l’annulation ne change rien ; après confirmation l’album
+  est absent de la bibliothèque, non modifiable et toujours présent dans la
+  corbeille après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-009` — Restauration durable depuis la corbeille
+
+- Préconditions : `IPAD-L1-008` terminé avec « Voyage Guatemala » dans la
+  corbeille.
+- Étapes :
+  1. toucher « Restaurer » sur l’album ;
+  2. vérifier sa disparition de la corbeille ;
+  3. revenir à la bibliothèque et ouvrir l’album ;
+  4. vérifier son nom, ses pages et son fond ;
+  5. fermer complètement puis relancer l’application ;
+  6. vérifier que l’album est toujours dans la bibliothèque et absent de la
+  corbeille.
+- Résultat attendu : l’album et tout son contenu sont restaurés sans perte et
+  le résultat persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
 ## Prochaine campagne
 
-Les tests du prochain groupe de fonctionnalités seront ajoutés ici avec l’état
-⚪ `NON TESTÉ`, les étapes exactes et le commit à récupérer avant la prochaine
-demande de validation iPad.
+Les contrôles suivants recevront de nouveaux identifiants après le prochain
+groupe cohérent de fonctionnalités.

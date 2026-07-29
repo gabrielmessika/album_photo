@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | `ACPT-100` couvert par 8 tests Linux ; création, pages, fond et mode édition validés partiellement sur iPad | Préparer plusieurs fonctions du prochain incrément |
+| Lot 1 — Création locale | 🟡 En cours | `ACPT-100` validé partiellement sur iPad ; renommage, corbeille et restauration couverts par 12 tests Linux et en attente de campagne groupée | Exécuter `IPAD-L1-006` à `IPAD-L1-009` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -96,7 +96,7 @@ Objectif : prouver les risques techniques avant de développer le produit.
 | Créer l’App Playground universel | 🟡 | `DEC-01`, `LOT-001` | `Albumzh.swiftpm` compilé sur iPad au commit `ec8842a` ; familles et orientations à relever |
 | Activer iPhone et iPad, portrait et paysage | ⬜ | `DEC-17`, `TST-003` | Exécution et captures |
 | Définir l’organisation des modules | 🟡 | `ARC-001` à `ARC-017` | Noyau partagé et AppModule séparés ; ADR et validation Apple manquants |
-| Isoler le domaine testable sous WSL | 🟡 | `ARC-002`, `ARC-003`, `DEV-006` | Package Swift partagé compilé et 8 tests réussis sous Linux |
+| Isoler le domaine testable sous WSL | 🟡 | `ARC-002`, `ARC-003`, `DEV-006` | Package Swift partagé compilé et 12 tests réussis sous Linux |
 | Prototyper l’édition riche | ⬜ | `TXT-001` à `TXT-006` | Sélection, collage, brouillon, annulation et sérialisation |
 | Prototyper l’animation de page interactive | ⬜ | Section 10 | Démonstration gestes et interruption |
 | Définir le modèle du domaine | 🟡 | Section 22 | Premier sous-ensemble Album/Page et invariants de création testés |
@@ -127,8 +127,8 @@ Objectif : rendre possible la création locale et durable d’albums.
 | Tâche | État | Scénarios principaux |
 |---|---|---|
 | Bibliothèque des albums | 🟡 | `ACPT-100` — grille, création, ouverture et relance validées sur iPad ; libellé du mode édition ajouté et à revalider |
-| Création et renommage | 🟡 | `ACPT-100` — création validée sous Linux et sur iPad ; renommage non commencé |
-| Corbeille et restauration des albums | ⬜ | `ACPT-102` |
+| Création et renommage | 🟡 | `ACPT-100`, `ALB-007`, `ALB-021`, `UND-011` — création validée ; renommage et sa pile Annuler/Rétablir implémentés, campagne iPad requise |
+| Corbeille et restauration des albums | 🟡 | `ACPT-102` — confirmation, corbeille durable et restauration implémentées ; suppression définitive et expiration non commencées |
 | Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001`, `PAG-002` — ajout et persistance validés sous Linux et sur iPad ; suppression et réorganisation non commencées |
 | Fonds d’album | 🟡 | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-008`, `BG-010` — identifiant normatif et rendu à spirales ajoutés ; validation iPad requise |
 | Couverture automatique et manuelle | ⬜ | `ACPT-103` |
@@ -303,7 +303,7 @@ Ce lot est répété avant chaque version publique.
 | Projet compilable | 🟡 | Noyau compilé sous Linux et App Playground compilé sur iPad au commit `ec8842a` ; nouvel incrément à revalider |
 | Application iPhone et iPad | 🟡 | Bibliothèque et premier éditeur validés partiellement sur iPad ; iPhone non testé |
 | Code Swift formaté | 🟡 | Premier incrément Swift présent ; contrôle de format automatisé absent |
-| Tests unitaires, intégration et interface | 🟡 | 8 tests de domaine/persistance réussis sous Linux ; validation manuelle iPad partielle |
+| Tests unitaires, intégration et interface | 🟡 | 12 tests de domaine/persistance réussis sous Linux ; `IPAD-L1-006` à `IPAD-L1-009` en attente |
 | Assets de démonstration libres de droits | ⬜ | À sourcer et documenter |
 | Schéma CloudKit documenté | ⬜ | Lot 4 |
 | Configuration Google sans secret | ⬜ | Lot 5 |
@@ -404,8 +404,8 @@ Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 
 ## Prochaines actions prioritaires
 
-1. Préparer un groupe cohérent de fonctionnalités du lot 1 et ajouter tous ses
-   contrôles identifiés dans `suivi_tests.md` avant la prochaine campagne iPad.
+1. Exécuter la campagne groupée `IPAD-L1-006` à `IPAD-L1-009` sur le commit
+   indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -426,6 +426,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-07-28 | Codex | Groupe bibliothèque : renommage avec Annuler/Rétablir, confirmation de suppression, corbeille locale durable et restauration ; ajout de quatre contrôles iPad | `ALB-007`, `ALB-008`, `ALB-011`, `ALB-017` à `ALB-019`, `ALB-021`, `UND-011`, `ACPT-102`, `APP-005`, `LOC-011` | `swift test` sous WSL/Swift 6.3.3 : 12 tests réussis ; analyse SwiftUI et campagne `IPAD-L1-006` à `IPAD-L1-009` à exécuter |
 | 2026-07-28 | Codex | Ajout de repères colorés aux cinq états et à chaque résultat de `suivi_tests.md`, avec règle correspondante dans `AGENTS.md` | Suivi des campagnes manuelles, sans changement fonctionnel | Relecture du registre et `git diff --check` ; aucun test applicatif requis |
 | 2026-07-28 | Codex | Création du registre `suivi_tests.md` avec identifiants stables et adoption de campagnes iPad regroupant plusieurs fonctionnalités ; mise à jour des instructions et du README | `TST-001`, `TST-005`, `TST-009` à `TST-016`, méthode de validation du lot 1 | Relecture croisée de `AGENTS.md`, `README.md`, `SUIVI_PROJET.md` et `suivi_tests.md` ; aucun test applicatif requis pour ce changement documentaire |
 | 2026-07-28 | Codex | Correction du rendu absent du fond Album classique et ajout d’un indicateur explicite du mode édition ; normalisation de l’identifiant du thème avec repli visuel pour les anciennes données | `APP-002`, `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-008`, `BG-010`, `ACPT-100` | Persistance des deux pages RÉUSSIE sur iPad d’après l’utilisateur ; correctif analysé syntaxiquement et tests Linux exécutés ; rendu corrigé NON TESTÉ sur iPad |

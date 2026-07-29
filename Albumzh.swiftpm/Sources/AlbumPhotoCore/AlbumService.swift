@@ -20,6 +20,14 @@ public struct AlbumService: Sendable {
             .sorted { $0.updatedAt > $1.updatedAt }
     }
 
+    public func trashedAlbums() async throws -> [Album] {
+        try await repository.loadAlbums()
+            .filter { $0.trashedAt != nil }
+            .sorted {
+                ($0.trashedAt ?? .distantPast) > ($1.trashedAt ?? .distantPast)
+            }
+    }
+
     public func createAlbum(
         named proposedName: String,
         now: Date = Date(),
@@ -65,6 +73,66 @@ public struct AlbumService: Sendable {
         album.pages.insert(Page(id: pageID), at: activeIndex + 1)
         album.updatedAt = now
         try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func renameAlbum(
+        _ albumID: UUID,
+        to proposedName: String,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        let name = proposedName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else {
+            throw AlbumValidationError.emptyName
+        }
+
+        var album = try await editableAlbum(id: albumID)
+        album.name = name
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func moveAlbumToTrash(
+        _ albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        album.trashedAt = now
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func restoreAlbum(
+        _ albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        let storedAlbums = try await repository.loadAlbums()
+        guard var album = storedAlbums.first(where: { $0.id == albumID }) else {
+            throw AlbumValidationError.albumNotFound
+        }
+        guard album.trashedAt != nil else {
+            return album
+        }
+
+        album.trashedAt = nil
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    private func editableAlbum(id albumID: UUID) async throws -> Album {
+        let storedAlbums = try await repository.loadAlbums()
+        guard let album = storedAlbums.first(where: { $0.id == albumID }) else {
+            throw AlbumValidationError.albumNotFound
+        }
+        guard album.trashedAt == nil else {
+            throw AlbumValidationError.albumIsTrashed
+        }
         return album
     }
 }

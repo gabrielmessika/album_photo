@@ -57,6 +57,35 @@ struct JSONAlbumRepositoryTests {
         #expect(relaunchedAlbum.pages.map(\.id) == [firstPageID, secondPageID])
     }
 
+    @Test("ACPT-102 conserve la corbeille et la restauration après relance")
+    func persistsTrashAndRestoreAcrossRepositoryInstances() async throws {
+        let directory = temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let service = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        let album = try await service.createAlbum(named: "Guatemala")
+        _ = try await service.moveAlbumToTrash(
+            album.id,
+            now: Date(timeIntervalSince1970: 3_000)
+        )
+
+        let afterTrashRelaunch = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        #expect(try await afterTrashRelaunch.albums().isEmpty)
+        #expect(try await afterTrashRelaunch.trashedAlbums().first?.id == album.id)
+
+        _ = try await afterTrashRelaunch.restoreAlbum(album.id)
+        let afterRestoreRelaunch = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        let restored = try #require(await afterRestoreRelaunch.albums().first)
+        #expect(restored.id == album.id)
+        #expect(restored.pages == album.pages)
+        #expect(try await afterRestoreRelaunch.trashedAlbums().isEmpty)
+    }
+
     private func temporaryDirectory() -> URL {
         FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

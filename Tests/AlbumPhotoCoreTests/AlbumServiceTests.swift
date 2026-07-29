@@ -98,6 +98,63 @@ struct AlbumServiceTests {
             try await service.addPage(to: album.id, after: UUID())
         }
     }
+
+    @Test("ALB-007 et ALB-011 renomment avec un nom nettoyé")
+    func renamesAlbum() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+
+        let renamed = try await service.renameAlbum(
+            album.id,
+            to: "  Voyage  ",
+            now: Date(timeIntervalSince1970: 2_000)
+        )
+
+        #expect(renamed.name == "Voyage")
+        #expect(renamed.updatedAt == Date(timeIntervalSince1970: 2_000))
+        #expect(try await service.albums().map(\.name) == ["Voyage"])
+    }
+
+    @Test("ALB-019 interdit de renommer un album dans la corbeille")
+    func rejectsRenamingTrashedAlbum() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+        _ = try await service.moveAlbumToTrash(album.id)
+
+        await #expect(throws: AlbumValidationError.albumIsTrashed) {
+            try await service.renameAlbum(album.id, to: "Voyage")
+        }
+    }
+
+    @Test("ACPT-102 masque puis restaure un album sans perte")
+    func trashesAndRestoresAlbum() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+        let page = album.pages[0]
+        let trashedAt = Date(timeIntervalSince1970: 3_000)
+
+        let trashed = try await service.moveAlbumToTrash(
+            album.id,
+            now: trashedAt
+        )
+
+        #expect(trashed.trashedAt == trashedAt)
+        #expect(try await service.albums().isEmpty)
+        #expect(try await service.trashedAlbums().map(\.id) == [album.id])
+
+        let restored = try await service.restoreAlbum(
+            album.id,
+            now: Date(timeIntervalSince1970: 4_000)
+        )
+
+        #expect(restored.trashedAt == nil)
+        #expect(restored.pages == [page])
+        #expect(try await service.albums().map(\.id) == [album.id])
+        #expect(try await service.trashedAlbums().isEmpty)
+    }
 }
 
 private actor InMemoryAlbumRepository: AlbumRepository {
