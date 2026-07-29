@@ -50,10 +50,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-003` | Lot 1 | Ajout et persistance d’une page | `ACPT-100`, `PAG-001`, `PAG-002`, `APP-005` | `2030d7c` | 🟢 `RÉUSSI` |
 | `IPAD-L1-004` | Lot 1 | Rendu du fond Album classique | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010` | `9a35365` | 🟢 `RÉUSSI` |
 | `IPAD-L1-005` | Lot 1 | Identification du mode édition | `APP-002` | `9a35365` | 🟢 `RÉUSSI` |
-| `IPAD-L1-006` | Lot 1 | Compilation et régression du groupe bibliothèque | `LOT-001`, `ACPT-100` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-007` | Lot 1 | Renommage, annulation et rétablissement | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-008` | Lot 1 | Confirmation et mise en corbeille | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-009` | Lot 1 | Restauration durable depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `COMMIT-LOT1-BATCH-ALBUM` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-006` | Lot 1 | Compilation et régression du groupe bibliothèque | `LOT-001`, `ACPT-100` | `35c9f12` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-007` | Lot 1 | Renommage, annulation et rétablissement | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `35c9f12` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-008` | Lot 1 | Confirmation et mise en corbeille | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `35c9f12` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-009` | Lot 1 | Restauration durable depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `35c9f12` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -124,7 +124,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 
 ### `IPAD-L1-006` — Compilation et régression du groupe bibliothèque
 
-- Préconditions : récupérer le commit `COMMIT-LOT1-BATCH-ALBUM` et ouvrir
+- Préconditions : récupérer le commit `35c9f12` et ouvrir
   `Albumzh.swiftpm` dans Swift Playgrounds.
 - Étapes :
   1. compiler et lancer l’application ;
