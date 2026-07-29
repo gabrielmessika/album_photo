@@ -57,10 +57,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `a44a4f1` | 🟢 `RÉUSSI` |
 | `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
 | `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
-| `IPAD-L1-013` | Lot 1 | Compilation et régression du groupe pages | `LOT-001`, `ACPT-100`, `ACPT-102` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-014` | Lot 1 | Suppression et protection des pages | `PAG-006` à `PAG-008`, `PAG-010` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-015` | Lot 1 | Annulation et rétablissement de session | `UND-001` à `UND-004`, `UND-010`, `UND-012` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `COMMIT-LOT1-PAGES` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-013` | Lot 1 | Compilation et régression du groupe pages | `LOT-001`, `ACPT-100`, `ACPT-102` | `3338b7d` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-014` | Lot 1 | Suppression et protection des pages | `PAG-006` à `PAG-008`, `PAG-010` | `3338b7d` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-015` | Lot 1 | Annulation et rétablissement de session | `UND-001` à `UND-004`, `UND-010`, `UND-012` | `3338b7d` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `3338b7d` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -237,7 +237,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 
 ### `IPAD-L1-013` — Compilation et régression du groupe pages
 
-- Préconditions : récupérer le commit `COMMIT-LOT1-PAGES` et ouvrir
+- Préconditions : récupérer le commit `3338b7d` et ouvrir
   `Albumzh.swiftpm` dans Swift Playgrounds.
 - Étapes :
   1. compiler et lancer l’application ;
