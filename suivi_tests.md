@@ -68,8 +68,8 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `e2405c9` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-022` | Lot 1 | Navigation Précédent/Suivant | `NAV-001` à `NAV-003` | `e2405c9` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-024` | Lot 1 | Numéros et identification des pages | `PAG-003`, `DSP-010` | `COMMIT-SPIRAL-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-025` | Lot 1 | Reliure classique simple et double page | `BG-002`, `BG-007`, `BG-010` | `COMMIT-SPIRAL-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-024` | Lot 1 | Numéros et identification des pages | `PAG-003`, `DSP-010` | `35e6741` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-025` | Lot 1 | Reliure classique simple et double page | `BG-002`, `BG-007`, `BG-010` | `35e6741` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -338,7 +338,7 @@ Pour la régression :
 
 ### `IPAD-L1-024` — Numéros et identification des pages
 
-- Commit : `COMMIT-SPIRAL-FIX`.
+- Commit : `35e6741`.
 - Préconditions : créer ou ouvrir un album contenant au moins cinq pages.
 - Étapes :
   1. sélectionner le mode Une page et parcourir l’album avec les boutons puis
@@ -356,7 +356,7 @@ Pour la régression :
 
 ### `IPAD-L1-025` — Reliure classique simple et double page
 
-- Commit : `COMMIT-SPIRAL-FIX`.
+- Commit : `35e6741`.
 - Préconditions : sélectionner le fond Album classique à spirales dans un album
   contenant au moins trois pages.
 - Étapes :
