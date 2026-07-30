@@ -61,13 +61,13 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-014` | Lot 1 | Suppression et protection des pages | `PAG-006` à `PAG-008`, `PAG-010` | `3338b7d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-015` | Lot 1 | Annulation et rétablissement de session | `UND-001` à `UND-004`, `UND-010`, `UND-012` | `3338b7d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `3338b7d` | 🟢 `RÉUSSI` |
-| `IPAD-L1-017` | Lot 1 | Compilation et régression apparence/navigation | `LOT-001` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-018` | Lot 1 | Catalogue des trois fonds | `BG-001` à `BG-004`, `BG-009`, `BG-011` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-019` | Lot 1 | Changement de fond, persistance et annulation | `BG-005` à `BG-008` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-020` | Lot 1 | Préférence Une/Deux pages | `DSP-001` à `DSP-003` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-022` | Lot 1 | Navigation Précédent/Suivant | `NAV-001` à `NAV-003` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-017` | Lot 1 | Compilation et régression apparence/navigation | `LOT-001` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-018` | Lot 1 | Catalogue des trois fonds | `BG-001` à `BG-004`, `BG-009`, `BG-011` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-019` | Lot 1 | Changement de fond, persistance et annulation | `BG-005` à `BG-008` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-020` | Lot 1 | Préférence Une/Deux pages | `DSP-001` à `DSP-003` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-022` | Lot 1 | Navigation Précédent/Suivant | `NAV-001` à `NAV-003` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `e2405c9` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
