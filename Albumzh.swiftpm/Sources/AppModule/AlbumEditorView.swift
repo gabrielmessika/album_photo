@@ -146,6 +146,20 @@ final class AlbumEditorViewModel {
         activePageID = album.pages[activePageIndex + 1].id
     }
 
+    func navigateBySwipe(towardNext: Bool, availableWidth: Double) {
+        let usesSpread = album.preferredDisplayMode == .doublePage
+            && availableWidth >= 600
+        let step = usesSpread ? 2 : 1
+        let currentIndex = usesSpread
+            ? (activePageIndex / 2) * 2
+            : activePageIndex
+        let destination = towardNext
+            ? min(currentIndex + step, album.pages.count - 1)
+            : max(currentIndex - step, 0)
+        guard destination != currentIndex else { return }
+        activePageID = album.pages[destination].id
+    }
+
     func visiblePages(availableWidth: Double) -> [Page] {
         guard
             album.preferredDisplayMode == .doublePage,

@@ -70,9 +70,11 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `e2405c9` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-024` | Lot 1 | Numéros et identification des pages | `PAG-003`, `DSP-010` | `35e6741` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-025` | Lot 1 | Reliure classique simple et double page | `BG-002`, `BG-007`, `BG-010` | `35e6741` | 🟢 `RÉUSSI` |
-| `IPAD-L1-026` | Lot 1 | Proportions de la miniature classique | `BG-002`, `BG-009` | `16c7a37` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-027` | Lot 1 | Navigation gestuelle sans retour implicite | `NAV-004` à `NAV-006` | `16c7a37` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `16c7a37` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-026` | Lot 1 | Proportions de la miniature classique | `BG-002`, `BG-009` | `16c7a37` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-027` | Lot 1 | Navigation gestuelle sans retour implicite | `NAV-004` à `NAV-006` | `16c7a37` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `16c7a37` | 🟢 `RÉUSSI` |
+| `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `COMMIT-GESTURE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `COMMIT-GESTURE-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -401,7 +403,8 @@ Pour la régression :
      principale conserve ses dimensions normales.
 - Résultat attendu : la reliure n’occupe plus la majeure partie de la
   miniature et le rendu pleine page ne régresse pas.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ`, aucun changement visible dans la miniature selon le
+  retour utilisateur du 29 juillet 2026.
 
 ### `IPAD-L1-027` — Navigation gestuelle sans retour implicite
 
@@ -418,7 +421,8 @@ Pour la régression :
      seul moyen prévu de revenir à la bibliothèque.
 - Résultat attendu : les gestes naviguent uniquement entre les pages ; le
   retour à la bibliothèque exige le bouton.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ` le 29 juillet 2026 : le retour à la bibliothèque est
+  bien supprimé, mais les directions et changements de pages sont incohérents.
 
 ### `IPAD-L1-028` — Contraste du numéro de page
 
@@ -431,4 +435,37 @@ Pour la régression :
      classique beige et en apparence sombre d’iPadOS.
 - Résultat attendu : le numéro sombre sur pastille claire reste lisible sur les
   fonds clairs, et le numéro clair sur pastille sombre sur le fond Nuit.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
+
+### `IPAD-L1-029` — Miniature classique réellement adaptative
+
+- Commit : `COMMIT-GESTURE-FIX`.
+- Préconditions : ouvrir « Choisir le fond ».
+- Étapes :
+  1. observer la miniature « Album classique » ;
+  2. vérifier que chaque anneau est contenu dans la largeur étroite allouée à
+     la reliure et ne déborde pas sur les trois quarts de la miniature ;
+  3. sélectionner ce fond et vérifier que la reliure pleine page et la reliure
+     centrale en double page restent correctement proportionnées.
+- Résultat attendu : la largeur réelle des anneaux s’adapte à leur conteneur ;
+  la miniature montre une reliure fine à gauche.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-030` — Balayage déterministe simple et double page
+
+- Commit : `COMMIT-GESTURE-FIX`.
+- Préconditions : ouvrir un album d’au moins six pages.
+- Étapes :
+  1. en mode Une page, commencer alternativement les gestes sur une page et sur
+     la zone noire autour ;
+  2. vérifier dix fois qu’un balayage vers la droite passe à la page suivante,
+     si elle existe ;
+  3. vérifier dix fois qu’un balayage vers la gauche passe à la page
+     précédente, si elle existe ;
+  4. en mode Deux pages, répéter les mêmes gestes et vérifier les passages
+     `1–2` → `3–4` → `5–6` vers la droite, puis l’ordre inverse vers la gauche ;
+  5. vérifier qu’aux extrémités le geste reste dans l’album et qu’aucun geste ne
+     revient à la bibliothèque.
+- Résultat attendu : la direction seule détermine la navigation, quel que soit
+  le point de départ ; une double page avance ou recule comme un groupe.
 - Résultat : ⚪ `NON TESTÉ`.

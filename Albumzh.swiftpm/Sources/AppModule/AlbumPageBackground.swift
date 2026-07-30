@@ -79,12 +79,15 @@ struct SpiralBindingView: View {
 
     var body: some View {
         GeometryReader { geometry in
+            let ringWidth = max(1, geometry.size.width)
+            let ringHeight = min(10, max(3, ringWidth * 0.26))
+            let strokeWidth = min(3, max(1, ringWidth * 0.08))
             VStack {
                 ForEach(0..<12, id: \.self) { _ in
                     Capsule()
-                        .stroke(metal, lineWidth: 3)
+                        .stroke(metal, lineWidth: strokeWidth)
                         .background(Capsule().fill(.black.opacity(0.08)))
-                        .frame(width: 38, height: 10)
+                        .frame(width: ringWidth, height: ringHeight)
                     if geometry.size.height > 220 {
                         Spacer(minLength: 3)
                     }

@@ -62,17 +62,16 @@ struct AlbumSpreadView: View {
             }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .contentShape(Rectangle())
-                .gesture(
+                .highPriorityGesture(
                     DragGesture(minimumDistance: 30)
                         .onEnded { value in
                             let horizontal = abs(value.translation.width)
                             let vertical = abs(value.translation.height)
                             guard horizontal > vertical * 1.25 else { return }
-                            if value.translation.width < 0 {
-                                model.goPrevious()
-                            } else {
-                                model.goNext()
-                            }
+                            model.navigateBySwipe(
+                                towardNext: value.translation.width > 0,
+                                availableWidth: geometry.size.width
+                            )
                         }
                 )
         }
