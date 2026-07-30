@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Contraste validé ; second correctif local pour miniature adaptative et balayage déterministe simple/double page | Exécuter `IPAD-L1-029` et `030` |
+| Lot 1 — Création locale | 🟡 En cours | Miniature et fiabilité du balayage validées ; inversion locale de la convention directionnelle à vérifier | Exécuter `IPAD-L1-031` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -403,16 +403,15 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-002` | `ALB-007`, `ALB-021`, `UND-011` | Élevée | 🟢 Corrigée | Le dialogue libérait l’album avant l’exécution asynchrone ; sélection durable validée avec renommage, Annuler et Rétablir | `IPAD-L1-007`, régression réussie `IPAD-L1-010` |
 | `ANO-003` | `ALB-008`, `ALB-017` à `ALB-019`, `ACPT-102` | Élevée | 🟢 Corrigée | La confirmation libérait l’album avant la commande et masquait Annuler ; alerte explicite, corbeille et restauration validées | `IPAD-L1-008`, régressions réussies `IPAD-L1-011`, `IPAD-L1-012` |
 | `ANO-004` | `PAG-003`, `DSP-010`, `BG-002`, `BG-010` | Élevée | 🟢 Corrigée | Numérotation et placement de la reliure validés ; le défaut de contraste résiduel est suivi séparément | `IPAD-L1-019`, `021`, régressions `024`, `025` |
-| `ANO-005` | `BG-002`, `BG-009`, `PAG-003` | Moyenne | 🟡 Correctif à valider | Contraste corrigé et validé ; premier redimensionnement sans effet car les anneaux conservaient une largeur interne fixe, désormais adaptative | `IPAD-L1-018`, `024`, `026`, régressions `028`, `029` |
-| `ANO-006` | `NAV-004` à `NAV-006`, `DSP-010` | Élevée | 🟡 Correctif à valider | Retour interactif supprimé, mais navigation incohérente ; geste repris avec priorité uniforme et déplacement par feuille ou double page complète | `IPAD-L1-023`, `027`, régression `030` |
+| `ANO-005` | `BG-002`, `BG-009`, `PAG-003` | Moyenne | 🟢 Corrigée | Contraste et miniature adaptative validés après correction des dimensions internes des anneaux | `IPAD-L1-018`, `024`, `026`, régressions réussies `028`, `029` |
+| `ANO-006` | `NAV-004` à `NAV-006`, `DSP-010` | Élevée | 🟡 Correctif à valider | Fiabilité, portée et groupement du geste validés ; convention inversée ensuite à la demande : gauche suivant, droite précédent | `IPAD-L1-023`, `027`, régression réussie `030`, inversion `031` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter la campagne regroupée `IPAD-L1-029` et `030` sur le commit indiqué
-   dans `suivi_tests.md`.
+1. Exécuter `IPAD-L1-031` sur le commit indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -433,6 +432,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-07-29 | Codex | Validation de la miniature et du moteur de balayage ; inversion de la convention directionnelle demandée : gauche vers la suite, droite vers le précédent | `BG-002`, `BG-009`, `NAV-004`, `DSP-010` | `029` et `030` RÉUSSIS ; inversion `031` NON TESTÉE |
 | 2026-07-29 | Codex | Second correctif miniature : dimensions internes des anneaux rendues adaptatives ; reprise du balayage avec priorité sur toute la zone et déplacement de 1 page en simple ou 2 pages en double | `BG-002`, `BG-009`, `NAV-004` à `NAV-006`, `DSP-010` | Commit `00d7c69` ; `026` et `027` ÉCHOUÉS, `028` RÉUSSI ; analyse SwiftUI et 18 tests Linux réussis ; régressions `029` et `030` NON TESTÉES |
 | 2026-07-29 | Codex | Prise en compte du retour `017` à `025` ; réduction adaptative de la reliure en miniature, pastille contrastée pour les numéros, inversion des directions demandées et suppression du retour gestuel implicite au profit du bouton « Albums » | `BG-002`, `BG-009`, `PAG-003`, `NAV-004` à `NAV-006` | Commit `16c7a37` ; `017`, `019` à `022` et `025` RÉUSSIS ; `018`, `023`, `024` ÉCHOUÉS ; analyse SwiftUI et 18 tests Linux réussis ; régressions `026` à `028` NON TESTÉES |
 | 2026-07-29 | Codex | Ajout des numéros de pages et correction du fond classique selon les références fournies : reliure à gauche en simple page, gouttière centrale en double page | `PAG-003`, `DSP-010`, `BG-002`, `BG-007`, `BG-010` | Commit `35e6741` ; retour iPad partiel : `019` et `021` ÉCHOUÉS ; autres tests non confirmés ; analyse syntaxique SwiftUI et 18 tests Linux réussis ; correctifs `024` et `025` NON TESTÉS |

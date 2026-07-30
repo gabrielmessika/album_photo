@@ -73,8 +73,9 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-026` | Lot 1 | Proportions de la miniature classique | `BG-002`, `BG-009` | `16c7a37` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-027` | Lot 1 | Navigation gestuelle sans retour implicite | `NAV-004` à `NAV-006` | `16c7a37` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `16c7a37` | 🟢 `RÉUSSI` |
-| `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `00d7c69` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `00d7c69` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `00d7c69` | 🟢 `RÉUSSI` |
+| `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `00d7c69` | 🟢 `RÉUSSI` |
+| `IPAD-L1-031` | Lot 1 | Convention naturelle du sens de balayage | `NAV-004`, `DSP-010` | `COMMIT-DIRECTION-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -449,7 +450,7 @@ Pour la régression :
      centrale en double page restent correctement proportionnées.
 - Résultat attendu : la largeur réelle des anneaux s’adapte à leur conteneur ;
   la miniature montre une reliure fine à gauche.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
 
 ### `IPAD-L1-030` — Balayage déterministe simple et double page
 
@@ -468,4 +469,24 @@ Pour la régression :
      revient à la bibliothèque.
 - Résultat attendu : la direction seule détermine la navigation, quel que soit
   le point de départ ; une double page avance ou recule comme un groupe.
+- Résultat : 🟢 `RÉUSSI` pour la fiabilité du geste, son point de départ, le
+  déplacement simple/double et l’absence de retour à la bibliothèque.
+- Décision postérieure : l’utilisateur corrige la convention directionnelle ;
+  la validation de cette inversion est suivie par `IPAD-L1-031`.
+
+### `IPAD-L1-031` — Convention naturelle du sens de balayage
+
+- Commit : `COMMIT-DIRECTION-FIX`.
+- Préconditions : ouvrir un album d’au moins six pages.
+- Étapes :
+  1. en mode Une page, balayer vers la gauche et vérifier l’affichage de la page
+     suivante ;
+  2. balayer vers la droite et vérifier l’affichage de la page précédente ;
+  3. répéter depuis une page puis depuis la zone noire ;
+  4. en mode Deux pages, vérifier vers la gauche `1–2` → `3–4` → `5–6`, puis
+     vers la droite dans l’ordre inverse ;
+  5. vérifier que les extrémités et le retour à la bibliothèque ne régressent
+     pas.
+- Résultat attendu : gauche affiche la suite, droite affiche le précédent,
+  avec le même comportement déterministe dans les deux modes.
 - Résultat : ⚪ `NON TESTÉ`.

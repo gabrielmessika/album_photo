@@ -69,7 +69,7 @@ struct AlbumSpreadView: View {
                             let vertical = abs(value.translation.height)
                             guard horizontal > vertical * 1.25 else { return }
                             model.navigateBySwipe(
-                                towardNext: value.translation.width > 0,
+                                towardNext: value.translation.width < 0,
                                 availableWidth: geometry.size.width
                             )
                         }
