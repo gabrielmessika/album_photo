@@ -63,11 +63,13 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `3338b7d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-017` | Lot 1 | Compilation et régression apparence/navigation | `LOT-001` | `e2405c9` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-018` | Lot 1 | Catalogue des trois fonds | `BG-001` à `BG-004`, `BG-009`, `BG-011` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-019` | Lot 1 | Changement de fond, persistance et annulation | `BG-005` à `BG-008` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-019` | Lot 1 | Changement de fond, persistance et annulation | `BG-005` à `BG-008`, `BG-010` | `e2405c9` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-020` | Lot 1 | Préférence Une/Deux pages | `DSP-001` à `DSP-003` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `e2405c9` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-022` | Lot 1 | Navigation Précédent/Suivant | `NAV-001` à `NAV-003` | `e2405c9` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `e2405c9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-024` | Lot 1 | Numéros et identification des pages | `PAG-003`, `DSP-010` | `COMMIT-SPIRAL-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-025` | Lot 1 | Reliure classique simple et double page | `BG-002`, `BG-007`, `BG-010` | `COMMIT-SPIRAL-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -323,3 +325,51 @@ Pour `IPAD-L1-017` à `023`, récupérer le commit indiqué, compiler, puis :
 
 Résultat attendu pour chacun : comportement décrit observé après relance.
 Résultat initial : ⚪ `NON TESTÉ`.
+
+Retour partiel du 29 juillet 2026 :
+
+- `IPAD-L1-019` 🔴 `ÉCHOUÉ` pour le placement de la reliure classique ;
+- `IPAD-L1-021` 🔴 `ÉCHOUÉ` car l’absence de numéros rend le groupement
+  invérifiable ;
+- les autres contrôles restent ⚪ `NON TESTÉ`, le retour global « semble ok »
+  ne détaillant pas leurs étapes.
+
+Pour la régression :
+
+### `IPAD-L1-024` — Numéros et identification des pages
+
+- Commit : `COMMIT-SPIRAL-FIX`.
+- Préconditions : créer ou ouvrir un album contenant au moins cinq pages.
+- Étapes :
+  1. sélectionner le mode Une page et parcourir l’album avec les boutons puis
+     par balayage ;
+  2. vérifier que le libellé visible suit la page active (`Page 1`, `Page 2`,
+     etc.) ;
+  3. sélectionner le mode Deux pages et vérifier que deux numéros consécutifs
+     sont visibles ;
+  4. réorganiser au moins deux pages et vérifier que les numéros reflètent le
+     nouvel ordre ;
+  5. fermer puis rouvrir l’album et contrôler de nouveau la numérotation.
+- Résultat attendu : chaque feuille est identifiable, la numérotation est
+  cohérente avec l’ordre courant et permet de vérifier la navigation.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-025` — Reliure classique simple et double page
+
+- Commit : `COMMIT-SPIRAL-FIX`.
+- Préconditions : sélectionner le fond Album classique à spirales dans un album
+  contenant au moins trois pages.
+- Étapes :
+  1. en mode Une page, vérifier qu’une seule reliure longe le bord gauche de la
+     feuille ;
+  2. parcourir plusieurs pages et vérifier que ce placement reste stable ;
+  3. en mode Deux pages et avec une largeur suffisante, vérifier qu’une seule
+     reliure est dessinée entre les deux feuilles, sans reliure supplémentaire
+     sur leur bord gauche ;
+  4. atteindre la dernière page isolée d’un album impair et vérifier que la
+     reliure revient sur son bord gauche ;
+  5. changer temporairement de fond puis revenir au fond classique.
+- Résultat attendu : la reliure est à gauche d’une feuille isolée et uniquement
+  dans la gouttière centrale d’une double page, conformément aux références
+  visuelles fournies.
+- Résultat : ⚪ `NON TESTÉ`.
