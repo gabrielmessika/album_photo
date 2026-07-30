@@ -75,7 +75,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `16c7a37` | 🟢 `RÉUSSI` |
 | `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `00d7c69` | 🟢 `RÉUSSI` |
 | `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `00d7c69` | 🟢 `RÉUSSI` |
-| `IPAD-L1-031` | Lot 1 | Convention naturelle du sens de balayage | `NAV-004`, `DSP-010` | `COMMIT-DIRECTION-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-031` | Lot 1 | Convention naturelle du sens de balayage | `NAV-004`, `DSP-010` | `8679748` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -476,7 +476,7 @@ Pour la régression :
 
 ### `IPAD-L1-031` — Convention naturelle du sens de balayage
 
-- Commit : `COMMIT-DIRECTION-FIX`.
+- Commit : `8679748`.
 - Préconditions : ouvrir un album d’au moins six pages.
 - Étapes :
   1. en mode Une page, balayer vers la gauche et vérifier l’affichage de la page
