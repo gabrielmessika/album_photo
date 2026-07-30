@@ -232,6 +232,43 @@ struct AlbumServiceTests {
             )
         }
     }
+
+    @Test("BG-001 à BG-004 fournissent le catalogue normatif")
+    func providesBackgroundCatalog() {
+        #expect(
+            BackgroundCatalog.themes.map(\.id)
+                == [
+                    "album.classicSpiral",
+                    "album.travelKraft",
+                    "album.minimalDark"
+                ]
+        )
+        #expect(BackgroundCatalog.themes.map(\.localizedName).count == 3)
+        #expect(
+            BackgroundCatalog.theme(id: "inconnu").id
+                == Album.classicSpiralBackgroundID
+        )
+    }
+
+    @Test("BG-005 et DSP-002 enregistrent les préférences d’album")
+    func changesBackgroundAndDisplayMode() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+
+        let themed = try await service.changeBackground(
+            of: album.id,
+            to: "album.minimalDark"
+        )
+        let singlePage = try await service.changeDisplayMode(
+            of: album.id,
+            to: .singlePage
+        )
+
+        #expect(themed.backgroundID == "album.minimalDark")
+        #expect(singlePage.preferredDisplayMode == .singlePage)
+        #expect(try await service.albums().first?.backgroundID == "album.minimalDark")
+    }
 }
 
 private actor InMemoryAlbumRepository: AlbumRepository {

@@ -5,10 +5,42 @@ struct AlbumPageBackground: View {
     let backgroundID: String
 
     var body: some View {
-        // BG-008: an unknown or legacy identifier falls back to the default
-        // visual theme without changing the stored diagnostic value.
-        ClassicSpiralPageBackground()
-            .accessibilityLabel("Fond Album classique à spirales")
+        switch BackgroundCatalog.theme(id: backgroundID).id {
+        case "album.travelKraft":
+            TexturedPageBackground(
+                colors: [.brown.opacity(0.75), .orange.opacity(0.28)],
+                label: "Fond Carnet de voyage"
+            )
+        case "album.minimalDark":
+            TexturedPageBackground(
+                colors: [.black, Color(red: 0.12, green: 0.15, blue: 0.22)],
+                label: "Fond Nuit minimaliste"
+            )
+        default:
+            ClassicSpiralPageBackground()
+                .accessibilityLabel("Fond Album classique à spirales")
+        }
+    }
+}
+
+private struct TexturedPageBackground: View {
+    let colors: [Color]
+    let label: String
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(
+                LinearGradient(
+                    colors: colors,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(.white.opacity(0.15))
+            }
+            .accessibilityLabel(label)
     }
 }
 

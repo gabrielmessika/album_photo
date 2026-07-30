@@ -17,11 +17,17 @@ final class AlbumEditorViewModel {
     var activePageID: UUID
     var isConfirmingPageDeletion = false
     var isShowingPageManager = false
+    var isShowingBackgrounds = false
     var errorMessage: String?
 
     var canUndo: Bool { !undoActions.isEmpty }
     var canRedo: Bool { !redoActions.isEmpty }
     var canDeletePage: Bool { album.pages.count > 1 }
+    var activePageIndex: Int {
+        album.pages.firstIndex(where: { $0.id == activePageID }) ?? 0
+    }
+    var canGoPrevious: Bool { activePageIndex > 0 }
+    var canGoNext: Bool { activePageIndex < album.pages.count - 1 }
 
     init(album: Album, service: AlbumService) {
         self.album = album
@@ -100,6 +106,57 @@ final class AlbumEditorViewModel {
         }
     }
 
+    func changeBackground(to backgroundID: String) async {
+        let before = album
+        do {
+            let updated = try await service.changeBackground(
+                of: album.id,
+                to: backgroundID
+            )
+            record(EditAction(before: before, after: updated))
+            album = updated
+            isShowingBackgrounds = false
+        } catch {
+            errorMessage = "Impossible de changer le fond."
+        }
+    }
+
+    func changeDisplayMode(to mode: DisplayMode) async {
+        guard mode != album.preferredDisplayMode else { return }
+        let before = album
+        do {
+            let updated = try await service.changeDisplayMode(
+                of: album.id,
+                to: mode
+            )
+            record(EditAction(before: before, after: updated))
+            album = updated
+        } catch {
+            errorMessage = "Impossible de changer le mode d’affichage."
+        }
+    }
+
+    func goPrevious() {
+        guard canGoPrevious else { return }
+        activePageID = album.pages[activePageIndex - 1].id
+    }
+
+    func goNext() {
+        guard canGoNext else { return }
+        activePageID = album.pages[activePageIndex + 1].id
+    }
+
+    func visiblePages(availableWidth: Double) -> [Page] {
+        guard
+            album.preferredDisplayMode == .doublePage,
+            availableWidth >= 600
+        else {
+            return [album.pages[activePageIndex]]
+        }
+        let firstIndex = (activePageIndex / 2) * 2
+        return Array(album.pages[firstIndex..<min(firstIndex + 2, album.pages.count)])
+    }
+
     func undo() async {
         guard let action = undoActions.popLast() else { return }
 
@@ -160,45 +217,29 @@ struct AlbumEditorView: View {
                 .foregroundStyle(.secondary)
                 .accessibilityAddTraits(.isHeader)
 
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 16) {
-                    ForEach(Array(model.album.pages.enumerated()), id: \.element.id) {
-                        index,
-                        page in
-                        Button {
-                            model.activePageID = page.id
-                        } label: {
-                            VStack(spacing: 8) {
-                                AlbumPageBackground(
-                                    backgroundID: model.album.backgroundID
-                                )
-                                    .aspectRatio(4 / 5, contentMode: .fit)
-                                    .frame(width: 220)
-                                    .overlay {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(
-                                                model.activePageID == page.id
-                                                    ? Color.accentColor
-                                                    : Color.secondary.opacity(0.3),
-                                                lineWidth: model.activePageID == page.id ? 3 : 1
-                                            )
-                                    }
-                                    .shadow(radius: 3)
-                                Text("Page \(index + 1)")
-                                    .font(.headline)
-                            }
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Page \(index + 1)")
-                        .accessibilityAddTraits(
-                            model.activePageID == page.id ? .isSelected : []
-                        )
+            Picker(
+                "Affichage",
+                selection: Binding(
+                    get: { model.album.preferredDisplayMode },
+                    set: { mode in
+                        Task { await model.changeDisplayMode(to: mode) }
                     }
-                }
-                .padding()
+                )
+            ) {
+                Text("Une page").tag(DisplayMode.singlePage)
+                Text("Deux pages").tag(DisplayMode.doublePage)
             }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+
+            AlbumSpreadView(model: model)
 
             HStack {
+                Button("Précédent", systemImage: "chevron.left") {
+                    model.goPrevious()
+                }
+                .disabled(!model.canGoPrevious)
+
                 Button(
                     "Ajouter une page",
                     systemImage: "plus.rectangle.on.rectangle"
@@ -216,6 +257,11 @@ struct AlbumEditorView: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(!model.canDeletePage)
+
+                Button("Suivant", systemImage: "chevron.right") {
+                    model.goNext()
+                }
+                .disabled(!model.canGoNext)
             }
             .padding(.bottom)
         }
@@ -236,10 +282,17 @@ struct AlbumEditorView: View {
                 Button("Gérer les pages", systemImage: "rectangle.stack") {
                     model.isShowingPageManager = true
                 }
+
+                Button("Choisir le fond", systemImage: "paintpalette") {
+                    model.isShowingBackgrounds = true
+                }
             }
         }
         .sheet(isPresented: $model.isShowingPageManager) {
             PageManagerView(model: model)
+        }
+        .sheet(isPresented: $model.isShowingBackgrounds) {
+            BackgroundPickerView(model: model)
         }
         .alert(
             "Supprimer cette page ?",

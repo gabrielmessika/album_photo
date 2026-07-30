@@ -1,6 +1,6 @@
 import Foundation
 
-public enum DisplayMode: String, Codable, Sendable {
+public enum DisplayMode: String, Codable, Sendable, Hashable {
     case singlePage
     case doublePage
 }

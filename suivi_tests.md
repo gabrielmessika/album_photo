@@ -57,10 +57,17 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-010` | Lot 1 | Régression du renommage corrigé | `ALB-007`, `ALB-011`, `ALB-021`, `UND-011` | `a44a4f1` | 🟢 `RÉUSSI` |
 | `IPAD-L1-011` | Lot 1 | Régression de la mise en corbeille corrigée | `ALB-008`, `ALB-017`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
 | `IPAD-L1-012` | Lot 1 | Restauration après correction | `ALB-018`, `ALB-019`, `ACPT-102` | `a44a4f1` | 🟢 `RÉUSSI` |
-| `IPAD-L1-013` | Lot 1 | Compilation et régression du groupe pages | `LOT-001`, `ACPT-100`, `ACPT-102` | `3338b7d` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-014` | Lot 1 | Suppression et protection des pages | `PAG-006` à `PAG-008`, `PAG-010` | `3338b7d` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-015` | Lot 1 | Annulation et rétablissement de session | `UND-001` à `UND-004`, `UND-010`, `UND-012` | `3338b7d` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `3338b7d` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-013` | Lot 1 | Compilation et régression du groupe pages | `LOT-001`, `ACPT-100`, `ACPT-102` | `3338b7d` | 🟢 `RÉUSSI` |
+| `IPAD-L1-014` | Lot 1 | Suppression et protection des pages | `PAG-006` à `PAG-008`, `PAG-010` | `3338b7d` | 🟢 `RÉUSSI` |
+| `IPAD-L1-015` | Lot 1 | Annulation et rétablissement de session | `UND-001` à `UND-004`, `UND-010`, `UND-012` | `3338b7d` | 🟢 `RÉUSSI` |
+| `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `3338b7d` | 🟢 `RÉUSSI` |
+| `IPAD-L1-017` | Lot 1 | Compilation et régression apparence/navigation | `LOT-001` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-018` | Lot 1 | Catalogue des trois fonds | `BG-001` à `BG-004`, `BG-009`, `BG-011` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-019` | Lot 1 | Changement de fond, persistance et annulation | `BG-005` à `BG-008` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-020` | Lot 1 | Préférence Une/Deux pages | `DSP-001` à `DSP-003` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-022` | Lot 1 | Navigation Précédent/Suivant | `NAV-001` à `NAV-003` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `COMMIT-APPEARANCE` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -245,7 +252,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
   3. ouvrir un album existant et vérifier ses pages et son fond.
 - Résultat attendu : aucune erreur de compilation ou de lancement et aucune
   régression sur les fonctions déjà validées.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
 
 ### `IPAD-L1-014` — Suppression et protection des pages
 
@@ -262,7 +269,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
   8. relancer l’application.
 - Résultat attendu : aucune suppression sans confirmation, la page suivante
   devient active, la dernière page est protégée et l’état persiste.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
 
 ### `IPAD-L1-015` — Annulation et rétablissement de session
 
@@ -279,7 +286,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
      déjà validées.
 - Résultat attendu : la pile suit les actions de la session, une nouvelle
   branche supprime le rétablissement et l’arrière-plan clôt la pile.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
 
 ### `IPAD-L1-016` — Réorganisation durable des pages
 
@@ -296,9 +303,23 @@ nouvelle ligne de régression avec un nouvel identifiant.
 - Résultat attendu : la réorganisation constitue une action unique, les deux
   annulations restaurent successivement la page puis l’ordre, et le résultat
   final persiste après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
 
 ## Prochaine campagne
 
-Les contrôles suivants recevront de nouveaux identifiants après le prochain
-groupe cohérent de fonctionnalités.
+Pour `IPAD-L1-017` à `023`, récupérer le commit indiqué, compiler, puis :
+
+1. `017` : vérifier les fonctions précédentes sans régression.
+2. `018` : ouvrir « Choisir le fond » et vérifier les trois noms et miniatures.
+3. `019` : appliquer chaque fond, annuler/rétablir, relancer et vérifier la
+   persistance sur toutes les pages.
+4. `020` : sélectionner Une page puis Deux pages et vérifier la persistance.
+5. `021` : en Deux pages, vérifier les groupes 1–2, 3–4 et la dernière page
+   seule ; réduire la largeur et vérifier le repli à une page sans changer la
+   préférence.
+6. `022` : vérifier Précédent/Suivant et leur désactivation aux extrémités.
+7. `023` : balayer horizontalement dans les deux sens ; un geste surtout
+   vertical ne doit pas naviguer.
+
+Résultat attendu pour chacun : comportement décrit observé après relance.
+Résultat initial : ⚪ `NON TESTÉ`.

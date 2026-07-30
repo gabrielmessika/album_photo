@@ -139,6 +139,32 @@ public struct AlbumService: Sendable {
         return restored
     }
 
+    public func changeBackground(
+        of albumID: UUID,
+        to backgroundID: String,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        album.backgroundID = BackgroundCatalog.theme(id: backgroundID).id
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func changeDisplayMode(
+        of albumID: UUID,
+        to displayMode: DisplayMode,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        album.preferredDisplayMode = displayMode
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
     public func renameAlbum(
         _ albumID: UUID,
         to proposedName: String,
