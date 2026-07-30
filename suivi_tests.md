@@ -70,9 +70,9 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `e2405c9` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-024` | Lot 1 | Numéros et identification des pages | `PAG-003`, `DSP-010` | `35e6741` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-025` | Lot 1 | Reliure classique simple et double page | `BG-002`, `BG-007`, `BG-010` | `35e6741` | 🟢 `RÉUSSI` |
-| `IPAD-L1-026` | Lot 1 | Proportions de la miniature classique | `BG-002`, `BG-009` | `COMMIT-UI-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-027` | Lot 1 | Navigation gestuelle sans retour implicite | `NAV-004` à `NAV-006` | `COMMIT-UI-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `COMMIT-UI-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-026` | Lot 1 | Proportions de la miniature classique | `BG-002`, `BG-009` | `16c7a37` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-027` | Lot 1 | Navigation gestuelle sans retour implicite | `NAV-004` à `NAV-006` | `16c7a37` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `16c7a37` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -391,7 +391,7 @@ Pour la régression :
 
 ### `IPAD-L1-026` — Proportions de la miniature classique
 
-- Commit : `COMMIT-UI-FIX`.
+- Commit : `16c7a37`.
 - Préconditions : ouvrir « Choisir le fond ».
 - Étapes :
   1. comparer les trois miniatures ;
@@ -405,7 +405,7 @@ Pour la régression :
 
 ### `IPAD-L1-027` — Navigation gestuelle sans retour implicite
 
-- Commit : `COMMIT-UI-FIX`.
+- Commit : `16c7a37`.
 - Préconditions : ouvrir un album contenant au moins cinq pages.
 - Étapes :
   1. répéter dix balayages vers la droite et vérifier le passage à la page
@@ -422,7 +422,7 @@ Pour la régression :
 
 ### `IPAD-L1-028` — Contraste du numéro de page
 
-- Commit : `COMMIT-UI-FIX`.
+- Commit : `16c7a37`.
 - Préconditions : ouvrir un album contenant plusieurs pages.
 - Étapes :
   1. appliquer successivement chacun des trois fonds ;
