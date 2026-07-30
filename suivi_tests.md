@@ -73,8 +73,8 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-026` | Lot 1 | Proportions de la miniature classique | `BG-002`, `BG-009` | `16c7a37` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-027` | Lot 1 | Navigation gestuelle sans retour implicite | `NAV-004` à `NAV-006` | `16c7a37` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `16c7a37` | 🟢 `RÉUSSI` |
-| `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `COMMIT-GESTURE-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `COMMIT-GESTURE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `00d7c69` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `00d7c69` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -439,7 +439,7 @@ Pour la régression :
 
 ### `IPAD-L1-029` — Miniature classique réellement adaptative
 
-- Commit : `COMMIT-GESTURE-FIX`.
+- Commit : `00d7c69`.
 - Préconditions : ouvrir « Choisir le fond ».
 - Étapes :
   1. observer la miniature « Album classique » ;
@@ -453,7 +453,7 @@ Pour la régression :
 
 ### `IPAD-L1-030` — Balayage déterministe simple et double page
 
-- Commit : `COMMIT-GESTURE-FIX`.
+- Commit : `00d7c69`.
 - Préconditions : ouvrir un album d’au moins six pages.
 - Étapes :
   1. en mode Une page, commencer alternativement les gestes sur une page et sur
