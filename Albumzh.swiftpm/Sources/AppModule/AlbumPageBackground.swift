@@ -51,7 +51,8 @@ private struct ClassicSpiralPageBackground: View {
     let showsLeadingBinding: Bool
 
     var body: some View {
-        GeometryReader { _ in
+        GeometryReader { geometry in
+            let bindingWidth = min(38, max(8, geometry.size.width * 0.14))
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
@@ -64,8 +65,8 @@ private struct ClassicSpiralPageBackground: View {
 
                 if showsLeadingBinding {
                     SpiralBindingView()
-                        .frame(width: 38)
-                        .offset(x: -8)
+                        .frame(width: bindingWidth)
+                        .offset(x: -bindingWidth * 0.2)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 12))

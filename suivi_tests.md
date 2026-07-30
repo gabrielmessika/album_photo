@@ -61,15 +61,18 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-014` | Lot 1 | Suppression et protection des pages | `PAG-006` à `PAG-008`, `PAG-010` | `3338b7d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-015` | Lot 1 | Annulation et rétablissement de session | `UND-001` à `UND-004`, `UND-010`, `UND-012` | `3338b7d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-016` | Lot 1 | Réorganisation durable des pages | `ACPT-104`, `PAG-003` à `PAG-005`, `PAG-011` | `3338b7d` | 🟢 `RÉUSSI` |
-| `IPAD-L1-017` | Lot 1 | Compilation et régression apparence/navigation | `LOT-001` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-018` | Lot 1 | Catalogue des trois fonds | `BG-001` à `BG-004`, `BG-009`, `BG-011` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-019` | Lot 1 | Changement de fond, persistance et annulation | `BG-005` à `BG-008`, `BG-010` | `e2405c9` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-020` | Lot 1 | Préférence Une/Deux pages | `DSP-001` à `DSP-003` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `e2405c9` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-022` | Lot 1 | Navigation Précédent/Suivant | `NAV-001` à `NAV-003` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `e2405c9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-024` | Lot 1 | Numéros et identification des pages | `PAG-003`, `DSP-010` | `35e6741` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-025` | Lot 1 | Reliure classique simple et double page | `BG-002`, `BG-007`, `BG-010` | `35e6741` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-017` | Lot 1 | Compilation et régression apparence/navigation | `LOT-001` | `e2405c9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-018` | Lot 1 | Catalogue des trois fonds | `BG-001` à `BG-004`, `BG-009`, `BG-011` | `e2405c9` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-019` | Lot 1 | Changement de fond, persistance et annulation | `BG-005` à `BG-008`, `BG-010` | `e2405c9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-020` | Lot 1 | Préférence Une/Deux pages | `DSP-001` à `DSP-003` | `e2405c9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-021` | Lot 1 | Adaptation à la largeur et groupement | `DSP-004` à `DSP-011` | `e2405c9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-022` | Lot 1 | Navigation Précédent/Suivant | `NAV-001` à `NAV-003` | `e2405c9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-023` | Lot 1 | Navigation par balayage horizontal | `NAV-004` à `NAV-006` | `e2405c9` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-024` | Lot 1 | Numéros et identification des pages | `PAG-003`, `DSP-010` | `35e6741` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-025` | Lot 1 | Reliure classique simple et double page | `BG-002`, `BG-007`, `BG-010` | `35e6741` | 🟢 `RÉUSSI` |
+| `IPAD-L1-026` | Lot 1 | Proportions de la miniature classique | `BG-002`, `BG-009` | `COMMIT-UI-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-027` | Lot 1 | Navigation gestuelle sans retour implicite | `NAV-004` à `NAV-006` | `COMMIT-UI-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `COMMIT-UI-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -372,4 +375,60 @@ Pour la régression :
 - Résultat attendu : la reliure est à gauche d’une feuille isolée et uniquement
   dans la gouttière centrale d’une double page, conformément aux références
   visuelles fournies.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
+
+## Retour iPad du 29 juillet 2026 — `IPAD-L1-017` à `025`
+
+- `017`, `019`, `020`, `021`, `022` et `025` : 🟢 `RÉUSSI`.
+- `018` : 🔴 `ÉCHOUÉ`, les spirales de la miniature classique occupent environ
+  trois quarts de sa largeur.
+- `023` : 🔴 `ÉCHOUÉ`, un balayage destiné à revenir à la page précédente
+  déclenche parfois le retour à la bibliothèque.
+- `024` : 🔴 `ÉCHOUÉ`, la numérotation et son suivi sont corrects mais le
+  libellé blanc manque de contraste sur le fond classique beige.
+- Environnement : iPad et Swift Playgrounds ; versions exactes non
+  communiquées.
+
+### `IPAD-L1-026` — Proportions de la miniature classique
+
+- Commit : `COMMIT-UI-FIX`.
+- Préconditions : ouvrir « Choisir le fond ».
+- Étapes :
+  1. comparer les trois miniatures ;
+  2. vérifier que la reliure classique reste fine et proportionnée à la largeur
+     de sa miniature ;
+  3. sélectionner le fond classique et vérifier que la reliure de la page
+     principale conserve ses dimensions normales.
+- Résultat attendu : la reliure n’occupe plus la majeure partie de la
+  miniature et le rendu pleine page ne régresse pas.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-027` — Navigation gestuelle sans retour implicite
+
+- Commit : `COMMIT-UI-FIX`.
+- Préconditions : ouvrir un album contenant au moins cinq pages.
+- Étapes :
+  1. répéter dix balayages vers la droite et vérifier le passage à la page
+     suivante ;
+  2. répéter dix balayages vers la gauche et vérifier le passage à la page
+     précédente ;
+  3. commencer plusieurs gestes près du bord de l’écran ;
+  4. vérifier qu’aucun geste ne revient à la bibliothèque ;
+  5. utiliser le bouton « Albums » en haut à gauche et vérifier qu’il reste le
+     seul moyen prévu de revenir à la bibliothèque.
+- Résultat attendu : les gestes naviguent uniquement entre les pages ; le
+  retour à la bibliothèque exige le bouton.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-028` — Contraste du numéro de page
+
+- Commit : `COMMIT-UI-FIX`.
+- Préconditions : ouvrir un album contenant plusieurs pages.
+- Étapes :
+  1. appliquer successivement chacun des trois fonds ;
+  2. parcourir plusieurs pages en modes Une page et Deux pages ;
+  3. vérifier la lisibilité immédiate de chaque numéro, notamment sur le fond
+     classique beige et en apparence sombre d’iPadOS.
+- Résultat attendu : le numéro sombre sur pastille claire reste lisible sur les
+  fonds clairs, et le numéro clair sur pastille sombre sur le fond Nuit.
 - Résultat : ⚪ `NON TESTÉ`.

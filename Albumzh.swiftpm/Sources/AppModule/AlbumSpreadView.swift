@@ -30,7 +30,13 @@ struct AlbumSpreadView: View {
                                     .padding(7)
                                     .foregroundStyle(
                                         model.album.backgroundID == "album.minimalDark"
-                                            ? .white : .primary
+                                            ? .white : .black
+                                    )
+                                    .background(
+                                        model.album.backgroundID == "album.minimalDark"
+                                            ? Color.black.opacity(0.7)
+                                            : Color.white.opacity(0.82),
+                                        in: Capsule()
                                     )
                             }
                             .overlay {
@@ -63,9 +69,9 @@ struct AlbumSpreadView: View {
                             let vertical = abs(value.translation.height)
                             guard horizontal > vertical * 1.25 else { return }
                             if value.translation.width < 0 {
-                                model.goNext()
-                            } else {
                                 model.goPrevious()
+                            } else {
+                                model.goNext()
                             }
                         }
                 )

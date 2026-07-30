@@ -201,6 +201,7 @@ final class AlbumEditorViewModel {
 }
 
 struct AlbumEditorView: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @State private var model: AlbumEditorViewModel
 
@@ -267,7 +268,14 @@ struct AlbumEditorView: View {
         }
         .navigationTitle(model.album.name)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Albums", systemImage: "chevron.left") {
+                    dismiss()
+                }
+            }
+
             ToolbarItemGroup(placement: .secondaryAction) {
                 Button("Annuler", systemImage: "arrow.uturn.backward") {
                     Task { await model.undo() }
