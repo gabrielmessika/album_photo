@@ -10,11 +10,30 @@ public enum CoverSelection: Codable, Sendable, Equatable {
     case pageMedia(pageID: UUID, assetID: UUID)
 }
 
+public struct MediaPlacement: Codable, Sendable, Equatable {
+    public let assetID: UUID
+    public init(assetID: UUID) { self.assetID = assetID }
+}
+
 public struct Page: Identifiable, Codable, Sendable, Equatable {
     public let id: UUID
+    public var mediaPlacement: MediaPlacement?
 
-    public init(id: UUID = UUID()) {
+    public init(id: UUID = UUID(), mediaPlacement: MediaPlacement? = nil) {
         self.id = id
+        self.mediaPlacement = mediaPlacement
+    }
+}
+
+public extension Album {
+    var resolvedCoverOccurrence: CoverSelection? {
+        if case let .pageMedia(pageID, assetID) = coverSelection,
+           pages.contains(where: { $0.id == pageID && $0.mediaPlacement?.assetID == assetID }) {
+            return coverSelection
+        }
+        guard let page = pages.first(where: { $0.mediaPlacement != nil }),
+              let assetID = page.mediaPlacement?.assetID else { return nil }
+        return .pageMedia(pageID: page.id, assetID: assetID)
     }
 }
 

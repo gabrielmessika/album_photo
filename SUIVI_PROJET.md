@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Couvertures de repli validées ; correctif local de suppression définitive à revalider | Exécuter `IPAD-L1-036`, puis importer les premiers médias |
+| Lot 1 — Création locale | 🟡 En cours | Suppression définitive validée ; import photo local et couvertures automatiques/manuelles implémentés | Exécuter `IPAD-L1-037` à `041` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -131,10 +131,10 @@ Objectif : rendre possible la création locale et durable d’albums.
 | Corbeille et restauration des albums | 🟡 | `ACPT-102`, `ALB-017` à `024` — restauration validée ; suppression définitive et expiration exacte à 30 jours implémentées et testées sous Linux, validation iPad requise |
 | Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001` à `PAG-008`, `PAG-010`, `PAG-011`, `ACPT-104` — opérations et deux annulations testées sous Linux ; nettoyage des références `PAG-009` attend les médias |
 | Fonds d’album | 🟢 | `BG-001` à `BG-011` — catalogue, rendu, proportions, changement persistant et annulation validés jusqu’à `IPAD-L1-029` |
-| Couverture automatique et manuelle | 🟡 | `ALB-002`, `ALB-007`, `COV-004`, `COV-006` — repli nom + fond et état sans média implémentés ; sélection automatique/manuelle attend l’import média |
+| Couverture automatique et manuelle | 🟡 | `COV-001`, `COV-003` à `COV-006`, `DAT-005` — automatique et sélection d’une occurrence implémentées ; validation iPad requise |
 | Dépôt d’assets adressé par contenu | ⬜ | Section 18 |
 | Journal local transactionnel | 🟡 | `ACPT-100`, `ACPT-114` — premier journal JSON rejouable ; campagne d’interruption manquante |
-| Import de photos avec PhotosPicker | ⬜ | `ACPT-106` |
+| Import de photos avec PhotosPicker | 🟡 | Copie locale, affichage, remplacement et suppression implémentés ; formats avancés et validation iPad requis |
 | Import et lecture des vidéos | ⬜ | `ACPT-106`, `ACPT-110` |
 | Normalisation des formats média | ⬜ | `ACPT-106` |
 | Cadrage non destructif | ⬜ | `ACPT-105` |
@@ -405,14 +405,14 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-004` | `PAG-003`, `DSP-010`, `BG-002`, `BG-010` | Élevée | 🟢 Corrigée | Numérotation et placement de la reliure validés ; le défaut de contraste résiduel est suivi séparément | `IPAD-L1-019`, `021`, régressions `024`, `025` |
 | `ANO-005` | `BG-002`, `BG-009`, `PAG-003` | Moyenne | 🟢 Corrigée | Contraste et miniature adaptative validés après correction des dimensions internes des anneaux | `IPAD-L1-018`, `024`, `026`, régressions réussies `028`, `029` |
 | `ANO-006` | `NAV-004` à `NAV-006`, `DSP-010` | Élevée | 🟢 Corrigée | Fiabilité, portée, groupement et convention gauche-suivant/droite-précédent validés sur iPad | `IPAD-L1-023`, `027`, régressions réussies `030`, `031` |
-| `ANO-007` | `ALB-018`, `ALB-019`, `ACPT-102` | Élevée | 🟡 Correctif à valider | La fermeture de l’alerte effaçait l’album ciblé avant la tâche asynchrone ; cible et visibilité de confirmation désormais séparées | `IPAD-L1-035`, régression `036` |
+| `ANO-007` | `ALB-018`, `ALB-019`, `ACPT-102` | Élevée | 🟢 Corrigée | Cible et visibilité de confirmation séparées, suppression définitive validée | `IPAD-L1-035`, régression réussie `036` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter `IPAD-L1-036` sur le commit indiqué dans `suivi_tests.md`.
+1. Exécuter `IPAD-L1-037` à `041` sur le commit indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -433,6 +433,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-03 | Codex | Validation de la suppression définitive ; ajout de l’import photo par PhotosPicker, copie locale, affichage, remplacement/suppression et couvertures automatique/manuelle par occurrence | `APL-001` à `APL-005`, `MED-001` à `MED-008`, `COV-001`, `COV-003` à `COV-006`, `DAT-005` | `036` RÉUSSI ; 22 tests Linux et analyse SwiftUI réussis ; `037` à `041` NON TESTÉS |
 | 2026-08-03 | Codex | Enregistrement de `032` à `035` et correction du cycle de vie de la cible lors de la confirmation de suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | Commit `28d8c41` ; `032` à `034` RÉUSSIS ; `035` ÉCHOUÉ ; analyse SwiftUI et 21 tests Linux réussis ; régression `036` NON TESTÉE |
 | 2026-08-03 | Codex | Groupe bibliothèque : couverture nom + fond pour les albums sans média, commande de choix sans import dédié, suppression définitive confirmée et purge à trente périodes de 24 heures | `ALB-002`, `ALB-007`, `ALB-018` à `ALB-024`, `COV-003`, `COV-004`, `COV-006`, `ACPT-102` | Commit `d5da50e` ; 21 tests Linux et analyse syntaxique SwiftUI réussis ; `IPAD-L1-032` à `035` NON TESTÉS |
 | 2026-08-03 | Codex | Enregistrement de la validation finale du sens des balayages et clôture de l’anomalie de navigation | `NAV-004` à `NAV-006`, `DSP-010`, lot 1 | `IPAD-L1-031` RÉUSSI sur iPad au commit `8679748` ; versions exactes de l’environnement non communiquées |

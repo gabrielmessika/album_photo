@@ -166,6 +166,37 @@ public struct AlbumService: Sendable {
         return album
     }
 
+    public func setMedia(assetID: UUID, on pageID: UUID, in albumID: UUID, now: Date = Date(), commandID: UUID = UUID()) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        guard let index = album.pages.firstIndex(where: { $0.id == pageID }) else { throw AlbumValidationError.pageNotFound }
+        album.pages[index].mediaPlacement = MediaPlacement(assetID: assetID)
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func removeMedia(from pageID: UUID, in albumID: UUID, now: Date = Date(), commandID: UUID = UUID()) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        guard let index = album.pages.firstIndex(where: { $0.id == pageID }) else { throw AlbumValidationError.pageNotFound }
+        let removed = album.pages[index].mediaPlacement?.assetID
+        album.pages[index].mediaPlacement = nil
+        if album.coverSelection == .pageMedia(pageID: pageID, assetID: removed ?? UUID()) { album.coverSelection = .automatic }
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func changeCover(of albumID: UUID, to selection: CoverSelection, now: Date = Date(), commandID: UUID = UUID()) async throws -> Album {
+        var album = try await editableAlbum(id: albumID)
+        if case let .pageMedia(pageID, assetID) = selection {
+            guard album.pages.contains(where: { $0.id == pageID && $0.mediaPlacement?.assetID == assetID }) else { throw AlbumValidationError.pageNotFound }
+        }
+        album.coverSelection = selection
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
     public func renameAlbum(
         _ albumID: UUID,
         to proposedName: String,

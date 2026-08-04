@@ -1,5 +1,6 @@
 import AlbumPhotoCore
 import SwiftUI
+import PhotosUI
 
 @MainActor
 @Observable
@@ -135,6 +136,8 @@ final class AlbumEditorViewModel {
             errorMessage = "Impossible de changer le mode d’affichage."
         }
     }
+    func setMedia(_ assetID: UUID) async { let before = album; if let updated = try? await service.setMedia(assetID: assetID, on: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible d’ajouter la photo." } }
+    func removeMedia() async { let before = album; if let updated = try? await service.removeMedia(from: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible de supprimer la photo." } }
 
     func goPrevious() {
         guard canGoPrevious else { return }
@@ -218,11 +221,14 @@ struct AlbumEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @State private var model: AlbumEditorViewModel
+    @State private var selectedPhoto: PhotosPickerItem?
+    let assetStore: MediaAssetStore
 
-    init(album: Album, service: AlbumService) {
+    init(album: Album, service: AlbumService, assetStore: MediaAssetStore) {
         _model = State(
             initialValue: AlbumEditorViewModel(album: album, service: service)
         )
+        self.assetStore = assetStore
     }
 
     var body: some View {
@@ -247,7 +253,16 @@ struct AlbumEditorView: View {
             .pickerStyle(.segmented)
             .padding(.horizontal)
 
-            AlbumSpreadView(model: model)
+            AlbumSpreadView(model: model, assetStore: assetStore)
+
+            HStack {
+                PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                    Label(model.album.pages[model.activePageIndex].mediaPlacement == nil ? "Ajouter une photo" : "Remplacer la photo", systemImage: "photo.badge.plus")
+                }
+                if model.album.pages[model.activePageIndex].mediaPlacement != nil {
+                    Button("Supprimer la photo", role: .destructive) { Task { await model.removeMedia() } }
+                }
+            }
 
             HStack {
                 Button("Précédent", systemImage: "chevron.left") {
@@ -330,6 +345,14 @@ struct AlbumEditorView: View {
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase != .active {
                 model.closeSession()
+            }
+        }
+        .onChange(of: selectedPhoto) { _, item in
+            guard let item else { return }
+            Task {
+                defer { selectedPhoto = nil }
+                guard let data = try? await item.loadTransferable(type: Data.self), let id = try? assetStore.importData(data) else { model.errorMessage = "Impossible d’importer la photo."; return }
+                await model.setMedia(id)
             }
         }
         .alert(

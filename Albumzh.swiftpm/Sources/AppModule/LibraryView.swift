@@ -152,8 +152,10 @@ final class LibraryViewModel {
 struct LibraryView: View {
     @State private var model: LibraryViewModel
 
-    init(service: AlbumService) {
+    let assetStore: MediaAssetStore
+    init(service: AlbumService, assetStore: MediaAssetStore) {
         _model = State(initialValue: LibraryViewModel(service: service))
+        self.assetStore = assetStore
     }
 
     private let columns = [
@@ -179,10 +181,10 @@ struct LibraryView: View {
                         LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(model.albums) { album in
                                 NavigationLink {
-                                    AlbumEditorView(album: album, service: model.service)
+                                    AlbumEditorView(album: album, service: model.service, assetStore: assetStore)
                                 } label: {
                                     VStack(alignment: .leading, spacing: 8) {
-                                        AlbumCoverView(album: album)
+                                        AlbumCoverView(album: album, assetStore: assetStore)
                                         Text(album.name)
                                             .font(.headline)
                                         Text(
@@ -297,7 +299,7 @@ struct LibraryView: View {
                 Text(model.errorMessage ?? "")
             }
             .sheet(item: $model.albumChoosingCover) { album in
-                CoverPickerView(album: album)
+                CoverPickerView(album: album, service: model.service, assetStore: assetStore)
             }
         }
     }

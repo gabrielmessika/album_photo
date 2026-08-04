@@ -306,6 +306,21 @@ struct AlbumServiceTests {
         #expect(singlePage.preferredDisplayMode == .singlePage)
         #expect(try await service.albums().first?.backgroundID == "album.minimalDark")
     }
+
+    @Test("COV-001 à COV-005 suivent une occurrence de média")
+    func managesMediaCoverOccurrence() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+        let assetID = UUID()
+        let withMedia = try await service.setMedia(assetID: assetID, on: album.pages[0].id, in: album.id)
+        #expect(withMedia.resolvedCoverOccurrence == .pageMedia(pageID: album.pages[0].id, assetID: assetID))
+        let manual = try await service.changeCover(of: album.id, to: .pageMedia(pageID: album.pages[0].id, assetID: assetID))
+        #expect(manual.coverSelection == .pageMedia(pageID: album.pages[0].id, assetID: assetID))
+        let removed = try await service.removeMedia(from: album.pages[0].id, in: album.id)
+        #expect(removed.coverSelection == .automatic)
+        #expect(removed.resolvedCoverOccurrence == nil)
+    }
 }
 
 private actor InMemoryAlbumRepository: AlbumRepository {

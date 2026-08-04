@@ -80,7 +80,12 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-033` | Lot 1 | Couverture de repli des albums sans média | `ALB-002`, `COV-006` | `d5da50e` | 🟢 `RÉUSSI` |
 | `IPAD-L1-034` | Lot 1 | Choix de couverture sans import dédié | `ALB-007`, `COV-003`, `COV-004` | `d5da50e` | 🟢 `RÉUSSI` |
 | `IPAD-L1-035` | Lot 1 | Suppression définitive depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `d5da50e` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-036` | Lot 1 | Régression suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `28d8c41` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-036` | Lot 1 | Régression suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `28d8c41` | 🟢 `RÉUSSI` |
+| `IPAD-L1-037` | Lot 1 | Compilation et régression médias | `LOT-001`, `ACPT-100` | `COMMIT-PHOTO-IMPORT` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-038` | Lot 1 | Import et persistance photo | `MED-001`, `MED-002`, `APL-001` à `APL-005` | `COMMIT-PHOTO-IMPORT` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-039` | Lot 1 | Remplacement, suppression et annulation | `MED-003`, `MED-005` à `MED-008`, `UND-004` | `COMMIT-PHOTO-IMPORT` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-040` | Lot 1 | Couverture automatique | `COV-001`, `COV-006` | `COMMIT-PHOTO-IMPORT` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `COMMIT-PHOTO-IMPORT` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -512,6 +517,20 @@ Pour la régression :
   validées restent accessibles.
 - Résultat : ⚪ `NON TESTÉ`.
 
+## Campagne import photo et couvertures
+
+Pour `IPAD-L1-037` à `041`, utiliser le commit indiqué et un album d’au moins
+quatre pages. Compiler puis vérifier : import d’une photo depuis Photothèque sur
+les pages 1, 3 et 4 ; persistance après relance (`038`) ; remplacement,
+suppression sans confirmation puis Annuler/Rétablir (`039`) ; choix automatique
+du premier média selon l’ordre (`040`) ; choix manuel de la page 4,
+réorganisation, persistance et retour automatique après suppression de cette
+occurrence (`041`). `037` couvre la compilation et les régressions précédentes.
+
+Résultat attendu : les fichiers restent locaux et visibles après relance, la
+couverture suit une occurrence de page et aucun import dédié à la couverture
+n’est proposé. Résultat initial : ⚪ `NON TESTÉ`.
+
 ### `IPAD-L1-033` — Couverture de repli des albums sans média
 
 - Commit : `d5da50e`.
@@ -570,4 +589,4 @@ Pour la régression :
      l’application.
 - Résultat attendu : la sélection de l’album reste disponible pendant la tâche
   asynchrone, et l’album supprimé ne réapparaît jamais.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.

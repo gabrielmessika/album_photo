@@ -3,6 +3,7 @@ import SwiftUI
 
 struct AlbumSpreadView: View {
     let model: AlbumEditorViewModel
+    let assetStore: MediaAssetStore
 
     var body: some View {
         GeometryReader { geometry in
@@ -24,6 +25,7 @@ struct AlbumSpreadView: View {
                                 showsLeadingBinding: isClassic && pages.count == 1
                             )
                             .aspectRatio(4 / 5, contentMode: .fit)
+                            .overlay { if let assetID = page.mediaPlacement?.assetID { StoredImageView(assetID: assetID, store: assetStore).clipped().padding(12) } }
                             .overlay(alignment: .bottomTrailing) {
                                 Text("Page \(pageNumber)")
                                     .font(.caption.bold())
