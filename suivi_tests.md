@@ -515,21 +515,84 @@ Pour la régression :
   bouton « Albums », puis ouvrir la corbeille.
 - Résultat attendu : aucune erreur ou perte de données ; les fonctions déjà
   validées restent accessibles.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
 
 ## Campagne import photo et couvertures
 
-Pour `IPAD-L1-037` à `041`, utiliser le commit indiqué et un album d’au moins
-quatre pages. Compiler puis vérifier : import d’une photo depuis Photothèque sur
-les pages 1, 3 et 4 ; persistance après relance (`038`) ; remplacement,
-suppression sans confirmation puis Annuler/Rétablir (`039`) ; choix automatique
-du premier média selon l’ordre (`040`) ; choix manuel de la page 4,
-réorganisation, persistance et retour automatique après suppression de cette
-occurrence (`041`). `037` couvre la compilation et les régressions précédentes.
+### `IPAD-L1-037` — Compilation et régression médias
 
-Résultat attendu : les fichiers restent locaux et visibles après relance, la
-couverture suit une occurrence de page et aucun import dédié à la couverture
-n’est proposé. Résultat initial : ⚪ `NON TESTÉ`.
+- Commit : `9472f8e`.
+- Préconditions : conserver un album existant et récupérer le commit indiqué.
+- Étapes : compiler, ouvrir la bibliothèque, un album et la corbeille, puis
+  vérifier les fonds, numéros, modes d’affichage, gestes et boutons déjà validés.
+- Résultat attendu : compilation réussie et aucune régression fonctionnelle ou
+  perte des albums existants.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-038` — Import et persistance d’une photo
+
+- Commit : `9472f8e`.
+- Préconditions : album d’au moins quatre pages et photos accessibles dans la
+  photothèque de l’iPad.
+- Étapes :
+  1. sélectionner la page 1 et toucher « Ajouter une photo » ;
+  2. choisir une image puis vérifier son affichage sur la page 1 ;
+  3. répéter avec deux images distinctes sur les pages 3 et 4 ;
+  4. fermer complètement puis relancer l’application ;
+  5. rouvrir l’album et vérifier les trois images sur leurs pages respectives.
+- Résultat attendu : chaque sélection est limitée à une image, copiée dans le
+  stockage de l’application et disponible après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-039` — Remplacement, suppression et annulation
+
+- Commit : `9472f8e`.
+- Préconditions : `IPAD-L1-038` exécuté, avec une photo sur la page 3.
+- Étapes :
+  1. sélectionner la page 3 puis « Remplacer la photo » et choisir une autre
+     image ;
+  2. vérifier que la nouvelle image remplace l’ancienne ;
+  3. toucher « Annuler » puis « Rétablir » et contrôler les deux images ;
+  4. toucher « Supprimer la photo » et vérifier l’absence de confirmation ;
+  5. annuler puis rétablir la suppression ;
+  6. relancer l’application et vérifier le dernier état validé.
+- Résultat attendu : remplacement et suppression sont persistants et chacun
+  constitue une action annulable sans supprimer la page.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-040` — Couverture automatique
+
+- Commit : `9472f8e`.
+- Préconditions : photos présentes sur les pages 1, 3 et 4.
+- Étapes :
+  1. revenir à la bibliothèque et vérifier que la carte utilise la photo de la
+     page 1 ;
+  2. réorganiser les pages afin que la page 3 soit la première page contenant
+     un média ;
+  3. revenir à la bibliothèque et vérifier que sa photo devient la couverture ;
+  4. relancer l’application et contrôler la même couverture.
+- Résultat attendu : en mode automatique, le premier média selon l’ordre courant
+  des pages est utilisé et persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-041` — Couverture manuelle par occurrence
+
+- Commit : `9472f8e`.
+- Préconditions : photos distinctes sur les pages 1, 3 et 4.
+- Étapes :
+  1. effectuer une pression longue sur la carte, choisir « Choisir la
+     couverture », puis sélectionner la page 4 ;
+  2. vérifier que la carte affiche la photo de cette occurrence ;
+  3. réorganiser les pages et vérifier que la couverture reste liée à la même
+     page et à la même photo ;
+  4. relancer l’application et vérifier la persistance ;
+  5. supprimer la photo de cette page ;
+  6. revenir à la bibliothèque et vérifier le retour au premier média selon le
+     nouvel ordre.
+- Résultat attendu : le choix manuel suit l’occurrence pendant la
+  réorganisation, puis revient automatiquement au premier média lorsqu’elle est
+  supprimée ; aucun import propre à la couverture n’est proposé.
+- Résultat : ⚪ `NON TESTÉ`.
 
 ### `IPAD-L1-033` — Couverture de repli des albums sans média
 
@@ -544,7 +607,7 @@ n’est proposé. Résultat initial : ⚪ `NON TESTÉ`.
   5. relancer l’application et contrôler la persistance.
 - Résultat attendu : une couverture lisible et cohérente est toujours présente,
   même sans média, sans empêcher l’ouverture de l’album.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
 
 ### `IPAD-L1-034` — Choix de couverture sans import dédié
 
@@ -559,7 +622,7 @@ n’est proposé. Résultat initial : ⚪ `NON TESTÉ`.
   5. fermer la feuille et ouvrir normalement l’album.
 - Résultat attendu : la commande existe, explique le repli automatique et ne
   contourne pas la règle imposant un média déjà présent sur une page.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
 
 ### `IPAD-L1-035` — Suppression définitive depuis la corbeille
 
