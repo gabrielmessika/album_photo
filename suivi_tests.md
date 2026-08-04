@@ -75,7 +75,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-028` | Lot 1 | Contraste du numéro sur tous les fonds | `PAG-003`, `BG-001` à `BG-004` | `16c7a37` | 🟢 `RÉUSSI` |
 | `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `00d7c69` | 🟢 `RÉUSSI` |
 | `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `00d7c69` | 🟢 `RÉUSSI` |
-| `IPAD-L1-031` | Lot 1 | Convention naturelle du sens de balayage | `NAV-004`, `DSP-010` | `8679748` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-031` | Lot 1 | Convention naturelle du sens de balayage | `NAV-004`, `DSP-010` | `8679748` | 🟢 `RÉUSSI` |
 
 ## Détail des tests
 
@@ -358,7 +358,9 @@ Pour la régression :
   5. fermer puis rouvrir l’album et contrôler de nouveau la numérotation.
 - Résultat attendu : chaque feuille est identifiable, la numérotation est
   cohérente avec l’ordre courant et permet de vérifier la navigation.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ` le 29 juillet 2026 : numérotation correcte, mais
+  contraste insuffisant sur le fond classique ; correction validée ensuite par
+  `IPAD-L1-028`.
 
 ### `IPAD-L1-025` — Reliure classique simple et double page
 
@@ -489,4 +491,6 @@ Pour la régression :
      pas.
 - Résultat attendu : gauche affiche la suite, droite affiche le précédent,
   avec le même comportement déterministe dans les deux modes.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
+- Environnement : iPad et Swift Playgrounds ; versions exactes non
+  communiquées.
