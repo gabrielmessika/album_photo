@@ -433,7 +433,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
-| 2026-08-03 | Codex | Enregistrement de `032` à `035` et correction du cycle de vie de la cible lors de la confirmation de suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `032` à `034` RÉUSSIS ; `035` ÉCHOUÉ ; analyse SwiftUI et 21 tests Linux réussis ; régression `036` NON TESTÉE |
+| 2026-08-03 | Codex | Enregistrement de `032` à `035` et correction du cycle de vie de la cible lors de la confirmation de suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | Commit `28d8c41` ; `032` à `034` RÉUSSIS ; `035` ÉCHOUÉ ; analyse SwiftUI et 21 tests Linux réussis ; régression `036` NON TESTÉE |
 | 2026-08-03 | Codex | Groupe bibliothèque : couverture nom + fond pour les albums sans média, commande de choix sans import dédié, suppression définitive confirmée et purge à trente périodes de 24 heures | `ALB-002`, `ALB-007`, `ALB-018` à `ALB-024`, `COV-003`, `COV-004`, `COV-006`, `ACPT-102` | Commit `d5da50e` ; 21 tests Linux et analyse syntaxique SwiftUI réussis ; `IPAD-L1-032` à `035` NON TESTÉS |
 | 2026-08-03 | Codex | Enregistrement de la validation finale du sens des balayages et clôture de l’anomalie de navigation | `NAV-004` à `NAV-006`, `DSP-010`, lot 1 | `IPAD-L1-031` RÉUSSI sur iPad au commit `8679748` ; versions exactes de l’environnement non communiquées |
 | 2026-07-29 | Codex | Validation de la miniature et du moteur de balayage ; inversion de la convention directionnelle demandée : gauche vers la suite, droite vers le précédent | `BG-002`, `BG-009`, `NAV-004`, `DSP-010` | Commit `8679748` ; `029` et `030` RÉUSSIS ; analyse SwiftUI et 18 tests Linux réussis ; inversion `031` NON TESTÉE |

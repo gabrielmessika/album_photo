@@ -80,7 +80,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-033` | Lot 1 | Couverture de repli des albums sans média | `ALB-002`, `COV-006` | `d5da50e` | 🟢 `RÉUSSI` |
 | `IPAD-L1-034` | Lot 1 | Choix de couverture sans import dédié | `ALB-007`, `COV-003`, `COV-004` | `d5da50e` | 🟢 `RÉUSSI` |
 | `IPAD-L1-035` | Lot 1 | Suppression définitive depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `d5da50e` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-036` | Lot 1 | Régression suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `COMMIT-DELETE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-036` | Lot 1 | Régression suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `28d8c41` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -560,7 +560,7 @@ Pour la régression :
 
 ### `IPAD-L1-036` — Régression suppression définitive
 
-- Commit : `COMMIT-DELETE-FIX`.
+- Commit : `28d8c41`.
 - Préconditions : placer un nouvel album de test dans la corbeille.
 - Étapes :
   1. toucher « Supprimer » puis annuler et vérifier que l’album reste présent ;
