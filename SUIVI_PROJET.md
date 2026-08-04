@@ -434,7 +434,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
-| 2026-08-03 | Codex | Correction de la portée de `.background` et `.padding` dans la branche texte de `AlbumCoverView` après diagnostic Swift Playgrounds | `LOT-001`, `APL-001`, groupe média | `042` ÉCHOUÉ avec diagnostic exact ; analyse syntaxique et tests Linux à exécuter ; `043` NON TESTÉ |
+| 2026-08-03 | Codex | Correction de la portée de `.background` et `.padding` dans la branche texte de `AlbumCoverView` après diagnostic Swift Playgrounds | `LOT-001`, `APL-001`, groupe média | Commit `5deef95` ; `042` ÉCHOUÉ avec diagnostic exact ; analyse SwiftUI et 22 tests Linux réussis ; `043` NON TESTÉ |
 | 2026-08-03 | Codex | Enregistrement de l’échec de compilation du groupe média ; ajout de l’import UIKit requis par `UIImage` et simplification du sélecteur de couverture | `LOT-001`, `APL-001`, groupe média | Commit `a389d8a` ; `037` ÉCHOUÉ sans diagnostic exact ; analyse SwiftUI et 22 tests Linux réussis ; `042` NON TESTÉ |
 | 2026-08-03 | Codex | Décomposition de la campagne photo/couverture en cinq fiches manuelles complètes avec préconditions, étapes et résultats attendus | `TST-009` à `TST-016`, `IPAD-L1-037` à `041` | Relecture et `git diff --check` ; changement documentaire uniquement, tests applicatifs inchangés |
 | 2026-08-03 | Codex | Validation de la suppression définitive ; ajout de l’import photo par PhotosPicker, copie locale, affichage, remplacement/suppression et couvertures automatique/manuelle par occurrence | `APL-001` à `APL-005`, `MED-001` à `MED-008`, `COV-001`, `COV-003` à `COV-006`, `DAT-005` | Commit `9472f8e` ; `036` RÉUSSI ; 22 tests Linux et analyse SwiftUI réussis ; `037` à `041` NON TESTÉS |

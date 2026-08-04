@@ -87,7 +87,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-040` | Lot 1 | Couverture automatique | `COV-001`, `COV-006` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `COMMIT-COVER-COMPILE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `5deef95` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -547,7 +547,7 @@ Pour la régression :
 
 ### `IPAD-L1-043` — Régression compilation AlbumCoverView
 
-- Commit : `COMMIT-COVER-COMPILE-FIX`.
+- Commit : `5deef95`.
 - Préconditions : récupérer le commit et ouvrir le package dans Swift
   Playgrounds.
 - Étapes : nettoyer si nécessaire les résultats de compilation, compiler puis
