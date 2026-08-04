@@ -31,25 +31,35 @@ struct CoverPickerView: View {
     let service: AlbumService
     let assetStore: MediaAssetStore
 
+    private var mediaPages: [(offset: Int, element: Page)] {
+        Array(album.pages.enumerated()).filter { $0.element.mediaPlacement != nil }
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
                 AlbumCoverView(album: album, assetStore: assetStore)
                     .frame(maxWidth: 360)
 
-                if album.pages.allSatisfy({ $0.mediaPlacement == nil }) { ContentUnavailableView(
-                    "Aucun média disponible",
-                    systemImage: "photo.badge.plus",
-                    description: Text(
-                        "La couverture affiche automatiquement le nom sur le fond de l’album. "
-                            + "Après l’ajout de médias aux pages, vous pourrez choisir une occurrence existante."
+                if mediaPages.isEmpty {
+                    ContentUnavailableView(
+                        "Aucun média disponible",
+                        systemImage: "photo.badge.plus",
+                        description: Text(
+                            "La couverture affiche automatiquement le nom sur le fond de l’album. "
+                                + "Après l’ajout de médias aux pages, vous pourrez choisir une occurrence existante."
+                        )
                     )
-                ) } else {
+                } else {
                     List {
-                        Button("Automatique") { Task { _ = try? await service.changeCover(of: album.id, to: .automatic); dismiss() } }
-                        ForEach(Array(album.pages.enumerated()), id: \.element.id) { index, page in
+                        Button("Automatique") {
+                            choose(.automatic)
+                        }
+                        ForEach(mediaPages, id: \.element.id) { index, page in
                             if let assetID = page.mediaPlacement?.assetID {
-                                Button("Page \(index + 1)") { Task { _ = try? await service.changeCover(of: album.id, to: .pageMedia(pageID: page.id, assetID: assetID)); dismiss() } }
+                                Button("Page \(index + 1)") {
+                                    choose(.pageMedia(pageID: page.id, assetID: assetID))
+                                }
                             }
                         }
                     }
@@ -60,6 +70,13 @@ struct CoverPickerView: View {
             .toolbar {
                 Button("Fermer") { dismiss() }
             }
+        }
+    }
+
+    private func choose(_ selection: CoverSelection) {
+        Task {
+            _ = try? await service.changeCover(of: album.id, to: selection)
+            dismiss()
         }
     }
 }

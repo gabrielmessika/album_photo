@@ -81,11 +81,12 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-034` | Lot 1 | Choix de couverture sans import dédié | `ALB-007`, `COV-003`, `COV-004` | `d5da50e` | 🟢 `RÉUSSI` |
 | `IPAD-L1-035` | Lot 1 | Suppression définitive depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `d5da50e` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-036` | Lot 1 | Régression suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `28d8c41` | 🟢 `RÉUSSI` |
-| `IPAD-L1-037` | Lot 1 | Compilation et régression médias | `LOT-001`, `ACPT-100` | `9472f8e` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-037` | Lot 1 | Compilation et régression médias | `LOT-001`, `ACPT-100` | `9472f8e` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-038` | Lot 1 | Import et persistance photo | `MED-001`, `MED-002`, `APL-001` à `APL-005` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-039` | Lot 1 | Remplacement, suppression et annulation | `MED-003`, `MED-005` à `MED-008`, `UND-004` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-040` | Lot 1 | Couverture automatique | `COV-001`, `COV-006` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `COMMIT-IPAD-COMPILE-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -527,6 +528,18 @@ Pour la régression :
   vérifier les fonds, numéros, modes d’affichage, gestes et boutons déjà validés.
 - Résultat attendu : compilation réussie et aucune régression fonctionnelle ou
   perte des albums existants.
+- Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 : le projet ne compile pas dans Swift
+  Playgrounds ; message d’erreur exact non communiqué.
+
+### `IPAD-L1-042` — Régression compilation UIKit des médias
+
+- Commit : `COMMIT-IPAD-COMPILE-FIX`.
+- Préconditions : récupérer le commit et ouvrir le package dans Swift
+  Playgrounds.
+- Étapes : nettoyer les résultats de compilation si nécessaire, compiler puis
+  ouvrir un album et afficher le sélecteur de couverture.
+- Résultat attendu : `UIImage`, le rendu des médias et les vues de couverture
+  sont compilés sans erreur ; l’application démarre normalement.
 - Résultat : ⚪ `NON TESTÉ`.
 
 ### `IPAD-L1-038` — Import et persistance d’une photo

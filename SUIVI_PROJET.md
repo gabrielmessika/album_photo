@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Suppression définitive validée ; import photo local et couvertures automatiques/manuelles implémentés | Exécuter `IPAD-L1-037` à `041` |
+| Lot 1 — Création locale | 🟡 En cours | Import photo local implémenté ; première compilation iPad échouée, correctif UIKit local à revalider | Exécuter `IPAD-L1-042`, puis `038` à `041` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -406,13 +406,14 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-005` | `BG-002`, `BG-009`, `PAG-003` | Moyenne | 🟢 Corrigée | Contraste et miniature adaptative validés après correction des dimensions internes des anneaux | `IPAD-L1-018`, `024`, `026`, régressions réussies `028`, `029` |
 | `ANO-006` | `NAV-004` à `NAV-006`, `DSP-010` | Élevée | 🟢 Corrigée | Fiabilité, portée, groupement et convention gauche-suivant/droite-précédent validés sur iPad | `IPAD-L1-023`, `027`, régressions réussies `030`, `031` |
 | `ANO-007` | `ALB-018`, `ALB-019`, `ACPT-102` | Élevée | 🟢 Corrigée | Cible et visibilité de confirmation séparées, suppression définitive validée | `IPAD-L1-035`, régression réussie `036` |
+| `ANO-008` | `LOT-001`, `APL-001` | Élevée | 🟡 Correctif à valider | Le groupe média ne compile pas sur iPad ; import UIKit explicite ajouté et vues de couverture simplifiées, diagnostic exact encore inconnu | `IPAD-L1-037`, régression `042` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter `IPAD-L1-037` à `041` sur le commit indiqué dans `suivi_tests.md`.
+1. Exécuter `IPAD-L1-042`, puis `IPAD-L1-038` à `041` si la compilation réussit.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -433,6 +434,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-03 | Codex | Enregistrement de l’échec de compilation du groupe média ; ajout de l’import UIKit requis par `UIImage` et simplification du sélecteur de couverture | `LOT-001`, `APL-001`, groupe média | `037` ÉCHOUÉ sans diagnostic exact ; analyse syntaxique SwiftUI à exécuter ; `042` NON TESTÉ |
 | 2026-08-03 | Codex | Décomposition de la campagne photo/couverture en cinq fiches manuelles complètes avec préconditions, étapes et résultats attendus | `TST-009` à `TST-016`, `IPAD-L1-037` à `041` | Relecture et `git diff --check` ; changement documentaire uniquement, tests applicatifs inchangés |
 | 2026-08-03 | Codex | Validation de la suppression définitive ; ajout de l’import photo par PhotosPicker, copie locale, affichage, remplacement/suppression et couvertures automatique/manuelle par occurrence | `APL-001` à `APL-005`, `MED-001` à `MED-008`, `COV-001`, `COV-003` à `COV-006`, `DAT-005` | Commit `9472f8e` ; `036` RÉUSSI ; 22 tests Linux et analyse SwiftUI réussis ; `037` à `041` NON TESTÉS |
 | 2026-08-03 | Codex | Enregistrement de `032` à `035` et correction du cycle de vie de la cible lors de la confirmation de suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | Commit `28d8c41` ; `032` à `034` RÉUSSIS ; `035` ÉCHOUÉ ; analyse SwiftUI et 21 tests Linux réussis ; régression `036` NON TESTÉE |

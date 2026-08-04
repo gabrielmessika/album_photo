@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 final class MediaAssetStore: @unchecked Sendable {
     let directory: URL
