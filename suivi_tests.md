@@ -76,6 +76,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `00d7c69` | 🟢 `RÉUSSI` |
 | `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `00d7c69` | 🟢 `RÉUSSI` |
 | `IPAD-L1-031` | Lot 1 | Convention naturelle du sens de balayage | `NAV-004`, `DSP-010` | `8679748` | 🟢 `RÉUSSI` |
+| `IPAD-L1-032` | Lot 1 | Compilation et régression bibliothèque | `LOT-001`, `ACPT-100`, `ACPT-102` | `COMMIT-LIBRARY-LIFECYCLE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-033` | Lot 1 | Couverture de repli des albums sans média | `ALB-002`, `COV-006` | `COMMIT-LIBRARY-LIFECYCLE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-034` | Lot 1 | Choix de couverture sans import dédié | `ALB-007`, `COV-003`, `COV-004` | `COMMIT-LIBRARY-LIFECYCLE` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-035` | Lot 1 | Suppression définitive depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `COMMIT-LIBRARY-LIFECYCLE` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -494,3 +498,60 @@ Pour la régression :
 - Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
 - Environnement : iPad et Swift Playgrounds ; versions exactes non
   communiquées.
+
+## Campagne bibliothèque et cycle de vie
+
+### `IPAD-L1-032` — Compilation et régression bibliothèque
+
+- Commit : `COMMIT-LIBRARY-LIFECYCLE`.
+- Préconditions : conserver au moins un album existant et récupérer le commit.
+- Étapes : compiler, ouvrir la bibliothèque, ouvrir un album, revenir avec le
+  bouton « Albums », puis ouvrir la corbeille.
+- Résultat attendu : aucune erreur ou perte de données ; les fonctions déjà
+  validées restent accessibles.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-033` — Couverture de repli des albums sans média
+
+- Commit : `COMMIT-LIBRARY-LIFECYCLE`.
+- Préconditions : disposer d’albums sans média utilisant des fonds différents.
+- Étapes :
+  1. observer chaque carte dans la grille ;
+  2. vérifier que la couverture reprend le fond de l’album et affiche son nom ;
+  3. renommer un album et vérifier la mise à jour de sa couverture ;
+  4. changer son fond dans l’éditeur, revenir à la bibliothèque et vérifier le
+     nouveau rendu ;
+  5. relancer l’application et contrôler la persistance.
+- Résultat attendu : une couverture lisible et cohérente est toujours présente,
+  même sans média, sans empêcher l’ouverture de l’album.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-034` — Choix de couverture sans import dédié
+
+- Commit : `COMMIT-LIBRARY-LIFECYCLE`.
+- Préconditions : disposer d’un album sans média.
+- Étapes :
+  1. effectuer une pression longue sur sa carte ;
+  2. choisir « Choisir la couverture » ;
+  3. vérifier l’aperçu et le message « Aucun média disponible » ;
+  4. vérifier qu’aucune commande ne permet d’importer un média uniquement pour
+     la couverture ;
+  5. fermer la feuille et ouvrir normalement l’album.
+- Résultat attendu : la commande existe, explique le repli automatique et ne
+  contourne pas la règle imposant un média déjà présent sur une page.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-035` — Suppression définitive depuis la corbeille
+
+- Commit : `COMMIT-LIBRARY-LIFECYCLE`.
+- Préconditions : créer un album de test puis le placer dans la corbeille.
+- Étapes :
+  1. toucher « Supprimer » dans la corbeille puis « Annuler » dans l’alerte ;
+  2. vérifier que l’album reste restaurable ;
+  3. recommencer et confirmer « Supprimer définitivement » ;
+  4. vérifier sa disparition de la corbeille ;
+  5. relancer l’application et vérifier qu’il ne réapparaît ni dans la
+     bibliothèque ni dans la corbeille.
+- Résultat attendu : seule une confirmation explicite entraîne la suppression
+  irréversible, qui persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.

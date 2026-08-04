@@ -20,6 +20,7 @@ final class LibraryViewModel {
     var proposedRename = ""
     var isConfirmingTrash = false
     var albumPendingTrash: Album?
+    var albumChoosingCover: Album?
     var errorMessage: String?
     private var undoRenames: [RenameAction] = []
     private var redoRenames: [RenameAction] = []
@@ -33,6 +34,7 @@ final class LibraryViewModel {
 
     func load() async {
         do {
+            _ = try await service.purgeExpiredTrashedAlbums()
             albums = try await service.albums()
         } catch {
             errorMessage = "Impossible de charger les albums."
@@ -180,16 +182,7 @@ struct LibraryView: View {
                                     AlbumEditorView(album: album, service: model.service)
                                 } label: {
                                     VStack(alignment: .leading, spacing: 8) {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(.brown.gradient)
-                                                .aspectRatio(4 / 3, contentMode: .fit)
-                                            Text(album.name)
-                                                .font(.title3.bold())
-                                                .foregroundStyle(.white)
-                                                .multilineTextAlignment(.center)
-                                                .padding()
-                                        }
+                                        AlbumCoverView(album: album)
                                         Text(album.name)
                                             .font(.headline)
                                         Text(
@@ -205,6 +198,9 @@ struct LibraryView: View {
                                 .contextMenu {
                                     Button("Renommer", systemImage: "pencil") {
                                         model.beginRenaming(album)
+                                    }
+                                    Button("Choisir la couverture", systemImage: "photo") {
+                                        model.albumChoosingCover = album
                                     }
                                     Button(
                                         "Supprimer",
@@ -246,8 +242,8 @@ struct LibraryView: View {
                     }
                 }
             }
-            .task {
-                await model.load()
+            .onAppear {
+                Task { await model.load() }
             }
             .alert("Nouvel album", isPresented: $model.isCreatingAlbum) {
                 TextField("Nom", text: $model.proposedName)
@@ -299,6 +295,9 @@ struct LibraryView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(model.errorMessage ?? "")
+            }
+            .sheet(item: $model.albumChoosingCover) { album in
+                CoverPickerView(album: album)
             }
         }
     }

@@ -7,6 +7,7 @@ final class TrashViewModel {
     private let service: AlbumService
 
     var albums: [Album] = []
+    var albumPendingPermanentDeletion: Album?
     var errorMessage: String?
 
     init(service: AlbumService) {
@@ -15,6 +16,7 @@ final class TrashViewModel {
 
     func load() async {
         do {
+            _ = try await service.purgeExpiredTrashedAlbums()
             albums = try await service.trashedAlbums()
         } catch {
             errorMessage = "Impossible de charger la corbeille."
@@ -27,6 +29,18 @@ final class TrashViewModel {
             albums = try await service.trashedAlbums()
         } catch {
             errorMessage = "Impossible de restaurer l’album."
+        }
+    }
+
+    func permanentlyDeletePendingAlbum() async {
+        guard let album = albumPendingPermanentDeletion else { return }
+        do {
+            try await service.permanentlyDeleteAlbum(album.id)
+            albumPendingPermanentDeletion = nil
+            albums = try await service.trashedAlbums()
+        } catch {
+            albumPendingPermanentDeletion = nil
+            errorMessage = "Impossible de supprimer définitivement l’album."
         }
     }
 }
@@ -65,6 +79,10 @@ struct TrashView: View {
                             Task { await model.restore(album) }
                         }
                         .buttonStyle(.bordered)
+                        Button("Supprimer", role: .destructive) {
+                            model.albumPendingPermanentDeletion = album
+                        }
+                        .buttonStyle(.bordered)
                     }
                 }
             }
@@ -72,6 +90,22 @@ struct TrashView: View {
         .navigationTitle("Corbeille")
         .task {
             await model.load()
+        }
+        .alert(
+            "Supprimer définitivement cet album ?",
+            isPresented: Binding(
+                get: { model.albumPendingPermanentDeletion != nil },
+                set: { if !$0 { model.albumPendingPermanentDeletion = nil } }
+            )
+        ) {
+            Button("Annuler", role: .cancel) {
+                model.albumPendingPermanentDeletion = nil
+            }
+            Button("Supprimer définitivement", role: .destructive) {
+                Task { await model.permanentlyDeletePendingAlbum() }
+            }
+        } message: {
+            Text("Cette action est irréversible.")
         }
         .alert(
             "Erreur",

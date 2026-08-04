@@ -3,6 +3,7 @@ import Foundation
 public protocol AlbumRepository: Sendable {
     func loadAlbums() async throws -> [Album]
     func save(_ album: Album, commandID: UUID) async throws
+    func deleteAlbum(id: UUID) async throws
 }
 
 public enum AlbumRepositoryError: Error, Equatable {
@@ -68,6 +69,13 @@ public actor JSONAlbumRepository: AlbumRepository {
         upsert(album, into: &store.albums)
         try writeStore(store)
         try FileManager.default.removeItem(at: journalURL)
+    }
+
+    public func deleteAlbum(id: UUID) throws {
+        try ensureDirectory()
+        var store = try readStore()
+        store.albums.removeAll { $0.id == id }
+        try writeStore(store)
     }
 
     private func ensureDirectory() throws {

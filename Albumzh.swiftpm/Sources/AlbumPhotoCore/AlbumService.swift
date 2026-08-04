@@ -7,6 +7,7 @@ public enum AlbumValidationError: Error, Equatable {
     case albumIsTrashed
     case cannotDeleteOnlyPage
     case invalidPageOrder
+    case albumIsNotTrashed
 }
 
 public struct AlbumService: Sendable {
@@ -212,6 +213,30 @@ public struct AlbumService: Sendable {
         album.updatedAt = now
         try await repository.save(album, commandID: commandID)
         return album
+    }
+
+    public func permanentlyDeleteAlbum(_ albumID: UUID) async throws {
+        let storedAlbums = try await repository.loadAlbums()
+        guard let album = storedAlbums.first(where: { $0.id == albumID }) else {
+            throw AlbumValidationError.albumNotFound
+        }
+        guard album.trashedAt != nil else {
+            throw AlbumValidationError.albumIsNotTrashed
+        }
+        try await repository.deleteAlbum(id: albumID)
+    }
+
+    @discardableResult
+    public func purgeExpiredTrashedAlbums(now: Date = Date()) async throws -> Int {
+        let retention: TimeInterval = 30 * 24 * 60 * 60
+        let expired = try await repository.loadAlbums().filter { album in
+            guard let trashedAt = album.trashedAt else { return false }
+            return now.timeIntervalSince(trashedAt) >= retention
+        }
+        for album in expired {
+            try await repository.deleteAlbum(id: album.id)
+        }
+        return expired.count
     }
 
     private func editableAlbum(id albumID: UUID) async throws -> Album {

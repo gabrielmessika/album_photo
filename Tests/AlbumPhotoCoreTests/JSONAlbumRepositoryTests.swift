@@ -86,6 +86,24 @@ struct JSONAlbumRepositoryTests {
         #expect(try await afterRestoreRelaunch.trashedAlbums().isEmpty)
     }
 
+    @Test("ALB-018 conserve la suppression définitive après relance")
+    func persistsPermanentDeletionAcrossRelaunch() async throws {
+        let directory = temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let service = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        let album = try await service.createAlbum(named: "Guatemala")
+        _ = try await service.moveAlbumToTrash(album.id)
+        try await service.permanentlyDeleteAlbum(album.id)
+
+        let relaunchedService = AlbumService(
+            repository: JSONAlbumRepository(directoryURL: directory)
+        )
+        #expect(try await relaunchedService.albums().isEmpty)
+        #expect(try await relaunchedService.trashedAlbums().isEmpty)
+    }
+
     @Test("ACPT-104 réorganise, supprime puis annule les deux actions")
     func persistsPageActionsAndUndoAcrossRelaunch() async throws {
         let directory = temporaryDirectory()

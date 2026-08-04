@@ -24,7 +24,7 @@ dépôt, conformément à [`AGENTS.md`](AGENTS.md).
 | Distribution | App Store Connect et TestFlight |
 | Version publique visée en premier | `1.0` |
 | Phase courante | Lot 1 démarré par un incrément `ACPT-100` ; sorties du lot 0 encore incomplètes |
-| Dernière mise à jour | 29 juillet 2026 |
+| Dernière mise à jour | 3 août 2026 |
 | Dernier auteur du suivi | Codex |
 
 ## Légende des états
@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Fonds, modes d’affichage, numérotation et navigation gestuelle validés sur iPad | Poursuivre avec la couverture et le dépôt d’assets |
+| Lot 1 — Création locale | 🟡 En cours | Couverture de repli et cycle de vie de la corbeille implémentés après validation des fonds et de la navigation | Valider `IPAD-L1-032` à `035`, puis importer les premiers médias |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -126,12 +126,12 @@ Objectif : rendre possible la création locale et durable d’albums.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, création, ouverture, fond et relance validés sur iPad ; commandes de couverture et export absentes |
+| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, couverture de repli, création, ouverture, fond et relance ; export encore absent |
 | Création et renommage | 🟡 | `ACPT-100`, `ALB-007`, `ALB-021`, `UND-011` — renommage, Annuler/Rétablir et persistance validés dans `IPAD-L1-010` |
-| Corbeille et restauration des albums | 🟡 | `ACPT-102` — confirmation, corbeille et restauration durable validées dans `IPAD-L1-011` et `012` ; suppression définitive et expiration non commencées |
+| Corbeille et restauration des albums | 🟡 | `ACPT-102`, `ALB-017` à `024` — restauration validée ; suppression définitive et expiration exacte à 30 jours implémentées et testées sous Linux, validation iPad requise |
 | Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001` à `PAG-008`, `PAG-010`, `PAG-011`, `ACPT-104` — opérations et deux annulations testées sous Linux ; nettoyage des références `PAG-009` attend les médias |
 | Fonds d’album | 🟢 | `BG-001` à `BG-011` — catalogue, rendu, proportions, changement persistant et annulation validés jusqu’à `IPAD-L1-029` |
-| Couverture automatique et manuelle | ⬜ | `ACPT-103` |
+| Couverture automatique et manuelle | 🟡 | `ALB-002`, `ALB-007`, `COV-004`, `COV-006` — repli nom + fond et état sans média implémentés ; sélection automatique/manuelle attend l’import média |
 | Dépôt d’assets adressé par contenu | ⬜ | Section 18 |
 | Journal local transactionnel | 🟡 | `ACPT-100`, `ACPT-114` — premier journal JSON rejouable ; campagne d’interruption manquante |
 | Import de photos avec PhotosPicker | ⬜ | `ACPT-106` |
@@ -411,7 +411,7 @@ Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 
 ## Prochaines actions prioritaires
 
-1. Commencer la couverture automatique et manuelle définie par `ACPT-103`.
+1. Exécuter `IPAD-L1-032` à `035` sur le commit indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -432,6 +432,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-03 | Codex | Groupe bibliothèque : couverture nom + fond pour les albums sans média, commande de choix sans import dédié, suppression définitive confirmée et purge à trente périodes de 24 heures | `ALB-002`, `ALB-007`, `ALB-018` à `ALB-024`, `COV-003`, `COV-004`, `COV-006`, `ACPT-102` | 21 tests Linux et analyse syntaxique SwiftUI réussis ; `IPAD-L1-032` à `035` NON TESTÉS |
 | 2026-08-03 | Codex | Enregistrement de la validation finale du sens des balayages et clôture de l’anomalie de navigation | `NAV-004` à `NAV-006`, `DSP-010`, lot 1 | `IPAD-L1-031` RÉUSSI sur iPad au commit `8679748` ; versions exactes de l’environnement non communiquées |
 | 2026-07-29 | Codex | Validation de la miniature et du moteur de balayage ; inversion de la convention directionnelle demandée : gauche vers la suite, droite vers le précédent | `BG-002`, `BG-009`, `NAV-004`, `DSP-010` | Commit `8679748` ; `029` et `030` RÉUSSIS ; analyse SwiftUI et 18 tests Linux réussis ; inversion `031` NON TESTÉE |
 | 2026-07-29 | Codex | Second correctif miniature : dimensions internes des anneaux rendues adaptatives ; reprise du balayage avec priorité sur toute la zone et déplacement de 1 page en simple ou 2 pages en double | `BG-002`, `BG-009`, `NAV-004` à `NAV-006`, `DSP-010` | Commit `00d7c69` ; `026` et `027` ÉCHOUÉS, `028` RÉUSSI ; analyse SwiftUI et 18 tests Linux réussis ; régressions `029` et `030` NON TESTÉES |

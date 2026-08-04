@@ -156,6 +156,43 @@ struct AlbumServiceTests {
         #expect(try await service.trashedAlbums().isEmpty)
     }
 
+    @Test("ALB-018 supprime définitivement uniquement depuis la corbeille")
+    func permanentlyDeletesTrashedAlbum() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let active = try await service.createAlbum(named: "Actif")
+        let trashed = try await service.createAlbum(named: "À supprimer")
+        _ = try await service.moveAlbumToTrash(trashed.id)
+
+        await #expect(throws: AlbumValidationError.albumIsNotTrashed) {
+            try await service.permanentlyDeleteAlbum(active.id)
+        }
+        try await service.permanentlyDeleteAlbum(trashed.id)
+
+        #expect(try await service.albums().map(\.id) == [active.id])
+        #expect(try await service.trashedAlbums().isEmpty)
+    }
+
+    @Test("ALB-023 et ALB-024 expirent après trente périodes de 24 heures")
+    func purgesOnlyExpiredTrashedAlbums() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let now = Date(timeIntervalSince1970: 4_000_000)
+        let expired = try await service.createAlbum(named: "Expiré")
+        let retained = try await service.createAlbum(named: "Conservé")
+        _ = try await service.moveAlbumToTrash(
+            expired.id,
+            now: now.addingTimeInterval(-(30 * 24 * 60 * 60))
+        )
+        _ = try await service.moveAlbumToTrash(
+            retained.id,
+            now: now.addingTimeInterval(-(30 * 24 * 60 * 60) + 1)
+        )
+
+        #expect(try await service.purgeExpiredTrashedAlbums(now: now) == 1)
+        #expect(try await service.trashedAlbums().map(\.id) == [retained.id])
+    }
+
     @Test("PAG-007 protège la dernière page")
     func refusesToDeleteOnlyPage() async throws {
         let repository = InMemoryAlbumRepository()
@@ -286,5 +323,9 @@ private actor InMemoryAlbumRepository: AlbumRepository {
             albums.append(album)
         }
         savedAlbum = album
+    }
+
+    func deleteAlbum(id: UUID) {
+        albums.removeAll { $0.id == id }
     }
 }
