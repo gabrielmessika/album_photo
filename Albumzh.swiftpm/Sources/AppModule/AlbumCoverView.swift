@@ -10,15 +10,22 @@ struct AlbumCoverView: View {
         .aspectRatio(4 / 3, contentMode: .fit)
         .overlay {
             if case let .pageMedia(_, assetID)? = album.resolvedCoverOccurrence {
-                StoredImageView(assetID: assetID, store: assetStore).clipped()
-            } else { Text(album.name)
-                .font(.title3.bold())
-                .foregroundStyle(album.backgroundID == "album.minimalDark" ? .white : .black)
-                .multilineTextAlignment(.center)
-                .padding()
+                StoredImageView(assetID: assetID, store: assetStore)
+                    .clipped()
+            } else {
+                Text(album.name)
+                    .font(.title3.bold())
+                    .foregroundStyle(
+                        album.backgroundID == "album.minimalDark" ? .white : .black
+                    )
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .background(
+                        .ultraThinMaterial,
+                        in: RoundedRectangle(cornerRadius: 8)
+                    )
+                    .padding()
             }
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
-                .padding()
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Couverture de l’album \(album.name)")

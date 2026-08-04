@@ -86,7 +86,8 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-039` | Lot 1 | Remplacement, suppression et annulation | `MED-003`, `MED-005` à `MED-008`, `UND-004` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-040` | Lot 1 | Couverture automatique | `COV-001`, `COV-006` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `COMMIT-COVER-COMPILE-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -540,6 +541,19 @@ Pour la régression :
   ouvrir un album et afficher le sélecteur de couverture.
 - Résultat attendu : `UIImage`, le rendu des médias et les vues de couverture
   sont compilés sans erreur ; l’application démarre normalement.
+- Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 avec l’erreur
+  `instance member 'background' cannot be used on type 'View'` dans
+  `AlbumCoverView`.
+
+### `IPAD-L1-043` — Régression compilation AlbumCoverView
+
+- Commit : `COMMIT-COVER-COMPILE-FIX`.
+- Préconditions : récupérer le commit et ouvrir le package dans Swift
+  Playgrounds.
+- Étapes : nettoyer si nécessaire les résultats de compilation, compiler puis
+  lancer l’application et afficher la bibliothèque.
+- Résultat attendu : `AlbumCoverView` compile, les couvertures texte sont
+  visibles et l’application démarre.
 - Résultat : ⚪ `NON TESTÉ`.
 
 ### `IPAD-L1-038` — Import et persistance d’une photo
