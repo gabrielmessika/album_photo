@@ -76,10 +76,11 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-029` | Lot 1 | Miniature classique réellement adaptative | `BG-002`, `BG-009` | `00d7c69` | 🟢 `RÉUSSI` |
 | `IPAD-L1-030` | Lot 1 | Balayage déterministe simple et double page | `NAV-004` à `NAV-006`, `DSP-010` | `00d7c69` | 🟢 `RÉUSSI` |
 | `IPAD-L1-031` | Lot 1 | Convention naturelle du sens de balayage | `NAV-004`, `DSP-010` | `8679748` | 🟢 `RÉUSSI` |
-| `IPAD-L1-032` | Lot 1 | Compilation et régression bibliothèque | `LOT-001`, `ACPT-100`, `ACPT-102` | `d5da50e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-033` | Lot 1 | Couverture de repli des albums sans média | `ALB-002`, `COV-006` | `d5da50e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-034` | Lot 1 | Choix de couverture sans import dédié | `ALB-007`, `COV-003`, `COV-004` | `d5da50e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-035` | Lot 1 | Suppression définitive depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `d5da50e` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-032` | Lot 1 | Compilation et régression bibliothèque | `LOT-001`, `ACPT-100`, `ACPT-102` | `d5da50e` | 🟢 `RÉUSSI` |
+| `IPAD-L1-033` | Lot 1 | Couverture de repli des albums sans média | `ALB-002`, `COV-006` | `d5da50e` | 🟢 `RÉUSSI` |
+| `IPAD-L1-034` | Lot 1 | Choix de couverture sans import dédié | `ALB-007`, `COV-003`, `COV-004` | `d5da50e` | 🟢 `RÉUSSI` |
+| `IPAD-L1-035` | Lot 1 | Suppression définitive depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `d5da50e` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-036` | Lot 1 | Régression suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `COMMIT-DELETE-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -554,4 +555,19 @@ Pour la régression :
      bibliothèque ni dans la corbeille.
 - Résultat attendu : seule une confirmation explicite entraîne la suppression
   irréversible, qui persiste après relance.
+- Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 : l’alerte s’ouvre et se ferme, mais la
+  confirmation ne retire pas l’album de la corbeille.
+
+### `IPAD-L1-036` — Régression suppression définitive
+
+- Commit : `COMMIT-DELETE-FIX`.
+- Préconditions : placer un nouvel album de test dans la corbeille.
+- Étapes :
+  1. toucher « Supprimer » puis annuler et vérifier que l’album reste présent ;
+  2. toucher de nouveau « Supprimer » puis confirmer la suppression définitive ;
+  3. vérifier la disparition immédiate de la ligne ;
+  4. revenir à la bibliothèque, rouvrir la corbeille puis relancer
+     l’application.
+- Résultat attendu : la sélection de l’album reste disponible pendant la tâche
+  asynchrone, et l’album supprimé ne réapparaît jamais.
 - Résultat : ⚪ `NON TESTÉ`.
