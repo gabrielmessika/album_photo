@@ -86,7 +86,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-039` | Lot 1 | Remplacement, suppression et annulation | `MED-003`, `MED-005` à `MED-008`, `UND-004` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-040` | Lot 1 | Couverture automatique | `COV-001`, `COV-006` | `9472f8e` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `COMMIT-IPAD-COMPILE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -533,7 +533,7 @@ Pour la régression :
 
 ### `IPAD-L1-042` — Régression compilation UIKit des médias
 
-- Commit : `COMMIT-IPAD-COMPILE-FIX`.
+- Commit : `a389d8a`.
 - Préconditions : récupérer le commit et ouvrir le package dans Swift
   Playgrounds.
 - Étapes : nettoyer les résultats de compilation si nécessaire, compiler puis
