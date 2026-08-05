@@ -88,9 +88,9 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `5deef95` | 🟢 `RÉUSSI` |
-| `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `COMMIT-PREVIEW-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `COMMIT-PREVIEW-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `COMMIT-PREVIEW-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `394df8d` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -629,7 +629,7 @@ Pour la régression :
 
 ### `IPAD-L1-044` — Confinement des photos dans les pages
 
-- Commit : `COMMIT-PREVIEW-FIX`.
+- Commit : `394df8d`.
 - Préconditions : pages contenant des photos de formats portrait et paysage.
 - Étapes : afficher ces pages en modes Une page et Deux pages, naviguer, puis
   vérifier les bords et les coins de chaque feuille.
@@ -639,7 +639,7 @@ Pour la régression :
 
 ### `IPAD-L1-045` — Choix de couverture avec aperçu direct
 
-- Commit : `COMMIT-PREVIEW-FIX`.
+- Commit : `394df8d`.
 - Préconditions : album contenant au moins trois pages avec photos distinctes.
 - Étapes : ouvrir « Choisir la couverture », sélectionner successivement deux
   pages et vérifier l’aperçu et la carte ; confirmer que la feuille reste
@@ -650,7 +650,7 @@ Pour la régression :
 
 ### `IPAD-L1-046` — Miniatures de contenu des pages
 
-- Commit : `COMMIT-PREVIEW-FIX`.
+- Commit : `394df8d`.
 - Préconditions : plusieurs pages contenant des photos visuellement distinctes.
 - Étapes : ouvrir « Choisir la couverture » puis « Gérer les pages » ; comparer
   les miniatures, réorganiser deux pages et vérifier que le contenu permet
