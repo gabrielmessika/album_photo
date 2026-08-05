@@ -1,3 +1,4 @@
+import AlbumPhotoCore
 import Foundation
 import SwiftUI
 import UIKit

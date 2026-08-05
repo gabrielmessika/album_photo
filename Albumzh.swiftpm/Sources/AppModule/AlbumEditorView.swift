@@ -232,6 +232,9 @@ struct AlbumEditorView: View {
     }
 
     var body: some View {
+        let activePageHasMedia = model.album.pages[model.activePageIndex]
+            .mediaPlacement != nil
+
         VStack(spacing: 20) {
             Label("Mode édition", systemImage: "pencil")
                 .font(.subheadline.weight(.semibold))
@@ -257,10 +260,15 @@ struct AlbumEditorView: View {
 
             HStack {
                 PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                    Label(model.album.pages[model.activePageIndex].mediaPlacement == nil ? "Ajouter une photo" : "Remplacer la photo", systemImage: "photo.badge.plus")
+                    Label(
+                        activePageHasMedia ? "Remplacer la photo" : "Ajouter une photo",
+                        systemImage: "photo.badge.plus"
+                    )
                 }
-                if model.album.pages[model.activePageIndex].mediaPlacement != nil {
-                    Button("Supprimer la photo", role: .destructive) { Task { await model.removeMedia() } }
+                if activePageHasMedia {
+                    Button("Supprimer la photo", role: .destructive) {
+                        Task { await model.removeMedia() }
+                    }
                 }
             }
 

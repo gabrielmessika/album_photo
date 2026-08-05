@@ -88,9 +88,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `5deef95` | 🟢 `RÉUSSI` |
-| `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `394df8d` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `394df8d` | 🟠 `BLOQUÉ` |
+| `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | 🟠 `BLOQUÉ` |
+| `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | 🟠 `BLOQUÉ` |
+| `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `COMMIT-PREVIEW-COMPILE-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -635,7 +636,8 @@ Pour la régression :
   vérifier les bords et les coins de chaque feuille.
 - Résultat attendu : chaque photo remplit sa zone avec recadrage central sans
   dépasser du cadre ni recouvrir les pages voisines.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟠 `BLOQUÉ` le 4 août 2026 par les erreurs de compilation du
+  commit, avant exécution des étapes.
 
 ### `IPAD-L1-045` — Choix de couverture avec aperçu direct
 
@@ -646,7 +648,8 @@ Pour la régression :
   ouverte, puis toucher « Terminé » et vérifier la carte dans la grille.
 - Résultat attendu : chaque sélection met immédiatement à jour l’aperçu et la
   miniature ; seule l’action « Terminé » ferme la feuille.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟠 `BLOQUÉ` le 4 août 2026 par les erreurs de compilation du
+  commit, avant exécution des étapes.
 
 ### `IPAD-L1-046` — Miniatures de contenu des pages
 
@@ -657,6 +660,17 @@ Pour la régression :
   toujours de les reconnaître malgré la renumérotation.
 - Résultat attendu : les deux interfaces montrent le fond et la photo réels de
   chaque page dans une miniature identifiable.
+- Résultat : 🟠 `BLOQUÉ` le 4 août 2026 par les erreurs de compilation du
+  commit, avant exécution des étapes.
+
+### `IPAD-L1-047` — Régression compilation des aperçus
+
+- Commit : `COMMIT-PREVIEW-COMPILE-FIX`.
+- Préconditions : récupérer le commit dans Swift Playgrounds.
+- Étapes : compiler puis ouvrir un album, « Gérer les pages » et « Choisir la
+  couverture ».
+- Résultat attendu : aucune erreur d’isolation `MainActor`, le type `Page` est
+  résolu et `PageManagerView` est type-vérifiée dans le délai du compilateur.
 - Résultat : ⚪ `NON TESTÉ`.
 
 ### `IPAD-L1-033` — Couverture de repli des albums sans média

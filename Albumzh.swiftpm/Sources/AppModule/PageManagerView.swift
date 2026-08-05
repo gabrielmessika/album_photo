@@ -8,34 +8,19 @@ struct PageManagerView: View {
     let assetStore: MediaAssetStore
 
     var body: some View {
+        let pages = model.album.pages
+        let backgroundID = model.album.backgroundID
+        let activePageID = model.activePageID
+
         NavigationStack {
             List {
-                ForEach(Array(model.album.pages.enumerated()), id: \.element.id) {
-                    index,
-                    page in
-                    HStack(spacing: 16) {
-                        PageThumbnailView(
-                            page: page,
-                            backgroundID: model.album.backgroundID,
-                            assetStore: assetStore
-                        )
-                        .frame(width: 64, height: 80)
-
-                        Text("Page \(index + 1)")
-                            .font(.headline)
-
-                        if page.id == model.activePageID {
-                            Spacer()
-                            Text("Active")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(
-                        page.id == model.activePageID
-                            ? "Page \(index + 1), active"
-                            : "Page \(index + 1)"
+                ForEach(Array(pages.enumerated()), id: \.element.id) { index, page in
+                    PageManagerRow(
+                        page: page,
+                        pageNumber: index + 1,
+                        backgroundID: backgroundID,
+                        isActive: page.id == activePageID,
+                        assetStore: assetStore
                     )
                 }
                 .onMove { source, destination in
@@ -57,5 +42,38 @@ struct PageManagerView: View {
                 }
             }
         }
+    }
+}
+
+private struct PageManagerRow: View {
+    let page: Page
+    let pageNumber: Int
+    let backgroundID: String
+    let isActive: Bool
+    let assetStore: MediaAssetStore
+
+    var body: some View {
+        HStack(spacing: 16) {
+            PageThumbnailView(
+                page: page,
+                backgroundID: backgroundID,
+                assetStore: assetStore
+            )
+            .frame(width: 64, height: 80)
+
+            Text("Page \(pageNumber)")
+                .font(.headline)
+
+            if isActive {
+                Spacer()
+                Text("Active")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            isActive ? "Page \(pageNumber), active" : "Page \(pageNumber)"
+        )
     }
 }
