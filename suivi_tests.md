@@ -91,7 +91,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `394df8d` | 🟠 `BLOQUÉ` |
 | `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | 🟠 `BLOQUÉ` |
 | `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | 🟠 `BLOQUÉ` |
-| `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `COMMIT-PREVIEW-COMPILE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `c41e5f7` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -665,7 +665,7 @@ Pour la régression :
 
 ### `IPAD-L1-047` — Régression compilation des aperçus
 
-- Commit : `COMMIT-PREVIEW-COMPILE-FIX`.
+- Commit : `c41e5f7`.
 - Préconditions : récupérer le commit dans Swift Playgrounds.
 - Étapes : compiler puis ouvrir un album, « Gérer les pages » et « Choisir la
   couverture ».
