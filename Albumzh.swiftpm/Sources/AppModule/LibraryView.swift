@@ -41,6 +41,11 @@ final class LibraryViewModel {
         }
     }
 
+    func update(_ album: Album) {
+        guard let index = albums.firstIndex(where: { $0.id == album.id }) else { return }
+        albums[index] = album
+    }
+
     func createAlbum() async {
         do {
             _ = try await service.createAlbum(named: proposedName)
@@ -299,7 +304,12 @@ struct LibraryView: View {
                 Text(model.errorMessage ?? "")
             }
             .sheet(item: $model.albumChoosingCover) { album in
-                CoverPickerView(album: album, service: model.service, assetStore: assetStore)
+                CoverPickerView(
+                    album: album,
+                    service: model.service,
+                    assetStore: assetStore,
+                    onAlbumChanged: model.update
+                )
             }
         }
     }

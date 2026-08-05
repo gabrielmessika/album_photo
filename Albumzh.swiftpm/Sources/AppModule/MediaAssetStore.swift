@@ -23,3 +23,22 @@ struct StoredImageView: View {
         } else { Color.secondary.opacity(0.2) }
     }
 }
+
+struct PageThumbnailView: View {
+    let page: Page
+    let backgroundID: String
+    let assetStore: MediaAssetStore
+
+    var body: some View {
+        AlbumPageBackground(backgroundID: backgroundID)
+            .aspectRatio(4 / 5, contentMode: .fit)
+            .overlay {
+                if let assetID = page.mediaPlacement?.assetID {
+                    StoredImageView(assetID: assetID, store: assetStore)
+                        .padding(4)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}

@@ -34,9 +34,22 @@ struct AlbumCoverView: View {
 
 struct CoverPickerView: View {
     @Environment(\.dismiss) private var dismiss
-    let album: Album
+    @State private var album: Album
     let service: AlbumService
     let assetStore: MediaAssetStore
+    let onAlbumChanged: (Album) -> Void
+
+    init(
+        album: Album,
+        service: AlbumService,
+        assetStore: MediaAssetStore,
+        onAlbumChanged: @escaping (Album) -> Void
+    ) {
+        _album = State(initialValue: album)
+        self.service = service
+        self.assetStore = assetStore
+        self.onAlbumChanged = onAlbumChanged
+    }
 
     private var mediaPages: [(offset: Int, element: Page)] {
         Array(album.pages.enumerated()).filter { $0.element.mediaPlacement != nil }
@@ -64,8 +77,25 @@ struct CoverPickerView: View {
                         }
                         ForEach(mediaPages, id: \.element.id) { index, page in
                             if let assetID = page.mediaPlacement?.assetID {
-                                Button("Page \(index + 1)") {
+                                Button {
                                     choose(.pageMedia(pageID: page.id, assetID: assetID))
+                                } label: {
+                                    HStack {
+                                        PageThumbnailView(
+                                            page: page,
+                                            backgroundID: album.backgroundID,
+                                            assetStore: assetStore
+                                        )
+                                        .frame(width: 64, height: 80)
+                                        Text("Page \(index + 1)")
+                                        Spacer()
+                                        if album.coverSelection == .pageMedia(
+                                            pageID: page.id,
+                                            assetID: assetID
+                                        ) {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -75,15 +105,17 @@ struct CoverPickerView: View {
             .padding()
             .navigationTitle("Choisir la couverture")
             .toolbar {
-                Button("Fermer") { dismiss() }
+                Button("Terminé") { dismiss() }
             }
         }
     }
 
     private func choose(_ selection: CoverSelection) {
         Task {
-            _ = try? await service.changeCover(of: album.id, to: selection)
-            dismiss()
+            if let updated = try? await service.changeCover(of: album.id, to: selection) {
+                album = updated
+                onAlbumChanged(updated)
+            }
         }
     }
 }

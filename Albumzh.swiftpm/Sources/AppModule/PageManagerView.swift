@@ -5,6 +5,7 @@ struct PageManagerView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var editMode: EditMode = .active
     let model: AlbumEditorViewModel
+    let assetStore: MediaAssetStore
 
     var body: some View {
         NavigationStack {
@@ -13,10 +14,12 @@ struct PageManagerView: View {
                     index,
                     page in
                     HStack(spacing: 16) {
-                        AlbumPageBackground(
-                            backgroundID: model.album.backgroundID
+                        PageThumbnailView(
+                            page: page,
+                            backgroundID: model.album.backgroundID,
+                            assetStore: assetStore
                         )
-                        .frame(width: 44, height: 55)
+                        .frame(width: 64, height: 80)
 
                         Text("Page \(index + 1)")
                             .font(.headline)

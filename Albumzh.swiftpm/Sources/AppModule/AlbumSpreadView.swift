@@ -25,7 +25,13 @@ struct AlbumSpreadView: View {
                                 showsLeadingBinding: isClassic && pages.count == 1
                             )
                             .aspectRatio(4 / 5, contentMode: .fit)
-                            .overlay { if let assetID = page.mediaPlacement?.assetID { StoredImageView(assetID: assetID, store: assetStore).clipped().padding(12) } }
+                            .overlay {
+                                if let assetID = page.mediaPlacement?.assetID {
+                                    StoredImageView(assetID: assetID, store: assetStore)
+                                        .padding(12)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                }
+                            }
                             .overlay(alignment: .bottomTrailing) {
                                 Text("Page \(pageNumber)")
                                     .font(.caption.bold())
@@ -50,6 +56,7 @@ struct AlbumSpreadView: View {
                                     )
                             }
                             .shadow(radius: 3)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Page \(pageNumber)")

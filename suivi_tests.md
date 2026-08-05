@@ -82,12 +82,15 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-035` | Lot 1 | Suppression définitive depuis la corbeille | `ALB-018`, `ALB-019`, `ACPT-102` | `d5da50e` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-036` | Lot 1 | Régression suppression définitive | `ALB-018`, `ALB-019`, `ACPT-102` | `28d8c41` | 🟢 `RÉUSSI` |
 | `IPAD-L1-037` | Lot 1 | Compilation et régression médias | `LOT-001`, `ACPT-100` | `9472f8e` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-038` | Lot 1 | Import et persistance photo | `MED-001`, `MED-002`, `APL-001` à `APL-005` | `9472f8e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-039` | Lot 1 | Remplacement, suppression et annulation | `MED-003`, `MED-005` à `MED-008`, `UND-004` | `9472f8e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-040` | Lot 1 | Couverture automatique | `COV-001`, `COV-006` | `9472f8e` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-038` | Lot 1 | Import et persistance photo | `MED-001`, `MED-002`, `APL-001` à `APL-005` | `9472f8e` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-039` | Lot 1 | Remplacement, suppression et annulation | `MED-003`, `MED-005` à `MED-008`, `UND-004` | `9472f8e` | 🟢 `RÉUSSI` |
+| `IPAD-L1-040` | Lot 1 | Couverture automatique | `COV-001`, `COV-006` | `9472f8e` | 🟢 `RÉUSSI` |
+| `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `5deef95` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `5deef95` | 🟢 `RÉUSSI` |
+| `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `COMMIT-PREVIEW-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `COMMIT-PREVIEW-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `COMMIT-PREVIEW-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -569,7 +572,8 @@ Pour la régression :
   5. rouvrir l’album et vérifier les trois images sur leurs pages respectives.
 - Résultat attendu : chaque sélection est limitée à une image, copiée dans le
   stockage de l’application et disponible après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ` le 4 août 2026 : import, affectation et persistance
+  corrects, mais les photos dépassent du cadre de la page.
 
 ### `IPAD-L1-039` — Remplacement, suppression et annulation
 
@@ -585,7 +589,7 @@ Pour la régression :
   6. relancer l’application et vérifier le dernier état validé.
 - Résultat attendu : remplacement et suppression sont persistants et chacun
   constitue une action annulable sans supprimer la page.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 4 août 2026.
 
 ### `IPAD-L1-040` — Couverture automatique
 
@@ -600,7 +604,7 @@ Pour la régression :
   4. relancer l’application et contrôler la même couverture.
 - Résultat attendu : en mode automatique, le premier média selon l’ordre courant
   des pages est utilisé et persiste après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 4 août 2026.
 
 ### `IPAD-L1-041` — Couverture manuelle par occurrence
 
@@ -619,6 +623,40 @@ Pour la régression :
 - Résultat attendu : le choix manuel suit l’occurrence pendant la
   réorganisation, puis revient automatiquement au premier média lorsqu’elle est
   supprimée ; aucun import propre à la couverture n’est proposé.
+- Résultat : 🔴 `ÉCHOUÉ` le 4 août 2026 : la sélection est persistée, mais la
+  carte ne se rafraîchit qu’après un aller-retour dans l’album et la feuille se
+  ferme immédiatement.
+
+### `IPAD-L1-044` — Confinement des photos dans les pages
+
+- Commit : `COMMIT-PREVIEW-FIX`.
+- Préconditions : pages contenant des photos de formats portrait et paysage.
+- Étapes : afficher ces pages en modes Une page et Deux pages, naviguer, puis
+  vérifier les bords et les coins de chaque feuille.
+- Résultat attendu : chaque photo remplit sa zone avec recadrage central sans
+  dépasser du cadre ni recouvrir les pages voisines.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-045` — Choix de couverture avec aperçu direct
+
+- Commit : `COMMIT-PREVIEW-FIX`.
+- Préconditions : album contenant au moins trois pages avec photos distinctes.
+- Étapes : ouvrir « Choisir la couverture », sélectionner successivement deux
+  pages et vérifier l’aperçu et la carte ; confirmer que la feuille reste
+  ouverte, puis toucher « Terminé » et vérifier la carte dans la grille.
+- Résultat attendu : chaque sélection met immédiatement à jour l’aperçu et la
+  miniature ; seule l’action « Terminé » ferme la feuille.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-046` — Miniatures de contenu des pages
+
+- Commit : `COMMIT-PREVIEW-FIX`.
+- Préconditions : plusieurs pages contenant des photos visuellement distinctes.
+- Étapes : ouvrir « Choisir la couverture » puis « Gérer les pages » ; comparer
+  les miniatures, réorganiser deux pages et vérifier que le contenu permet
+  toujours de les reconnaître malgré la renumérotation.
+- Résultat attendu : les deux interfaces montrent le fond et la photo réels de
+  chaque page dans une miniature identifiable.
 - Résultat : ⚪ `NON TESTÉ`.
 
 ### `IPAD-L1-033` — Couverture de repli des albums sans média

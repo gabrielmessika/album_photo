@@ -326,7 +326,7 @@ struct AlbumEditorView: View {
             }
         }
         .sheet(isPresented: $model.isShowingPageManager) {
-            PageManagerView(model: model)
+            PageManagerView(model: model, assetStore: assetStore)
         }
         .sheet(isPresented: $model.isShowingBackgrounds) {
             BackgroundPickerView(model: model)

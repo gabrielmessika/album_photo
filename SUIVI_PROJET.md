@@ -24,7 +24,7 @@ dépôt, conformément à [`AGENTS.md`](AGENTS.md).
 | Distribution | App Store Connect et TestFlight |
 | Version publique visée en premier | `1.0` |
 | Phase courante | Lot 1 démarré par un incrément `ACPT-100` ; sorties du lot 0 encore incomplètes |
-| Dernière mise à jour | 3 août 2026 |
+| Dernière mise à jour | 4 août 2026 |
 | Dernier auteur du suivi | Codex |
 
 ## Légende des états
@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Import photo local implémenté ; erreur de portée des modificateurs dans la couverture corrigée localement | Exécuter `IPAD-L1-043`, puis `038` à `041` |
+| Lot 1 — Création locale | 🟡 En cours | Import et couvertures fonctionnels ; confinement, rafraîchissement direct et miniatures de pages corrigés localement | Exécuter `IPAD-L1-044` à `046` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -406,14 +406,16 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-005` | `BG-002`, `BG-009`, `PAG-003` | Moyenne | 🟢 Corrigée | Contraste et miniature adaptative validés après correction des dimensions internes des anneaux | `IPAD-L1-018`, `024`, `026`, régressions réussies `028`, `029` |
 | `ANO-006` | `NAV-004` à `NAV-006`, `DSP-010` | Élevée | 🟢 Corrigée | Fiabilité, portée, groupement et convention gauche-suivant/droite-précédent validés sur iPad | `IPAD-L1-023`, `027`, régressions réussies `030`, `031` |
 | `ANO-007` | `ALB-018`, `ALB-019`, `ACPT-102` | Élevée | 🟢 Corrigée | Cible et visibilité de confirmation séparées, suppression définitive validée | `IPAD-L1-035`, régression réussie `036` |
-| `ANO-008` | `LOT-001`, `APL-001` | Élevée | 🟡 Correctif à valider | Le modificateur `background` était hors de la branche `Text` dans `AlbumCoverView` ; portée corrigée après diagnostic iPad | `IPAD-L1-037`, `042`, régression `043` |
+| `ANO-008` | `LOT-001`, `APL-001` | Élevée | 🟢 Corrigée | Le modificateur `background` était hors de la branche `Text` dans `AlbumCoverView` ; portée corrigée et compilation validée | `IPAD-L1-037`, `042`, régression réussie `043` |
+| `ANO-009` | `MED-001`, `CRP-001`, `CRP-006` | Élevée | 🟡 Correctif à valider | Les photos débordaient des feuilles ; masque arrondi appliqué après mise en page du média | `IPAD-L1-038`, régression `044` |
+| `ANO-010` | `ALB-002`, `COV-003`, `PAG-003` | Moyenne | 🟡 Correctif à valider | Choix manuel sans rafraîchissement immédiat et listes indifférenciées ; état local et miniatures réelles ajoutés | `IPAD-L1-041`, régressions `045`, `046` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter `IPAD-L1-043`, puis `IPAD-L1-038` à `041` si la compilation réussit.
+1. Exécuter `IPAD-L1-044` à `046` sur le commit indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -434,6 +436,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-04 | Codex | Enregistrement de `038` à `041` ; confinement des photos, sélection de couverture non fermante avec rafraîchissement direct et miniatures réelles dans les deux listes de pages | `MED-001`, `CRP-001`, `CRP-006`, `ALB-002`, `COV-003`, `PAG-003` | `043`, `039`, `040` RÉUSSIS ; `038`, `041` ÉCHOUÉS ; analyse SwiftUI et 22 tests Linux réussis ; `044` à `046` NON TESTÉS |
 | 2026-08-03 | Codex | Correction de la portée de `.background` et `.padding` dans la branche texte de `AlbumCoverView` après diagnostic Swift Playgrounds | `LOT-001`, `APL-001`, groupe média | Commit `5deef95` ; `042` ÉCHOUÉ avec diagnostic exact ; analyse SwiftUI et 22 tests Linux réussis ; `043` NON TESTÉ |
 | 2026-08-03 | Codex | Enregistrement de l’échec de compilation du groupe média ; ajout de l’import UIKit requis par `UIImage` et simplification du sélecteur de couverture | `LOT-001`, `APL-001`, groupe média | Commit `a389d8a` ; `037` ÉCHOUÉ sans diagnostic exact ; analyse SwiftUI et 22 tests Linux réussis ; `042` NON TESTÉ |
 | 2026-08-03 | Codex | Décomposition de la campagne photo/couverture en cinq fiches manuelles complètes avec préconditions, étapes et résultats attendus | `TST-009` à `TST-016`, `IPAD-L1-037` à `041` | Relecture et `git diff --check` ; changement documentaire uniquement, tests applicatifs inchangés |
