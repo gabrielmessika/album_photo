@@ -92,11 +92,11 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `c41e5f7` | 🟢 `RÉUSSI` |
-| `IPAD-L1-048` | Lot 1 | Compilation et régression cadrage | `LOT-001`, `CRP-001`, `CRP-004` à `CRP-010` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-049` | Lot 1 | Zoom et déplacement normalisés | `CRP-001`, `CRP-004` à `CRP-006`, `CRP-009` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-050` | Lot 1 | Annulation et réinitialisation du cadrage | `CRP-007`, `CRP-008`, `CRP-010` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-051` | Lot 1 | Persistance et Annuler/Rétablir du cadrage | `APP-005`, `CRP-009`, `CRP-010`, `UND-004` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-052` | Lot 1 | Cadrage cohérent dans les miniatures | `ALB-002`, `COV-007`, `PAG-003` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-048` | Lot 1 | Compilation et régression cadrage | `LOT-001`, `CRP-001`, `CRP-004` à `CRP-010` | `53e0597` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-049` | Lot 1 | Zoom et déplacement normalisés | `CRP-001`, `CRP-004` à `CRP-006`, `CRP-009` | `53e0597` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-050` | Lot 1 | Annulation et réinitialisation du cadrage | `CRP-007`, `CRP-008`, `CRP-010` | `53e0597` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-051` | Lot 1 | Persistance et Annuler/Rétablir du cadrage | `APP-005`, `CRP-009`, `CRP-010`, `UND-004` | `53e0597` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-052` | Lot 1 | Cadrage cohérent dans les miniatures | `ALB-002`, `COV-007`, `PAG-003` | `53e0597` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -742,7 +742,7 @@ Pour la régression :
 
 ### `IPAD-L1-048` — Compilation et régression cadrage
 
-- Commit : `COMMIT-CROP`.
+- Commit : `53e0597`.
 - Préconditions : récupérer le commit et conserver un album avec photos.
 - Étapes : compiler, ouvrir l’album, naviguer en modes Une/Deux pages et ouvrir
   les interfaces de pages et de couverture.
@@ -752,7 +752,7 @@ Pour la régression :
 
 ### `IPAD-L1-049` — Zoom et déplacement normalisés
 
-- Commit : `COMMIT-CROP`.
+- Commit : `53e0597`.
 - Préconditions : sélectionner une page avec une photo reconnaissable.
 - Étapes : toucher « Recadrer », régler successivement le zoom à 1, environ 4
   puis 8, déplacer horizontalement et verticalement aux deux extrémités, puis
@@ -764,7 +764,7 @@ Pour la régression :
 
 ### `IPAD-L1-050` — Annulation et réinitialisation du cadrage
 
-- Commit : `COMMIT-CROP`.
+- Commit : `53e0597`.
 - Préconditions : photo possédant déjà un cadrage distinctif.
 - Étapes : modifier les trois réglages puis toucher « Annuler » et vérifier
   l’ancien cadrage ; rouvrir, toucher « Réinitialiser », vérifier zoom 1 et
@@ -775,7 +775,7 @@ Pour la régression :
 
 ### `IPAD-L1-051` — Persistance et Annuler/Rétablir du cadrage
 
-- Commit : `COMMIT-CROP`.
+- Commit : `53e0597`.
 - Préconditions : cadrage initial centré.
 - Étapes : valider un cadrage distinct, utiliser Annuler puis Rétablir dans
   l’éditeur, fermer complètement l’application après Rétablir et la relancer.
@@ -785,7 +785,7 @@ Pour la régression :
 
 ### `IPAD-L1-052` — Cadrage cohérent dans les miniatures
 
-- Commit : `COMMIT-CROP`.
+- Commit : `53e0597`.
 - Préconditions : cadrage très identifiable validé sur une photo utilisée en
   couverture.
 - Étapes : comparer la page, « Gérer les pages », « Choisir la couverture » et
