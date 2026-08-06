@@ -13,13 +13,16 @@ final class MediaAssetStore: @unchecked Sendable {
         return id
     }
     func url(for id: UUID) -> URL { directory.appendingPathComponent(id.uuidString) }
+    func image(for id: UUID) -> UIImage? {
+        UIImage(contentsOfFile: url(for: id).path)
+    }
 }
 
 struct StoredImageView: View {
     let assetID: UUID
     let store: MediaAssetStore
     var body: some View {
-        if let image = UIImage(contentsOfFile: store.url(for: assetID).path) {
+        if let image = store.image(for: assetID) {
             Image(uiImage: image).resizable().scaledToFill()
         } else { Color.secondary.opacity(0.2) }
     }
@@ -31,17 +34,33 @@ struct PlacedMediaView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            StoredImageView(assetID: placement.assetID, store: store)
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .scaleEffect(placement.normalizedScale)
-                .offset(
-                    x: placement.normalizedOffsetX
-                        * geometry.size.width * 0.2
-                        * (placement.normalizedScale - 1),
-                    y: placement.normalizedOffsetY
-                        * geometry.size.height * 0.2
-                        * (placement.normalizedScale - 1)
-                )
+            if let image = store.image(for: placement.assetID) {
+                let frameSize = geometry.size
+                let imageRatio = image.size.width / max(1, image.size.height)
+                let frameRatio = frameSize.width / max(1, frameSize.height)
+                let baseWidth = imageRatio > frameRatio
+                    ? frameSize.height * imageRatio
+                    : frameSize.width
+                let baseHeight = imageRatio > frameRatio
+                    ? frameSize.height
+                    : frameSize.width / max(0.001, imageRatio)
+                let renderedWidth = baseWidth * placement.normalizedScale
+                let renderedHeight = baseHeight * placement.normalizedScale
+                let maximumX = max(0, (renderedWidth - frameSize.width) / 2)
+                let maximumY = max(0, (renderedHeight - frameSize.height) / 2)
+
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: frameSize.width, height: frameSize.height)
+                    .scaleEffect(placement.normalizedScale)
+                    .offset(
+                        x: placement.normalizedOffsetX * maximumX,
+                        y: placement.normalizedOffsetY * maximumY
+                    )
+            } else {
+                Color.secondary.opacity(0.2)
+            }
         }
         .clipped()
     }

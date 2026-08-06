@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Persistance du cadrage validée ; interface remplacée par pincement/glissement directement dans la page | Exécuter `IPAD-L1-053` à `056` |
+| Lot 1 — Création locale | 🟡 En cours | Cadrage gestuel validé ; correctif local pour réactivation de la navigation et déplacement borné à 1× | Exécuter `IPAD-L1-057` et `058` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -410,14 +410,15 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-009` | `MED-001`, `CRP-001`, `CRP-006` | Élevée | 🟢 Corrigée | Les photos débordaient des feuilles ; confinement après mise en page validé sur iPad | `IPAD-L1-038`, régression réussie `044` |
 | `ANO-010` | `ALB-002`, `COV-003`, `PAG-003` | Moyenne | 🟢 Corrigée | Rafraîchissement direct et miniatures réelles des pages validés dans les deux interfaces | `IPAD-L1-041`, régressions réussies `045`, `046` |
 | `ANO-011` | `LOT-001`, `PAG-003`, `APL-001` | Élevée | 🟢 Corrigée | Import du domaine, isolation et complexité de `PageManagerView` corrigés et compilés sur iPad | `IPAD-L1-044` à `047` réussis |
-| `ANO-012` | `CRP-002`, `CRP-003`, ergonomie | Moyenne | 🟡 Correctif à valider | Feuille à curseurs fonctionnelle mais non intuitive ; remplacée par pincement et glissement directement sur la page | `IPAD-L1-049`, régressions `053` à `056` |
+| `ANO-012` | `CRP-002`, `CRP-003`, ergonomie | Moyenne | 🟢 Corrigée | Feuille supprimée ; pincement, glissement et commandes intégrées validés, la régression de navigation est suivie séparément | `IPAD-L1-049`, régressions `053` à `056` |
+| `ANO-013` | `NAV-004` à `NAV-006`, `CRP-003`, `CRP-006` | Élevée | 🟡 Correctif à valider | Les reconnaisseurs de recadrage restaient actifs hors du mode et bloquaient la navigation ; masque gestuel conditionnel et calcul du débordement réel ajoutés | `IPAD-L1-055`, régressions `057`, `058` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter `IPAD-L1-053` à `056` sur le commit indiqué dans `suivi_tests.md`.
+1. Exécuter `IPAD-L1-057` et `058` sur le commit indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -438,6 +439,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-05 | Codex | Validation du cadrage intégré ; désactivation réelle de ses reconnaisseurs hors du mode et calcul du débordement d’image pour déplacer à 1× sans révéler de vide | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007`, `NAV-004` à `NAV-006` | `053`, `054`, `056` RÉUSSIS ; `055` ÉCHOUÉ ; analyse SwiftUI et 23 tests Linux réussis ; `057`, `058` NON TESTÉS |
 | 2026-08-05 | Codex | Validation du modèle de cadrage et remplacement de la feuille à curseurs par un mode intégré : pincement, glissement, Annuler, Réinitialiser et Terminé directement autour de la page | `CRP-001` à `CRP-010`, `NAV-005`, `UND-004` | Commit `9a87ae9` ; `048`, `050` à `052` RÉUSSIS ; `049` ÉCHOUÉ sur ergonomie ; analyse SwiftUI et 23 tests Linux réussis ; `053` à `056` NON TESTÉS |
 | 2026-08-05 | Codex | Groupe cadrage : modèle rétrocompatible avec zoom et offsets normalisés, éditeur avec aperçu, réglages, réinitialisation, Annuler/Terminé, persistance et pile d’annulation | `CRP-001`, `CRP-004` à `CRP-010`, `DAT-006`, `DAT-007`, `APP-005`, `UND-004` | Commit `53e0597` ; analyse SwiftUI et 23 tests Linux réussis ; gestes directs `CRP-002`, `CRP-003` encore absents ; `IPAD-L1-048` à `052` NON TESTÉS |
 | 2026-08-05 | Codex | Validation des aperçus et de leur compilation ; remise en ordre numérique des fiches détaillées `032` à `047` | `MED-001`, `CRP-001`, `CRP-006`, `ALB-002`, `COV-003`, `PAG-003`, suivi manuel | `IPAD-L1-044` à `047` RÉUSSIS sur iPad ; relecture de l’ordre et `git diff --check` |

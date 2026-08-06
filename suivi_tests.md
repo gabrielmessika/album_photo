@@ -97,10 +97,12 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-050` | Lot 1 | Annulation et réinitialisation du cadrage | `CRP-007`, `CRP-008`, `CRP-010` | `53e0597` | 🟢 `RÉUSSI` |
 | `IPAD-L1-051` | Lot 1 | Persistance et Annuler/Rétablir du cadrage | `APP-005`, `CRP-009`, `CRP-010`, `UND-004` | `53e0597` | 🟢 `RÉUSSI` |
 | `IPAD-L1-052` | Lot 1 | Cadrage cohérent dans les miniatures | `ALB-002`, `COV-007`, `PAG-003` | `53e0597` | 🟢 `RÉUSSI` |
-| `IPAD-L1-053` | Lot 1 | Compilation du cadrage intégré | `LOT-001`, `CRP-002`, `CRP-003` | `9a87ae9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-054` | Lot 1 | Zoom direct par pincement | `CRP-002`, `CRP-004` à `CRP-006` | `9a87ae9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-055` | Lot 1 | Déplacement direct et priorité des gestes | `CRP-003`, `CRP-006`, `NAV-005` | `9a87ae9` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `9a87ae9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-053` | Lot 1 | Compilation du cadrage intégré | `LOT-001`, `CRP-002`, `CRP-003` | `9a87ae9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-054` | Lot 1 | Zoom direct par pincement | `CRP-002`, `CRP-004` à `CRP-006` | `9a87ae9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-055` | Lot 1 | Déplacement direct et priorité des gestes | `CRP-003`, `CRP-006`, `NAV-005` | `9a87ae9` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `9a87ae9` | 🟢 `RÉUSSI` |
+| `IPAD-L1-057` | Lot 1 | Restauration des gestes de navigation | `NAV-004` à `NAV-006` | `COMMIT-CROP-GESTURE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-058` | Lot 1 | Déplacement borné sans zoom | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007` | `COMMIT-CROP-GESTURE-FIX` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -807,7 +809,7 @@ Pour la régression :
 - Étapes : compiler, ouvrir la page, activer puis quitter le mode « Recadrer ».
 - Résultat attendu : aucune feuille n’est présentée et les commandes intégrées
   apparaissent sous la page sans régression de navigation.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
 
 ### `IPAD-L1-054` — Zoom direct par pincement
 
@@ -817,7 +819,7 @@ Pour la régression :
   bornes minimale et maximale, puis valider.
 - Résultat attendu : la photo suit les doigts, reste entre 1× et 8× et aucune
   zone vide ne devient visible.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
 
 ### `IPAD-L1-055` — Déplacement direct et priorité des gestes
 
@@ -828,7 +830,8 @@ Pour la régression :
   gestes de navigation redeviennent disponibles.
 - Résultat attendu : le média se déplace uniquement dans son cadre pendant le
   recadrage et le geste de navigation est temporairement désactivé.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ` le 5 août 2026 : le cadrage gestuel fonctionne, mais
+  les balayages de navigation ne fonctionnent plus après avoir quitté ce mode.
 
 ### `IPAD-L1-056` — Validation intégrée comme action unique
 
@@ -838,4 +841,28 @@ Pour la régression :
   Terminé ; utiliser ensuite Annuler/Rétablir dans l’éditeur et relancer.
 - Résultat attendu : Annuler abandonne le brouillon, Réinitialiser centre la
   photo, Terminé crée une seule action et le résultat persiste.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
+
+### `IPAD-L1-057` — Restauration des gestes de navigation
+
+- Commit : `COMMIT-CROP-GESTURE-FIX`.
+- Préconditions : album de plusieurs pages avec une photo.
+- Étapes : vérifier les balayages dans les deux sens, entrer dans Recadrer,
+  déplacer et zoomer, quitter par Annuler puis recommencer avec Terminé ; après
+  chaque sortie, balayer de nouveau dans les deux sens et en modes Une/Deux
+  pages.
+- Résultat attendu : les gestes de recadrage sont réellement désactivés hors du
+  mode et la navigation redevient immédiatement opérationnelle.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-058` — Déplacement borné sans zoom
+
+- Commit : `COMMIT-CROP-GESTURE-FIX`.
+- Préconditions : utiliser une photo paysage dans une page portrait, puis une
+  photo portrait dans un cadre plus large.
+- Étapes : à zoom 1×, glisser chaque photo sur l’axe où elle déborde jusqu’aux
+  deux extrémités ; valider et comparer la page et ses miniatures.
+- Résultat attendu : le contenu peut être repositionné sans zoom sur son axe de
+  débordement, tout ce qui sort est masqué et aucune zone vide n’apparaît ; un
+  axe sans débordement reste centré.
 - Résultat : ⚪ `NON TESTÉ`.

@@ -80,7 +80,8 @@ struct AlbumSpreadView: View {
                                         scale: (cropStartScale ?? 1) * value.magnification
                                     )
                                 }
-                                .onEnded { _ in cropStartScale = nil }
+                                .onEnded { _ in cropStartScale = nil },
+                            including: model.isCropping ? .all : .none
                         )
                         .simultaneousGesture(
                             DragGesture(minimumDistance: 1)
@@ -92,8 +93,8 @@ struct AlbumSpreadView: View {
                                         cropStartOffsetX = draft.normalizedOffsetX
                                         cropStartOffsetY = draft.normalizedOffsetY
                                     }
-                                    let width = max(1, geometry.size.width * 0.2)
-                                    let height = max(1, geometry.size.height * 0.2)
+                                    let width = max(1, geometry.size.width * 0.35)
+                                    let height = max(1, geometry.size.height * 0.35)
                                     model.updateCrop(
                                         offsetX: (cropStartOffsetX ?? 0)
                                             + value.translation.width / width,
@@ -104,7 +105,8 @@ struct AlbumSpreadView: View {
                                 .onEnded { _ in
                                     cropStartOffsetX = nil
                                     cropStartOffsetY = nil
-                                }
+                                },
+                            including: model.isCropping ? .all : .none
                         )
                     }
                 }
