@@ -97,10 +97,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-050` | Lot 1 | Annulation et réinitialisation du cadrage | `CRP-007`, `CRP-008`, `CRP-010` | `53e0597` | 🟢 `RÉUSSI` |
 | `IPAD-L1-051` | Lot 1 | Persistance et Annuler/Rétablir du cadrage | `APP-005`, `CRP-009`, `CRP-010`, `UND-004` | `53e0597` | 🟢 `RÉUSSI` |
 | `IPAD-L1-052` | Lot 1 | Cadrage cohérent dans les miniatures | `ALB-002`, `COV-007`, `PAG-003` | `53e0597` | 🟢 `RÉUSSI` |
-| `IPAD-L1-053` | Lot 1 | Compilation du cadrage intégré | `LOT-001`, `CRP-002`, `CRP-003` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-054` | Lot 1 | Zoom direct par pincement | `CRP-002`, `CRP-004` à `CRP-006` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-055` | Lot 1 | Déplacement direct et priorité des gestes | `CRP-003`, `CRP-006`, `NAV-005` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-053` | Lot 1 | Compilation du cadrage intégré | `LOT-001`, `CRP-002`, `CRP-003` | `9a87ae9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-054` | Lot 1 | Zoom direct par pincement | `CRP-002`, `CRP-004` à `CRP-006` | `9a87ae9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-055` | Lot 1 | Déplacement direct et priorité des gestes | `CRP-003`, `CRP-006`, `NAV-005` | `9a87ae9` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `9a87ae9` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -802,7 +802,7 @@ Pour la régression :
 
 ### `IPAD-L1-053` — Compilation du cadrage intégré
 
-- Commit : `COMMIT-INLINE-CROP`.
+- Commit : `9a87ae9`.
 - Préconditions : récupérer le commit et conserver une page avec photo.
 - Étapes : compiler, ouvrir la page, activer puis quitter le mode « Recadrer ».
 - Résultat attendu : aucune feuille n’est présentée et les commandes intégrées
@@ -811,7 +811,7 @@ Pour la régression :
 
 ### `IPAD-L1-054` — Zoom direct par pincement
 
-- Commit : `COMMIT-INLINE-CROP`.
+- Commit : `9a87ae9`.
 - Préconditions : activer « Recadrer » sur une photo reconnaissable.
 - Étapes : pincer directement la photo pour agrandir et réduire, essayer les
   bornes minimale et maximale, puis valider.
@@ -821,7 +821,7 @@ Pour la régression :
 
 ### `IPAD-L1-055` — Déplacement direct et priorité des gestes
 
-- Commit : `COMMIT-INLINE-CROP`.
+- Commit : `9a87ae9`.
 - Préconditions : zoomer la photo en mode Recadrer.
 - Étapes : glisser la photo horizontalement, verticalement et en diagonale ;
   vérifier qu’aucun geste ne change de page ; terminer puis vérifier que les
@@ -832,7 +832,7 @@ Pour la régression :
 
 ### `IPAD-L1-056` — Validation intégrée comme action unique
 
-- Commit : `COMMIT-INLINE-CROP`.
+- Commit : `9a87ae9`.
 - Préconditions : cadrage existant distinctif.
 - Étapes : modifier par gestes puis Annuler ; recommencer, Réinitialiser et
   Terminé ; utiliser ensuite Annuler/Rétablir dans l’éditeur et relancer.
