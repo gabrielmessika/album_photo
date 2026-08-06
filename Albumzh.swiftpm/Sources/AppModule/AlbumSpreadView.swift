@@ -24,9 +24,7 @@ struct AlbumSpreadView: View {
                             && page.id == model.activePageID
                             ? model.cropDraft
                             : page.mediaPlacement
-                        Button {
-                            model.activePageID = page.id
-                        } label: {
+                        ZStack(alignment: .topTrailing) {
                             AlbumPageBackground(
                                 backgroundID: model.album.backgroundID,
                                 showsLeadingBinding: isClassic && pages.count == 1
@@ -64,8 +62,31 @@ struct AlbumSpreadView: View {
                             }
                             .shadow(radius: 3)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                            if !model.isCropping && page.mediaPlacement != nil {
+                                Button("Recadrer page \(pageNumber)", systemImage: "crop") {
+                                    model.beginCropping(pageID: page.id)
+                                }
+                                .labelStyle(.iconOnly)
+                                .buttonStyle(.borderedProminent)
+                                .padding(10)
+                            }
+
+                            if model.isCropping && page.id == model.activePageID {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(
+                                        Color.yellow,
+                                        style: StrokeStyle(lineWidth: 2, dash: [7, 5])
+                                    )
+                                    .padding(12)
+                                    .allowsHitTesting(false)
+                            }
                         }
-                        .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            guard !model.isCropping else { return }
+                            model.activePageID = page.id
+                        }
                         .accessibilityLabel("Page \(pageNumber)")
                         .simultaneousGesture(
                             MagnifyGesture()

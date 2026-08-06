@@ -39,20 +39,29 @@ struct PlacedMediaView: View {
                 let imageRatio = image.size.width / max(1, image.size.height)
                 let frameRatio = frameSize.width / max(1, frameSize.height)
                 let baseWidth = imageRatio > frameRatio
-                    ? frameSize.height * imageRatio
-                    : frameSize.width
+                    ? frameSize.width
+                    : frameSize.height * imageRatio
                 let baseHeight = imageRatio > frameRatio
-                    ? frameSize.height
-                    : frameSize.width / max(0.001, imageRatio)
+                    ? frameSize.width / max(0.001, imageRatio)
+                    : frameSize.height
                 let renderedWidth = baseWidth * placement.normalizedScale
                 let renderedHeight = baseHeight * placement.normalizedScale
-                let maximumX = max(0, (renderedWidth - frameSize.width) / 2)
-                let maximumY = max(0, (renderedHeight - frameSize.height) / 2)
+                let minimumVisibleWidth = min(renderedWidth, frameSize.width) * 0.2
+                let minimumVisibleHeight = min(renderedHeight, frameSize.height) * 0.2
+                let maximumX = max(
+                    0,
+                    (frameSize.width + renderedWidth) / 2 - minimumVisibleWidth
+                )
+                let maximumY = max(
+                    0,
+                    (frameSize.height + renderedHeight) / 2 - minimumVisibleHeight
+                )
 
                 Image(uiImage: image)
                     .resizable()
-                    .scaledToFill()
-                    .frame(width: frameSize.width, height: frameSize.height)
+                    .scaledToFit()
+                    .frame(width: baseWidth, height: baseHeight)
+                    .position(x: frameSize.width / 2, y: frameSize.height / 2)
                     .scaleEffect(placement.normalizedScale)
                     .offset(
                         x: placement.normalizedOffsetX * maximumX,

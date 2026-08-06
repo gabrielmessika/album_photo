@@ -101,8 +101,12 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-054` | Lot 1 | Zoom direct par pincement | `CRP-002`, `CRP-004` à `CRP-006` | `9a87ae9` | 🟢 `RÉUSSI` |
 | `IPAD-L1-055` | Lot 1 | Déplacement direct et priorité des gestes | `CRP-003`, `CRP-006`, `NAV-005` | `9a87ae9` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `9a87ae9` | 🟢 `RÉUSSI` |
-| `IPAD-L1-057` | Lot 1 | Restauration des gestes de navigation | `NAV-004` à `NAV-006` | `8190bca` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-058` | Lot 1 | Déplacement borné sans zoom | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007` | `8190bca` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-057` | Lot 1 | Restauration des gestes de navigation | `NAV-004` à `NAV-006` | `8190bca` | 🟢 `RÉUSSI` |
+| `IPAD-L1-058` | Lot 1 | Déplacement borné sans zoom | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007` | `8190bca` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-059` | Lot 1 | Ciblage du recadrage en double page | `CRP-002`, `CRP-003`, `DSP-010` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-060` | Lot 1 | Image entière au zoom 1× | `CRP-001`, `CRP-004`, `CRP-006` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-061` | Lot 1 | Masque visible et déplacement hors cadre | `CRP-003`, `CRP-006`, `DAT-007` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-062` | Lot 1 | Cohérence du nouveau cadrage | `ALB-002`, `COV-007`, `PAG-003`, `APP-005` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -853,7 +857,7 @@ Pour la régression :
   pages.
 - Résultat attendu : les gestes de recadrage sont réellement désactivés hors du
   mode et la navigation redevient immédiatement opérationnelle.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
 
 ### `IPAD-L1-058` — Déplacement borné sans zoom
 
@@ -865,4 +869,48 @@ Pour la régression :
 - Résultat attendu : le contenu peut être repositionné sans zoom sur son axe de
   débordement, tout ce qui sort est masqué et aucune zone vide n’apparaît ; un
   axe sans débordement reste centré.
+- Résultat : 🔴 `ÉCHOUÉ` le 5 août 2026 : à 1×, l’image reste centrée et
+  recadrée au lieu d’être affichée entièrement ; la page gauche d’une double
+  page ne peut pas être ciblée correctement.
+
+### `IPAD-L1-059` — Ciblage du recadrage en double page
+
+- Commit : `COMMIT-FRAME-CROP`.
+- Préconditions : deux pages visibles contenant chacune une photo distincte.
+- Étapes : utiliser l’icône Recadrer de la page gauche, modifier et valider ;
+  vérifier que seule la gauche change, puis répéter indépendamment à droite.
+- Résultat attendu : chaque commande cible explicitement sa page et les deux
+  cadrages sont indépendants.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-060` — Image entière au zoom 1×
+
+- Commit : `COMMIT-FRAME-CROP`.
+- Préconditions : photos paysage, portrait et carrée.
+- Étapes : ouvrir chaque photo en recadrage, toucher Réinitialiser et observer
+  le rendu 1× dans le cadre en pointillés.
+- Résultat attendu : l’image entière est visible, centrée et non déformée ; le
+  fond de page apparaît lorsque les proportions diffèrent.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-061` — Masque visible et déplacement hors cadre
+
+- Commit : `COMMIT-FRAME-CROP`.
+- Préconditions : image entière visible à 1×.
+- Étapes : glisser l’image dans toutes les directions sans zoomer, puis avec un
+  zoom ; observer les limites du cadre pointillé et valider plusieurs positions.
+- Résultat attendu : l’image peut sortir partiellement du cadre, ses parties
+  extérieures sont toujours masquées et le cadre reste visible pendant
+  l’édition.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-062` — Cohérence du nouveau cadrage
+
+- Commit : `COMMIT-FRAME-CROP`.
+- Préconditions : valider un cadrage distinct sur une photo utilisée en
+  couverture.
+- Étapes : comparer page, gestion des pages, choix de couverture et carte de
+  bibliothèque ; relancer l’application puis vérifier Annuler/Rétablir.
+- Résultat attendu : le même masque et la même position sont rendus partout et
+  persistent sans modifier l’original.
 - Résultat : ⚪ `NON TESTÉ`.

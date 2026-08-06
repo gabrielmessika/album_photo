@@ -585,12 +585,12 @@ Le catalogue initial est :
 
 | ID | Exigence |
 |---|---|
-| `CRP-001` | Le média DOIT remplir entièrement le cadre. |
+| `CRP-001` | Au zoom `1×`, le média DOIT être affiché entièrement et centré dans le cadre, sans déformation ; le fond de page PEUT rester visible lorsque les proportions diffèrent. |
 | `CRP-002` | L’utilisateur DOIT pouvoir zoomer avec un pincement. |
 | `CRP-003` | L’utilisateur DOIT pouvoir déplacer le média dans le cadre. |
-| `CRP-004` | Le zoom minimal DOIT être la valeur qui couvre entièrement le cadre. |
+| `CRP-004` | Le zoom minimal `1×` DOIT être la valeur qui contient entièrement le média dans le cadre. |
 | `CRP-005` | Le zoom maximal DOIT être égal à huit fois le zoom minimal. |
-| `CRP-006` | Les zones vides ne doivent jamais apparaître dans le cadre après validation. |
+| `CRP-006` | Le cadre DOIT masquer toute partie du média qui en sort. Une zone du cadre non couverte par le média DOIT laisser voir le fond de page et NE DOIT PAS afficher de pixels extérieurs au cadre. |
 | `CRP-007` | Une action Réinitialiser DOIT restaurer un cadrage centré. |
 | `CRP-008` | Le fichier original importé NE DOIT PAS être modifié. |
 | `CRP-009` | Le zoom et le déplacement DOIVENT être enregistrés sous forme normalisée. |
@@ -1483,7 +1483,7 @@ struct MediaPlacement: Codable, Sendable {
 }
 ```
 
-`DAT-006` — `normalizedScale` DOIT être le rapport entre le zoom courant et le zoom minimal remplissant entièrement le cadre. Sa valeur validée est comprise entre `1` et `8`.
+`DAT-006` — `normalizedScale` DOIT être le rapport entre le zoom courant et le zoom minimal affichant entièrement le média dans le cadre. Sa valeur validée est comprise entre `1` et `8`.
 
 `DAT-007` — Les offsets DOIVENT être compris entre `-1` et `1` et représenter la position dans le débordement disponible sur chaque axe : `-1` aligne le bord initial, `0` centre et `1` aligne le bord final. Lorsqu’aucun débordement n’existe sur un axe, son offset DOIT être `0`.
 

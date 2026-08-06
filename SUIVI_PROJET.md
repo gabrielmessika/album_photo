@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Cadrage gestuel validé ; correctif local pour réactivation de la navigation et déplacement borné à 1× | Exécuter `IPAD-L1-057` et `058` |
+| Lot 1 — Création locale | 🟡 En cours | Navigation restaurée ; cadrage revu avec cible par page, image entière à 1× et masque visible | Exécuter `IPAD-L1-059` à `062` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -347,6 +347,7 @@ Les décisions d’architecture détaillées devront être créées dans
 | `ADR-PROJ-004` | 2026-07-27 | Aucun contournement par API privée n’est autorisé | Acceptée |
 | `ADR-PROJ-005` | 2026-07-27 | L’accès macOS/Xcode est différé jusqu’à une version viable sur iPad, puis utilisé ponctuellement pour la qualification obligatoire avant publication | Acceptée |
 | `ADR-PROJ-006` | 2026-07-27 | Aucun abonnement ou location continue de Mac n’est requis pendant la phase A | Acceptée |
+| `ADR-PROJ-007` | 2026-08-05 | Le zoom `1×` contient l’image entière dans une zone photo visible ; le fond peut apparaître et toute partie déplacée hors de la zone est masquée, en cohérence avec la demande utilisateur inspirée des éditeurs de livres photo | Acceptée |
 
 ## Environnements et accès
 
@@ -411,14 +412,15 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-010` | `ALB-002`, `COV-003`, `PAG-003` | Moyenne | 🟢 Corrigée | Rafraîchissement direct et miniatures réelles des pages validés dans les deux interfaces | `IPAD-L1-041`, régressions réussies `045`, `046` |
 | `ANO-011` | `LOT-001`, `PAG-003`, `APL-001` | Élevée | 🟢 Corrigée | Import du domaine, isolation et complexité de `PageManagerView` corrigés et compilés sur iPad | `IPAD-L1-044` à `047` réussis |
 | `ANO-012` | `CRP-002`, `CRP-003`, ergonomie | Moyenne | 🟢 Corrigée | Feuille supprimée ; pincement, glissement et commandes intégrées validés, la régression de navigation est suivie séparément | `IPAD-L1-049`, régressions `053` à `056` |
-| `ANO-013` | `NAV-004` à `NAV-006`, `CRP-003`, `CRP-006` | Élevée | 🟡 Correctif à valider | Les reconnaisseurs de recadrage restaient actifs hors du mode et bloquaient la navigation ; masque gestuel conditionnel et calcul du débordement réel ajoutés | `IPAD-L1-055`, régressions `057`, `058` |
+| `ANO-013` | `NAV-004` à `NAV-006`, `CRP-003`, `CRP-006` | Élevée | 🟢 Corrigée | Les reconnaisseurs de recadrage sont désormais inactifs hors du mode ; navigation restaurée sur iPad | `IPAD-L1-055`, régression réussie `057` |
+| `ANO-014` | `CRP-001` à `CRP-006`, `DSP-010` | Élevée | 🟡 Correctif à valider | Recadrage limité à la page droite et 1× en remplissage ; cible explicite par page et modèle 1× contenant avec masque ajoutés | `IPAD-L1-058`, régressions `059` à `062` |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter `IPAD-L1-057` et `058` sur le commit indiqué dans `suivi_tests.md`.
+1. Exécuter `IPAD-L1-059` à `062` sur le commit indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -439,6 +441,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-05 | Codex | Après comparaison avec Photoweb, évolution normative du cadrage : image entière à 1×, fond visible si nécessaire, masque des parties extérieures ; commande Recadrer propre à chaque page | `CRP-001`, `CRP-004`, `CRP-006`, `DAT-006`, `DSP-010` | `057` RÉUSSI ; `058` ÉCHOUÉ ; analyse SwiftUI et 23 tests Linux réussis ; `059` à `062` NON TESTÉS |
 | 2026-08-05 | Codex | Validation du cadrage intégré ; désactivation réelle de ses reconnaisseurs hors du mode et calcul du débordement d’image pour déplacer à 1× sans révéler de vide | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007`, `NAV-004` à `NAV-006` | Commit `8190bca` ; `053`, `054`, `056` RÉUSSIS ; `055` ÉCHOUÉ ; analyse SwiftUI et 23 tests Linux réussis ; `057`, `058` NON TESTÉS |
 | 2026-08-05 | Codex | Validation du modèle de cadrage et remplacement de la feuille à curseurs par un mode intégré : pincement, glissement, Annuler, Réinitialiser et Terminé directement autour de la page | `CRP-001` à `CRP-010`, `NAV-005`, `UND-004` | Commit `9a87ae9` ; `048`, `050` à `052` RÉUSSIS ; `049` ÉCHOUÉ sur ergonomie ; analyse SwiftUI et 23 tests Linux réussis ; `053` à `056` NON TESTÉS |
 | 2026-08-05 | Codex | Groupe cadrage : modèle rétrocompatible avec zoom et offsets normalisés, éditeur avec aperçu, réglages, réinitialisation, Annuler/Terminé, persistance et pile d’annulation | `CRP-001`, `CRP-004` à `CRP-010`, `DAT-006`, `DAT-007`, `APP-005`, `UND-004` | Commit `53e0597` ; analyse SwiftUI et 23 tests Linux réussis ; gestes directs `CRP-002`, `CRP-003` encore absents ; `IPAD-L1-048` à `052` NON TESTÉS |

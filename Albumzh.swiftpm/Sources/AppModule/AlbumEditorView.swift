@@ -140,8 +140,14 @@ final class AlbumEditorViewModel {
     }
     func setMedia(_ assetID: UUID) async { let before = album; if let updated = try? await service.setMedia(assetID: assetID, on: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible d’ajouter la photo." } }
     func removeMedia() async { let before = album; if let updated = try? await service.removeMedia(from: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible de supprimer la photo." } }
-    func beginCropping() {
-        cropDraft = album.pages[activePageIndex].mediaPlacement
+    func beginCropping(pageID: UUID? = nil) {
+        if let pageID,
+           let index = album.pages.firstIndex(where: { $0.id == pageID }) {
+            activePageID = pageID
+            cropDraft = album.pages[index].mediaPlacement
+        } else {
+            cropDraft = album.pages[activePageIndex].mediaPlacement
+        }
     }
 
     func cancelCropping() {
@@ -327,7 +333,7 @@ struct AlbumEditorView: View {
                         .buttonStyle(.borderedProminent)
                     } else {
                         Button("Recadrer", systemImage: "crop") {
-                            model.beginCropping()
+                            model.beginCropping(pageID: model.activePageID)
                         }
                         Button("Supprimer la photo", role: .destructive) {
                             Task { await model.removeMedia() }
