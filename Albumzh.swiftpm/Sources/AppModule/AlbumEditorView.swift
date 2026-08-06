@@ -19,7 +19,7 @@ final class AlbumEditorViewModel {
     var isConfirmingPageDeletion = false
     var isShowingPageManager = false
     var isShowingBackgrounds = false
-    var isShowingCropEditor = false
+    var cropDraft: MediaPlacement?
     var errorMessage: String?
 
     var canUndo: Bool { !undoActions.isEmpty }
@@ -30,6 +30,7 @@ final class AlbumEditorViewModel {
     }
     var canGoPrevious: Bool { activePageIndex > 0 }
     var canGoNext: Bool { activePageIndex < album.pages.count - 1 }
+    var isCropping: Bool { cropDraft != nil }
 
     init(album: Album, service: AlbumService) {
         self.album = album
@@ -139,7 +140,29 @@ final class AlbumEditorViewModel {
     }
     func setMedia(_ assetID: UUID) async { let before = album; if let updated = try? await service.setMedia(assetID: assetID, on: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible d’ajouter la photo." } }
     func removeMedia() async { let before = album; if let updated = try? await service.removeMedia(from: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible de supprimer la photo." } }
-    func applyCrop(_ placement: MediaPlacement) async -> Bool {
+    func beginCropping() {
+        cropDraft = album.pages[activePageIndex].mediaPlacement
+    }
+
+    func cancelCropping() {
+        cropDraft = nil
+    }
+
+    func resetCrop() {
+        guard let assetID = cropDraft?.assetID else { return }
+        cropDraft = MediaPlacement(assetID: assetID)
+    }
+
+    func updateCrop(scale: Double? = nil, offsetX: Double? = nil, offsetY: Double? = nil) {
+        guard var draft = cropDraft else { return }
+        if let scale { draft.normalizedScale = min(8, max(1, scale)) }
+        if let offsetX { draft.normalizedOffsetX = min(1, max(-1, offsetX)) }
+        if let offsetY { draft.normalizedOffsetY = min(1, max(-1, offsetY)) }
+        cropDraft = draft
+    }
+
+    func commitCrop() async -> Bool {
+        guard let placement = cropDraft else { return false }
         let before = album
         do {
             let updated = try await service.changeMediaCrop(
@@ -151,6 +174,7 @@ final class AlbumEditorViewModel {
             )
             record(EditAction(before: before, after: updated))
             album = updated
+            cropDraft = nil
             return true
         } catch {
             errorMessage = "Impossible d’enregistrer le cadrage."
@@ -274,6 +298,7 @@ struct AlbumEditorView: View {
             }
             .pickerStyle(.segmented)
             .padding(.horizontal)
+            .disabled(model.isCropping)
 
             AlbumSpreadView(model: model, assetStore: assetStore)
 
@@ -284,12 +309,29 @@ struct AlbumEditorView: View {
                         systemImage: "photo.badge.plus"
                     )
                 }
+                .disabled(model.isCropping)
                 if activePageHasMedia {
-                    Button("Recadrer", systemImage: "crop") {
-                        model.isShowingCropEditor = true
-                    }
-                    Button("Supprimer la photo", role: .destructive) {
-                        Task { await model.removeMedia() }
+                    if model.isCropping {
+                        Label("Pincez pour zoomer, glissez pour déplacer", systemImage: "hand.pinch")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Button("Réinitialiser", systemImage: "arrow.counterclockwise") {
+                            model.resetCrop()
+                        }
+                        Button("Annuler", role: .cancel) {
+                            model.cancelCropping()
+                        }
+                        Button("Terminé") {
+                            Task { _ = await model.commitCrop() }
+                        }
+                        .buttonStyle(.borderedProminent)
+                    } else {
+                        Button("Recadrer", systemImage: "crop") {
+                            model.beginCropping()
+                        }
+                        Button("Supprimer la photo", role: .destructive) {
+                            Task { await model.removeMedia() }
+                        }
                     }
                 }
             }
@@ -324,6 +366,7 @@ struct AlbumEditorView: View {
                 .disabled(!model.canGoNext)
             }
             .padding(.bottom)
+            .disabled(model.isCropping)
         }
         .navigationTitle(model.album.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -360,15 +403,6 @@ struct AlbumEditorView: View {
         }
         .sheet(isPresented: $model.isShowingBackgrounds) {
             BackgroundPickerView(model: model)
-        }
-        .sheet(isPresented: $model.isShowingCropEditor) {
-            if let placement = model.album.pages[model.activePageIndex].mediaPlacement {
-                CropEditorView(
-                    model: model,
-                    initialPlacement: placement,
-                    assetStore: assetStore
-                )
-            }
         }
         .alert(
             "Supprimer cette page ?",

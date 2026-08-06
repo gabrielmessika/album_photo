@@ -4,6 +4,9 @@ import SwiftUI
 struct AlbumSpreadView: View {
     let model: AlbumEditorViewModel
     let assetStore: MediaAssetStore
+    @State private var cropStartScale: Double?
+    @State private var cropStartOffsetX: Double?
+    @State private var cropStartOffsetY: Double?
 
     var body: some View {
         GeometryReader { geometry in
@@ -17,6 +20,10 @@ struct AlbumSpreadView: View {
                         let pageNumber = (
                             model.album.pages.firstIndex(where: { $0.id == page.id }) ?? 0
                         ) + 1
+                        let displayedPlacement = model.isCropping
+                            && page.id == model.activePageID
+                            ? model.cropDraft
+                            : page.mediaPlacement
                         Button {
                             model.activePageID = page.id
                         } label: {
@@ -26,7 +33,7 @@ struct AlbumSpreadView: View {
                             )
                             .aspectRatio(4 / 5, contentMode: .fit)
                             .overlay {
-                                if let placement = page.mediaPlacement {
+                                if let placement = displayedPlacement {
                                     PlacedMediaView(placement: placement, store: assetStore)
                                         .padding(12)
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -60,6 +67,45 @@ struct AlbumSpreadView: View {
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Page \(pageNumber)")
+                        .simultaneousGesture(
+                            MagnifyGesture()
+                                .onChanged { value in
+                                    guard model.isCropping,
+                                          page.id == model.activePageID,
+                                          let draft = model.cropDraft else { return }
+                                    if cropStartScale == nil {
+                                        cropStartScale = draft.normalizedScale
+                                    }
+                                    model.updateCrop(
+                                        scale: (cropStartScale ?? 1) * value.magnification
+                                    )
+                                }
+                                .onEnded { _ in cropStartScale = nil }
+                        )
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 1)
+                                .onChanged { value in
+                                    guard model.isCropping,
+                                          page.id == model.activePageID,
+                                          let draft = model.cropDraft else { return }
+                                    if cropStartOffsetX == nil {
+                                        cropStartOffsetX = draft.normalizedOffsetX
+                                        cropStartOffsetY = draft.normalizedOffsetY
+                                    }
+                                    let width = max(1, geometry.size.width * 0.2)
+                                    let height = max(1, geometry.size.height * 0.2)
+                                    model.updateCrop(
+                                        offsetX: (cropStartOffsetX ?? 0)
+                                            + value.translation.width / width,
+                                        offsetY: (cropStartOffsetY ?? 0)
+                                            + value.translation.height / height
+                                    )
+                                }
+                                .onEnded { _ in
+                                    cropStartOffsetX = nil
+                                    cropStartOffsetY = nil
+                                }
+                        )
                     }
                 }
 
@@ -74,6 +120,7 @@ struct AlbumSpreadView: View {
                 .highPriorityGesture(
                     DragGesture(minimumDistance: 30)
                         .onEnded { value in
+                            guard !model.isCropping else { return }
                             let horizontal = abs(value.translation.width)
                             let vertical = abs(value.translation.height)
                             guard horizontal > vertical * 1.25 else { return }

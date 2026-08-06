@@ -92,11 +92,15 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `c41e5f7` | 🟢 `RÉUSSI` |
-| `IPAD-L1-048` | Lot 1 | Compilation et régression cadrage | `LOT-001`, `CRP-001`, `CRP-004` à `CRP-010` | `53e0597` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-049` | Lot 1 | Zoom et déplacement normalisés | `CRP-001`, `CRP-004` à `CRP-006`, `CRP-009` | `53e0597` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-050` | Lot 1 | Annulation et réinitialisation du cadrage | `CRP-007`, `CRP-008`, `CRP-010` | `53e0597` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-051` | Lot 1 | Persistance et Annuler/Rétablir du cadrage | `APP-005`, `CRP-009`, `CRP-010`, `UND-004` | `53e0597` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-052` | Lot 1 | Cadrage cohérent dans les miniatures | `ALB-002`, `COV-007`, `PAG-003` | `53e0597` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-048` | Lot 1 | Compilation et régression cadrage | `LOT-001`, `CRP-001`, `CRP-004` à `CRP-010` | `53e0597` | 🟢 `RÉUSSI` |
+| `IPAD-L1-049` | Lot 1 | Zoom et déplacement normalisés | `CRP-001`, `CRP-004` à `CRP-006`, `CRP-009` | `53e0597` | 🔴 `ÉCHOUÉ` |
+| `IPAD-L1-050` | Lot 1 | Annulation et réinitialisation du cadrage | `CRP-007`, `CRP-008`, `CRP-010` | `53e0597` | 🟢 `RÉUSSI` |
+| `IPAD-L1-051` | Lot 1 | Persistance et Annuler/Rétablir du cadrage | `APP-005`, `CRP-009`, `CRP-010`, `UND-004` | `53e0597` | 🟢 `RÉUSSI` |
+| `IPAD-L1-052` | Lot 1 | Cadrage cohérent dans les miniatures | `ALB-002`, `COV-007`, `PAG-003` | `53e0597` | 🟢 `RÉUSSI` |
+| `IPAD-L1-053` | Lot 1 | Compilation du cadrage intégré | `LOT-001`, `CRP-002`, `CRP-003` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-054` | Lot 1 | Zoom direct par pincement | `CRP-002`, `CRP-004` à `CRP-006` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-055` | Lot 1 | Déplacement direct et priorité des gestes | `CRP-003`, `CRP-006`, `NAV-005` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `COMMIT-INLINE-CROP` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -748,7 +752,7 @@ Pour la régression :
   les interfaces de pages et de couverture.
 - Résultat attendu : aucune erreur ni régression des photos, miniatures,
   couvertures ou gestes.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
 
 ### `IPAD-L1-049` — Zoom et déplacement normalisés
 
@@ -760,7 +764,9 @@ Pour la régression :
 - Résultat attendu : l’aperçu suit les réglages, le zoom reste entre 1 et 8, la
   photo remplit toujours le cadre sans zone vide et le fichier original reste
   inchangé.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🔴 `ÉCHOUÉ` le 5 août 2026 : les réglages fonctionnent, mais la
+  feuille et les curseurs ne sont pas intuitifs ; le cadrage doit utiliser les
+  gestes directement dans la page.
 
 ### `IPAD-L1-050` — Annulation et réinitialisation du cadrage
 
@@ -771,7 +777,7 @@ Pour la régression :
   centrage, puis valider.
 - Résultat attendu : Annuler ne sauvegarde rien ; Réinitialiser restaure un
   cadrage centré avant validation.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
 
 ### `IPAD-L1-051` — Persistance et Annuler/Rétablir du cadrage
 
@@ -781,7 +787,7 @@ Pour la régression :
   l’éditeur, fermer complètement l’application après Rétablir et la relancer.
 - Résultat attendu : une validation constitue une seule action annulable et le
   cadrage rétabli persiste après relance.
-- Résultat : ⚪ `NON TESTÉ`.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
 
 ### `IPAD-L1-052` — Cadrage cohérent dans les miniatures
 
@@ -792,4 +798,44 @@ Pour la régression :
   la carte de bibliothèque.
 - Résultat attendu : les quatre rendus utilisent le même cadrage enregistré et
   permettent d’identifier la même occurrence.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
+
+### `IPAD-L1-053` — Compilation du cadrage intégré
+
+- Commit : `COMMIT-INLINE-CROP`.
+- Préconditions : récupérer le commit et conserver une page avec photo.
+- Étapes : compiler, ouvrir la page, activer puis quitter le mode « Recadrer ».
+- Résultat attendu : aucune feuille n’est présentée et les commandes intégrées
+  apparaissent sous la page sans régression de navigation.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-054` — Zoom direct par pincement
+
+- Commit : `COMMIT-INLINE-CROP`.
+- Préconditions : activer « Recadrer » sur une photo reconnaissable.
+- Étapes : pincer directement la photo pour agrandir et réduire, essayer les
+  bornes minimale et maximale, puis valider.
+- Résultat attendu : la photo suit les doigts, reste entre 1× et 8× et aucune
+  zone vide ne devient visible.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-055` — Déplacement direct et priorité des gestes
+
+- Commit : `COMMIT-INLINE-CROP`.
+- Préconditions : zoomer la photo en mode Recadrer.
+- Étapes : glisser la photo horizontalement, verticalement et en diagonale ;
+  vérifier qu’aucun geste ne change de page ; terminer puis vérifier que les
+  gestes de navigation redeviennent disponibles.
+- Résultat attendu : le média se déplace uniquement dans son cadre pendant le
+  recadrage et le geste de navigation est temporairement désactivé.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-056` — Validation intégrée comme action unique
+
+- Commit : `COMMIT-INLINE-CROP`.
+- Préconditions : cadrage existant distinctif.
+- Étapes : modifier par gestes puis Annuler ; recommencer, Réinitialiser et
+  Terminé ; utiliser ensuite Annuler/Rétablir dans l’éditeur et relancer.
+- Résultat attendu : Annuler abandonne le brouillon, Réinitialiser centre la
+  photo, Terminé crée une seule action et le résultat persiste.
 - Résultat : ⚪ `NON TESTÉ`.
