@@ -101,8 +101,8 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-054` | Lot 1 | Zoom direct par pincement | `CRP-002`, `CRP-004` à `CRP-006` | `9a87ae9` | 🟢 `RÉUSSI` |
 | `IPAD-L1-055` | Lot 1 | Déplacement direct et priorité des gestes | `CRP-003`, `CRP-006`, `NAV-005` | `9a87ae9` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `9a87ae9` | 🟢 `RÉUSSI` |
-| `IPAD-L1-057` | Lot 1 | Restauration des gestes de navigation | `NAV-004` à `NAV-006` | `COMMIT-CROP-GESTURE-FIX` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-058` | Lot 1 | Déplacement borné sans zoom | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007` | `COMMIT-CROP-GESTURE-FIX` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-057` | Lot 1 | Restauration des gestes de navigation | `NAV-004` à `NAV-006` | `8190bca` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-058` | Lot 1 | Déplacement borné sans zoom | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007` | `8190bca` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -845,7 +845,7 @@ Pour la régression :
 
 ### `IPAD-L1-057` — Restauration des gestes de navigation
 
-- Commit : `COMMIT-CROP-GESTURE-FIX`.
+- Commit : `8190bca`.
 - Préconditions : album de plusieurs pages avec une photo.
 - Étapes : vérifier les balayages dans les deux sens, entrer dans Recadrer,
   déplacer et zoomer, quitter par Annuler puis recommencer avec Terminé ; après
@@ -857,7 +857,7 @@ Pour la régression :
 
 ### `IPAD-L1-058` — Déplacement borné sans zoom
 
-- Commit : `COMMIT-CROP-GESTURE-FIX`.
+- Commit : `8190bca`.
 - Préconditions : utiliser une photo paysage dans une page portrait, puis une
   photo portrait dans un cadre plus large.
 - Étapes : à zoom 1×, glisser chaque photo sur l’axe où elle déborde jusqu’aux
