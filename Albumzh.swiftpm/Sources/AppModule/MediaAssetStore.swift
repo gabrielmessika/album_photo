@@ -25,6 +25,28 @@ struct StoredImageView: View {
     }
 }
 
+struct PlacedMediaView: View {
+    let placement: MediaPlacement
+    let store: MediaAssetStore
+
+    var body: some View {
+        GeometryReader { geometry in
+            StoredImageView(assetID: placement.assetID, store: store)
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .scaleEffect(placement.normalizedScale)
+                .offset(
+                    x: placement.normalizedOffsetX
+                        * geometry.size.width * 0.2
+                        * (placement.normalizedScale - 1),
+                    y: placement.normalizedOffsetY
+                        * geometry.size.height * 0.2
+                        * (placement.normalizedScale - 1)
+                )
+        }
+        .clipped()
+    }
+}
+
 struct PageThumbnailView: View {
     let page: Page
     let backgroundID: String
@@ -34,8 +56,8 @@ struct PageThumbnailView: View {
         AlbumPageBackground(backgroundID: backgroundID)
             .aspectRatio(4 / 5, contentMode: .fit)
             .overlay {
-                if let assetID = page.mediaPlacement?.assetID {
-                    StoredImageView(assetID: assetID, store: assetStore)
+                if let placement = page.mediaPlacement {
+                    PlacedMediaView(placement: placement, store: assetStore)
                         .padding(4)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }

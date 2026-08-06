@@ -19,6 +19,7 @@ final class AlbumEditorViewModel {
     var isConfirmingPageDeletion = false
     var isShowingPageManager = false
     var isShowingBackgrounds = false
+    var isShowingCropEditor = false
     var errorMessage: String?
 
     var canUndo: Bool { !undoActions.isEmpty }
@@ -138,6 +139,24 @@ final class AlbumEditorViewModel {
     }
     func setMedia(_ assetID: UUID) async { let before = album; if let updated = try? await service.setMedia(assetID: assetID, on: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible d’ajouter la photo." } }
     func removeMedia() async { let before = album; if let updated = try? await service.removeMedia(from: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible de supprimer la photo." } }
+    func applyCrop(_ placement: MediaPlacement) async -> Bool {
+        let before = album
+        do {
+            let updated = try await service.changeMediaCrop(
+                on: activePageID,
+                in: album.id,
+                scale: placement.normalizedScale,
+                offsetX: placement.normalizedOffsetX,
+                offsetY: placement.normalizedOffsetY
+            )
+            record(EditAction(before: before, after: updated))
+            album = updated
+            return true
+        } catch {
+            errorMessage = "Impossible d’enregistrer le cadrage."
+            return false
+        }
+    }
 
     func goPrevious() {
         guard canGoPrevious else { return }
@@ -266,6 +285,9 @@ struct AlbumEditorView: View {
                     )
                 }
                 if activePageHasMedia {
+                    Button("Recadrer", systemImage: "crop") {
+                        model.isShowingCropEditor = true
+                    }
                     Button("Supprimer la photo", role: .destructive) {
                         Task { await model.removeMedia() }
                     }
@@ -338,6 +360,15 @@ struct AlbumEditorView: View {
         }
         .sheet(isPresented: $model.isShowingBackgrounds) {
             BackgroundPickerView(model: model)
+        }
+        .sheet(isPresented: $model.isShowingCropEditor) {
+            if let placement = model.album.pages[model.activePageIndex].mediaPlacement {
+                CropEditorView(
+                    model: model,
+                    initialPlacement: placement,
+                    assetStore: assetStore
+                )
+            }
         }
         .alert(
             "Supprimer cette page ?",

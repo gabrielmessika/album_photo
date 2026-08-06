@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Import photo, couvertures et miniatures de pages validés sur iPad | Poursuivre avec le cadrage non destructif et les formats média |
+| Lot 1 — Création locale | 🟡 En cours | Cadrage non destructif normalisé implémenté après validation de l’import et des miniatures | Exécuter `IPAD-L1-048` à `052` |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -137,7 +137,7 @@ Objectif : rendre possible la création locale et durable d’albums.
 | Import de photos avec PhotosPicker | 🟡 | Copie locale, affichage, remplacement et suppression implémentés ; formats avancés et validation iPad requis |
 | Import et lecture des vidéos | ⬜ | `ACPT-106`, `ACPT-110` |
 | Normalisation des formats média | ⬜ | `ACPT-106` |
-| Cadrage non destructif | ⬜ | `ACPT-105` |
+| Cadrage non destructif | 🟡 | `CRP-001`, `CRP-004` à `CRP-010` — réglages accessibles, réinitialisation, persistance et action annulable implémentés ; pincement/déplacement directs `CRP-002`, `CRP-003` et validation iPad requis |
 | Hauteur du commentaire | ⬜ | `ACPT-105` |
 | Affichage simple et double page | 🟢 | `DSP-001` à `DSP-011` — préférence, repli selon largeur et groupement validés sur iPad |
 | Navigation boutons et gestes | 🟢 | `NAV-001` à `NAV-006` — boutons et balayage déterministe simple/double validés jusqu’à `IPAD-L1-031` |
@@ -416,7 +416,7 @@ Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 
 ## Prochaines actions prioritaires
 
-1. Commencer le cadrage non destructif défini par `CRP-001` à `CRP-010`.
+1. Exécuter `IPAD-L1-048` à `052` sur le commit indiqué dans `suivi_tests.md`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -437,6 +437,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-05 | Codex | Groupe cadrage : modèle rétrocompatible avec zoom et offsets normalisés, éditeur avec aperçu, réglages, réinitialisation, Annuler/Terminé, persistance et pile d’annulation | `CRP-001`, `CRP-004` à `CRP-010`, `DAT-006`, `DAT-007`, `APP-005`, `UND-004` | Analyse SwiftUI et 23 tests Linux réussis ; gestes directs `CRP-002`, `CRP-003` encore absents ; `IPAD-L1-048` à `052` NON TESTÉS |
 | 2026-08-05 | Codex | Validation des aperçus et de leur compilation ; remise en ordre numérique des fiches détaillées `032` à `047` | `MED-001`, `CRP-001`, `CRP-006`, `ALB-002`, `COV-003`, `PAG-003`, suivi manuel | `IPAD-L1-044` à `047` RÉUSSIS sur iPad ; relecture de l’ordre et `git diff --check` |
 | 2026-08-04 | Codex | Correction des diagnostics iPad : import du domaine pour `Page`, valeur média capturée hors fermeture `Sendable`, extraction de `PageManagerRow` | `LOT-001`, `PAG-003`, `APL-001` | Commit `c41e5f7` ; `044` à `046` BLOQUÉS par compilation ; analyse SwiftUI et 22 tests Linux réussis ; `047` NON TESTÉ |
 | 2026-08-04 | Codex | Enregistrement de `038` à `041` ; confinement des photos, sélection de couverture non fermante avec rafraîchissement direct et miniatures réelles dans les deux listes de pages | `MED-001`, `CRP-001`, `CRP-006`, `ALB-002`, `COV-003`, `PAG-003` | Commit `394df8d` ; `043`, `039`, `040` RÉUSSIS ; `038`, `041` ÉCHOUÉS ; analyse SwiftUI et 22 tests Linux réussis ; `044` à `046` NON TESTÉS |

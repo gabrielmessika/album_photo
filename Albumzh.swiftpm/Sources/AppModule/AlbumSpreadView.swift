@@ -26,8 +26,8 @@ struct AlbumSpreadView: View {
                             )
                             .aspectRatio(4 / 5, contentMode: .fit)
                             .overlay {
-                                if let assetID = page.mediaPlacement?.assetID {
-                                    StoredImageView(assetID: assetID, store: assetStore)
+                                if let placement = page.mediaPlacement {
+                                    PlacedMediaView(placement: placement, store: assetStore)
                                         .padding(12)
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
                                 }

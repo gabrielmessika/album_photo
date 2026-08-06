@@ -321,6 +321,39 @@ struct AlbumServiceTests {
         #expect(removed.coverSelection == .automatic)
         #expect(removed.resolvedCoverOccurrence == nil)
     }
+
+    @Test("CRP-004 à CRP-010 valident et persistent un cadrage normalisé")
+    func changesMediaCrop() async throws {
+        let repository = InMemoryAlbumRepository()
+        let service = AlbumService(repository: repository)
+        let album = try await service.createAlbum(named: "Guatemala")
+        _ = try await service.setMedia(
+            assetID: UUID(),
+            on: album.pages[0].id,
+            in: album.id
+        )
+
+        let cropped = try await service.changeMediaCrop(
+            on: album.pages[0].id,
+            in: album.id,
+            scale: 4.5,
+            offsetX: -0.75,
+            offsetY: 1
+        )
+        #expect(cropped.pages[0].mediaPlacement?.normalizedScale == 4.5)
+        #expect(cropped.pages[0].mediaPlacement?.normalizedOffsetX == -0.75)
+        #expect(cropped.pages[0].mediaPlacement?.normalizedOffsetY == 1)
+
+        await #expect(throws: AlbumValidationError.invalidMediaCrop) {
+            try await service.changeMediaCrop(
+                on: album.pages[0].id,
+                in: album.id,
+                scale: 8.1,
+                offsetX: 0,
+                offsetY: 0
+            )
+        }
+    }
 }
 
 private actor InMemoryAlbumRepository: AlbumRepository {

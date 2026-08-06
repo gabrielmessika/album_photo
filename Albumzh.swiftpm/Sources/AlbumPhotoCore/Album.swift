@@ -12,7 +12,42 @@ public enum CoverSelection: Codable, Sendable, Equatable {
 
 public struct MediaPlacement: Codable, Sendable, Equatable {
     public let assetID: UUID
-    public init(assetID: UUID) { self.assetID = assetID }
+    public var normalizedScale: Double
+    public var normalizedOffsetX: Double
+    public var normalizedOffsetY: Double
+
+    public init(
+        assetID: UUID,
+        normalizedScale: Double = 1,
+        normalizedOffsetX: Double = 0,
+        normalizedOffsetY: Double = 0
+    ) {
+        self.assetID = assetID
+        self.normalizedScale = normalizedScale
+        self.normalizedOffsetX = normalizedOffsetX
+        self.normalizedOffsetY = normalizedOffsetY
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case assetID, normalizedScale, normalizedOffsetX, normalizedOffsetY
+    }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        assetID = try values.decode(UUID.self, forKey: .assetID)
+        normalizedScale = try values.decodeIfPresent(
+            Double.self,
+            forKey: .normalizedScale
+        ) ?? 1
+        normalizedOffsetX = try values.decodeIfPresent(
+            Double.self,
+            forKey: .normalizedOffsetX
+        ) ?? 0
+        normalizedOffsetY = try values.decodeIfPresent(
+            Double.self,
+            forKey: .normalizedOffsetY
+        ) ?? 0
+    }
 }
 
 public struct Page: Identifiable, Codable, Sendable, Equatable {

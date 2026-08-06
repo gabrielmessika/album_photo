@@ -92,6 +92,11 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | 🟢 `RÉUSSI` |
 | `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `c41e5f7` | 🟢 `RÉUSSI` |
+| `IPAD-L1-048` | Lot 1 | Compilation et régression cadrage | `LOT-001`, `CRP-001`, `CRP-004` à `CRP-010` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-049` | Lot 1 | Zoom et déplacement normalisés | `CRP-001`, `CRP-004` à `CRP-006`, `CRP-009` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-050` | Lot 1 | Annulation et réinitialisation du cadrage | `CRP-007`, `CRP-008`, `CRP-010` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-051` | Lot 1 | Persistance et Annuler/Rétablir du cadrage | `APP-005`, `CRP-009`, `CRP-010`, `UND-004` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-052` | Lot 1 | Cadrage cohérent dans les miniatures | `ALB-002`, `COV-007`, `PAG-003` | `COMMIT-CROP` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -732,3 +737,59 @@ Pour la régression :
 - Résultat attendu : aucune erreur d’isolation `MainActor`, le type `Page` est
   résolu et `PageManagerView` est type-vérifiée dans le délai du compilateur.
 - Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
+
+## Campagne cadrage non destructif
+
+### `IPAD-L1-048` — Compilation et régression cadrage
+
+- Commit : `COMMIT-CROP`.
+- Préconditions : récupérer le commit et conserver un album avec photos.
+- Étapes : compiler, ouvrir l’album, naviguer en modes Une/Deux pages et ouvrir
+  les interfaces de pages et de couverture.
+- Résultat attendu : aucune erreur ni régression des photos, miniatures,
+  couvertures ou gestes.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-049` — Zoom et déplacement normalisés
+
+- Commit : `COMMIT-CROP`.
+- Préconditions : sélectionner une page avec une photo reconnaissable.
+- Étapes : toucher « Recadrer », régler successivement le zoom à 1, environ 4
+  puis 8, déplacer horizontalement et verticalement aux deux extrémités, puis
+  valider avec « Terminé ».
+- Résultat attendu : l’aperçu suit les réglages, le zoom reste entre 1 et 8, la
+  photo remplit toujours le cadre sans zone vide et le fichier original reste
+  inchangé.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-050` — Annulation et réinitialisation du cadrage
+
+- Commit : `COMMIT-CROP`.
+- Préconditions : photo possédant déjà un cadrage distinctif.
+- Étapes : modifier les trois réglages puis toucher « Annuler » et vérifier
+  l’ancien cadrage ; rouvrir, toucher « Réinitialiser », vérifier zoom 1 et
+  centrage, puis valider.
+- Résultat attendu : Annuler ne sauvegarde rien ; Réinitialiser restaure un
+  cadrage centré avant validation.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-051` — Persistance et Annuler/Rétablir du cadrage
+
+- Commit : `COMMIT-CROP`.
+- Préconditions : cadrage initial centré.
+- Étapes : valider un cadrage distinct, utiliser Annuler puis Rétablir dans
+  l’éditeur, fermer complètement l’application après Rétablir et la relancer.
+- Résultat attendu : une validation constitue une seule action annulable et le
+  cadrage rétabli persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+
+### `IPAD-L1-052` — Cadrage cohérent dans les miniatures
+
+- Commit : `COMMIT-CROP`.
+- Préconditions : cadrage très identifiable validé sur une photo utilisée en
+  couverture.
+- Étapes : comparer la page, « Gérer les pages », « Choisir la couverture » et
+  la carte de bibliothèque.
+- Résultat attendu : les quatre rendus utilisent le même cadrage enregistré et
+  permettent d’identifier la même occurrence.
+- Résultat : ⚪ `NON TESTÉ`.

@@ -9,8 +9,11 @@ struct AlbumCoverView: View {
         AlbumPageBackground(backgroundID: album.backgroundID)
         .aspectRatio(4 / 3, contentMode: .fit)
         .overlay {
-            if case let .pageMedia(_, assetID)? = album.resolvedCoverOccurrence {
-                StoredImageView(assetID: assetID, store: assetStore)
+            if case let .pageMedia(pageID, assetID)? = album.resolvedCoverOccurrence {
+                let placement = album.pages.first {
+                    $0.id == pageID && $0.mediaPlacement?.assetID == assetID
+                }?.mediaPlacement ?? MediaPlacement(assetID: assetID)
+                PlacedMediaView(placement: placement, store: assetStore)
                     .clipped()
             } else {
                 Text(album.name)

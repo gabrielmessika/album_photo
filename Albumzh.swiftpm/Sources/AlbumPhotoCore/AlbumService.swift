@@ -8,6 +8,7 @@ public enum AlbumValidationError: Error, Equatable {
     case cannotDeleteOnlyPage
     case invalidPageOrder
     case albumIsNotTrashed
+    case invalidMediaCrop
 }
 
 public struct AlbumService: Sendable {
@@ -192,6 +193,33 @@ public struct AlbumService: Sendable {
             guard album.pages.contains(where: { $0.id == pageID && $0.mediaPlacement?.assetID == assetID }) else { throw AlbumValidationError.pageNotFound }
         }
         album.coverSelection = selection
+        album.updatedAt = now
+        try await repository.save(album, commandID: commandID)
+        return album
+    }
+
+    public func changeMediaCrop(
+        on pageID: UUID,
+        in albumID: UUID,
+        scale: Double,
+        offsetX: Double,
+        offsetY: Double,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> Album {
+        guard (1...8).contains(scale), (-1...1).contains(offsetX),
+              (-1...1).contains(offsetY) else {
+            throw AlbumValidationError.invalidMediaCrop
+        }
+        var album = try await editableAlbum(id: albumID)
+        guard let index = album.pages.firstIndex(where: { $0.id == pageID }),
+              var placement = album.pages[index].mediaPlacement else {
+            throw AlbumValidationError.pageNotFound
+        }
+        placement.normalizedScale = scale
+        placement.normalizedOffsetX = offsetX
+        placement.normalizedOffsetY = offsetY
+        album.pages[index].mediaPlacement = placement
         album.updatedAt = now
         try await repository.save(album, commandID: commandID)
         return album
