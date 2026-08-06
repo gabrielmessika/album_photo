@@ -103,10 +103,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-056` | Lot 1 | Validation intégrée comme action unique | `CRP-007` à `CRP-010`, `UND-004` | `9a87ae9` | 🟢 `RÉUSSI` |
 | `IPAD-L1-057` | Lot 1 | Restauration des gestes de navigation | `NAV-004` à `NAV-006` | `8190bca` | 🟢 `RÉUSSI` |
 | `IPAD-L1-058` | Lot 1 | Déplacement borné sans zoom | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007` | `8190bca` | 🔴 `ÉCHOUÉ` |
-| `IPAD-L1-059` | Lot 1 | Ciblage du recadrage en double page | `CRP-002`, `CRP-003`, `DSP-010` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-060` | Lot 1 | Image entière au zoom 1× | `CRP-001`, `CRP-004`, `CRP-006` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-061` | Lot 1 | Masque visible et déplacement hors cadre | `CRP-003`, `CRP-006`, `DAT-007` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-062` | Lot 1 | Cohérence du nouveau cadrage | `ALB-002`, `COV-007`, `PAG-003`, `APP-005` | `COMMIT-FRAME-CROP` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-059` | Lot 1 | Ciblage du recadrage en double page | `CRP-002`, `CRP-003`, `DSP-010` | `a82167a` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-060` | Lot 1 | Image entière au zoom 1× | `CRP-001`, `CRP-004`, `CRP-006` | `a82167a` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-061` | Lot 1 | Masque visible et déplacement hors cadre | `CRP-003`, `CRP-006`, `DAT-007` | `a82167a` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-062` | Lot 1 | Cohérence du nouveau cadrage | `ALB-002`, `COV-007`, `PAG-003`, `APP-005` | `a82167a` | ⚪ `NON TESTÉ` |
 
 ## Détail des tests
 
@@ -875,7 +875,7 @@ Pour la régression :
 
 ### `IPAD-L1-059` — Ciblage du recadrage en double page
 
-- Commit : `COMMIT-FRAME-CROP`.
+- Commit : `a82167a`.
 - Préconditions : deux pages visibles contenant chacune une photo distincte.
 - Étapes : utiliser l’icône Recadrer de la page gauche, modifier et valider ;
   vérifier que seule la gauche change, puis répéter indépendamment à droite.
@@ -885,7 +885,7 @@ Pour la régression :
 
 ### `IPAD-L1-060` — Image entière au zoom 1×
 
-- Commit : `COMMIT-FRAME-CROP`.
+- Commit : `a82167a`.
 - Préconditions : photos paysage, portrait et carrée.
 - Étapes : ouvrir chaque photo en recadrage, toucher Réinitialiser et observer
   le rendu 1× dans le cadre en pointillés.
@@ -895,7 +895,7 @@ Pour la régression :
 
 ### `IPAD-L1-061` — Masque visible et déplacement hors cadre
 
-- Commit : `COMMIT-FRAME-CROP`.
+- Commit : `a82167a`.
 - Préconditions : image entière visible à 1×.
 - Étapes : glisser l’image dans toutes les directions sans zoomer, puis avec un
   zoom ; observer les limites du cadre pointillé et valider plusieurs positions.
@@ -906,7 +906,7 @@ Pour la régression :
 
 ### `IPAD-L1-062` — Cohérence du nouveau cadrage
 
-- Commit : `COMMIT-FRAME-CROP`.
+- Commit : `a82167a`.
 - Préconditions : valider un cadrage distinct sur une photo utilisée en
   couverture.
 - Étapes : comparer page, gestion des pages, choix de couverture et carte de
