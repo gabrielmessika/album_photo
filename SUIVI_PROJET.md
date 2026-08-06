@@ -46,7 +46,7 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 |---|---|---|---|
 | Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
 | Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Aperçus implémentés ; compilation iPad corrigée localement après diagnostics d’isolation et de type | Exécuter `IPAD-L1-047`, puis reprendre `044` à `046` |
+| Lot 1 — Création locale | 🟡 En cours | Import photo, couvertures et miniatures de pages validés sur iPad | Poursuivre avec le cadrage non destructif et les formats média |
 | Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
@@ -407,16 +407,16 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-006` | `NAV-004` à `NAV-006`, `DSP-010` | Élevée | 🟢 Corrigée | Fiabilité, portée, groupement et convention gauche-suivant/droite-précédent validés sur iPad | `IPAD-L1-023`, `027`, régressions réussies `030`, `031` |
 | `ANO-007` | `ALB-018`, `ALB-019`, `ACPT-102` | Élevée | 🟢 Corrigée | Cible et visibilité de confirmation séparées, suppression définitive validée | `IPAD-L1-035`, régression réussie `036` |
 | `ANO-008` | `LOT-001`, `APL-001` | Élevée | 🟢 Corrigée | Le modificateur `background` était hors de la branche `Text` dans `AlbumCoverView` ; portée corrigée et compilation validée | `IPAD-L1-037`, `042`, régression réussie `043` |
-| `ANO-009` | `MED-001`, `CRP-001`, `CRP-006` | Élevée | 🟡 Correctif à valider | Les photos débordaient des feuilles ; masque arrondi appliqué après mise en page du média | `IPAD-L1-038`, régression `044` |
-| `ANO-010` | `ALB-002`, `COV-003`, `PAG-003` | Moyenne | 🟡 Correctif à valider | Choix manuel sans rafraîchissement immédiat et listes indifférenciées ; état local et miniatures réelles ajoutés | `IPAD-L1-041`, régressions `045`, `046` |
-| `ANO-011` | `LOT-001`, `PAG-003`, `APL-001` | Élevée | 🟡 Correctif à valider | Compilation des aperçus : module domaine absent, capture `MainActor` dans une fermeture `Sendable` et expression PageManager trop complexe ; trois points corrigés | `IPAD-L1-044` à `046` bloqués, régression `047` |
+| `ANO-009` | `MED-001`, `CRP-001`, `CRP-006` | Élevée | 🟢 Corrigée | Les photos débordaient des feuilles ; confinement après mise en page validé sur iPad | `IPAD-L1-038`, régression réussie `044` |
+| `ANO-010` | `ALB-002`, `COV-003`, `PAG-003` | Moyenne | 🟢 Corrigée | Rafraîchissement direct et miniatures réelles des pages validés dans les deux interfaces | `IPAD-L1-041`, régressions réussies `045`, `046` |
+| `ANO-011` | `LOT-001`, `PAG-003`, `APL-001` | Élevée | 🟢 Corrigée | Import du domaine, isolation et complexité de `PageManagerView` corrigés et compilés sur iPad | `IPAD-L1-044` à `047` réussis |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter `IPAD-L1-047`, puis reprendre `IPAD-L1-044` à `046` si la compilation réussit.
+1. Commencer le cadrage non destructif défini par `CRP-001` à `CRP-010`.
 2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
    Playgrounds dans la fiche de validation.
 3. Ajouter l’injection d’interruption au journal local.
@@ -437,6 +437,7 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-05 | Codex | Validation des aperçus et de leur compilation ; remise en ordre numérique des fiches détaillées `032` à `047` | `MED-001`, `CRP-001`, `CRP-006`, `ALB-002`, `COV-003`, `PAG-003`, suivi manuel | `IPAD-L1-044` à `047` RÉUSSIS sur iPad ; relecture de l’ordre et `git diff --check` |
 | 2026-08-04 | Codex | Correction des diagnostics iPad : import du domaine pour `Page`, valeur média capturée hors fermeture `Sendable`, extraction de `PageManagerRow` | `LOT-001`, `PAG-003`, `APL-001` | Commit `c41e5f7` ; `044` à `046` BLOQUÉS par compilation ; analyse SwiftUI et 22 tests Linux réussis ; `047` NON TESTÉ |
 | 2026-08-04 | Codex | Enregistrement de `038` à `041` ; confinement des photos, sélection de couverture non fermante avec rafraîchissement direct et miniatures réelles dans les deux listes de pages | `MED-001`, `CRP-001`, `CRP-006`, `ALB-002`, `COV-003`, `PAG-003` | Commit `394df8d` ; `043`, `039`, `040` RÉUSSIS ; `038`, `041` ÉCHOUÉS ; analyse SwiftUI et 22 tests Linux réussis ; `044` à `046` NON TESTÉS |
 | 2026-08-03 | Codex | Correction de la portée de `.background` et `.padding` dans la branche texte de `AlbumCoverView` après diagnostic Swift Playgrounds | `LOT-001`, `APL-001`, groupe média | Commit `5deef95` ; `042` ÉCHOUÉ avec diagnostic exact ; analyse SwiftUI et 22 tests Linux réussis ; `043` NON TESTÉ |

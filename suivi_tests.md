@@ -88,10 +88,10 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-041` | Lot 1 | Couverture manuelle par occurrence | `COV-003` à `COV-005`, `DAT-005` | `9472f8e` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-042` | Lot 1 | Régression compilation UIKit des médias | `LOT-001`, `APL-001` | `a389d8a` | 🔴 `ÉCHOUÉ` |
 | `IPAD-L1-043` | Lot 1 | Régression compilation AlbumCoverView | `LOT-001`, `APL-001` | `5deef95` | 🟢 `RÉUSSI` |
-| `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `394df8d` | 🟠 `BLOQUÉ` |
-| `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | 🟠 `BLOQUÉ` |
-| `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | 🟠 `BLOQUÉ` |
-| `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `c41e5f7` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-044` | Lot 1 | Confinement des photos dans les pages | `MED-001`, `CRP-001`, `CRP-006` | `394df8d` | 🟢 `RÉUSSI` |
+| `IPAD-L1-045` | Lot 1 | Choix de couverture avec aperçu direct | `COV-003`, `ALB-002` | `394df8d` | 🟢 `RÉUSSI` |
+| `IPAD-L1-046` | Lot 1 | Miniatures de contenu des pages | `PAG-003`, `COV-003` | `394df8d` | 🟢 `RÉUSSI` |
+| `IPAD-L1-047` | Lot 1 | Régression compilation des aperçus | `LOT-001`, `PAG-003`, `APL-001` | `c41e5f7` | 🟢 `RÉUSSI` |
 
 ## Détail des tests
 
@@ -523,6 +523,66 @@ Pour la régression :
   validées restent accessibles.
 - Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
 
+### `IPAD-L1-033` — Couverture de repli des albums sans média
+
+- Commit : `d5da50e`.
+- Préconditions : disposer d’albums sans média utilisant des fonds différents.
+- Étapes :
+  1. observer chaque carte dans la grille ;
+  2. vérifier que la couverture reprend le fond de l’album et affiche son nom ;
+  3. renommer un album et vérifier la mise à jour de sa couverture ;
+  4. changer son fond dans l’éditeur, revenir à la bibliothèque et vérifier le
+     nouveau rendu ;
+  5. relancer l’application et contrôler la persistance.
+- Résultat attendu : une couverture lisible et cohérente est toujours présente,
+  même sans média, sans empêcher l’ouverture de l’album.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
+
+### `IPAD-L1-034` — Choix de couverture sans import dédié
+
+- Commit : `d5da50e`.
+- Préconditions : disposer d’un album sans média.
+- Étapes :
+  1. effectuer une pression longue sur sa carte ;
+  2. choisir « Choisir la couverture » ;
+  3. vérifier l’aperçu et le message « Aucun média disponible » ;
+  4. vérifier qu’aucune commande ne permet d’importer un média uniquement pour
+     la couverture ;
+  5. fermer la feuille et ouvrir normalement l’album.
+- Résultat attendu : la commande existe, explique le repli automatique et ne
+  contourne pas la règle imposant un média déjà présent sur une page.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
+
+### `IPAD-L1-035` — Suppression définitive depuis la corbeille
+
+- Commit : `d5da50e`.
+- Préconditions : créer un album de test puis le placer dans la corbeille.
+- Étapes :
+  1. toucher « Supprimer » dans la corbeille puis « Annuler » dans l’alerte ;
+  2. vérifier que l’album reste restaurable ;
+  3. recommencer et confirmer « Supprimer définitivement » ;
+  4. vérifier sa disparition de la corbeille ;
+  5. relancer l’application et vérifier qu’il ne réapparaît ni dans la
+     bibliothèque ni dans la corbeille.
+- Résultat attendu : seule une confirmation explicite entraîne la suppression
+  irréversible, qui persiste après relance.
+- Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 : l’alerte s’ouvre et se ferme, mais la
+  confirmation ne retire pas l’album de la corbeille.
+
+### `IPAD-L1-036` — Régression suppression définitive
+
+- Commit : `28d8c41`.
+- Préconditions : placer un nouvel album de test dans la corbeille.
+- Étapes :
+  1. toucher « Supprimer » puis annuler et vérifier que l’album reste présent ;
+  2. toucher de nouveau « Supprimer » puis confirmer la suppression définitive ;
+  3. vérifier la disparition immédiate de la ligne ;
+  4. revenir à la bibliothèque, rouvrir la corbeille puis relancer
+     l’application.
+- Résultat attendu : la sélection de l’album reste disponible pendant la tâche
+  asynchrone, et l’album supprimé ne réapparaît jamais.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
+
 ## Campagne import photo et couvertures
 
 ### `IPAD-L1-037` — Compilation et régression médias
@@ -535,30 +595,6 @@ Pour la régression :
   perte des albums existants.
 - Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 : le projet ne compile pas dans Swift
   Playgrounds ; message d’erreur exact non communiqué.
-
-### `IPAD-L1-042` — Régression compilation UIKit des médias
-
-- Commit : `a389d8a`.
-- Préconditions : récupérer le commit et ouvrir le package dans Swift
-  Playgrounds.
-- Étapes : nettoyer les résultats de compilation si nécessaire, compiler puis
-  ouvrir un album et afficher le sélecteur de couverture.
-- Résultat attendu : `UIImage`, le rendu des médias et les vues de couverture
-  sont compilés sans erreur ; l’application démarre normalement.
-- Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 avec l’erreur
-  `instance member 'background' cannot be used on type 'View'` dans
-  `AlbumCoverView`.
-
-### `IPAD-L1-043` — Régression compilation AlbumCoverView
-
-- Commit : `5deef95`.
-- Préconditions : récupérer le commit et ouvrir le package dans Swift
-  Playgrounds.
-- Étapes : nettoyer si nécessaire les résultats de compilation, compiler puis
-  lancer l’application et afficher la bibliothèque.
-- Résultat attendu : `AlbumCoverView` compile, les couvertures texte sont
-  visibles et l’application démarre.
-- Résultat : ⚪ `NON TESTÉ`.
 
 ### `IPAD-L1-038` — Import et persistance d’une photo
 
@@ -628,6 +664,30 @@ Pour la régression :
   carte ne se rafraîchit qu’après un aller-retour dans l’album et la feuille se
   ferme immédiatement.
 
+### `IPAD-L1-042` — Régression compilation UIKit des médias
+
+- Commit : `a389d8a`.
+- Préconditions : récupérer le commit et ouvrir le package dans Swift
+  Playgrounds.
+- Étapes : nettoyer les résultats de compilation si nécessaire, compiler puis
+  ouvrir un album et afficher le sélecteur de couverture.
+- Résultat attendu : `UIImage`, le rendu des médias et les vues de couverture
+  sont compilés sans erreur ; l’application démarre normalement.
+- Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 avec l’erreur
+  `instance member 'background' cannot be used on type 'View'` dans
+  `AlbumCoverView`.
+
+### `IPAD-L1-043` — Régression compilation AlbumCoverView
+
+- Commit : `5deef95`.
+- Préconditions : récupérer le commit et ouvrir le package dans Swift
+  Playgrounds.
+- Étapes : nettoyer si nécessaire les résultats de compilation, compiler puis
+  lancer l’application et afficher la bibliothèque.
+- Résultat attendu : `AlbumCoverView` compile, les couvertures texte sont
+  visibles et l’application démarre.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 4 août 2026.
+
 ### `IPAD-L1-044` — Confinement des photos dans les pages
 
 - Commit : `394df8d`.
@@ -636,8 +696,8 @@ Pour la régression :
   vérifier les bords et les coins de chaque feuille.
 - Résultat attendu : chaque photo remplit sa zone avec recadrage central sans
   dépasser du cadre ni recouvrir les pages voisines.
-- Résultat : 🟠 `BLOQUÉ` le 4 août 2026 par les erreurs de compilation du
-  commit, avant exécution des étapes.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026 sur le
+  correctif de compilation `c41e5f7`.
 
 ### `IPAD-L1-045` — Choix de couverture avec aperçu direct
 
@@ -648,8 +708,8 @@ Pour la régression :
   ouverte, puis toucher « Terminé » et vérifier la carte dans la grille.
 - Résultat attendu : chaque sélection met immédiatement à jour l’aperçu et la
   miniature ; seule l’action « Terminé » ferme la feuille.
-- Résultat : 🟠 `BLOQUÉ` le 4 août 2026 par les erreurs de compilation du
-  commit, avant exécution des étapes.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026 sur le
+  correctif de compilation `c41e5f7`.
 
 ### `IPAD-L1-046` — Miniatures de contenu des pages
 
@@ -660,8 +720,8 @@ Pour la régression :
   toujours de les reconnaître malgré la renumérotation.
 - Résultat attendu : les deux interfaces montrent le fond et la photo réels de
   chaque page dans une miniature identifiable.
-- Résultat : 🟠 `BLOQUÉ` le 4 août 2026 par les erreurs de compilation du
-  commit, avant exécution des étapes.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026 sur le
+  correctif de compilation `c41e5f7`.
 
 ### `IPAD-L1-047` — Régression compilation des aperçus
 
@@ -671,64 +731,4 @@ Pour la régression :
   couverture ».
 - Résultat attendu : aucune erreur d’isolation `MainActor`, le type `Page` est
   résolu et `PageManagerView` est type-vérifiée dans le délai du compilateur.
-- Résultat : ⚪ `NON TESTÉ`.
-
-### `IPAD-L1-033` — Couverture de repli des albums sans média
-
-- Commit : `d5da50e`.
-- Préconditions : disposer d’albums sans média utilisant des fonds différents.
-- Étapes :
-  1. observer chaque carte dans la grille ;
-  2. vérifier que la couverture reprend le fond de l’album et affiche son nom ;
-  3. renommer un album et vérifier la mise à jour de sa couverture ;
-  4. changer son fond dans l’éditeur, revenir à la bibliothèque et vérifier le
-     nouveau rendu ;
-  5. relancer l’application et contrôler la persistance.
-- Résultat attendu : une couverture lisible et cohérente est toujours présente,
-  même sans média, sans empêcher l’ouverture de l’album.
-- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
-
-### `IPAD-L1-034` — Choix de couverture sans import dédié
-
-- Commit : `d5da50e`.
-- Préconditions : disposer d’un album sans média.
-- Étapes :
-  1. effectuer une pression longue sur sa carte ;
-  2. choisir « Choisir la couverture » ;
-  3. vérifier l’aperçu et le message « Aucun média disponible » ;
-  4. vérifier qu’aucune commande ne permet d’importer un média uniquement pour
-     la couverture ;
-  5. fermer la feuille et ouvrir normalement l’album.
-- Résultat attendu : la commande existe, explique le repli automatique et ne
-  contourne pas la règle imposant un média déjà présent sur une page.
-- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
-
-### `IPAD-L1-035` — Suppression définitive depuis la corbeille
-
-- Commit : `d5da50e`.
-- Préconditions : créer un album de test puis le placer dans la corbeille.
-- Étapes :
-  1. toucher « Supprimer » dans la corbeille puis « Annuler » dans l’alerte ;
-  2. vérifier que l’album reste restaurable ;
-  3. recommencer et confirmer « Supprimer définitivement » ;
-  4. vérifier sa disparition de la corbeille ;
-  5. relancer l’application et vérifier qu’il ne réapparaît ni dans la
-     bibliothèque ni dans la corbeille.
-- Résultat attendu : seule une confirmation explicite entraîne la suppression
-  irréversible, qui persiste après relance.
-- Résultat : 🔴 `ÉCHOUÉ` le 3 août 2026 : l’alerte s’ouvre et se ferme, mais la
-  confirmation ne retire pas l’album de la corbeille.
-
-### `IPAD-L1-036` — Régression suppression définitive
-
-- Commit : `28d8c41`.
-- Préconditions : placer un nouvel album de test dans la corbeille.
-- Étapes :
-  1. toucher « Supprimer » puis annuler et vérifier que l’album reste présent ;
-  2. toucher de nouveau « Supprimer » puis confirmer la suppression définitive ;
-  3. vérifier la disparition immédiate de la ligne ;
-  4. revenir à la bibliothèque, rouvrir la corbeille puis relancer
-     l’application.
-- Résultat attendu : la sélection de l’album reste disponible pendant la tâche
-  asynchrone, et l’album supprimé ne réapparaît jamais.
-- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 3 août 2026.
+- Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 5 août 2026.
