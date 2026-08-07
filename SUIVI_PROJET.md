@@ -14,7 +14,7 @@ dépôt, conformément à [`AGENTS.md`](AGENTS.md).
 | Produit | Album Photo |
 | Dépôt | [gabrielmessika/album_photo](https://github.com/gabrielmessika/album_photo) |
 | Branche d’intégration | `main` |
-| Spécification | Version 2.1 du 27 juillet 2026 |
+| Spécification | Version 3.0 du 6 août 2026 |
 | Plateformes | iPhone et iPad |
 | Version minimale | iOS 26 et iPadOS 26 |
 | Technologies | Swift, SwiftUI et frameworks Apple publics |
@@ -23,8 +23,8 @@ dépôt, conformément à [`AGENTS.md`](AGENTS.md).
 | Build Apple | Phase A sur Swift Playgrounds/iPad ; qualification Xcode/macOS ponctuelle en phase B |
 | Distribution | App Store Connect et TestFlight |
 | Version publique visée en premier | `1.0` |
-| Phase courante | Lot 1 démarré par un incrément `ACPT-100` ; sorties du lot 0 encore incomplètes |
-| Dernière mise à jour | 4 août 2026 |
+| Phase courante | Redémarrage du développement décidé ; cinq comportements produit Photoweb arbitrés, convention technique du zoom natif à confirmer, nouvelle implémentation non commencée |
+| Dernière mise à jour | 6 août 2026 |
 | Dernier auteur du suivi | Codex |
 
 ## Légende des états
@@ -44,10 +44,10 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 
 | Périmètre | État | Avancement constaté | Prochaine condition |
 |---|---|---|---|
-| Préparation et documentation | 🟡 En cours | Spécification, README, suivi et squelette App Playground compilé sur iPad | Relever les versions exactes de l’environnement iPad |
-| Lot 0 — Prototypes et contrats | 🟡 En cours | Frontière de domaine et premier modèle testable créés ; prototypes à compléter | Valider l’architecture sur iPad et traiter les autres sorties |
-| Lot 1 — Création locale | 🟡 En cours | Navigation restaurée ; cadrage revu avec cible par page, image entière à 1× et masque visible | Exécuter `IPAD-L1-059` à `062` |
-| Lot 2 — Création enrichie | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 1 |
+| Préparation et documentation | 🟡 En cours | Projet 3.0, README et suivis réalignés ; suppression option A, confirmation des modèles, profondeur libre et réutilisation interalbum sont spécifiées | Confirmer le repère photo canonique `2 400 × 3 000` et la plage `0,1×…8×`, puis créer le nouveau squelette |
+| Lot 0 — Prototypes et contrats | 🟡 En cours | Contrat du canevas défini ; aucun prototype 3.0 ni ADR technique du lot 0 encore validé | Créer le nouveau noyau et prototyper géométrie, texte et modèles |
+| Lot 1 — Création locale | ⬜ Non commencé | L’implémentation 2.1 est supplantée et ne sera ni reprise comme preuve ni migrée | Démarrer le nouveau squelette et `ACPT-123`/`124` |
+| Lot 2 — Parité de composition Photoweb | ⬜ Non commencé | 0 scénario d’acceptation 3.0 validé | Terminer le lot 1 |
 | Lot 3 — Consultation et documents | ⬜ Non commencé | 0 scénario d’acceptation validé | Terminer le lot 2 |
 | Qualité et publication `1.0` | ⬜ Non commencé | Aucune build | Lots 0 à 3 terminés |
 | Lot 4 — Historique et CloudKit | ⬜ Non commencé | 0 scénario d’acceptation validé | Version 1.0 et faisabilité CloudKit |
@@ -56,7 +56,8 @@ sa documentation sont terminés. Une implémentation non testée reste 🟡.
 | Qualité et publication `1.2` | ⬜ Non commencé | Aucune build | Lot 5 terminé |
 
 **Avancement fonctionnel global : 0 %.** Aucun scénario d’acceptation de
-`ACPT-100` à `ACPT-122` n’est encore validé.
+`ACPT-100`, `ACPT-102` à `ACPT-104`, `ACPT-111` à `ACPT-115`,
+`ACPT-117` à `ACPT-131` n’est encore validé pour le produit 3.0.
 
 Ce pourcentage mesure uniquement les fonctionnalités livrables. Il n’intègre
 pas la rédaction préalable de la spécification ou de la documentation.
@@ -65,15 +66,15 @@ pas la rédaction préalable de la spécification ou de la documentation.
 
 | Version | Lots requis | Périmètre | État | Build | Publication |
 |---|---|---|---|---|---|
-| `1.0` | Lots 0 à 3 + qualité | Création locale, médias, commentaires de base, stickers, lecture, diaporama, PDF et `.photoalbum` | ⬜ | — | — |
-| `1.1` | Hérite de `1.0` + lot 4 + qualité | Tableaux, listes de contrôle, historique et CloudKit | ⬜ | — | — |
-| `1.2` | Hérite de `1.1` + lot 5 + qualité | Google Sign-In et Google Photos Picker | ⬜ | — | — |
+| `1.0` | Lots 0 à 3 + qualité | Canevas multiélément, photos et textes multiples, stickers statiques, cadres/formes, fonds, modèles, dé, automatisme, vue globale, lecture, diaporama, PDF et `.photoalbum` | ⬜ | — | — |
+| `1.1` | Hérite de `1.0` + lot 4 + qualité | Historique et CloudKit | ⬜ | — | — |
+| `1.2` | Hérite de `1.1` + lot 5 + qualité | Google Sign-In et import multiple de photos statiques | ⬜ | — | — |
 
 ## Phase de préparation
 
 | Tâche | État | Preuve ou résultat | Action suivante |
 |---|---|---|---|
-| Spécification fonctionnelle et technique 2.1 | 🟢 | [`spec.md`](spec.md), sections 2.8, 30.5 et 30.6 | Garder les identifiants normatifs stables |
+| Spécification fonctionnelle et technique 3.0 | 🟡 | [`spec.md`](spec.md), canevas Photoweb et décisions utilisateur du 6 août 2026 ; `DEC-34` à `DEC-37` sont intégrées, seule la convention de `CRP-001`/`DAT-006` reste ouverte | Confirmer `2 400 × 3 000` et `0,1×…8×`, puis figer la version avant développement du cadrage |
 | Guide du flux Windows/WSL/GitHub/iPad | 🟢 | [`README.md`](README.md), scénario en deux phases | Le réviser après le premier test réel |
 | Checklist iPad et registre des validations différées | 🟢 | `TST-009` à `TST-016`, [`suivi_tests.md`](suivi_tests.md) et registre ci-dessous | Ajouter les tests de chaque campagne groupée |
 | Tableau de suivi du projet | 🟢 | Ce document | Le maintenir à chaque changement |
@@ -93,20 +94,22 @@ Objectif : prouver les risques techniques avant de développer le produit.
 
 | Tâche | État | Exigences ou sortie | Preuve attendue |
 |---|---|---|---|
-| Créer l’App Playground universel | 🟡 | `DEC-01`, `LOT-001` | `Albumzh.swiftpm` compilé sur iPad au commit `ec8842a` ; familles et orientations à relever |
+| Créer le nouvel App Playground universel | ⬜ | `DEC-01`, `DEC-33`, `LOT-001` | Ancien `Albumzh.swiftpm` seulement historique ; nouveau squelette compilé sur iPad attendu |
 | Activer iPhone et iPad, portrait et paysage | ⬜ | `DEC-17`, `TST-003` | Exécution et captures |
-| Définir l’organisation des modules | 🟡 | `ARC-001` à `ARC-017` | Noyau partagé et AppModule séparés ; ADR et validation Apple manquants |
-| Isoler le domaine testable sous WSL | 🟡 | `ARC-002`, `ARC-003`, `DEV-006` | Package Swift partagé compilé et 16 tests réussis sous Linux |
-| Prototyper l’édition riche | ⬜ | `TXT-001` à `TXT-006` | Sélection, collage, brouillon, annulation et sérialisation |
+| Définir l’organisation des modules | ⬜ | `ARC-001` à `ARC-017` | ADR du nouveau noyau, rendu partagé et services isolés |
+| Isoler le domaine 3.0 testable sous WSL | ⬜ | `ARC-002`, `ARC-003`, `DEV-006` | Nouveau package Swift et suites géométrie/modèles/commandes |
+| Prototyper le canevas multiélément | ⬜ | `CAN-001` à `CAN-009`, `ELM-001` à `ELM-014`, `ZOM-001` à `ZOM-008` | Hit-testing, poignées, guides, profondeur, sélection d’un élément masqué, zoom de fenêtre, rotation accessible et priorité gestuelle |
+| Prototyper le texte Photoweb | ⬜ | `TXA-001` à `TXA-005`, `TBX-001` à `TBX-025` | Sélection, styles, valeurs initiales, boîte, débordement, annulation et sérialisation |
+| Prototyper modèles, dé et automatisme | ⬜ | `TPL-001` à `TPL-023`, `RND-001` à `RND-006`, `AUT-001` à `AUT-019` | Manifeste canonique figé puis moteur pur déterministe pour zéro à vingt photos sans perte de contenu ni collision de profondeur |
 | Prototyper l’animation de page interactive | ⬜ | Section 10 | Démonstration gestes et interruption |
-| Définir le modèle du domaine | 🟡 | Section 22 | Premier sous-ensemble Album/Page et invariants de création testés |
+| Définir le modèle du domaine 3.0 | ⬜ | Section 22 | `PageElement`, cadres photo, textes, stickers, fonds et layout state testés |
 | Définir la sérialisation canonique | ⬜ | `DAT-020` à `DAT-028` | Golden files et empreintes stables |
-| Prototyper le journal transactionnel | 🟡 | `LOC-011` à `LOC-026` | Journal de création et relance testés ; injection d’interruption à ajouter |
-| Créer le schéma `.photoalbum` v1 | ⬜ | `PKG-001` à `PKG-021` | Schéma JSON et corpus d’exemples |
+| Prototyper le journal transactionnel | ⬜ | `LOC-011` à `LOC-026` | Nouveau journal 3.0 et injection d’interruption |
+| Créer le schéma `.photoalbum` v1 | ⬜ | `PKG-001` à `PKG-022`, `IMP-001` à `IMP-025`, `TPL-019`, `CAT-009`, `SHR-012` à `SHR-014` | Génération propre et schémas JSON ; manifeste des modèles avec SHA, trois fonds et six formes figés avant la première build du lot 1 qui persiste ces références ; registre complet, six cadres et stickers figés avant le lot 2 |
 | Valider le type de document sur iPad | 🟠 | `PKG-001`, `PKG-002`, `IMP-001` | Ouverture depuis Fichiers et partage |
 | Prototyper CloudKit page par page | 🟠 | `SYN-001` à `SYN-003` | Go/no-go sur entitlements et conteneur |
 | Vérifier la faisabilité OAuth Google | 🟠 | `CFG-001` à `CFG-003`, lot 5 | Go/no-go sur le schéma de retour |
-| Créer la matrice de traçabilité initiale | 🟡 | `TST-001` | Premier registre exigences–tests manuels dans `suivi_tests.md` ; matrice exhaustive à créer |
+| Créer la matrice de traçabilité 3.0 | 🟡 | `TST-001`, `SPEC-001` à `SPEC-003` | Registre historique conservé ; couverture des nouveaux identifiants à créer |
 | Enregistrer les décisions d’architecture | ⬜ | Sortie du lot 0 | ADR datées et approuvées |
 | Créer la CI du domaine | ⬜ | Tests unitaires multiplateformes | Workflow GitHub vert |
 
@@ -115,6 +118,7 @@ Objectif : prouver les risques techniques avant de développer le produit.
 - [ ] Les prototypes prouvent ou réfutent chaque risque principal.
 - [ ] Le projet reste compilable et démontrable.
 - [ ] Les formats de données sont relus.
+- [ ] Le manifeste canonique des modèles, le schéma du registre et les contrats de rendu public sont versionnés et leurs golden tests passent.
 - [ ] Les décisions d’architecture sont enregistrées.
 - [ ] Les blocages Swift Playgrounds ont un plan de repli décidé.
 - [ ] La matrice de traçabilité existe.
@@ -126,57 +130,55 @@ Objectif : rendre possible la création locale et durable d’albums.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Bibliothèque des albums | 🟡 | `ACPT-100` — grille, couverture de repli, création, ouverture, fond et relance ; export encore absent |
-| Création et renommage | 🟡 | `ACPT-100`, `ALB-007`, `ALB-021`, `UND-011` — renommage, Annuler/Rétablir et persistance validés dans `IPAD-L1-010` |
-| Corbeille et restauration des albums | 🟡 | `ACPT-102`, `ALB-017` à `024` — restauration validée ; suppression définitive et expiration exacte à 30 jours implémentées et testées sous Linux, validation iPad requise |
-| Pages : ajout, suppression et réorganisation | 🟡 | `PAG-001` à `PAG-008`, `PAG-010`, `PAG-011`, `ACPT-104` — opérations et deux annulations testées sous Linux ; nettoyage des références `PAG-009` attend les médias |
-| Fonds d’album | 🟢 | `BG-001` à `BG-011` — catalogue, rendu, proportions, changement persistant et annulation validés jusqu’à `IPAD-L1-029` |
-| Couverture automatique et manuelle | 🟡 | `COV-001`, `COV-003` à `COV-006`, `DAT-005` — automatique et sélection d’une occurrence implémentées ; validation iPad requise |
-| Dépôt d’assets adressé par contenu | ⬜ | Section 18 |
-| Journal local transactionnel | 🟡 | `ACPT-100`, `ACPT-114` — premier journal JSON rejouable ; campagne d’interruption manquante |
-| Import de photos avec PhotosPicker | 🟡 | Copie locale, affichage, remplacement et suppression implémentés ; formats avancés et validation iPad requis |
-| Import et lecture des vidéos | ⬜ | `ACPT-106`, `ACPT-110` |
-| Normalisation des formats média | ⬜ | `ACPT-106` |
-| Cadrage non destructif | 🟡 | `CRP-001` à `CRP-010` — pincement, glissement, réinitialisation, persistance et action annulable implémentés directement dans la page ; validation iPad requise |
-| Hauteur du commentaire | ⬜ | `ACPT-105` |
-| Affichage simple et double page | 🟢 | `DSP-001` à `DSP-011` — préférence, repli selon largeur et groupement validés sur iPad |
-| Navigation boutons et gestes | 🟢 | `NAV-001` à `NAV-006` — boutons et balayage déterministe simple/double validés jusqu’à `IPAD-L1-031` |
-| Annulation et rétablissement de session | 🟡 | `ACPT-104`, `UND-001` à `UND-004`, `UND-010`, `UND-012` — pile de session implémentée pour les pages et testée sous Linux |
+| Nouveau squelette et bibliothèque | ⬜ | `ACPT-100`, `DEC-33` — nouvelle implémentation, sans réutilisation du schéma, des vues ni du store du prototype 2.1 |
+| Création, renommage, corbeille et restauration | ⬜ | `ACPT-100`, `ACPT-102` |
+| Page active unique et interface adaptative | ⬜ | `ACPT-123`, `GLO-001`, `GLO-002`, `ZOM-001` à `ZOM-008` |
+| Vue globale, ajout, suppression et réorganisation | ⬜ | `ACPT-104`, `ACPT-129`, `PAG-001` à `PAG-015`, `GLO-003` à `GLO-009` |
+| Nouveau modèle `PageElement` et rendu partagé | ⬜ | `CAN-001` à `CAN-009`, `DAT-001` à `DAT-043`, `ARC-008` |
+| Dépôt d’assets et journal transactionnel | ⬜ | Sections 18 et 22.8 ; racine `AlbumPhotoCanvasV1`, génération vérifiée et ancien store ignoré |
+| Import multiple de photos statiques et photothèque persistante | ⬜ | `PHO-001` à `PHO-018`, `APL-001` à `APL-008`, `FMT-001` à `FMT-008`, `DAT-043`, `ACPT-124` — retrait d’occurrence, suppression confirmée à zéro usage et réutilisation interalbum sont distincts |
+| Plusieurs cadres et occurrences par page | ⬜ | `FRM-001` à `FRM-009`, `ELM-001` à `ELM-014`, `ACPT-124` |
+| Cadrage natif `1×`, dézoom et fond visible par cadre | ⬜ | `CRP-001` à `CRP-007`, `DAT-006` à `DAT-010` |
+| Indicateur de qualité photo à trois états | ⬜ | `QLT-001` à `QLT-006`, `ACPT-124` |
+| Fonds propres à chaque page | ⬜ | `BG-001` à `BG-016`, `ACPT-127` |
+| Couverture par `pageID + elementID` | ⬜ | `COV-001` à `COV-007`, `DAT-005` |
+| Sauvegarde, presse-papiers et annulation | ⬜ | `SAV-001` à `SAV-004`, `CLP-001` à `CLP-005`, `UND-001` à `UND-012`, `ACPT-130` |
+| Navigation boutons, balayage et animation | ⬜ | `NAV-001` à `NAV-007`, `ANI-001` à `ANI-009`, priorité des gestes `NAV-005` |
+
+Les validations `IPAD-L1-001` à `062` décrivent exclusivement le prototype
+2.1. Elles restent des preuves historiques de leurs commits, mais aucune ne
+valide une ligne du lot 1 ci-dessus. La prochaine campagne commencera à `063`
+après création d’un commit du nouveau développement.
 
 ### Critère de sortie du lot 1
 
 - [ ] `ACPT-100` passe.
-- [ ] `ACPT-102` à `ACPT-106` passent.
+- [ ] `ACPT-102` à `ACPT-104`, `ACPT-123`, `ACPT-124`, `ACPT-127`, `ACPT-129` et `ACPT-130` passent.
 - [ ] Les commandes validées survivent à une relance.
+- [ ] Aucune commande ni disposition à deux pages n’existe.
 - [ ] Le lot reste compilable, testable et démontrable.
 
-## Lot 2 — Création enrichie
+## Lot 2 — Parité de composition Photoweb
 
-Objectif : ajouter les commentaires riches et les stickers.
+Objectif : compléter la composition Photoweb avec modèles, textes et décors.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Modèle persistant du commentaire | ⬜ | Section 12.8 |
-| Éditeur enrichi de base | ⬜ | `ACPT-107` |
-| Styles de paragraphes et caractères | ⬜ | `ACPT-107` |
-| Listes, retraits et alignements | ⬜ | `ACPT-107` |
-| Brouillon récupérable | ⬜ | `ACPT-101` |
-| Limite de 500 caractères par graphème | ⬜ | `TST-006` |
-| Hauteur et débordement | ⬜ | Sections 12.7 et 7.4 |
-| Catalogue de stickers intégrés | ⬜ | Section 13 |
-| Stickers personnalisés depuis une image | ⬜ | `ACPT-108` |
-| Stickers GIF | ⬜ | `ACPT-108` |
-| Détourage disponible | ⬜ | Section 13.3 |
-| Déplacement, rotation et redimensionnement | ⬜ | Section 13.4 |
-| Ordre d’affichage des stickers | ⬜ | `TST-006` |
-| Clavier, pointeur et trackpad | ⬜ | `ACPT-115` |
+| Catalogue et application des modèles | ⬜ | `TPL-001` à `TPL-023`, `ACPT-125` |
+| Dé aléatoire sans répétition immédiate | ⬜ | `RND-001` à `RND-006`, `ACPT-125` |
+| Mise en page et remplissage automatiques | ⬜ | `AUT-001` à `AUT-019`, `ACPT-125` |
+| Plusieurs zones de texte Photoweb | ⬜ | `TBX-001` à `TBX-025`, `TXA-001` à `TXA-005`, `ACPT-126` |
+| Débordement et limite de mille caractères par zone | ⬜ | `TBX-006`, `TBX-020` à `TBX-023` |
+| Catalogue de stickers statiques intégrés | ⬜ | `STK-001` à `STK-016`, `STK-021` à `STK-024`, `ACPT-128` |
+| Registre et copies des ressources intégrées | ⬜ | `CAT-001` à `CAT-009` — identités, versions, licences, discriminants `asset`/`nativeVector`, empreintes et contrats publics de rendu |
+| Formes, contours et cadres décoratifs | ⬜ | `SHR-001` à `SHR-014`, `CAT-001` à `CAT-009`, `DAT-041`, `ACPT-128` |
+| Manipulation, rotation et ordre unifiés | ⬜ | `ELM-001` à `ELM-014`, `CAN-003` |
+| Clavier, pointeur, trackpad et VoiceOver | ⬜ | `ACPT-115`, `ACC-001` à `ACC-021` |
 
 ### Critère de sortie du lot 2
 
-- [ ] `ACPT-101` passe.
-- [ ] `ACPT-107` passe.
-- [ ] `ACPT-108` passe.
-- [ ] Les brouillons et commandes validées résistent à une interruption.
+- [ ] `ACPT-125`, `ACPT-126` et `ACPT-128` passent.
+- [ ] Aucune fonction vidéo, GIF, sticker personnalisé, tableau ou liste de contrôle n’est exposée.
 - [ ] Le lot reste compilable, testable et démontrable.
 
 ## Lot 3 — Consultation et documents
@@ -186,32 +188,30 @@ Objectif : terminer le périmètre fonctionnel de la version publique 1.0.
 | Tâche | État | Scénarios principaux |
 |---|---|---|
 | Mode lecture | ⬜ | Sections 14 et 29 |
-| Diaporama | ⬜ | `ACPT-110` |
-| Animation de page finalisée | ⬜ | `ACPT-109` |
+| Diaporama photo, une page à la fois | ⬜ | `ACPT-131`, `SLD-001` à `SLD-022` |
+| Animation de page finalisée | ⬜ | `ANI-001` à `ANI-009`, `ACPT-131` |
 | Export `.photoalbum` | ⬜ | `ACPT-111` |
 | Import sécurisé `.photoalbum` | ⬜ | `ACPT-111`, `ACPT-112` |
-| Import dégradé avec média absent | ⬜ | `IMP-014` à `IMP-016` |
+| Import dégradé avec photo absente | ⬜ | `IMP-014` à `IMP-016` |
 | Corpus de packages valides et malveillants | ⬜ | `TST-007` |
-| Export PDF | ⬜ | `ACPT-113` |
+| Export PDF et alertes de qualité | ⬜ | `PDF-001` à `PDF-020`, `ACPT-113` |
 | PDF balisé et accessible | ⬜ | `ACPT-113` |
 | Enveloppe de performance 1.0 | ⬜ | `ACPT-114` |
-| Accessibilité iPad | ⬜ | `ACPT-115` |
+| Accessibilité iPhone et iPad | ⬜ | `ACPT-115` |
 
 ### Critère de sortie du lot 3
 
-- [ ] `ACPT-109` à `ACPT-115` passent.
+- [ ] `ACPT-111` à `ACPT-115` et `ACPT-131` passent.
 - [ ] Le format `.photoalbum` v1 est documenté publiquement.
 - [ ] Les imports hostiles sont rejetés sans écriture durable.
 - [ ] Après le lot Qualité, le produit est candidat à la version 1.0.
 
-## Lot 4 — Commentaires avancés, historique et CloudKit
+## Lot 4 — Historique et CloudKit
 
 Objectif : produire la version publique 1.1.
 
 | Tâche | État | Scénarios principaux |
 |---|---|---|
-| Listes de contrôle | ⬜ | `ACPT-116` |
-| Tableaux | ⬜ | `ACPT-116` |
 | Révisions persistantes | ⬜ | `ACPT-117` |
 | Restauration et purge à 50 révisions | ⬜ | `ACPT-117` |
 | Zone CloudKit `AlbumZone` | 🟠 | `SYN-003` |
@@ -221,12 +221,12 @@ Objectif : produire la version publique 1.1.
 | Conflits sur une même page | ⬜ | `ACPT-119` |
 | Changement de compte et mode hors ligne | ⬜ | `ACPT-120` |
 | Corbeille synchronisée | ⬜ | `ACPT-121` |
-| Téléchargement des médias à la demande | ⬜ | Section 19 |
+| Téléchargement des photos à la demande | ⬜ | Section 19 |
 
 ### Critère de sortie du lot 4
 
 - [ ] La capacité CloudKit est disponible dans la chaîne de signature retenue.
-- [ ] `ACPT-116` à `ACPT-121` passent.
+- [ ] `ACPT-117` à `ACPT-121` passent.
 - [ ] Les conflits conservent toutes les branches.
 - [ ] Après le lot Qualité, le produit est candidat à la version 1.1.
 
@@ -239,19 +239,18 @@ Objectif : produire la version publique 1.2.
 | Configuration OAuth par environnement | 🟠 | `CFG-001` à `CFG-006` |
 | Google Sign-In | ⬜ | `ACPT-122` |
 | Création d’une session Picker | ⬜ | Section 11.3 |
-| Sélection unique `maxItemCount = 1` | ⬜ | `DEC-10` |
-| Import d’une photo | ⬜ | `ACPT-122` |
-| Import d’une vidéo | ⬜ | `ACPT-122` |
+| Sélection multiple de photos | ⬜ | `DEC-10`, `GPH-003` |
+| Import de photos statiques | ⬜ | `ACPT-122` |
 | Reprise d’un téléchargement interrompu | ⬜ | `ACPT-122` |
 | Expiration de session | ⬜ | `ERR-006` |
-| Déconnexion sans perte des médias | ⬜ | `ERR-007` |
+| Déconnexion sans perte des photos | ⬜ | `ERR-007` |
 | Documentation sans secret embarqué | ⬜ | `DEL-001` |
 
 ### Critère de sortie du lot 5
 
 - [ ] Le retour OAuth fonctionne avec une build signée.
 - [ ] `ACPT-122` passe.
-- [ ] Les médias déjà importés restent disponibles hors ligne.
+- [ ] Les photos déjà importées restent disponibles hors ligne.
 - [ ] Après le lot Qualité, le produit est candidat à la version 1.2.
 
 ## Lot 6 — Qualité et publication
@@ -267,9 +266,9 @@ Ce lot est répété avant chaque version publique.
 | Tests iPad | ⬜ | ⬜ | ⬜ | Résultats appareil réel |
 | Accessibilité et VoiceOver | ⬜ | ⬜ | ⬜ | Procédure et preuves |
 | PDF balisé | ⬜ | ⬜ | ⬜ | Inspection d’accessibilité |
-| Localisation française et anglaise | ⬜ | ⬜ | ⬜ | Revue des libellés |
+| Localisation française | ⬜ | ⬜ | ⬜ | Revue des libellés |
 | Performance et charge | ⬜ | ⬜ | ⬜ | Mesures sur enveloppe garantie |
-| Migrations | ⬜ | ⬜ | ⬜ | Fixtures d’anciennes versions |
+| Migrations de formats publiés | ⬜ | ⬜ | ⬜ | Non applicable au prototype 2.1 ; fixtures requises seulement après un premier format publié |
 | Sécurité des packages | ⬜ | ⬜ | ⬜ | Corpus hostile et résultats |
 | Reprise après interruption | ⬜ | ⬜ | ⬜ | Injection à chaque étape |
 | Confidentialité | ⬜ | ⬜ | ⬜ | Politique et déclaration App Store |
@@ -283,14 +282,14 @@ Ce lot est répété avant chaque version publique.
 
 | Chantier | État | Référence | Remarque |
 |---|---|---|---|
-| Architecture et injection | 🟡 | Section 23 | Vue → ViewModel → service injecté → dépôt actor pour le premier incrément |
-| Persistance locale | 🟡 | Section 18 | Snapshot atomique et journal rejouable pour la création ; périmètre incomplet |
+| Architecture et injection | ⬜ | Section 23 | L’ancien découpage est historique ; nouvel ADR multiélément requis |
+| Persistance locale | ⬜ | Sections 18 et 22 | Génération `album-photo-canvas-v1` et racine `AlbumPhotoCanvasV1` ; ancien store préservé, ignoré et jamais décodé |
 | Gestion des assets | ⬜ | Sections 18 et 22.8 | SHA-256 et déduplication |
 | Sécurité des imports | ⬜ | Section 20.5 | Validation avant staging |
-| Confidentialité | ⬜ | Section 25 | Aucun secret ni média personnel dans Git |
+| Confidentialité | ⬜ | Section 25 | Aucun secret ni photo personnelle dans Git |
 | Accessibilité | ⬜ | Section 26 | À intégrer dès chaque composant |
 | Performance | ⬜ | Section 27 | Mesurer, ne pas supposer |
-| Localisation | ⬜ | Section 28 | Français et anglais |
+| Localisation | ⬜ | Section 28 | Français initial ; langues supplémentaires non planifiées |
 | Documentation d’architecture | ⬜ | `DEL-001` | ADR et README technique |
 | Traçabilité | 🟡 | `TST-001` | Registre manuel initial dans `suivi_tests.md` ; couverture exhaustive à créer |
 | CI Linux | ⬜ | Tests du domaine | Ne couvre pas les SDK Apple |
@@ -300,17 +299,16 @@ Ce lot est répété avant chaque version publique.
 
 | Livrable attendu par `DEL-001` | État | Emplacement ou action |
 |---|---|---|
-| Projet compilable | 🟡 | Noyau compilé sous Linux et App Playground compilé sur iPad au commit `ec8842a` ; nouvel incrément à revalider |
-| Application iPhone et iPad | 🟡 | Bibliothèque et premier éditeur validés partiellement sur iPad ; iPhone non testé |
-| Code Swift formaté | 🟡 | Premier incrément Swift présent ; contrôle de format automatisé absent |
-| Tests unitaires, intégration et interface | 🟡 | 18 tests Linux réussis ; pages `013` à `016` réussis sur iPad ; `017` à `023` non testés |
+| Projet compilable | ⬜ | Le prototype 2.1 a compilé historiquement ; aucun nouveau projet 3.0 créé |
+| Application iPhone et iPad | ⬜ | Aucune build du nouveau développement ; preuves 2.1 archivées dans `suivi_tests.md` |
+| Code Swift formaté | ⬜ | Ancien code présent mais non retenu comme implémentation 3.0 |
+| Tests unitaires, intégration et interface | ⬜ | Dernière preuve historique : 23 tests Linux au commit `a82167a` ; aucun test 3.0 exécuté |
 | Assets de démonstration libres de droits | ⬜ | À sourcer et documenter |
 | Schéma CloudKit documenté | ⬜ | Lot 4 |
 | Configuration Google sans secret | ⬜ | Lot 5 |
 | README d’installation | 🟢 | [`README.md`](README.md) |
 | README d’architecture | ⬜ | À créer après les ADR du lot 0 |
 | Format `.photoalbum` documenté | ⬜ | Lot 0 puis lot 3 |
-| Stratégie de migration | ⬜ | À définir au lot 0 |
 | Liste des limitations connues | 🟡 | Limites initiales dans le README, document de release absent |
 | Données d’exemple | ⬜ | À créer |
 | Matrice de traçabilité | ⬜ | À créer au lot 0 |
@@ -328,11 +326,18 @@ Ce lot est répété avant chaque version publique.
 | `RSK-005` | WSL ne compile pas SwiftUI ni les frameworks Apple | Certain | Moyen | Accepté | Isoler le domaine ; compiler l’app sur iPad ou macOS |
 | `RSK-006` | Swift Playgrounds ne couvre pas toute l’automatisation demandée par la spécification | Élevée | Élevé | 🟠 | Tenir le registre différé puis exécuter une campagne macOS/Xcode groupée |
 | `RSK-007` | Les copies PC et iPad divergent | Moyenne | Élevé | Surveillé | GitHub source de vérité, pas d’édition parallèle |
-| `RSK-008` | Volumes média de 5 Go difficiles à tester et transférer | Moyenne | Élevé | ⬜ | Corpus dédié, espace réservé et tests de charge progressifs |
+| `RSK-008` | Volumes photo de 5 Go difficiles à tester et transférer | Moyenne | Élevé | ⬜ | Corpus dédié, espace réservé et tests de charge progressifs |
 | `RSK-009` | Perte ou corruption pendant une commande | Moyenne | Critique | ⬜ | Journal transactionnel et injection d’interruption dès le lot 0 |
-| `RSK-010` | Dépendances ou assets non libres | Moyenne | Élevé | ⬜ | Revue de licence avant intégration |
+| `RSK-010` | Dépendances, icônes ou assets Photoweb non libres | Moyenne | Élevé | Surveillé | Utiliser SF Symbols, composants natifs et ressources propres ou licenciées ; revue avant intégration |
 | `RSK-011` | Une validation est oubliée entre deux sessions de vacances | Élevée | Élevé | Surveillé | Fiche iPad obligatoire, cinq états explicites et registre différé cumulatif |
 | `RSK-012` | La première ouverture tardive dans Xcode révèle un écart d’architecture ou de configuration | Moyenne | Élevé | Surveillé | Versionner les réglages, isoler les services Apple et réserver la phase B dès le premier candidat viable |
+| `RSK-013` | Hit-testing, transformation, recadrage, zoom de fenêtre et navigation entrent en conflit sur un canevas dense ou un écran étroit | Élevée | Élevé | ⬜ | Prototype lot 0, priorité gestuelle explicite `ZOM-005`/`NAV-005`, alternatives par poignées/menu et campagnes iPhone/iPad |
+| `RSK-014` | Modèle, dé, Auto ou remplissage retire ou réaffecte silencieusement un contenu | Moyenne | Critique | ⬜ | Moteur pur déterministe, confirmation `TPL-007`, désactivation protectrice `TPL-008`, commandes atomiques et tests de non-perte |
+| `RSK-015` | La documentation publique Photoweb ne décrit pas tous les gestes ou états internes | Élevée | Moyen | Accepté | Les règles déterministes de `spec.md` prévalent ; réviser seulement avec une nouvelle observation sourcée |
+| `RSK-016` | Une réussite du prototype 2.1 est interprétée à tort comme preuve du nouveau produit | Élevée | Élevé | Surveillé | Matrice d’applicabilité dans `suivi_tests.md`, nouveaux tests à partir de `IPAD-L1-063` |
+| `RSK-017` | Le nouveau code ouvre ou écrase accidentellement le store du prototype 2.1 qui porte aussi un schéma initial | Moyenne | Critique | ⬜ | Génération et racine distinctes imposées par `DAT-033` et `LOC-029` à `LOC-031`, fixture sentinelle vérifiant que l’ancien store reste intact |
+| `RSK-018` | Un package tiers contourne l'interdiction des stickers ou décors personnalisés | Moyenne | Élevé | ⬜ | Registre fermé `CAT-001` à `CAT-009`, payloads `asset` hashés, `rendererID` sans fichier et rejet par `IMP-023` à `IMP-025` |
+| `RSK-019` | « Taille d’origine » n’a pas de mesure stable entre pixels source, écran et PDF sans repère canonique ni borne de zoom décidés | Certaine | Élevé | 🟠 | Les cinq comportements produit sont arbitrés ; ne pas implémenter `CRP-001` à `CRP-007` ni `DAT-006` à `DAT-008` avant confirmation utilisateur de `2 400 × 3 000` et `0,1×…8×` |
 
 ## Décisions de projet
 
@@ -347,7 +352,14 @@ Les décisions d’architecture détaillées devront être créées dans
 | `ADR-PROJ-004` | 2026-07-27 | Aucun contournement par API privée n’est autorisé | Acceptée |
 | `ADR-PROJ-005` | 2026-07-27 | L’accès macOS/Xcode est différé jusqu’à une version viable sur iPad, puis utilisé ponctuellement pour la qualification obligatoire avant publication | Acceptée |
 | `ADR-PROJ-006` | 2026-07-27 | Aucun abonnement ou location continue de Mac n’est requis pendant la phase A | Acceptée |
-| `ADR-PROJ-007` | 2026-08-05 | Le zoom `1×` contient l’image entière dans une zone photo visible ; le fond peut apparaître et toute partie déplacée hors de la zone est masquée, en cohérence avec la demande utilisateur inspirée des éditeurs de livres photo | Acceptée |
+| `ADR-PROJ-007` | 2026-08-05 | Le zoom `1×` contient l’image entière dans l’ancien cadre unique | Supplantée le 2026-08-06 par `CRP-001` et `ADR-PROJ-008` |
+| `ADR-PROJ-008` | 2026-08-06 | Le produit adopte un canevas Photoweb avec plusieurs cadres photo et textes ; `1×` conserve la taille native centrée avec fond visible, le dézoom est autorisé et texte/photo partagent une profondeur libre | Acceptée pour les comportements ; repère technique encore provisoire |
+| `ADR-PROJ-009` | 2026-08-06 | L’interface reprend comportements, ordre des commandes et icônes fonctionnelles Photoweb avec composants iOS natifs adaptatifs, sans copie visuelle ni assets propriétaires | Acceptée |
+| `ADR-PROJ-010` | 2026-08-06 | Vidéos, GIF, texte Notes avancé et stickers personnalisés/animés sont retirés ; seuls photos fixes, texte Photoweb et stickers statiques intégrés restent | Acceptée |
+| `ADR-PROJ-011` | 2026-08-06 | Fonds par page, modèles, dé, Auto, remplissage et vue globale sont inclus ; la marge de sécurité et tout affichage simultané de deux pages sont exclus | Acceptée |
+| `ADR-PROJ-012` | 2026-08-06 | Le développement redémarre depuis zéro sur le schéma 3.0 ; aucune migration ni compatibilité avec les albums du prototype 2.1 n’est requise | Acceptée |
+| `ADR-PROJ-013` | 2026-08-06 | La 3.0 utilise une génération de modèle et une racine de stockage nouvelles ; les fichiers 2.1 éventuellement présents restent intacts mais ne sont ni inspectés, ni décodés, ni importés | Acceptée |
+| `ADR-PROJ-014` | 2026-08-06 | Une photo inutilisée peut être supprimée de l’album après confirmation ; un modèle retirant des occurrences demande confirmation ; une photo d’un autre album est réutilisable sous une nouvelle identité logique et le même blob | Acceptée |
 
 ## Environnements et accès
 
@@ -391,14 +403,18 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `VAL-DIF-003` | Exécuter la matrice de simulateurs iPhone/iPad de `TST-003` | Campagne Xcode | ⏸️ | Indisponible sur iPad seul |
 | `VAL-DIF-004` | Tester la build TestFlight sur un iPhone physique compatible | Candidat `1.0` | 🟠 | Testeur iPhone à identifier |
 | `VAL-DIF-005` | Valider signature, entitlements, `.photoalbum`, CloudKit et OAuth applicables | Lots 0, 4 et 5 selon version | ⏸️ | Capacités à prototyper d’abord sur iPad |
-| `VAL-DIF-006` | Injecter interruptions, migrations et packages hostiles | Lot Qualité | ⏸️ | Nécessite harnais et tests Apple |
+| `VAL-DIF-006` | Injecter interruptions, futures migrations de formats publiés et packages hostiles | Lot Qualité | ⏸️ | Aucune migration du prototype 2.1 ; nécessite harnais et tests Apple |
 | `VAL-DIF-007` | Mesurer mémoire, CPU, énergie, stockage et lancement dans Instruments | Lot Qualité | ⏸️ | Instruments indisponible sur iPad |
 | `VAL-DIF-008` | Inspecter le balisage et l’accessibilité des PDF | Candidat `1.0` | ⏸️ | Inspecteur à sélectionner en phase B |
 | `VAL-DIF-009` | Archiver Release, valider l’archive et qualifier la build distribuée | Avant publication | ⏸️ | Aucune build candidate |
 
-## Anomalies actives
+## Anomalies historiques du prototype 2.1
 
-| ID | Exigence | Sévérité | État | Description | Lien |
+Les identifiants courts de cette table appartiennent à l’espace normatif 2,
+soit `2:<ID>`. Aucune anomalie applicative 3.0 n’est encore ouverte puisque la
+nouvelle implémentation n’a pas commencé.
+
+| ID | Exigence — espace 2 | Sévérité | État | Description | Lien |
 |---|---|---|---|---|---|
 | `ANO-001` | `ALB-014`, `BG-002`, `BG-003`, `BG-007`, `BG-010`, `APP-002` | Moyenne | 🟢 Corrigée | L’éditeur iPad ne rendait pas le fond à spirales et n’identifiait pas le mode édition ; correctif jugé meilleur sur iPad, avec limites de preuve consignées | `IPAD-L1-004`, `IPAD-L1-005` |
 | `ANO-002` | `ALB-007`, `ALB-021`, `UND-011` | Élevée | 🟢 Corrigée | Le dialogue libérait l’album avant l’exécution asynchrone ; sélection durable validée avec renommage, Annuler et Rétablir | `IPAD-L1-007`, régression réussie `IPAD-L1-010` |
@@ -413,24 +429,28 @@ doit être ajoutée dès qu’un test iPad reçoit l’état `BLOQUÉ`.
 | `ANO-011` | `LOT-001`, `PAG-003`, `APL-001` | Élevée | 🟢 Corrigée | Import du domaine, isolation et complexité de `PageManagerView` corrigés et compilés sur iPad | `IPAD-L1-044` à `047` réussis |
 | `ANO-012` | `CRP-002`, `CRP-003`, ergonomie | Moyenne | 🟢 Corrigée | Feuille supprimée ; pincement, glissement et commandes intégrées validés, la régression de navigation est suivie séparément | `IPAD-L1-049`, régressions `053` à `056` |
 | `ANO-013` | `NAV-004` à `NAV-006`, `CRP-003`, `CRP-006` | Élevée | 🟢 Corrigée | Les reconnaisseurs de recadrage sont désormais inactifs hors du mode ; navigation restaurée sur iPad | `IPAD-L1-055`, régression réussie `057` |
-| `ANO-014` | `CRP-001` à `CRP-006`, `DSP-010` | Élevée | 🟡 Correctif à valider | Recadrage limité à la page droite et 1× en remplissage ; cible explicite par page et modèle 1× contenant avec masque ajoutés | `IPAD-L1-058`, régressions `059` à `062` |
+| `ANO-014` | Exigences 2.1 `CRP-001` à `CRP-006`, `DSP-010` | Élevée | ⏸️ Périmètre supplanté | L’échec reste historique ; la campagne `059` à `062` est fermée sans exécution car le cadre unique et le mode double page sont retirés | `IPAD-L1-058`, `059` à `062` historiques |
 
 Les risques de faisabilité sont suivis dans le registre `RSK` et ne doivent pas
 être transformés en anomalies applicatives avant qu’un prototype les reproduise.
+Les mentions `DSP` ou double page dans `ANO-004`, `ANO-006` et les autres
+anomalies closes décrivent uniquement la spécification 2.1 et ne sont plus
+applicables au produit courant.
 
 ## Prochaines actions prioritaires
 
-1. Exécuter `IPAD-L1-059` à `062` sur le commit indiqué dans `suivi_tests.md`.
-2. Relever le modèle d’iPad, la version d’iPadOS et la version de Swift
-   Playgrounds dans la fiche de validation.
-3. Ajouter l’injection d’interruption au journal local.
-4. Créer la matrice de traçabilité initiale et l’ADR d’organisation des modules.
-5. Commencer `ACPT-102` avec la mise en corbeille et la restauration.
-6. Choisir le bundle ID définitif et confirmer l’adhésion Apple Developer.
-7. Prototyper la déclaration et l’ouverture du document `.photoalbum`.
-8. Prototyper l’éditeur riche défini par `TXT-006`.
-9. Enregistrer comme bloquée toute capacité Swift Playgrounds indisponible.
-10. Après une première version viable, identifier un iPhone de test et
+1. Confirmer ou corriger la convention photo canonique `2 400 × 3 000` et la plage `nativeScale` `0,1×…8×` de la section 3.1, puis figer le cadrage de la spécification 3.0.
+2. Créer le nouveau squelette 3.0, la génération `album-photo-canvas-v1` et sa racine dédiée sans réutiliser le schéma, les vues ni le store du prototype.
+3. Écrire l’ADR d’architecture du canevas, du rendu partagé et des commandes.
+4. Implémenter sous WSL le modèle `PageElement`, la géométrie, le hit-testing et l’ordre.
+5. Prototyper sur iPad la sélection, les poignées, le cadrage retenu et la priorité des gestes.
+6. Prototyper le texte Photoweb et le moteur pur modèles/dé/Auto avant les catalogues visuels.
+7. Préparer la première campagne 3.0 à partir de `IPAD-L1-063` seulement lorsqu’un commit exact existe.
+8. Relever le modèle d’iPad, iPadOS et Swift Playgrounds lors de cette campagne.
+9. Choisir le bundle ID définitif et confirmer l’adhésion Apple Developer.
+10. Prototyper la déclaration et l’ouverture du document `.photoalbum`.
+11. Enregistrer comme bloquée toute capacité Swift Playgrounds indisponible.
+12. Après une première version viable, identifier un iPhone de test et
    réserver une campagne macOS/Xcode ponctuelle.
 
 ## Journal des mises à jour
@@ -441,6 +461,10 @@ haut.
 
 | Date | Auteur | Changement | Exigences ou phase | Validation |
 |---|---|---|---|---|
+| 2026-08-06 | Codex | Intégration détaillée dans `spec.md`, `README.md`, `SUIVI_PROJET.md` et `suivi_tests.md` des cinq réponses : taille native centrée et dézoom, suppression option A, confirmation des modèles destructifs, profondeur libre et réutilisation interalbum ; ajout des contrats d’identité, purge, CloudKit, package, icônes et tests ; convention numérique `2 400 × 3 000`/`0,1×…8×` laissée explicitement à confirmer | `3:DEC-07`, `3:DEC-34` à `3:DEC-37`, `3:CAN-009`, `3:ELM-014`, `3:PHO-001` à `3:PHO-018`, `3:CRP-001` à `3:CRP-007`, sections 16 à 22 et `3:ACPT-111`/`113`/`124` à `126`/`131` | Changement documentaire uniquement ; audits de cohérence en lecture seule, `git diff HEAD --check`, unicité et continuité des ID actifs, blocs Markdown et liens locaux réussis ; aucun build ni test applicatif Linux/Apple exécuté, aucune campagne 3.0 créée faute de code |
+| 2026-08-06 | Utilisateur | Arbitrage des cinq questions restantes : photo native centrée à `1×` avec dézoom, suppression A, confirmation avant retrait par un modèle plus petit, profondeur libre du texte et réutilisation depuis les autres albums | `3:DEC-07`, `3:DEC-34` à `3:DEC-37` | Réponses produit enregistrées ; convention numérique de la taille native encore à confirmer, aucun test applicatif requis ou exécuté pour l’arbitrage |
+| 2026-08-06 | Utilisateur | Ajout dans `AGENTS.md` de la règle imposant une clarification avant de coder lorsqu’une ambiguïté subsiste ; modification parallèle préservée telle quelle | Méthode de travail du dépôt | Diff relu ; aucun test applicatif requis ou exécuté pour cette instruction |
+| 2026-08-06 | Codex | Refonte documentaire Photoweb native dans `spec.md`, `README.md`, `SUIVI_PROJET.md` et `suivi_tests.md`, avec alignement `DONE-005` dans `AGENTS.md` : canevas multiélément, page active unique, commandes/icônes, zoom de fenêtre, photos/cadres/textes/stickers, modèles/dé/Auto/fonds/vue globale, génération et stockage 3.0 sans migration ; cinq arbitrages Photoweb explicitement laissés ouverts | Spec 3.0, sections 3 à 13, 20, 22 et 29 à 31 ; `3:DEC-31` à `3:DEC-33`, `3:ZOM-001` à `3:ZOM-008`, `3:PHO-015`, `3:LOC-029` à `3:LOC-031` | Changement documentaire uniquement ; sources Photoweb officielles relues, trois audits de cohérence en lecture seule, `git diff --check`, unicité des ID, clôture des blocs Markdown et bornes actives réussis ; aucun build ni test applicatif Linux/Apple exécuté, première campagne 3.0 non créée |
 | 2026-08-05 | Codex | Après comparaison avec Photoweb, évolution normative du cadrage : image entière à 1×, fond visible si nécessaire, masque des parties extérieures ; commande Recadrer propre à chaque page | `CRP-001`, `CRP-004`, `CRP-006`, `DAT-006`, `DSP-010` | Commit `a82167a` ; `057` RÉUSSI ; `058` ÉCHOUÉ ; analyse SwiftUI et 23 tests Linux réussis ; `059` à `062` NON TESTÉS |
 | 2026-08-05 | Codex | Validation du cadrage intégré ; désactivation réelle de ses reconnaisseurs hors du mode et calcul du débordement d’image pour déplacer à 1× sans révéler de vide | `CRP-003`, `CRP-004`, `CRP-006`, `DAT-007`, `NAV-004` à `NAV-006` | Commit `8190bca` ; `053`, `054`, `056` RÉUSSIS ; `055` ÉCHOUÉ ; analyse SwiftUI et 23 tests Linux réussis ; `057`, `058` NON TESTÉS |
 | 2026-08-05 | Codex | Validation du modèle de cadrage et remplacement de la feuille à curseurs par un mode intégré : pincement, glissement, Annuler, Réinitialiser et Terminé directement autour de la page | `CRP-001` à `CRP-010`, `NAV-005`, `UND-004` | Commit `9a87ae9` ; `048`, `050` à `052` RÉUSSIS ; `049` ÉCHOUÉ sur ergonomie ; analyse SwiftUI et 23 tests Linux réussis ; `053` à `056` NON TESTÉS |

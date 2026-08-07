@@ -28,9 +28,27 @@ Les seuls états autorisés sont :
 | ⚪ | `NON TESTÉ` | Le test n’a pas encore été exécuté pour le commit indiqué |
 | ⚫ | `NON APPLICABLE` | Le test ne concerne pas le périmètre du commit |
 
-Un résultat vaut uniquement pour le commit, l’appareil et les versions
-enregistrés. Une modification touchant le comportement peut imposer une
-nouvelle ligne de régression avec un nouvel identifiant.
+Un résultat vaut uniquement pour le commit, l’appareil, les versions
+logicielles et la version ou le commit exact de `spec.md` enregistrés. Une
+modification touchant le comportement peut imposer une nouvelle ligne de
+régression avec un nouvel identifiant.
+
+Depuis la spécification 3.0 du 6 août 2026, les résultats `001` à `062` sont
+des preuves historiques du prototype 2.1. Leur état observé ne change jamais,
+mais leur applicabilité au produit courant est indiquée séparément :
+
+| Repère | Applicabilité actuelle | Signification |
+|---|---|---|
+| 🟡 | `PARTIELLE — NOUVELLE PREUVE REQUISE` | Le principe subsiste, mais le nouveau développement doit être retesté avec un nouvel identifiant. |
+| ⏸️ | `SUPPLANTÉE` | Le comportement ou l’architecture testée a été retiré. |
+| ⚪ | `CAMPAGNE FERMÉE NON EXÉCUTÉE` | Le test reste historiquement NON TESTÉ et ne doit plus être exécuté. |
+
+Aucun résultat 2.1 ne valide le code 3.0, puisque le développement redémarre
+sans reprise ni migration du prototype. La première nouvelle fiche utilisera
+`IPAD-L1-063` et un commit exact du nouveau projet. Elle contiendra le champ
+`Spécification : 3.0 (<commit>)` et citera les exigences sous leur clé complète,
+par exemple `3:PHO-004`. Dans les fiches historiques `001` à `062`, les formes
+courtes désignent exclusivement l’espace 2, soit `2:<ID>`.
 
 ## Environnement iPad connu
 
@@ -107,6 +125,19 @@ nouvelle ligne de régression avec un nouvel identifiant.
 | `IPAD-L1-060` | Lot 1 | Image entière au zoom 1× | `CRP-001`, `CRP-004`, `CRP-006` | `a82167a` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-061` | Lot 1 | Masque visible et déplacement hors cadre | `CRP-003`, `CRP-006`, `DAT-007` | `a82167a` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-062` | Lot 1 | Cohérence du nouveau cadrage | `ALB-002`, `COV-007`, `PAG-003`, `APP-005` | `a82167a` | ⚪ `NON TESTÉ` |
+
+## Applicabilité depuis la spécification 3.0
+
+| Tests historiques | Applicabilité actuelle | Motif |
+|---|---|---|
+| `001` à `019` | 🟡 `PARTIELLE — NOUVELLE PREUVE REQUISE` | Bibliothèque et gestion des pages restent des concepts utiles, mais le nouveau projet, les fonds par page et l’éditeur multiélément repartent de zéro. |
+| `020`, `021` | ⏸️ `SUPPLANTÉE` | Le réglage Une/Deux pages et le groupement simultané sont supprimés. |
+| `022` à `031` | 🟡 `PARTIELLE — NOUVELLE PREUVE REQUISE` | Navigation et miniatures subsistent, mais doivent être rejouées avec une seule page et les gestes du canevas ; toute portion double page est retirée. |
+| `032` à `036` | 🟡 `PARTIELLE — NOUVELLE PREUVE REQUISE` | Les parcours de bibliothèque subsistent, sans constituer une preuve du nouveau code. |
+| `037` à `047` | 🟡 `PARTIELLE — NOUVELLE PREUVE REQUISE` | L’import et la couverture singleton sont remplacés par import multiple, cadres multiples et couverture par `elementID`. |
+| `048` à `058` | ⏸️ `SUPPLANTÉE` | Le cadrage du cadre implicite et son zoom contenant sont remplacés par un contenu indépendant dans chaque cadre libre : taille native centrée à `1×`, dézoom sous `1×` et fond visible. |
+| `059` | ⏸️ `SUPPLANTÉE` | Le ciblage en double page n’existe plus. |
+| `060` à `062` | ⚪ `CAMPAGNE FERMÉE NON EXÉCUTÉE` | La campagne a été arrêtée avant exécution ; ses états restent NON TESTÉ et ses attentes sont remplacées par `3:CRP-001` à `3:CRP-007`, `3:FRM-001` à `3:FRM-009` et `3:CAN-001` à `3:CAN-009` de la spec 3.0. |
 
 ## Détail des tests
 
@@ -344,7 +375,7 @@ nouvelle ligne de régression avec un nouvel identifiant.
   final persiste après relance.
 - Résultat : 🟢 `RÉUSSI`, confirmé par l’utilisateur le 29 juillet 2026.
 
-## Prochaine campagne
+## Campagne fonds et navigation — historique
 
 Pour `IPAD-L1-017` à `023`, récupérer le commit indiqué, compiler, puis :
 
@@ -874,6 +905,10 @@ Pour la régression :
   page ne peut pas être ciblée correctement.
 
 ### `IPAD-L1-059` — Ciblage du recadrage en double page
+
+> Campagne fermée le 6 août 2026 : ne pas exécuter `059` à `062`. Leurs
+> résultats historiques restent NON TESTÉ et les futurs contrôles commencent
+> à `IPAD-L1-063` sur le nouveau développement.
 
 - Commit : `a82167a`.
 - Préconditions : deux pages visibles contenant chacune une photo distincte.

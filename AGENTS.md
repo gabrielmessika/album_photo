@@ -43,7 +43,7 @@ Ne jamais marquer une tâche 🟢 sur la seule base d’un code écrit :
 - une implémentation partielle ou non testée reste 🟡 ;
 - une dépendance manquante ou une impossibilité reproductible passe à 🟠 ;
 - une tâche terminée doit avoir une preuve vérifiable ;
-- un lot ne peut être terminé que si sa sortie et `DONE-001` à `DONE-004` sont
+- un lot ne peut être terminé que si sa sortie et `DONE-001` à `DONE-005` sont
   satisfaites.
 
 ## Règles de développement
@@ -61,6 +61,7 @@ Ne jamais marquer une tâche 🟢 sur la seule base d’un code écrit :
   utilisateur réelle.
 - Ne pas modifier `spec.md` pour faire correspondre la spécification à une
   implémentation plus simple sans instruction explicite.
+- S'il y a une ambiguïté dans la spécification, demander une clarification avant de coder.
 
 ## Environnements de validation
 

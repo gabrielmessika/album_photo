@@ -1,12 +1,14 @@
 # Album Photo
 
-Application iPhone et iPad de création d’albums photo et vidéo, développée en
+Application iPhone et iPad de création d’albums photo, développée en
 Swift et SwiftUI.
 
-Le produit permet de composer des albums contenant des médias, des commentaires
-enrichis, des stickers et un fond commun, puis de les lire, de les présenter en
-diaporama et de les exporter en PDF ou sous la forme d’un document
-`.photoalbum`.
+Le produit reprend les comportements de composition de Photoweb dans une
+interface iOS native : plusieurs cadres photo et zones de texte par page,
+stickers statiques, fonds par page, modèles, dé aléatoire, mise en page
+automatique et vue globale. L’éditeur et la lecture affichent toujours une
+seule page active. Les albums restent lisibles en diaporama et exportables en
+PDF ou sous la forme d’un document `.photoalbum`.
 
 La spécification normative complète se trouve dans [`spec.md`](spec.md).
 L’avancement, les risques, les validations et les prochaines actions sont tenus
@@ -16,8 +18,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 
 ## État du projet
 
-- Spécification : version 2.1, prête pour le développement avec validation iPad temporaire.
-- Implémentation : lot 1 en cours, gestion locale des albums et des pages.
+- Spécification : projet 3.0 du 6 août 2026 consolidé ; taille native centrée à `1×` avec dézoom, suppression d’une photo inutilisée, confirmation des modèles plus petits, profondeur libre du texte et réutilisation interalbum sont arbitrées. Seule la convention numérique proposée pour rendre ce `1×` identique partout — page canonique `2 400 × 3 000` et zoom `0,1×…8×` — attend confirmation avant l’implémentation du cadrage.
+- Implémentation : redémarrage des lots 0 et 1 sur le canevas multiélément ; le prototype 2.1 reste historique. La nouvelle app utilise une génération et une racine de stockage distinctes : les anciennes données locales restent intactes mais sont ignorées, sans lecture, import ni migration.
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application prévu : App Playground Swift au format `.swiftpm`.
 - Dépôt GitHub :
@@ -26,14 +28,17 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 Les identifiants d’exigences de `spec.md` sont normatifs. Les branches, pull
 requests, tests et comptes rendus de validation doivent citer les identifiants
 concernés, par exemple `APP-001`, `LOC-004` ou `ACPT-100`.
+Pour la spécification courante, leur clé complète est respectivement
+`3:APP-001`, `3:LOC-004` ou `3:ACPT-100`; toute preuve cite aussi la version
+exacte de la spec ou son commit.
 
 ## Versions prévues
 
 | Version | Contenu |
 |---|---|
-| `1.0` | Création locale, médias, commentaires enrichis de base, stickers, lecture, diaporama, PDF et package modifiable |
-| `1.1` | Listes de contrôle, tableaux, historique persistant et synchronisation CloudKit |
-| `1.2` | Import depuis Google Photos |
+| `1.0` | Création locale, photos et textes multiples, stickers statiques, cadres et formes, fonds par page, modèles, dé, automatisme, vue globale, lecture, diaporama, PDF et package modifiable |
+| `1.1` | Historique persistant et synchronisation CloudKit |
+| `1.2` | Import de photos statiques depuis Google Photos |
 
 Chaque lot doit rester compilable, testable et démontrable. L’ordre de
 réalisation détaillé est défini dans la section 31 de `spec.md`.
@@ -105,8 +110,10 @@ Le premier objectif n’est donc pas une release App Store, mais une **version
 viable sur iPad**. Sur un même commit, elle doit au minimum permettre :
 
 - de créer un album et une page ;
-- d’ajouter une photo et une vidéo de test ;
-- de modifier un commentaire et un sticker ;
+- d’ajouter plusieurs photos dans plusieurs cadres d’une même page ;
+- de modifier plusieurs zones de texte et un sticker statique ;
+- d’appliquer un fond, un modèle, le dé et la mise en page automatique ;
+- d’utiliser la vue globale puis de revenir à une seule page active ;
 - de fermer puis relancer l’app sans perdre les données ;
 - de lire l’album et lancer le diaporama ;
 - d’exporter puis réimporter les formats déjà implémentés ;
@@ -186,7 +193,7 @@ TestFlight. Sans iPhone ni environnement Xcode distant, les exigences iPhone de
 - la dernière version stable de Swift Playgrounds ;
 - l’app Fichiers ;
 - l’app TestFlight pour tester les builds distribuées ;
-- suffisamment d’espace libre pour les médias, les dépendances et les builds ;
+- suffisamment d’espace libre pour les photos, les dépendances et les builds ;
 - facultatif mais pratique : un clavier, un pointeur ou un trackpad ;
 - facultatif : Working Copy pour faire du Git directement sur iPad.
 
@@ -334,7 +341,6 @@ Les adaptateurs Apple restent dans l’App Playground :
 
 - SwiftUI et UIKit ;
 - PhotosUI ;
-- AVFoundation et AVKit ;
 - CloudKit ;
 - PDFKit ;
 - UniformTypeIdentifiers ;
@@ -368,7 +374,7 @@ Dans Swift Playgrounds :
    en français compréhensible par l’utilisateur ;
 10. exécuter l’app vide en plein écran.
 
-L’import de médias de la version 1.0 passe par le sélecteur système. Ne pas
+L’import de photos de la version 1.0 passe par le sélecteur système. Ne pas
 ajouter la capacité Caméra : la capture directe est hors périmètre
 (`SCP-001`). Une autorisation Photothèque ne doit être ajoutée que si l’API
 réellement utilisée l’exige.
@@ -432,7 +438,7 @@ git push -u origin chore/bootstrap-app-playground
 ```
 
 Créer une pull request, contrôler que le package ne contient ni secret, ni
-cache, ni média personnel, puis fusionner.
+cache, ni photo personnelle, puis fusionner.
 
 Le `Package.swift` de l’App Playground est généré par Swift Playgrounds.
 Modifier les réglages de l’app depuis Swift Playgrounds puis versionner le
@@ -570,26 +576,31 @@ Dans Swift Playgrounds :
 10. tester avec puis sans réseau ;
 11. vérifier l’annulation et au moins un cas d’erreur ou d’annulation
     utilisateur ;
-12. pour les médias, utiliser au moins une photo et une vidéo non sensibles ;
-13. tester lecture, diaporama et les imports/exports déjà implémentés ;
+12. utiliser plusieurs photos non sensibles, dont une plus petite et une plus
+    grande que le repère canonique, vérifier la taille centrée à `1×`, le fond
+    visible et le dézoom à `0,5×`, les trois états de qualité, la suppression
+    confirmée seulement à zéro occurrence et la réutilisation depuis un autre
+    album, puis essayer un GIF ou une vidéo à refuser ;
+13. tester cadres multiples, texte, sticker, modèle, dé, automatisme, fonds, vue globale, lecture, diaporama et imports/exports déjà implémentés ;
 14. relever le hash Git, la copie ou le numéro de build, le modèle d’iPad, la
     version d’iPadOS et la version de Swift Playgrounds.
 
 Pour un lot donné, suivre les scénarios d’acceptation de la section 29 de
 `spec.md` et la campagne de la section 30.5, pas seulement un parcours de
-démonstration heureux. Lorsqu’une fonctionnalité touche les médias, les
-documents, le stockage, la vidéo ou l’accessibilité, exécuter aussi la
+démonstration heureux. Lorsqu’une fonctionnalité touche les photos, la
+composition, les documents, le stockage ou l’accessibilité, exécuter aussi la
 sous-checklist correspondante de `TST-011` à `TST-013`.
 
 Un compte rendu manuel doit être ajouté sous une forme similaire à :
 
 ```text
 Commit : a1b2c3d
+Spécification : 3.0 (commit de spec : d4e5f6a)
 Copie/build : AlbumPhoto-a1b2c3d / build interne 12
 Appareil : iPad ...
 Système : iPadOS 26.x
 Swift Playgrounds : x.y
-Scénario : ACPT-100
+Scénario : 3:ACPT-100
 Résultat attendu : ...
 Résultat observé : ...
 État : RÉUSSI / ÉCHOUÉ / BLOQUÉ / NON TESTÉ / NON APPLICABLE
@@ -658,11 +669,12 @@ Exemples :
 - ordre, ajout et suppression des pages ;
 - interdiction de supprimer la dernière page ;
 - sérialisation canonique ;
-- normalisation du cadrage ;
-- contraintes géométriques des stickers ;
+- conversion pixels source/repère canonique, `nativeScale`, point focal et transparence du cadrage ;
+- géométrie, hit-testing et ordre de tous les éléments ;
+- application des modèles, dé et mise en page automatique ;
 - validation de manifeste et de chemins ;
 - calcul d’empreintes avec une abstraction multiplateforme ;
-- migrations de données pures ;
+- migrations des futurs formats publiés de la génération 3.0, lorsqu’elles existent ;
 - règles de fusion.
 
 ### Tests à faire sur l’iPad
@@ -671,7 +683,10 @@ Exemples :
 - navigation et gestes ;
 - import PhotosUI ;
 - rendu SwiftUI ;
-- vidéo et mode silencieux ;
+- canevas multiélément, cadres, taille native `1×`, dézoom sous `1×`, fond visible, recadrage et guides ;
+- conservation des originaux dans Photos après retrait d’une occurrence, suppression explicite uniquement à zéro occurrence, réutilisation interalbum et indicateur de qualité à trois états ;
+- modèles, dé, automatisme, fonds et vue globale ;
+- absence de commande ou rendu double page ;
 - stockage dans le sandbox ;
 - orientation, fenêtres et accessibilité ;
 - export, partage et réimport de documents ;
@@ -681,8 +696,9 @@ Exemples :
 
 - lancement et navigation sur écran étroit ;
 - portrait et paysage ;
-- sélection de médias ;
-- lecture vidéo ;
+- sélection multiple de photos ;
+- panneaux et barres adaptés à l’écran étroit ;
+- manipulation et lecture d’une seule page ;
 - Dynamic Type et VoiceOver ;
 - import/export avec Fichiers ;
 - performance sur le plus ancien appareil du parc de test.
@@ -704,7 +720,7 @@ la liste différée et couvrir au minimum :
 - tests unitaires, d’intégration et d’interface Apple ;
 - simulateurs iPhone et iPad, puis au moins un iPhone physique via TestFlight ;
 - signature, entitlements, CloudKit, `.photoalbum` et OAuth applicables ;
-- interruptions, migrations et packages hostiles ;
+- interruptions, migrations des futurs formats publics de la génération 3.0 et packages hostiles ;
 - mesures Instruments et inspection de l’accessibilité PDF ;
 - archive Release et validation de la build distribuée.
 
@@ -866,7 +882,7 @@ Ne jamais versionner :
 - secret OAuth Google ;
 - token Google d’un utilisateur ;
 - certificat ou profil de signature exporté ;
-- média personnel utilisé pendant les tests ;
+- photo personnelle utilisée pendant les tests ;
 - export CloudKit contenant des données réelles.
 
 Les identifiants publics peuvent être versionnés uniquement lorsque les
