@@ -18,15 +18,20 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 
 ## État du projet
 
-- Spécification : projet 3.0 du 6 août 2026 consolidé ; le repère canonique `2 400 × 3 000`, la taille native centrée à `1×` et la borne basse de zoom calculée dynamiquement pour chaque photo et cadre sont confirmés. Le maximum reste `8×` et aucun DPI ou facteur d’écran n’entre dans ce calcul.
+- Spécification : projet 3.0 mis à jour le 10 août 2026 ; le repère canonique
+  `2 400 × 3 000`, la taille native centrée à `1×` et la borne basse de zoom
+  dynamique sont confirmés. La frontière des lots est également figée :
+  création photo locale au Lot 1, composition Photoweb complète au Lot 2,
+  lecture et documents au Lot 3 (`DEC-38`).
 - Implémentation : candidat local des lots 0 et 1 reconstruit from scratch sur
   le canevas multiélément, en conservant uniquement l’enveloppe de l’App
   Playground. Le prototype 2.1 reste historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
   migration. Les panneaux publics de ce candidat sont strictement `Photos`
-  et `Fonds` ; modèles, texte, stickers, cadres décoratifs, lecture et documents
-  restent respectivement dans les lots 2 et 3.
+  et `Fonds` ; les cinq panneaux complets, modèles, texte, stickers, cadres
+  décoratifs et presse-papiers multi-types relèvent du Lot 2 ; lecture,
+  diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : le noyau multiplateforme et les contrats sont validés
   sous WSL ; la compilation SwiftUI et toute validation fonctionnelle Apple
   restent à effectuer sur le commit de campagne indiqué dans

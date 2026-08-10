@@ -16,9 +16,10 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-10 |
-| Phase courante | Candidat des lots 0 et 1 figé ; campagne iPad prête, avant qualification Apple |
+| Phase courante | Candidat Lot 1 inchangé ; arbitrage des lots appliqué, spécification de campagne à figer |
 | Base avant reconstruction | `06aaa59` |
 | Commit candidat | `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` |
+| Spécification de campagne | `SPEC_COMMIT_LOTS` — à remplacer après le commit normatif |
 | Enveloppe iPad conservée | `Albumzh.swiftpm` ; son `Package.swift` généré n’a pas été recréé |
 | Sources | Anciennes sources 2.1 supprimées, nouvelles sources 3.0 écrites from scratch |
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
@@ -64,17 +65,17 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 
 | Périmètre | État | Preuve actuelle | Condition de sortie restante |
 |---|---|---|---|
-| Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; ADR canevas et stockage ; schémas, exemples, contrats de rendu et traçabilité présents | Figer le candidat puis résoudre la contradiction de frontière des lots |
+| Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` ; ADR, schémas, contrats et traçabilité présents | Figer le nouveau commit de spécification dans la campagne, puis qualifier sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core et ses tests | Compiler sur iPad ; prouver les capacités Apple encore bloquées |
 | Lot 1 — Création locale | 🟡 | Nouvelle bibliothèque et nouvel éditeur une page implémentés ; noyau portable couvert par 121 tests | Exécuter les 46 fiches `IPAD-L1-063` à `IPAD-L1-108` sur le commit figé |
-| Lot 2 — Parité de composition | ⏸️ | Moteurs purs ou schéma préparatoires seulement ; aucune commande publique Lot 2 | Démarrer après clarification et validation du lot 1 |
+| Lot 2 — Parité de composition | ⏸️ | Moteurs purs ou schéma préparatoires seulement ; aucune commande publique Lot 2 | Démarrer après validation du Lot 1 ; sortie `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128`, `ACPT-130` |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
 
-**Résultat d’acceptation actuel :** aucun scénario du lot 1 n’est déclaré
-réussi. `ACPT-100`, `ACPT-102` à `ACPT-104`, `ACPT-123`, `ACPT-124`,
-`ACPT-127`, `ACPT-129` et `ACPT-130` restent 🟡 ou 🟠 jusqu’à leur preuve sur
-le candidat exact.
+**Résultat d’acceptation actuel :** aucun scénario du Lot 1 n’est déclaré
+réussi. Ses sorties sont désormais uniquement `ACPT-100`, `ACPT-102` à
+`ACPT-104`, `ACPT-124` et `ACPT-129` ; elles restent 🟡 jusqu’à leur preuve
+sur le candidat exact.
 
 ## Lot 0 — Prototypes et contrats
 
@@ -133,23 +134,19 @@ Le code candidat couvre le périmètre d’implémentation retenu, mais le lot r
 détaillés `IPAD-L1-063+`. Aucun comportement n’est déclaré durable ou
 tactilement valide sur la seule base des tests Linux.
 
-## Ambiguïté normative à clarifier
+## Arbitrage normatif appliqué
 
-La frontière stricte `ARC-014` entre en conflit avec trois scénarios placés
-dans la sortie du lot 1 :
+L’utilisateur a validé le 10 août 2026 la frontière stricte formalisée par
+`DEC-38` :
 
-- `ACPT-123` demande de parcourir les cinq panneaux, dont Mise en page,
-  Stickers et Cadres et formes alors que leur contenu relève du lot 2 ;
-- `ACPT-127` exige la parité des fonds en lecture et PDF, sorties du lot 3 ;
-- `ACPT-130` exige le presse-papiers d’une photo, d’un texte et d’un sticker,
-  alors que texte et sticker relèvent du lot 2.
+- le Lot 1 reste la création photo locale avec les panneaux Photos et Fonds ;
+- `ACPT-123` et `ACPT-130` deviennent des sorties du Lot 2, avec les cinq
+  panneaux et le presse-papiers commun photo/texte/sticker ;
+- `ACPT-127` devient une sortie du Lot 3, lorsque lecture et PDF sont livrés.
 
-Le candidat applique pour l’instant la frontière stricte : il n’expose pas ces
-fonctions anticipées. Les moteurs ou types préparatoires restent internes.
-Cette décision évite de publier silencieusement un lot ultérieur, mais rend
-impossible la validation intégrale de ces trois scénarios à la sortie du lot 1.
-Une clarification de `spec.md` est requise avant d’élargir l’interface ou de
-modifier les critères de sortie.
+Le code candidat `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` correspond déjà à
+cette frontière. Aucun comportement n’est ajouté, retiré ou anticipé par la
+présente modification documentaire.
 
 ## Garde-fous contre les erreurs du prototype 2.1
 
@@ -181,6 +178,7 @@ modifier les critères de sortie.
 | WSL, C | `cc -Wall -Wextra -pedantic -fsyntax-only tools/generate_photo_fixture.c tools/normalize_png_4x5.c` | **OK** | Syntaxe des générateurs seulement |
 | Dépôt, registre manuel | Contrôle de continuité, champs obligatoires, états et références normatives | **OK** : 46 fiches détaillées `063…108`, 46 états synthétiques ⚪, 13 validations Apple, 276 références manuelles résolues | Contrôle structurel ; aucune fiche manuelle exécutée |
 | Dépôt, traçabilité | Contrôle des identifiants, méthodes, classes et liens de `docs/traceability/lot0-lot1.md` | **OK** : 46 contrôles iPad, 13 Apple, 24 `ACPT`, méthodes/classes/liens résolus après correction des écarts | Ne transforme aucune couverture structurelle en réussite fonctionnelle |
+| Dépôt, arbitrage des lots, 2026-08-10 | Vérification de `DEC-38`, des trois lots de validation, des sorties de la section 31 et du registre manuel | **OK** : Lot 1 = six sorties photo locales ; `ACPT-123`/`130` au Lot 2 ; `ACPT-127` au Lot 3 ; 276 références manuelles résolues | Documentation uniquement ; tests Core non relancés car aucune source ni ressource n’a changé |
 | Dépôt | `git diff --exit-code -- Albumzh.swiftpm/Package.swift Package.swift` | **OK** : les deux manifestes sont inchangés | Confirme la conservation de l’enveloppe, pas sa compilation Apple |
 | Dépôt | `git diff --check` | **OK** après écriture du code, des contrats et du registre manuel ; à rejouer après fixation des hashes | Contrôle des espaces et marqueurs de conflit, pas une preuve fonctionnelle |
 
@@ -205,7 +203,7 @@ modifier les critères de sortie.
 | `RSK-3.0-002` | Moyen | `DAT-042` n’est couvert que partiellement : résolution et provenance complètes des placements de modèle restent à finaliser. | Ne pas exposer modèles/dé/Auto avant le Lot 2 et ajouter des golden tests de résolution. |
 | `RSK-3.0-003` | Élevé | Le hachage, la déduplication et la réutilisation sont désormais en flux borné, mais ImageIO, la création du dérivé et certains chemins d’affichage chargent encore le média complet ; un RAW volumineux peut donc créer un pic mémoire. | Mesurer sur iPad et instrumenter les chemins de décodage avant de revendiquer l’enveloppe 5 Go. |
 | `RSK-3.0-004` | Élevé | L’analyse Linux ne détecte pas les erreurs de disponibilité, de type SwiftUI ou de bundle du SDK iOS 26. | Compiler d’abord le candidat exact dans Swift Playgrounds ; corriger sans réintroduire les bugs 2.1. |
-| `RSK-3.0-005` | Élevé | Les sorties `ACPT-123`, `ACPT-127` et `ACPT-130` contredisent la frontière des lots 1/2/3. | Obtenir l’arbitrage utilisateur avant d’exposer des fonctions de lots ultérieurs ou de modifier la spec. |
+| `RSK-3.0-005` | Levé | Les anciennes sorties de Lot 1 pour `ACPT-123`, `ACPT-127` et `ACPT-130` contredisaient la frontière des lots. | Arbitrage utilisateur enregistré par `DEC-38` : scénarios déplacés respectivement aux Lots 2, 3 et 2. |
 | `RSK-3.0-006` | Élevé | Les conflits de gestes ne peuvent être prouvés sans tactile : déplacement, pincement, rotation, cadrage et navigation partagent le canevas. | Exécuter les tests gestuels dédiés, un par un, sur iPad. |
 | `RSK-3.0-007` | Moyen | La performance, le chargement des miniatures, le stockage 5 Go et la robustesse à 100 pages ne sont pas mesurés. | Campagne de stress Apple et Instruments lors de la qualification Xcode. |
 | `RSK-3.0-008` | Élevé | Accessibilité et adaptation iPhone/iPad ne sont pas vérifiées malgré les libellés et composants ajoutés. | Tester VoiceOver, Dynamic Type, clavier/pointeur, orientations, Split View et iPhone réel. |
@@ -218,17 +216,19 @@ modifier les critères de sortie.
 
 ## Prochaines actions
 
-1. Transférer le commit candidat
+1. Figer le commit normatif et remplacer `SPEC_COMMIT_LOTS` dans les 50 cartes
+   détaillées avant toute exécution manuelle.
+2. Transférer le commit candidat
    `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` sur l’iPad, relever le modèle, iPadOS et Swift
    Playgrounds, puis exécuter en premier la compilation et le lancement à
    froid.
-2. Exécuter la campagne Lot 1 une fiche à la fois ; enregistrer chaque réponse
+3. Exécuter la campagne Lot 1 une fiche à la fois ; enregistrer chaque réponse
    sous la forme `IPAD-L1-xxx OK`, `BLOQUÉ` ou `BUG : …` sans extrapolation.
-3. Corriger chaque anomalie sur un nouveau commit et créer un nouvel identifiant
+4. Corriger chaque anomalie sur un nouveau commit et créer un nouvel identifiant
    de régression lorsque la preuve précédente devient insuffisante.
-4. Arbitrer la frontière normative de `ACPT-123`, `ACPT-127` et `ACPT-130`
-   avant d’ajouter des commandes de lots 2 ou 3.
-5. Après viabilité iPad, organiser les campagnes iPhone, Xcode/macOS,
+5. Après viabilité iPad, préparer les nouveaux identifiants de tests du Lot 2
+   pour `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128` et `ACPT-130`.
+6. Organiser ensuite les campagnes iPhone, Xcode/macOS,
    accessibilité, performance et interruption transactionnelle.
 
 ## Journal des mises à jour
@@ -238,6 +238,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-10 | Codex | Arbitrage des lots appliqué sans modification du candidat : Lot 1 Photos/Fonds, Lot 2 composition Photoweb complète et presse-papiers multi-types, Lot 3 lecture/documents | `spec.md`, `README.md`, `docs/traceability/lot0-lot1.md`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `DEC-38`, `ARC-014`, `ACPT-123`, `ACPT-127`, `ACPT-130` | Contrats OK ; sorties et lots de validation cohérents ; 46 fiches, 13 Apple, 50 cartes et 276 références manuelles résolues ; `git diff --check` OK ; tests Core non relancés car code inchangé ; spécification encore `SPEC_COMMIT_LOTS` |
 | 2026-08-10 | Codex | Gel du candidat d’implémentation et de spécification, puis injection de son empreinte Git exacte dans les 46 fiches iPad et les validations Apple différées | `suivi_tests.md`, `SUIVI_PROJET.md` ; `TST-001` à `TST-016`, `DONE-001` à `DONE-005` | Candidat `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; toutes les fiches restent ⚪ NON TESTÉ ; aucune preuve Apple extrapolée |
 | 2026-08-10 | Codex | Audit final avant gel : correction de la frontière de publication transactionnelle, SHA-256 et vérification en flux, annulation/nettoyage des imports initiaux et repris, suppression de page sûre, poignées pleine page, panneau compact glissable, accessibilité de prévisualisation, risques résiduels documentés et traçabilité exhaustive | `Albumzh.swiftpm/Sources/AlbumPhotoCore/`, `Albumzh.swiftpm/Sources/AppModule/`, `Tests/AlbumPhotoCoreTests/`, `docs/traceability/lot0-lot1.md`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `LOC-011` à `LOC-026`, `APL-006`, `PERF-009`, `PERF-011`, `SEC-008`, `PAG-006`, `ELM-005` à `ELM-009`, `ACC-001` à `ACC-021` | 121 tests Core sans échec (6,696 s) ; contrats, 10 checksums, 6 goldens, parse AppModule, syntaxe C, manifestes, registre, traçabilité et `git diff --check` OK ; Apple/iPad NON TESTÉ ; candidat encore `À figer` |
 | 2026-08-10 | Codex | Finalisation avant gel : file FIFO commune du service et barrière FIFO de l’éditeur, baux de bibliothèque/édition, dérivé RAW immuable et indexé, renderer pur des 6 formes avec golden masks, cache de couverture, progression d’import, descriptions accessibles et fiche de régression des commandes rapides | `Albumzh.swiftpm/Sources/AlbumPhotoCore/`, `Albumzh.swiftpm/Sources/AppModule/`, `Tests/AlbumPhotoCoreTests/`, `docs/catalog-*`, `docs/golden/`, `tools/`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `APP-002`, `APP-005`, `LOC-011` à `LOC-014`, `PHO-015` à `PHO-018`, `FMT-002`, `CAT-009`, `COV-007`, `APL-006`, `ACC-001` à `ACC-020` | 118 tests Core sans échec ; contrats OK ; 10/10 checksums ; 6 goldens régénérés à l’identique ; parse AppModule, syntaxe C, manifestes inchangés et `git diff --check` OK ; Apple/iPad NON TESTÉ ; candidat encore `À figer` |

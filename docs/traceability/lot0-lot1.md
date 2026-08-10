@@ -22,7 +22,8 @@ déclaré réussi par ce document.
 | Partiel | Seul le sous-périmètre livré ou prototypé est contrôlé ; l'exigence complète ne peut pas être déclarée satisfaite. |
 | Écart | Aucun contrôle suffisant n'existe encore dans les lots 0 et 1. |
 
-La frontière appliquée est celle de l'ordre de réalisation de la section 31 :
+La frontière appliquée est celle de `DEC-38` et de l’ordre de réalisation de
+la section 31 :
 
 - le lot 0 livre des prototypes internes et des contrats, sans rendre publiques
   les commandes des lots ultérieurs ;
@@ -64,7 +65,7 @@ l'exigence ou du scénario complet.
 |---|---|---|
 | `SPEC-001` à `SPEC-003`, `DEV-001` à `DEV-009` | Historique Git, `AGENTS.md`, cette matrice, fiches détaillées de `suivi_tests.md`, `IPAD-L1-063`, `APPLE-L1-001`, `APPLE-L1-009` | Revue de processus ; aucune réussite runtime n'en est déduite. |
 | `SCP-001`, `REL-001` à `REL-005` | Frontière de lots ci-dessus, absence des commandes futures contrôlée par `IPAD-L1-098`, `IPAD-L1-104`, `IPAD-L1-106`; scénarios futurs indexés plus bas | La non-exposition complète doit encore être observée sur Apple. |
-| `DEC-00` à `DEC-37` | Chaque décision fonctionnelle est routée vers la famille correspondante ci-dessous ; `A-PAGE`, `A-GEOM`, `A-TEXT`, `A-LAYOUT`, `A-CATALOG`, `A-STORE`, `A-CONC`, puis la campagne iPad | Les décisions des Lots 2 à 5 ne disposent que de prototypes, contrats ou écarts explicités dans l'index ACPT. |
+| `DEC-00` à `DEC-38` | Chaque décision fonctionnelle est routée vers la famille correspondante ci-dessous ; `A-PAGE`, `A-GEOM`, `A-TEXT`, `A-LAYOUT`, `A-CATALOG`, `A-STORE`, `A-CONC`, puis la campagne iPad | `DEC-38` est contrôlée structurellement par les sorties de lots et le registre ; les décisions des Lots 2 à 5 ne disposent encore que de prototypes, contrats ou écarts explicités dans l’index ACPT. |
 | `CFG-001` à `CFG-006` | Revue statique du dépôt ; `APPLE-L0-008`, `APPLE-L1-001`, `APPLE-L1-009` | Configuration CloudKit/Google et contrôle d'archive différés ; aucun secret ne peut être réputé absent sur la seule base de cette ligne. |
 
 ## Matrice des exigences du lot 0
@@ -171,7 +172,7 @@ les étapes manuelles.
 | `IPAD-L1-103` | `PAG-012`, `LOC-018` photo, `PERF-008`, `PERF-015`, `PERF-017` | `A-CAP` |
 | `IPAD-L1-104` | `EDT-003`, `EDT-004`, `EDT-007`, `EDT-010`, `EDT-012` à `EDT-017`, `FRM-005`, `FRM-006` dans le sous-périmètre Lot 1 | Revue UI ; états métier via `A-PHOTO` |
 | `IPAD-L1-105` | `ACC-006`, sous-périmètre Lot 1 de `TST-010` | `A-NAV-CLOUD` pour l'automate seulement |
-| `IPAD-L1-106` | aide Lot 1 de `EDT-019` et `ACPT-123` | Aucun équivalent Linux |
+| `IPAD-L1-106` | aide du sous-périmètre Lot 1 de `EDT-019` | Aucun équivalent Linux |
 | `IPAD-L1-107` | `APL-006`, `PERF-009`, `PERF-011`, `APP-006`, `SEC-008` | Atomicité via `A-PHOTO`; empreinte en flux via `A-STORE`; progression, annulation et nettoyage UI manuels |
 | `IPAD-L1-108` | `APP-002`, `APP-005`, `LOC-011` à `LOC-014`, `UND-011` | `A-CONC` |
 
@@ -215,14 +216,14 @@ ou « contrat » ne signifie jamais que le scénario utilisateur complet passe.
 | `ACPT-120` | 1.1 / Lot 4 | `APPLE-L0-008` ne couvre que la faisabilité CloudKit | Hors périmètre ; écart attendu. |
 | `ACPT-121` | 1.1 / Lot 4 | `A-ALB` couvre la corbeille locale seulement | Pas de corbeille synchronisée qualifiée. |
 | `ACPT-122` | 1.2 / Lot 5 | Aucun test fonctionnel Lot 0/1 | Hors périmètre ; écart attendu. |
-| `ACPT-123` | 1.0 / Lots 1 et 2 | `A-GEOM`, `A-NAV-CLOUD`; `IPAD-L1-090` à `IPAD-L1-092`, `IPAD-L1-098`, `IPAD-L1-104` à `IPAD-L1-106`, `APPLE-L1-003` | Partiel : Photos/Fonds Lot 1 seulement ; trois panneaux Lot 2 absents. |
+| `ACPT-123` | 1.0 / Lot 2 | `A-GEOM`, `A-NAV-CLOUD` et les contrôles Lot 1 prouvent des préconditions seulement | Non conclu : le scénario complet des cinq panneaux recevra de nouveaux contrôles Lot 2. |
 | `ACPT-124` | 1.0 / Lot 1 | `A-PHOTO`, `A-GEOM`, `A-RAW`, `A-REUSE`; `IPAD-L1-075` à `IPAD-L1-089`, `IPAD-L1-097`, `APPLE-L1-005` | Non conclu. |
 | `ACPT-125` | 1.0 / Lot 2 | `A-MANIFEST`, `A-LAYOUT` | Prototype interne uniquement ; aucune validation UI Lot 1. |
 | `ACPT-126` | 1.0 / Lot 2 | `A-TEXT`, `A-DOM` | Prototype interne uniquement. |
-| `ACPT-127` | 1.0 / Lots 1 et 3 | `A-PAGE`, `A-CATALOG`; `IPAD-L1-073`, `IPAD-L1-095`, `APPLE-L1-010` | Partiel : éditeur/vue globale/prévisualisation ; lecture/PDF Lot 3 absents. |
+| `ACPT-127` | 1.0 / Lot 3 | `A-PAGE`, `A-CATALOG`; `IPAD-L1-073`, `IPAD-L1-095`, `APPLE-L1-010` prouvent les préconditions de fonds | Non conclu : lecture et PDF recevront les contrôles de sortie Lot 3. |
 | `ACPT-128` | 1.0 / Lot 2 | `A-CATALOG`, `A-SHAPE` | Contrat des six formes seulement ; stickers et cadres non publiés. |
 | `ACPT-129` | 1.0 / Lot 1 | `A-PAGE`; `IPAD-L1-070` à `IPAD-L1-072`, `IPAD-L1-095`, `IPAD-L1-096` | Non conclu. |
-| `ACPT-130` | 1.0 / Lots 1 et 2 | `A-CLIP`, `A-CONC`, `A-STORE`; `IPAD-L1-083`, `IPAD-L1-093`, `IPAD-L1-108`, `APPLE-L1-011` | Partiel : presse-papiers photo seulement ; texte/sticker Lot 2 absents. |
+| `ACPT-130` | 1.0 / Lot 2 | `A-CLIP`, `A-CONC`, `A-STORE` prouvent le sous-périmètre photo et la durabilité | Non conclu : photo, texte et sticker seront validés ensemble par de nouveaux contrôles Lot 2. |
 | `ACPT-131` | 1.0 / Lots 1 à 3 | `A-GEOM`, `A-NAV-CLOUD`; `IPAD-L1-084` à `IPAD-L1-086`, `IPAD-L1-092`, `IPAD-L1-095` à `IPAD-L1-097`, `IPAD-L1-105`, `APPLE-L1-006`, `APPLE-L1-007` | Partiel : rendu/alertes Lot 1 et automate prototype ; lecture, diaporama, PDF et animation finale absents. |
 
 ## Écarts de traçabilité restant ouverts

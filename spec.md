@@ -1,8 +1,8 @@
 # Spécification fonctionnelle et technique — Application iOS d’albums photo
 
 > **Version :** 3.0<br>
-> **Date :** 6 août 2026<br>
-> **Statut :** projet consolidé — convention de zoom dynamique confirmée, développement 3.0 autorisé<br>
+> **Date :** 10 août 2026<br>
+> **Statut :** projet consolidé — zoom dynamique et frontières des lots 1 à 3 arbitrés<br>
 > **Plateformes :** iPhone et iPad  
 > **Version minimale :** iOS 26 et iPadOS 26  
 > **Technologies principales :** Swift et SwiftUI
@@ -290,6 +290,7 @@ quotidienne.
 | `DEC-35` | Appliquer un modèle plus petit qu’un ensemble de cadres remplis demande confirmation avant de retirer les occurrences excédentaires ; leurs originaux restent disponibles dans Photos. |
 | `DEC-36` | Les zones de texte participent librement à la même pile de profondeur que les photos et stickers ; elles peuvent être placées devant ou derrière eux. |
 | `DEC-37` | Ajouter des photos propose une source native Depuis vos autres albums afin de réutiliser, sans duplication binaire inutile, des originaux déjà présents dans l’application. |
+| `DEC-38` | Le Lot 1 expose uniquement la création locale centrée sur les panneaux Photos et Fonds. Le Lot 2 livre la composition Photoweb complète avec les cinq panneaux, modèles, dé, Auto, texte, stickers, cadres décoratifs et presse-papiers commun photo/texte/sticker ; `ACPT-123` et `ACPT-130` y sont validés. Le Lot 3 livre lecture, diaporama, package et PDF ; `ACPT-127` y est validé. |
 
 ## 3.1 Convention technique de zoom dynamique
 
@@ -2493,6 +2494,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 
 ## 29.16 `ACPT-123` — Éditeur Photoweb natif, une page — version 1.0
 
+**Lot de validation :** Lot 2<br>
 **Couvre :** `EDT-001` à `EDT-020`, `ZOM-001` à `ZOM-008`, `GLO-001`, `GLO-002`, `NAV-001` à `NAV-007`<br>
 **Étant donné** le même album de plusieurs pages sur iPhone étroit et iPad large<br>
 **Quand** l'utilisateur parcourt Photos, Mise en page, Fonds, Stickers et Cadres et formes, ouvre l'aide hors ligne depuis deux panneaux, zoome par commandes et pincement, revient de Vue globale et de la prévisualisation, puis atteint les bornes de l'album avec les boutons et les balayages<br>
@@ -2521,6 +2523,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 
 ## 29.20 `ACPT-127` — Fonds par page — version 1.0
 
+**Lot de validation :** Lot 3<br>
 **Couvre :** `BG-001` à `BG-016`, `DAT-039`<br>
 **Étant donné** trois pages<br>
 **Quand** trois fonds distincts sont appliqués puis l’un est appliqué à tout l’album et l’action annulée<br>
@@ -2542,6 +2545,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 
 ## 29.23 `ACPT-130` — Sauvegarde et presse-papiers — version 1.0
 
+**Lot de validation :** Lot 2<br>
 **Couvre :** `SAV-001` à `SAV-004`, `CLP-001` à `CLP-005`, `UND-001` à `UND-012`<br>
 **Étant donné** une photo, un texte et un sticker<br>
 **Quand** ils sont copiés, coupés et collés entre pages puis Sauvegarder est utilisé avant une interruption simulée<br>
@@ -2790,10 +2794,11 @@ rejoint la campagne macOS/Xcode ; il n’est pas réputé réussi.
 - pages, fonds par page et couverture par occurrence
 - dépôt d’assets et journal transactionnel
 - import multiple de photos statiques, cadres multiples et cadrage
-- sauvegarde, presse-papiers, navigation et annulation
+- panneaux publics Photos et Fonds
+- sauvegarde, presse-papiers de cadres photo, navigation et annulation
 
-**Sortie :** `ACPT-100`, `ACPT-102` à `ACPT-104`, `ACPT-123`, `ACPT-124`,
-`ACPT-127`, `ACPT-129` et `ACPT-130` passent.
+**Sortie :** `ACPT-100`, `ACPT-102` à `ACPT-104`, `ACPT-124` et
+`ACPT-129` passent.
 
 ## Lot 2 — Parité de composition Photoweb
 
@@ -2803,9 +2808,12 @@ rejoint la campagne macOS/Xcode ; il n’est pas réputé réussi.
 - stickers statiques intégrés
 - formes, contours et cadres décoratifs
 - gestes, clavier, ordre de profondeur et adaptation iPhone/iPad
+- ordre et adaptation native des cinq panneaux de création
+- presse-papiers commun aux photos, textes et stickers
 
-**Sortie :** `ACPT-125`, `ACPT-126` et `ACPT-128` passent. Le rendu commun
-reste vérifié intégralement par `ACPT-131` à la sortie du lot 3.
+**Sortie :** `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128` et
+`ACPT-130` passent. Le rendu commun reste vérifié intégralement par
+`ACPT-131` à la sortie du lot 3.
 
 ## Lot 3 — Consultation et documents
 
@@ -2815,8 +2823,8 @@ reste vérifié intégralement par `ACPT-131` à la sortie du lot 3.
 - package modifiable et import sécurisé
 - PDF accessible
 
-**Sortie :** `ACPT-111` à `ACPT-115` et `ACPT-131` passent. Après le lot
-Qualité correspondant, ce lot constitue la version publique 1.0.
+**Sortie :** `ACPT-111` à `ACPT-115`, `ACPT-127` et `ACPT-131` passent.
+Après le lot Qualité correspondant, ce lot constitue la version publique 1.0.
 
 ## Lot 4 — Historique et CloudKit
 
