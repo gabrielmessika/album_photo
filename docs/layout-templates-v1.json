@@ -1,0 +1,2186 @@
+{
+  "manifestVersion": 1,
+  "modelGeneration": "album-photo-canvas-v1",
+  "canonicalPage": {
+    "width": 2400,
+    "height": 3000
+  },
+  "templates": [
+    {
+      "id": "layout.p1.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p1.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.58,
+            "width": 0.441,
+            "height": 0.74,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        }
+      ]
+    },
+    {
+      "id": "layout.p1.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p1.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.42,
+            "width": 0.84,
+            "height": 0.74,
+            "rotationRadians": 0.025
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        }
+      ]
+    },
+    {
+      "id": "layout.p1.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p1.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.5,
+            "width": 0.441,
+            "height": 0.9,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        }
+      ]
+    },
+    {
+      "id": "layout.p1.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p1.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.5,
+            "width": 0.84,
+            "height": 0.9,
+            "rotationRadians": 0.025
+          },
+          "readingOrder": 0
+        }
+      ]
+    },
+    {
+      "id": "layout.p2.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p2.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2705,
+            "centerY": 0.58,
+            "width": 0.441,
+            "height": 0.74,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7295,
+            "centerY": 0.58,
+            "width": 0.441,
+            "height": 0.74,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "layout.p2.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p2.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.42,
+            "width": 0.411,
+            "height": 0.74,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.42,
+            "width": 0.411,
+            "height": 0.74,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "layout.p2.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p2.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2705,
+            "centerY": 0.5,
+            "width": 0.441,
+            "height": 0.9,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7295,
+            "centerY": 0.5,
+            "width": 0.441,
+            "height": 0.9,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        }
+      ]
+    },
+    {
+      "id": "layout.p2.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p2.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.5,
+            "width": 0.411,
+            "height": 0.9,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.5,
+            "width": 0.411,
+            "height": 0.9,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        }
+      ]
+    },
+    {
+      "id": "layout.p3.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p3.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2705,
+            "centerY": 0.3905,
+            "width": 0.441,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7295,
+            "centerY": 0.3905,
+            "width": 0.441,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7695,
+            "width": 0.441,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        }
+      ]
+    },
+    {
+      "id": "layout.p3.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p3.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.2305,
+            "width": 0.411,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.2305,
+            "width": 0.411,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.6095,
+            "width": 0.411,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        }
+      ]
+    },
+    {
+      "id": "layout.p3.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p3.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2705,
+            "centerY": 0.2705,
+            "width": 0.441,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7295,
+            "centerY": 0.2705,
+            "width": 0.441,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7295,
+            "width": 0.441,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "layout.p3.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p3.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.2705,
+            "width": 0.411,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.2705,
+            "width": 0.411,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7295,
+            "width": 0.411,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "layout.p4.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p4.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7695,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        }
+      ]
+    },
+    {
+      "id": "layout.p4.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p4.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.2305,
+            "width": 0.411,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.2305,
+            "width": 0.411,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.6095,
+            "width": 0.411,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.6095,
+            "width": 0.411,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        }
+      ]
+    },
+    {
+      "id": "layout.p4.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p4.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7295,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        }
+      ]
+    },
+    {
+      "id": "layout.p4.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p4.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.2705,
+            "width": 0.411,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.2705,
+            "width": 0.411,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.7295,
+            "width": 0.411,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.7295,
+            "width": 0.411,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        }
+      ]
+    },
+    {
+      "id": "layout.p5.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p5.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.347,
+            "centerY": 0.7695,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.653,
+            "centerY": 0.7695,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        }
+      ]
+    },
+    {
+      "id": "layout.p5.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p5.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.167333,
+            "width": 0.411,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.167333,
+            "width": 0.411,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.42,
+            "width": 0.411,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.42,
+            "width": 0.411,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.672667,
+            "width": 0.411,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        }
+      ]
+    },
+    {
+      "id": "layout.p5.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p5.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.347,
+            "centerY": 0.7295,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.653,
+            "centerY": 0.7295,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        }
+      ]
+    },
+    {
+      "id": "layout.p5.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p5.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.194,
+            "width": 0.411,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.194,
+            "width": 0.411,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.2855,
+            "centerY": 0.5,
+            "width": 0.411,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.7145,
+            "centerY": 0.5,
+            "width": 0.411,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.806,
+            "width": 0.411,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        }
+      ]
+    },
+    {
+      "id": "layout.p6.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p6.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.3905,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.7695,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7695,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.7695,
+            "width": 0.288,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        }
+      ]
+    },
+    {
+      "id": "layout.p6.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p6.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.2305,
+            "width": 0.268,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.2305,
+            "width": 0.268,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.2305,
+            "width": 0.268,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.6095,
+            "width": 0.268,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.6095,
+            "width": 0.268,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.6095,
+            "width": 0.268,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        }
+      ]
+    },
+    {
+      "id": "layout.p6.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p6.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.2705,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.7295,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7295,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.7295,
+            "width": 0.288,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        }
+      ]
+    },
+    {
+      "id": "layout.p6.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p6.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.2705,
+            "width": 0.268,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.2705,
+            "width": 0.268,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.2705,
+            "width": 0.268,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.7295,
+            "width": 0.268,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.7295,
+            "width": 0.268,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.7295,
+            "width": 0.268,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        }
+      ]
+    },
+    {
+      "id": "layout.p7.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p7.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.327333,
+            "width": 0.288,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.327333,
+            "width": 0.288,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.327333,
+            "width": 0.288,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.58,
+            "width": 0.288,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.58,
+            "width": 0.288,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.58,
+            "width": 0.288,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.832667,
+            "width": 0.288,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 7
+        }
+      ]
+    },
+    {
+      "id": "layout.p7.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p7.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.167333,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.167333,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.167333,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.42,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.42,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.42,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.672667,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 7
+        }
+      ]
+    },
+    {
+      "id": "layout.p7.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p7.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.194,
+            "width": 0.288,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.194,
+            "width": 0.288,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.194,
+            "width": 0.288,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.194,
+            "centerY": 0.5,
+            "width": 0.288,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.5,
+            "width": 0.288,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.806,
+            "centerY": 0.5,
+            "width": 0.288,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.806,
+            "width": 0.288,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        }
+      ]
+    },
+    {
+      "id": "layout.p7.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p7.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.194,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.194,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.194,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.5,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.5,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.5,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.806,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        }
+      ]
+    },
+    {
+      "id": "layout.p8.caption-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p8.caption-a.name",
+      "slots": [
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.115,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.15575,
+            "centerY": 0.3905,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.38525,
+            "centerY": 0.3905,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.61475,
+            "centerY": 0.3905,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.84425,
+            "centerY": 0.3905,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.15575,
+            "centerY": 0.7695,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.38525,
+            "centerY": 0.7695,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.61475,
+            "centerY": 0.7695,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 7
+        },
+        {
+          "id": "photo-8",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.84425,
+            "centerY": 0.7695,
+            "width": 0.2115,
+            "height": 0.361,
+            "rotationRadians": 0
+          },
+          "readingOrder": 8
+        }
+      ]
+    },
+    {
+      "id": "layout.p8.caption-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p8.caption-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.167333,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.167333,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.167333,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.42,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.42,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.42,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.357,
+            "centerY": 0.672667,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "photo-8",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.643,
+            "centerY": 0.672667,
+            "width": 0.268,
+            "height": 0.234667,
+            "rotationRadians": 0
+          },
+          "readingOrder": 7
+        },
+        {
+          "id": "text-1",
+          "kind": "text",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.885,
+            "width": 0.78,
+            "height": 0.12,
+            "rotationRadians": 0
+          },
+          "readingOrder": 8
+        }
+      ]
+    },
+    {
+      "id": "layout.p8.grid-a",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p8.grid-a.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.15575,
+            "centerY": 0.2705,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.38525,
+            "centerY": 0.2705,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.61475,
+            "centerY": 0.2705,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.84425,
+            "centerY": 0.2705,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.15575,
+            "centerY": 0.7295,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.38525,
+            "centerY": 0.7295,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.61475,
+            "centerY": 0.7295,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "photo-8",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.84425,
+            "centerY": 0.7295,
+            "width": 0.2115,
+            "height": 0.441,
+            "rotationRadians": 0
+          },
+          "readingOrder": 7
+        }
+      ]
+    },
+    {
+      "id": "layout.p8.grid-b",
+      "version": 1,
+      "isActive": true,
+      "localizedNameKey": "layout.p8.grid-b.name",
+      "slots": [
+        {
+          "id": "photo-1",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.194,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 0
+        },
+        {
+          "id": "photo-2",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.194,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "photo-3",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.194,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "photo-4",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.214,
+            "centerY": 0.5,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "photo-5",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.5,
+            "centerY": 0.5,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "photo-6",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.786,
+            "centerY": 0.5,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "photo-7",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.357,
+            "centerY": 0.806,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "photo-8",
+          "kind": "photo",
+          "geometry": {
+            "centerX": 0.643,
+            "centerY": 0.806,
+            "width": 0.268,
+            "height": 0.288,
+            "rotationRadians": 0
+          },
+          "readingOrder": 7
+        }
+      ]
+    }
+  ]
+}

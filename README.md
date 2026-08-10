@@ -18,10 +18,23 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 
 ## État du projet
 
-- Spécification : projet 3.0 du 6 août 2026 consolidé ; taille native centrée à `1×` avec dézoom, suppression d’une photo inutilisée, confirmation des modèles plus petits, profondeur libre du texte et réutilisation interalbum sont arbitrées. Seule la convention numérique proposée pour rendre ce `1×` identique partout — page canonique `2 400 × 3 000` et zoom `0,1×…8×` — attend confirmation avant l’implémentation du cadrage.
-- Implémentation : redémarrage des lots 0 et 1 sur le canevas multiélément ; le prototype 2.1 reste historique. La nouvelle app utilise une génération et une racine de stockage distinctes : les anciennes données locales restent intactes mais sont ignorées, sans lecture, import ni migration.
+- Spécification : projet 3.0 du 6 août 2026 consolidé ; le repère canonique `2 400 × 3 000`, la taille native centrée à `1×` et la borne basse de zoom calculée dynamiquement pour chaque photo et cadre sont confirmés. Le maximum reste `8×` et aucun DPI ou facteur d’écran n’entre dans ce calcul.
+- Implémentation : candidat local des lots 0 et 1 reconstruit from scratch sur
+  le canevas multiélément, en conservant uniquement l’enveloppe de l’App
+  Playground. Le prototype 2.1 reste historique. La nouvelle app utilise une
+  génération et une racine de stockage distinctes : les anciennes données
+  locales restent intactes mais sont ignorées, sans lecture, import ni
+  migration. Les panneaux publics de ce candidat sont strictement `Photos`
+  et `Fonds` ; modèles, texte, stickers, cadres décoratifs, lecture et documents
+  restent respectivement dans les lots 2 et 3.
+- Validation actuelle : le noyau multiplateforme et les contrats sont validés
+  sous WSL ; la compilation SwiftUI et toute validation fonctionnelle Apple
+  restent à effectuer sur le commit de campagne indiqué dans
+  [`suivi_tests.md`](suivi_tests.md).
 - Cible minimale : iOS 26 et iPadOS 26.
-- Projet d’application prévu : App Playground Swift au format `.swiftpm`.
+- Projet d’application : App Playground Swift existant
+  [`Albumzh.swiftpm`](Albumzh.swiftpm), dont le manifeste généré par Swift
+  Playgrounds est conservé sans modification manuelle.
 - Dépôt GitHub :
   [`gabrielmessika/album_photo`](https://github.com/gabrielmessika/album_photo).
 
@@ -302,33 +315,34 @@ code album_photo.code-workspace
 
 Dans VS Code, l’indicateur en bas à gauche doit afficher `WSL: Ubuntu`.
 
-## Structure cible du dépôt
+## Structure du dépôt
 
-Le lot 0 doit créer et stabiliser la structure réelle. La direction attendue
-est la suivante :
+La reconstruction 3.0 conserve l’enveloppe de package créée sur l’iPad et
+remplace uniquement ses anciennes sources. Le package racine réutilise le même
+noyau pour les tests Linux, sans dupliquer le code :
 
 ```text
 album_photo/
-├── Package.swift                # package multiplateforme AlbumPhotoCore
-├── AlbumPhoto.swiftpm/          # App Playground compilé sur l’iPad
+├── Package.swift                # façade de tests multiplateforme du noyau
+├── Albumzh.swiftpm/             # App Playground existant compilé sur l’iPad
 │   ├── Package.swift            # généré/maintenu par Swift Playgrounds
-│   ├── Sources/
-│   └── Resources/
-├── Sources/
-│   └── AlbumPhotoCore/          # domaine Swift sans SwiftUI si extrait
+│   └── Sources/
+│       ├── AlbumPhotoCore/      # domaine Swift sans SwiftUI
+│       └── AppModule/           # adaptateurs Apple et ressources intégrées
 ├── Tests/
 │   └── AlbumPhotoCoreTests/     # tests exécutables sous WSL
 ├── docs/
 │   ├── architecture/
-│   ├── decisions/
-│   ├── test-runs/
+│   ├── assets/
+│   ├── examples/
+│   ├── schema/
+│   ├── test-fixtures/
 │   └── traceability/
 ├── spec.md
 └── README.md
 ```
 
-La séparation d’un paquet `AlbumPhotoCore` multiplateforme est recommandée pour
-tester sous WSL :
+La cible `AlbumPhotoCore` multiplateforme permet de tester sous WSL :
 
 - modèles du domaine ;
 - invariants et validation ;
@@ -346,17 +360,16 @@ Les adaptateurs Apple restent dans l’App Playground :
 - UniformTypeIdentifiers ;
 - Keychain et autres services Apple.
 
-Le mode exact d’intégration de `AlbumPhotoCore` dans l’App Playground doit être
-figé pendant le lot 0. Swift Playgrounds sait ajouter un package Swift public
-par URL. Si le package est fourni par ce même dépôt, utiliser une branche
-explicitement choisie pendant le développement et verrouiller la révision
-résolue pour une build de publication. Une éventuelle version Git du noyau doit
-être créée avant la build qui la consomme. Ne pas dupliquer les sources entre
-le paquet et l’app.
+Le manifeste racine pointe directement sur
+`Albumzh.swiftpm/Sources/AlbumPhotoCore`. L’app et les tests utilisent donc les
+mêmes sources. Le manifeste généré de l’App Playground ne doit pas être
+recréé ni édité à la main.
 
-## Création initiale de l’App Playground
+## Création initiale de l’App Playground — historique
 
-Cette opération n’est faite qu’une fois, au lot 0.
+Cette opération a déjà été réalisée sur l’iPad. Elle est documentée uniquement
+pour expliquer l’origine de l’enveloppe conservée ; **elle ne doit pas être
+rejouée pour la reconstruction 3.0**.
 
 ### 1. Créer le document sur l’iPad
 
@@ -381,7 +394,7 @@ réellement utilisée l’exige.
 
 ### 2. Copier le document vers le PC
 
-Le document créé est un package nommé `AlbumPhoto.swiftpm`.
+Le document conservé dans ce dépôt est le package `Albumzh.swiftpm`.
 
 Sans client Git sur iPad :
 
@@ -393,7 +406,7 @@ Sans client Git sur iPad :
    long dans Fichiers puis choisir **Compresser** ;
 5. télécharger le document ou son ZIP depuis iCloud Drive sur le PC ;
 6. le placer dans la racine du dépôt WSL sous le nom
-   `AlbumPhoto.swiftpm` ;
+   `Albumzh.swiftpm` ;
 7. vérifier que `Package.swift` se trouve directement dans ce dossier, et non
    dans un second dossier imbriqué de même nom.
 
@@ -401,8 +414,8 @@ Exemple si un ZIP a été téléchargé dans le dossier Windows `Downloads` :
 
 ```bash
 cd ~/src/album_photo
-unzip /mnt/c/Users/VOTRE_COMPTE/Downloads/AlbumPhoto.swiftpm.zip
-find AlbumPhoto.swiftpm -maxdepth 2 -type f | sort
+unzip /mnt/c/Users/VOTRE_COMPTE/Downloads/Albumzh.swiftpm.zip
+find Albumzh.swiftpm -maxdepth 2 -type f | sort
 ```
 
 Adapter le chemin Windows. Contrôler le résultat avant tout déplacement ou
@@ -412,7 +425,7 @@ Avec Working Copy :
 
 1. connecter Working Copy à GitHub ;
 2. cloner `gabrielmessika/album_photo` ;
-3. partager le document `AlbumPhoto.swiftpm` depuis Swift Playgrounds vers la
+3. partager le document `Albumzh.swiftpm` depuis Swift Playgrounds vers la
    racine de ce clone ;
 4. vérifier les fichiers détectés ;
 5. créer un commit `chore: bootstrap Swift Playground app` ;
@@ -431,7 +444,7 @@ Sur le PC :
 cd ~/src/album_photo
 git switch -c chore/bootstrap-app-playground
 git status
-git add AlbumPhoto.swiftpm
+git add Albumzh.swiftpm
 git diff --cached
 git commit -m "chore: bootstrap Swift Playground app"
 git push -u origin chore/bootstrap-app-playground
@@ -529,7 +542,7 @@ Deux méthodes sont prévues.
 3. vérifier qu’aucun fichier iPad non sauvegardé n’est présent ;
 4. faire **Fetch**, puis **Pull** sur `main` ;
 5. vérifier le hash du commit reçu ;
-6. copier ou partager `AlbumPhoto.swiftpm` vers l’emplacement utilisé par
+6. copier ou partager `Albumzh.swiftpm` vers l’emplacement utilisé par
    Swift Playgrounds ;
 7. remplacer l’ancienne copie de test seulement après avoir confirmé que les
    réglages ou changements utiles de celle-ci sont déjà dans Git ;
@@ -550,7 +563,7 @@ Cette méthode convient très bien si le code est toujours modifié sur le PC.
 3. toucher **Code**, puis **Download ZIP** ;
 4. ouvrir le téléchargement dans Fichiers ;
 5. toucher le ZIP pour le décompresser ;
-6. ouvrir le dossier extrait puis toucher `AlbumPhoto.swiftpm` ;
+6. ouvrir le dossier extrait puis toucher `Albumzh.swiftpm` ;
 7. laisser Swift Playgrounds importer ou ouvrir le projet ;
 8. renommer la copie de test avec le hash court si nécessaire, par exemple
    `AlbumPhoto-a1b2c3d`, afin d’éviter toute confusion ;
@@ -578,10 +591,13 @@ Dans Swift Playgrounds :
     utilisateur ;
 12. utiliser plusieurs photos non sensibles, dont une plus petite et une plus
     grande que le repère canonique, vérifier la taille centrée à `1×`, le fond
-    visible et le dézoom à `0,5×`, les trois états de qualité, la suppression
+    visible et la borne basse dynamique — notamment `0,5×` pour une photo
+    `4 800 × 6 000` dans un cadre pleine page —, les trois états de qualité, la suppression
     confirmée seulement à zéro occurrence et la réutilisation depuis un autre
     album, puis essayer un GIF ou une vidéo à refuser ;
-13. tester cadres multiples, texte, sticker, modèle, dé, automatisme, fonds, vue globale, lecture, diaporama et imports/exports déjà implémentés ;
+13. pour le candidat lot 1, tester cadres multiples, fonds et vue globale, et
+    vérifier que texte, stickers, modèles, dé, automatisme, lecture, diaporama,
+    PDF et package ne sont pas exposés avant leurs lots ;
 14. relever le hash Git, la copie ou le numéro de build, le modèle d’iPad, la
     version d’iPadOS et la version de Swift Playgrounds.
 

@@ -2,7 +2,7 @@
 
 > **Version :** 3.0<br>
 > **Date :** 6 août 2026<br>
-> **Statut :** projet consolidé — une convention technique de zoom à confirmer avant développement<br>
+> **Statut :** projet consolidé — convention de zoom dynamique confirmée, développement 3.0 autorisé<br>
 > **Plateformes :** iPhone et iPad  
 > **Version minimale :** iOS 26 et iPadOS 26  
 > **Technologies principales :** Swift et SwiftUI
@@ -259,7 +259,7 @@ quotidienne.
 | `DEC-04` | Chaque page possède son propre fond. Une commande explicite permet d’appliquer le fond choisi à toutes les pages. |
 | `DEC-05` | L’éditeur et le mode lecture affichent toujours une seule page active. La vue globale affiche uniquement des miniatures destinées à l’organisation et n’est pas un mode de lecture à deux pages. |
 | `DEC-06` | La navigation fonctionne avec des boutons et avec un balayage horizontal. |
-| `DEC-07` | À `1×`, une photo conserve sa taille native de référence, sans agrandissement ou réduction automatique, et est centrée dans son cadre. Le fond de page reste visible dans toute partie du masque non couverte. Si la photo est plus grande que le cadre, l’utilisateur peut descendre sous `1×`, par exemple à `0,5×`, sans modifier l’original. Seules la conversion technique des pixels source vers cette taille native et la borne basse du zoom restent provisoires en section 3.1. |
+| `DEC-07` | À `1×`, une photo conserve sa taille native de référence, sans agrandissement ou réduction automatique, et est centrée dans son cadre. Le fond de page reste visible dans toute partie du masque non couverte. Si la photo est plus grande que le cadre, l’utilisateur peut descendre sous `1×`, par exemple à `0,5×`, sans modifier l’original. La conversion technique des pixels source vers cette taille native utilise le repère canonique et la borne basse dynamique définis en section 3.1. |
 | `DEC-08` | Le texte suit le modèle Photoweb : plusieurs zones indépendantes, police, taille, couleur et alignement. Les fonctions de traitement de texte avancé sont exclues. |
 | `DEC-09` | Le catalogue contient uniquement des stickers statiques intégrés et licenciés pour le projet. Leur manipulation suit celle des autres éléments du canevas. |
 | `DEC-10` | Google Photos utilise le sélecteur officiel et accepte une sélection multiple de photos à partir de la version 1.2. |
@@ -291,29 +291,46 @@ quotidienne.
 | `DEC-36` | Les zones de texte participent librement à la même pile de profondeur que les photos et stickers ; elles peuvent être placées devant ou derrière eux. |
 | `DEC-37` | Ajouter des photos propose une source native Depuis vos autres albums afin de réutiliser, sans duplication binaire inutile, des originaux déjà présents dans l’application. |
 
-## 3.1 Convention technique de zoom à confirmer avant implémentation
+## 3.1 Convention technique de zoom dynamique
 
-Les cinq comportements demandés ont été arbitrés par l’utilisateur. Une seule
-convention d’implémentation reste à confirmer : un fichier numérique n’a pas de
-« taille d’origine » indépendante d’un repère de sortie. Pour garantir le même
-rendu sur iPhone, iPad, miniature et PDF, `CRP-001` et `DAT-006` proposent
-provisoirement une page photo canonique de **2 400 × 3 000 unités** pour le
-canevas 4:5 et une plage continue de zoom photo de **`0,1×` à `8×`**. À
-`1×`, un pixel source après orientation EXIF correspond à une unité de ce
-repère ; une photo de 4 800 × 6 000 pixels occupe donc deux fois la largeur et
-la hauteur de la page et l’échelle `0,5×` la ramène à 2 400 × 3 000.
-La borne `0,1×` est une borne d’interface fixe proposée, et non un ajustement
-automatique au cadre : une image extrêmement grande ou panoramique PEUT donc
-rester partiellement rognée à `0,1×`. L’alternative à arbitrer serait une
-borne basse calculée pour permettre de contenir entièrement chaque photo dans
-son cadre.
+La convention confirmée utilise une page photo canonique de **2 400 × 3 000
+unités** pour le canevas 4:5. À `1×`, un pixel source après orientation EXIF
+correspond à une unité de ce repère. Une photo de 4 800 × 6 000 pixels occupe
+donc deux fois la largeur et la hauteur de la page ; dans un cadre pleine page,
+l’échelle `0,5×` la ramène exactement à 2 400 × 3 000 unités.
 
-Cette convention ignore les métadonnées DPI, `UIImage.scale`, le facteur Retina
-et la taille de la fenêtre. Elle ne fixe ni la résolution du PDF ni celle de
-l’écran : elle définit uniquement la taille native persistante de la photo dans
-le canevas.
-Elle DOIT être confirmée avant d’implémenter `CRP-001` à `CRP-007` et
-`DAT-006` à `DAT-008`. Toutes les autres décisions de composition sont figées.
+La borne basse du contrôle Zoom photo est **dynamique**. Pour un cadre de
+largeur normalisée `w` et de hauteur normalisée `h`, ses dimensions canoniques
+locales non tournées sont `Fw = 2 400 × w` et `Fh = 3 000 × h`. Pour une photo
+orientée de `Iw × Ih` pixels, les axes sont permutés lorsque `quarterTurns` est
+impair, donnant `Rw × Rh`. Le facteur permettant de contenir le rectangle photo
+entier dans les limites rectangulaires du cadre est :
+
+```text
+fitScale = min(Fw / Rw, Fh / Rh)
+minimumNativeScale = min(1, fitScale)
+```
+
+Les dimensions doivent être strictement positives et tous les résultats finis.
+La plage proposée pendant un nouveau cadrage est
+`minimumNativeScale...8`. Une petite photo qui tient déjà dans son cadre à
+`1×` ne peut donc pas être réduite sous `1×`; une photo trop grande peut être
+réduite exactement jusqu’à la valeur nécessaire pour devenir entièrement
+visible dans les limites rectangulaires du cadre. Le masque peut naturellement
+en rogner les coins ou d’autres parties selon sa forme.
+
+Un changement ultérieur de taille, de rapport, de forme, de modèle ou de mise
+en page automatique conserve néanmoins exactement le cadrage existant selon
+`CRP-007`. Si son `nativeScale` est déjà inférieur au nouveau minimum calculé,
+le contrôle utilise temporairement `min(minimumNativeScale,
+nativeScaleÀLOuverture)` comme borne basse : ouvrir puis fermer le cadrage ne
+doit jamais provoquer de zoom automatique. Réinitialiser revient toujours à
+`1×` centré.
+
+Cette convention ignore les métadonnées DPI, `UIImage.scale`, le facteur
+Retina et la taille de la fenêtre. Elle ne fixe ni la résolution du PDF ni
+celle de l’écran : elle définit uniquement la taille native persistante de la
+photo dans le canevas et le calcul reproductible du contrôle de cadrage.
 
 ---
 
@@ -452,7 +469,7 @@ haut à gauche, largeur et hauteur normalisées de `0` à `1`.
 | `CAN-006` | La largeur et la hauteur validées d’un élément NE DOIVENT PAS être inférieures à `0,05` de la dimension de page correspondante. |
 | `CAN-007` | Toute taille, marge ou géométrie de modèle DOIT provenir d’une définition centralisée et non d’une constante dispersée dans les vues. |
 | `CAN-008` | Le même moteur de composition DOIT rendre l’éditeur, la prévisualisation, la lecture, les miniatures, le diaporama et le PDF. |
-| `CAN-009` | Sous réserve de confirmation de la convention 3.1, chaque sortie DOIT transformer uniformément la page canonique `2 400 × 3 000` vers sa destination, sans faire dépendre la composition de la densité d’écran, de la taille de fenêtre, du zoom du canevas ou de la résolution du PDF. |
+| `CAN-009` | Chaque sortie DOIT transformer uniformément la page canonique `2 400 × 3 000` vers sa destination, sans faire dépendre la composition de la densité d’écran, de la taille de fenêtre, du zoom du canevas ou de la résolution du PDF. |
 
 ## 7.2 Organisation des commandes
 
@@ -874,10 +891,10 @@ n’est rendue.
 
 | ID | Exigence |
 |---|---|
-| `CRP-001` | Sous réserve de confirmation de la convention 3.1, le canevas photo DOIT utiliser un repère canonique de `2 400 × 3 000` unités. À `1×`, un pixel source après orientation EXIF mesure exactement une unité canonique et la photo est centrée sans ajustement automatique au cadre. Toute partie du masque sans pixel photo reste transparente et révèle les éléments de profondeur inférieure puis le fond de page. |
+| `CRP-001` | Le canevas photo DOIT utiliser un repère canonique de `2 400 × 3 000` unités. À `1×`, un pixel source après orientation EXIF mesure exactement une unité canonique et la photo est centrée sans ajustement automatique au cadre. Toute partie du masque sans pixel photo reste transparente et révèle les éléments de profondeur inférieure puis le fond de page. |
 | `CRP-002` | Un double toucher sur la photo ou la commande Recadrer DOIT ouvrir le mode de cadrage en laissant le cadre fixe et en assombrissant ce qui se trouve hors du masque. |
 | `CRP-003` | Dans ce mode, glisser déplace la photo en modifiant le point focal dans les bornes de `DAT-007`, pincer la zoome et les commandes de rotation ou retournement transforment son contenu sans transformer le cadre. Le point focal transformé reste au centre du cadre afin que le contenu ne puisse pas devenir entièrement introuvable. |
-| `CRP-004` | Le zoom photo `nativeScale` DOIT varier continûment de `0,1` à `8`, bornes incluses. Le pincement et le contrôle accessible Zoom photo PEUVENT donc descendre sous `1×`, notamment à `0,5×`; ils NE DOIVENT PAS confondre cette valeur avec le zoom de fenêtre `ZOM-001`. Révéler le fond autour de la photo est autorisé et NE DOIT PAS provoquer de zoom correctif. |
+| `CRP-004` | Le zoom photo `nativeScale` DOIT varier continûment jusqu’à `8`, borne incluse. Sa borne basse de session DOIT être calculée par la formule dynamique de la section 3.1 à partir du cadre, des dimensions orientées et de l’état d’entrée conservé ; elle peut donc être inférieure à `1×`, notamment égale à `0,5×`, et n’utilise aucune constante minimale fixe. Le pincement et le contrôle accessible Zoom photo NE DOIVENT PAS confondre cette valeur avec le zoom de fenêtre `ZOM-001`. Révéler le fond autour de la photo est autorisé et NE DOIT PAS provoquer de zoom correctif. |
 | `CRP-005` | Réinitialiser DOIT restaurer l’orientation d’origine et le cadrage centré à `1×`; Annuler restaure l’état d’entrée et Terminé valide une seule commande annulable. |
 | `CRP-006` | Le fichier original NE DOIT JAMAIS être modifié. Le cadrage DOIT persister le `nativeScale` absolu par rapport à `1×` et un point focal normalisé ; il NE DOIT persister ni facteur d’écran, ni échelle relative à un remplissage du masque. |
 | `CRP-007` | Après changement du rapport, de la taille ou de la forme du cadre, application d’un modèle ou recomposition Auto, le moteur DOIT conserver exactement `nativeScale`, point focal, quarts de tour et retournement. Il NE DOIT ni recentrer ni ajuster la photo pour couvrir le nouveau masque. |
@@ -1835,13 +1852,16 @@ struct PhotoFrameStyleDefaults: Codable, Sendable {
 }
 ```
 
-`DAT-006` — Sous réserve de confirmation de la convention 3.1,
-`nativeScale` DOIT être fini et compris entre `0,1` et `8`. Soit une photo de
-`Iw × Ih` pixels après orientation EXIF : avant rotation utilisateur, son rendu
-mesure exactement `nativeScale × Iw` par `nativeScale × Ih` unités dans la
-page canonique `2 400 × 3 000`. Les axes sont permutés lorsque `quarterTurns`
-est impair. La géométrie du cadre, son masque, les DPI du fichier, le facteur
-Retina et la destination de rendu NE DOIVENT PAS entrer dans cette échelle.
+`DAT-006` — `nativeScale` DOIT être fini, strictement supérieur à `0` et
+inférieur ou égal à `8`. Soit une photo de `Iw × Ih` pixels après orientation
+EXIF : avant rotation utilisateur, son rendu mesure exactement
+`nativeScale × Iw` par `nativeScale × Ih` unités dans la page canonique
+`2 400 × 3 000`. Les axes sont permutés lorsque `quarterTurns` est impair. La
+géométrie rectangulaire du cadre intervient uniquement dans le calcul de la
+borne basse dynamique de la section 3.1 ; son masque, les DPI du fichier, le
+facteur Retina et la destination de rendu NE DOIVENT PAS entrer dans cette
+échelle. Une valeur existante inférieure au minimum recalculé reste valide afin
+de respecter `CRP-007` et devient la borne basse de sa session de cadrage.
 
 `DAT-007` — `focalX` et `focalY` DOIVENT être finis et compris entre `0` et
 `1` dans les coordonnées de la photo après orientation EXIF mais avant les

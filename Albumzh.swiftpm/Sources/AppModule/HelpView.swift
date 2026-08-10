@@ -1,0 +1,131 @@
+import SwiftUI
+
+enum HelpContext: String, Identifiable {
+    case editor
+    case photos
+    case backgrounds
+    case crop
+    case globalPages
+
+    var id: String { rawValue }
+}
+
+struct HelpView: View {
+    @Environment(\.dismiss) private var dismiss
+    let context: HelpContext
+
+    private var sections: [HelpSection] {
+        var result = [HelpSection.title(for: context)]
+        result.append(contentsOf: [
+            HelpSection(
+                title: "Sélectionner et placer",
+                symbol: "hand.tap",
+                text: "Touchez un cadre pour le sélectionner. Faites-le glisser pour le déplacer. Les poignées redimensionnent ou tournent le cadre. Les commandes accessibles proposent les mêmes transformations sans geste multipoint."
+            ),
+            HelpSection(
+                title: "Ajouter des photos",
+                symbol: "photo.badge.plus",
+                text: "Le panneau Photos importe plusieurs images depuis Photothèque ou Fichiers. Vous pouvez aussi réutiliser les photos d’un autre album. Touchez une miniature pour remplir le cadre sélectionné ou créer un nouveau cadre."
+            ),
+            HelpSection(
+                title: "Cadre vide",
+                symbol: "rectangle.dashed",
+                text: "Retirer une photo conserve son cadre. Supprimer retire le cadre entier. Une photo retirée reste disponible dans le panneau tant que vous ne choisissez pas explicitement Supprimer de cet album."
+            ),
+            HelpSection(
+                title: "Cadrer la photo",
+                symbol: "crop",
+                text: "En mode Recadrer, glissez la photo, pincez pour modifier son échelle ou utilisez le réglage Zoom photo. À 1×, la taille native est conservée ; le fond peut rester visible. Annuler abandonne le brouillon et Terminé crée une seule action annulable."
+            ),
+            HelpSection(
+                title: "Fonds",
+                symbol: "paintpalette",
+                text: "Un fond s’applique immédiatement à la page active. Appliquer à toutes les pages est une commande distincte et annulable."
+            ),
+            HelpSection(
+                title: "Vue globale",
+                symbol: "square.grid.2x2",
+                text: "La vue globale sert à ajouter, supprimer et réorganiser les pages. Touchez une miniature pour revenir à cette page. Elle ne permet pas de modifier les éléments internes."
+            ),
+            HelpSection(
+                title: "Alertes de qualité",
+                symbol: "exclamationmark.triangle",
+                text: "Une alerte orange signale une qualité encore acceptable et une alerte rouge une qualité insuffisante pour la taille du cadre. Réduisez le cadre ou rapprochez le zoom photo de sa taille native ; l’original n’est jamais modifié."
+            ),
+            HelpSection(
+                title: "Clavier et précision",
+                symbol: "keyboard",
+                text: "Avec un cadre sélectionné, les flèches le déplacent de 1 % de la page. Option + flèche utilise le pas précis de 0,25 %. Commande-Z annule, Majuscule-Commande-Z rétablit, Commande-X/C/V coupe, copie ou colle et Commande-S sauvegarde un brouillon à consolider."
+            ),
+            HelpSection(
+                title: "Sauvegarde",
+                symbol: "externaldrive.badge.checkmark",
+                text: "Chaque commande validée est enregistrée localement. Sauvegarder consolide immédiatement le journal. En cas d’échec, utilisez Réessayer sans fermer l’éditeur."
+            )
+        ])
+        return result
+    }
+
+    var body: some View {
+        NavigationStack {
+            List(sections) { section in
+                Section {
+                    Text(section.text)
+                        .fixedSize(horizontal: false, vertical: true)
+                } header: {
+                    Label(section.title, systemImage: section.symbol)
+                        .accessibilityAddTraits(.isHeader)
+                }
+            }
+            .navigationTitle("Aide")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+private struct HelpSection: Identifiable {
+    let id = UUID()
+    let title: String
+    let symbol: String
+    let text: String
+
+    static func title(for context: HelpContext) -> HelpSection {
+        switch context {
+        case .photos:
+            return HelpSection(
+                title: "Panneau Photos",
+                symbol: "photo.on.rectangle",
+                text: "Importez d’abord les originaux dans la photothèque interne de l’album, puis placez chaque occurrence librement dans la page."
+            )
+        case .backgrounds:
+            return HelpSection(
+                title: "Panneau Fonds",
+                symbol: "paintpalette",
+                text: "Chaque page possède son propre fond et reste indépendante des autres pages."
+            )
+        case .crop:
+            return HelpSection(
+                title: "Mode Recadrer",
+                symbol: "crop",
+                text: "Le cadre reste fixe : seuls le zoom, le point focal, les quarts de tour et le retournement de son contenu changent."
+            )
+        case .globalPages:
+            return HelpSection(
+                title: "Organiser les pages",
+                symbol: "square.grid.2x2",
+                text: "Les miniatures représentent une seule page chacune. Il n’existe aucun affichage ni réglage en double page."
+            )
+        case .editor:
+            return HelpSection(
+                title: "Éditeur d’album",
+                symbol: "rectangle.portrait",
+                text: "Composez une seule page active, puis passez à la vue globale ou à la prévisualisation sans modifier le document."
+            )
+        }
+    }
+}

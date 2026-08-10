@@ -1,449 +1,1204 @@
 import AlbumPhotoCore
 import SwiftUI
-import PhotosUI
 
-@MainActor
-@Observable
-final class AlbumEditorViewModel {
-    private struct EditAction {
-        let before: Album
-        let after: Album
-    }
+private struct RotationEditorRequest: Identifiable {
+    let elementID: UUID
+    let initialRadians: Double
+    var id: UUID { elementID }
+}
 
-    private let service: AlbumService
-    private var undoActions: [EditAction] = []
-    private var redoActions: [EditAction] = []
-
-    var album: Album
-    var activePageID: UUID
-    var isConfirmingPageDeletion = false
-    var isShowingPageManager = false
-    var isShowingBackgrounds = false
-    var cropDraft: MediaPlacement?
-    var errorMessage: String?
-
-    var canUndo: Bool { !undoActions.isEmpty }
-    var canRedo: Bool { !redoActions.isEmpty }
-    var canDeletePage: Bool { album.pages.count > 1 }
-    var activePageIndex: Int {
-        album.pages.firstIndex(where: { $0.id == activePageID }) ?? 0
-    }
-    var canGoPrevious: Bool { activePageIndex > 0 }
-    var canGoNext: Bool { activePageIndex < album.pages.count - 1 }
-    var isCropping: Bool { cropDraft != nil }
-
-    init(album: Album, service: AlbumService) {
-        self.album = album
-        self.activePageID = album.pages[0].id
-        self.service = service
-    }
-
-    func addPage() async {
-        let before = album
-        do {
-            let updated = try await service.addPage(
-                to: album.id,
-                after: activePageID
-            )
-            record(EditAction(before: before, after: updated))
-            album = updated
-            if let activeIndex = updated.pages.firstIndex(
-                where: { $0.id == activePageID }
-            ) {
-                activePageID = updated.pages[activeIndex + 1].id
-            }
-        } catch {
-            errorMessage = "Impossible d’ajouter la page."
-        }
-    }
-
-    func deleteActivePage() async {
-        guard canDeletePage else { return }
-        let before = album
-        guard let deletedIndex = album.pages.firstIndex(
-            where: { $0.id == activePageID }
-        ) else {
-            errorMessage = "La page active est introuvable."
-            return
-        }
-
-        do {
-            let updated = try await service.deletePage(
-                from: album.id,
-                pageID: activePageID
-            )
-            record(EditAction(before: before, after: updated))
-            album = updated
-            activePageID = updated.pages[min(deletedIndex, updated.pages.count - 1)].id
-            isConfirmingPageDeletion = false
-        } catch {
-            errorMessage = "Impossible de supprimer la page."
-        }
-    }
-
-    func movePages(fromOffsets: IndexSet, toOffset: Int) async {
-        guard fromOffsets.count == 1, let sourceIndex = fromOffsets.first else {
-            errorMessage = "Une seule page peut être déplacée à la fois."
-            return
-        }
-
-        let before = album
-        var orderedIDs = album.pages.map(\.id)
-        let movedID = orderedIDs.remove(at: sourceIndex)
-        let adjustedOffset = toOffset > sourceIndex ? toOffset - 1 : toOffset
-        orderedIDs.insert(
-            movedID,
-            at: min(max(0, adjustedOffset), orderedIDs.count)
-        )
-        guard orderedIDs != album.pages.map(\.id) else { return }
-
-        do {
-            let updated = try await service.reorderPages(
-                in: album.id,
-                orderedPageIDs: orderedIDs
-            )
-            record(EditAction(before: before, after: updated))
-            album = updated
-        } catch {
-            errorMessage = "Impossible de réorganiser les pages."
-        }
-    }
-
-    func changeBackground(to backgroundID: String) async {
-        let before = album
-        do {
-            let updated = try await service.changeBackground(
-                of: album.id,
-                to: backgroundID
-            )
-            record(EditAction(before: before, after: updated))
-            album = updated
-            isShowingBackgrounds = false
-        } catch {
-            errorMessage = "Impossible de changer le fond."
-        }
-    }
-
-    func changeDisplayMode(to mode: DisplayMode) async {
-        guard mode != album.preferredDisplayMode else { return }
-        let before = album
-        do {
-            let updated = try await service.changeDisplayMode(
-                of: album.id,
-                to: mode
-            )
-            record(EditAction(before: before, after: updated))
-            album = updated
-        } catch {
-            errorMessage = "Impossible de changer le mode d’affichage."
-        }
-    }
-    func setMedia(_ assetID: UUID) async { let before = album; if let updated = try? await service.setMedia(assetID: assetID, on: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible d’ajouter la photo." } }
-    func removeMedia() async { let before = album; if let updated = try? await service.removeMedia(from: activePageID, in: album.id) { record(EditAction(before: before, after: updated)); album = updated } else { errorMessage = "Impossible de supprimer la photo." } }
-    func beginCropping(pageID: UUID? = nil) {
-        if let pageID,
-           let index = album.pages.firstIndex(where: { $0.id == pageID }) {
-            activePageID = pageID
-            cropDraft = album.pages[index].mediaPlacement
-        } else {
-            cropDraft = album.pages[activePageIndex].mediaPlacement
-        }
-    }
-
-    func cancelCropping() {
-        cropDraft = nil
-    }
-
-    func resetCrop() {
-        guard let assetID = cropDraft?.assetID else { return }
-        cropDraft = MediaPlacement(assetID: assetID)
-    }
-
-    func updateCrop(scale: Double? = nil, offsetX: Double? = nil, offsetY: Double? = nil) {
-        guard var draft = cropDraft else { return }
-        if let scale { draft.normalizedScale = min(8, max(1, scale)) }
-        if let offsetX { draft.normalizedOffsetX = min(1, max(-1, offsetX)) }
-        if let offsetY { draft.normalizedOffsetY = min(1, max(-1, offsetY)) }
-        cropDraft = draft
-    }
-
-    func commitCrop() async -> Bool {
-        guard let placement = cropDraft else { return false }
-        let before = album
-        do {
-            let updated = try await service.changeMediaCrop(
-                on: activePageID,
-                in: album.id,
-                scale: placement.normalizedScale,
-                offsetX: placement.normalizedOffsetX,
-                offsetY: placement.normalizedOffsetY
-            )
-            record(EditAction(before: before, after: updated))
-            album = updated
-            cropDraft = nil
-            return true
-        } catch {
-            errorMessage = "Impossible d’enregistrer le cadrage."
-            return false
-        }
-    }
-
-    func goPrevious() {
-        guard canGoPrevious else { return }
-        activePageID = album.pages[activePageIndex - 1].id
-    }
-
-    func goNext() {
-        guard canGoNext else { return }
-        activePageID = album.pages[activePageIndex + 1].id
-    }
-
-    func navigateBySwipe(towardNext: Bool, availableWidth: Double) {
-        let usesSpread = album.preferredDisplayMode == .doublePage
-            && availableWidth >= 600
-        let step = usesSpread ? 2 : 1
-        let currentIndex = usesSpread
-            ? (activePageIndex / 2) * 2
-            : activePageIndex
-        let destination = towardNext
-            ? min(currentIndex + step, album.pages.count - 1)
-            : max(currentIndex - step, 0)
-        guard destination != currentIndex else { return }
-        activePageID = album.pages[destination].id
-    }
-
-    func visiblePages(availableWidth: Double) -> [Page] {
-        guard
-            album.preferredDisplayMode == .doublePage,
-            availableWidth >= 600
-        else {
-            return [album.pages[activePageIndex]]
-        }
-        let firstIndex = (activePageIndex / 2) * 2
-        return Array(album.pages[firstIndex..<min(firstIndex + 2, album.pages.count)])
-    }
-
-    func undo() async {
-        guard let action = undoActions.popLast() else { return }
-
-        do {
-            album = try await service.applyEditorSnapshot(action.before)
-            redoActions.append(action)
-            keepValidActivePage()
-        } catch {
-            undoActions.append(action)
-            errorMessage = "Impossible d’annuler la modification."
-        }
-    }
-
-    func redo() async {
-        guard let action = redoActions.popLast() else { return }
-
-        do {
-            album = try await service.applyEditorSnapshot(action.after)
-            undoActions.append(action)
-            keepValidActivePage()
-        } catch {
-            redoActions.append(action)
-            errorMessage = "Impossible de rétablir la modification."
-        }
-    }
-
-    func closeSession() {
-        undoActions.removeAll()
-        redoActions.removeAll()
-    }
-
-    private func record(_ action: EditAction) {
-        undoActions.append(action)
-        redoActions.removeAll()
-    }
-
-    private func keepValidActivePage() {
-        if !album.pages.contains(where: { $0.id == activePageID }) {
-            activePageID = album.pages[0].id
-        }
-    }
+private struct PhotoDescriptionRequest: Identifiable {
+    let pageID: UUID
+    let elementID: UUID
+    let initialDescription: String
+    var id: UUID { elementID }
 }
 
 struct AlbumEditorView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.scenePhase) private var scenePhase
-    @State private var model: AlbumEditorViewModel
-    @State private var selectedPhoto: PhotosPickerItem?
-    let assetStore: MediaAssetStore
+    @EnvironmentObject private var appModel: AppModel
+    let albumID: UUID
 
-    init(album: Album, service: AlbumService, assetStore: MediaAssetStore) {
-        _model = State(
-            initialValue: AlbumEditorViewModel(album: album, service: service)
+    var body: some View {
+        AlbumEditorScene(albumID: albumID, appModel: appModel)
+    }
+}
+
+private struct AlbumEditorScene: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    @StateObject private var model: EditorViewModel
+    @State private var mobilePanel: EditorPanel?
+    @State private var showsRename = false
+    @State private var rotationRequest: RotationEditorRequest?
+    @State private var photoDescriptionRequest: PhotoDescriptionRequest?
+    @State private var isClosing = false
+    @State private var lifecycleTask: Task<Void, Never>?
+    @State private var lifecycleOperationBlockTokens: [UUID] = []
+    @State private var showsInspector = true
+
+    init(albumID: UUID, appModel: AppModel) {
+        _model = StateObject(
+            wrappedValue: EditorViewModel(albumID: albumID, appModel: appModel)
         )
-        self.assetStore = assetStore
     }
 
     var body: some View {
-        let activePageHasMedia = model.album.pages[model.activePageIndex]
-            .mediaPlacement != nil
-
-        VStack(spacing: 20) {
-            Label("Mode édition", systemImage: "pencil")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .accessibilityAddTraits(.isHeader)
-
-            Picker(
-                "Affichage",
-                selection: Binding(
-                    get: { model.album.preferredDisplayMode },
-                    set: { mode in
-                        Task { await model.changeDisplayMode(to: mode) }
-                    }
-                )
-            ) {
-                Text("Une page").tag(DisplayMode.singlePage)
-                Text("Deux pages").tag(DisplayMode.doublePage)
+        NavigationStack {
+            responsiveContent
+                .navigationTitle(model.album?.name ?? "Album")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { editorToolbar }
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    bottomCommands
+                }
+        }
+        .interactiveDismissDisabled()
+        .task { await model.load() }
+        .onDisappear {
+            guard !isClosing else { return }
+            isClosing = true
+            model.cancelImportTask()
+            let closingToken = model.beginClosingTransition()
+            let pending = lifecycleTask
+            Task {
+                defer { model.endClosingTransition(closingToken) }
+                await pending?.value
+                _ = await model.close()
             }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .disabled(model.isCropping)
-
-            AlbumSpreadView(model: model, assetStore: assetStore)
-
-            HStack {
-                PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                    Label(
-                        activePageHasMedia ? "Remplacer la photo" : "Ajouter une photo",
-                        systemImage: "photo.badge.plus"
+        }
+        .onChange(of: scenePhase) { _, phase in
+            enqueueLifecycleTransition(phase)
+        }
+        .onChange(of: model.presentationMode) { oldMode, newMode in
+            if newMode == .preview, oldMode != .preview {
+                model.beginPreviewSession()
+            } else if oldMode == .preview, newMode != .preview {
+                model.endPreviewSession()
+            }
+        }
+        .sheet(isPresented: $showsRename) {
+            EditorRenameSheet(initialName: model.album?.name ?? "") { name in
+                showsRename = false
+                Task { await model.renameAlbum(to: name) }
+            }
+        }
+        .sheet(item: $rotationRequest) { request in
+            ElementRotationSheet(initialRadians: request.initialRadians) { degrees in
+                let elementID = request.elementID
+                rotationRequest = nil
+                Task {
+                    await model.setElementRotation(
+                        elementID: elementID,
+                        degrees: degrees
                     )
                 }
-                .disabled(model.isCropping)
-                if activePageHasMedia {
-                    if model.isCropping {
-                        Label("Pincez pour zoomer, glissez pour déplacer", systemImage: "hand.pinch")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        Button("Réinitialiser", systemImage: "arrow.counterclockwise") {
-                            model.resetCrop()
-                        }
-                        Button("Annuler", role: .cancel) {
-                            model.cancelCropping()
-                        }
-                        Button("Terminé") {
-                            Task { _ = await model.commitCrop() }
-                        }
-                        .buttonStyle(.borderedProminent)
+            }
+        }
+        .sheet(item: $photoDescriptionRequest) { request in
+            PhotoDescriptionSheet(initialDescription: request.initialDescription) {
+                description in
+                photoDescriptionRequest = nil
+                Task {
+                    await model.updatePhotoAccessibilityDescription(
+                        description,
+                        elementID: request.elementID,
+                        pageID: request.pageID
+                    )
+                }
+            }
+        }
+        .sheet(item: $model.helpContext) { context in
+            HelpView(context: context)
+        }
+        .alert(
+            "Une action n’a pas pu être terminée",
+            isPresented: Binding(
+                get: { model.errorMessage != nil },
+                set: { if !$0 { model.clearError() } }
+            )
+        ) {
+            if model.saveState == .failed {
+                Button("Réessayer la sauvegarde") { Task { await model.save() } }
+            }
+            Button("OK") { model.clearError() }
+        } message: {
+            Text(model.errorMessage ?? "")
+        }
+        .alert(
+            "Enveloppe recommandée dépassée",
+            isPresented: Binding(
+                get: { model.capacityWarning != nil },
+                set: { if !$0 { model.clearCapacityWarning() } }
+            )
+        ) {
+            Button("Continuer") { model.clearCapacityWarning() }
+        } message: {
+            Text(model.capacityWarning ?? "")
+        }
+    }
+
+    @ViewBuilder
+    private var responsiveContent: some View {
+        if horizontalSizeClass == .regular,
+           model.presentationMode == .page {
+            HStack(spacing: 0) {
+                if model.cropDraft == nil {
+                    editorRail
+                    if showsInspector {
+                        Divider()
+                        panelContent(model.activePanel)
+                            .frame(width: 320)
+                    }
+                    Divider()
+                }
+                pageWorkspace
+            }
+        } else if model.presentationMode == .page,
+                  model.cropDraft == nil,
+                  let mobilePanel {
+            VStack(spacing: 0) {
+                pageWorkspace
+                Divider()
+                compactPanel(mobilePanel)
+            }
+        } else {
+            modeContent
+        }
+    }
+
+    @ViewBuilder
+    private var modeContent: some View {
+        switch model.presentationMode {
+        case .page:
+            pageWorkspace
+        case .global:
+            GlobalPagesView(model: model)
+        case .preview:
+            PreviewPageView(model: model)
+        }
+    }
+
+    private var pageWorkspace: some View {
+        VStack(spacing: 0) {
+            if model.isReadOnly {
+                HStack(spacing: 10) {
+                    Label(
+                        "Lecture seule — cet album est déjà ouvert dans une autre fenêtre.",
+                        systemImage: "lock"
+                    )
+                    .font(.caption)
+
+                    Spacer(minLength: 4)
+
+                    Button("Réessayer") {
+                        Task { await model.retryEditAccess() }
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .disabled(model.isLoading)
+                    .accessibilityHint(
+                        "Tente de reprendre l’édition si l’autre fenêtre a libéré l’album."
+                    )
+                }
+                .frame(maxWidth: .infinity)
+                .padding(7)
+                .background(Color.orange.opacity(0.16))
+            }
+
+            EditablePageCanvas(model: model)
+
+            HStack(spacing: 14) {
+                if model.cropDraft == nil {
+                    Button("Ajouter une photo", systemImage: "photo.badge.plus") {
+                        model.select(elementID: nil)
+                        openPhotosPanel()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(model.isReadOnly)
+
+                }
+                CanvasZoomControls(model: model)
+                Divider().frame(height: 26)
+                pageNavigation
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(.bar)
+        }
+    }
+
+    private var pageNavigation: some View {
+        HStack(spacing: 10) {
+            Button("Précédent", systemImage: "chevron.left") {
+                model.goPrevious()
+            }
+            .labelStyle(.iconOnly)
+            .disabled(!model.canGoPrevious || model.interaction.blocksPageNavigation)
+            .keyboardShortcut(.leftArrow, modifiers: [.command])
+
+            Text(
+                "Page \(model.activePageIndex + 1) sur \(model.album?.pages.count ?? 1)"
+            )
+            .font(.subheadline.monospacedDigit())
+            .accessibilityAddTraits(.isStaticText)
+
+            Button("Suivant", systemImage: "chevron.right") {
+                model.goNext()
+            }
+            .labelStyle(.iconOnly)
+            .disabled(!model.canGoNext || model.interaction.blocksPageNavigation)
+            .keyboardShortcut(.rightArrow, modifiers: [.command])
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+    }
+
+    private var editorRail: some View {
+        VStack(spacing: 10) {
+            ForEach(EditorPanel.allCases) { panel in
+                Button {
+                    model.activePanel = panel
+                    if reduceMotion {
+                        showsInspector = true
                     } else {
-                        Button("Recadrer", systemImage: "crop") {
-                            model.beginCropping(pageID: model.activePageID)
-                        }
-                        Button("Supprimer la photo", role: .destructive) {
-                            Task { await model.removeMedia() }
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showsInspector = true
                         }
                     }
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: panel.symbol)
+                            .font(.title3)
+                        Text(panel.title)
+                            .font(.caption2)
+                    }
+                    .frame(width: 66, height: 58)
+                    .background(
+                        model.activePanel == panel
+                            ? Color.accentColor.opacity(0.15) : Color.clear,
+                        in: RoundedRectangle(cornerRadius: 10)
+                    )
                 }
+                .buttonStyle(.plain)
+                .disabled(model.cropDraft != nil)
             }
-
-            HStack {
-                Button("Précédent", systemImage: "chevron.left") {
-                    model.goPrevious()
+            Spacer()
+            Button {
+                if reduceMotion {
+                    showsInspector.toggle()
+                } else {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showsInspector.toggle()
+                    }
                 }
-                .disabled(!model.canGoPrevious)
-
-                Button(
-                    "Ajouter une page",
-                    systemImage: "plus.rectangle.on.rectangle"
-                ) {
-                    Task { await model.addPage() }
+            } label: {
+                VStack(spacing: 4) {
+                    Image(systemName: "sidebar.left")
+                        .font(.title3)
+                    Text(showsInspector ? "Replier" : "Afficher")
+                        .font(.caption2)
                 }
-                .buttonStyle(.borderedProminent)
-
-                Button(
-                    "Supprimer la page",
-                    systemImage: "trash",
-                    role: .destructive
-                ) {
-                    model.isConfirmingPageDeletion = true
-                }
-                .buttonStyle(.bordered)
-                .disabled(!model.canDeletePage)
-
-                Button("Suivant", systemImage: "chevron.right") {
-                    model.goNext()
-                }
-                .disabled(!model.canGoNext)
+                .frame(width: 66, height: 58)
             }
-            .padding(.bottom)
-            .disabled(model.isCropping)
+            .buttonStyle(.plain)
+            .accessibilityLabel(
+                showsInspector ? "Replier l’inspecteur" : "Afficher l’inspecteur"
+            )
+            .accessibilityHint("Conserve la sélection et le contenu de la page.")
         }
-        .navigationTitle(model.album.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button("Albums", systemImage: "chevron.left") {
-                    dismiss()
+        .padding(.vertical, 12)
+        .frame(width: 78)
+        .background(.bar)
+    }
+
+    @ViewBuilder
+    private func panelContent(_ panel: EditorPanel) -> some View {
+        switch panel {
+        case .photos:
+            PhotosPanelView(model: model)
+        case .backgrounds:
+            BackgroundPickerView(model: model)
+        }
+    }
+
+    /// Compact iPad layouts keep the inspector in the same window as the
+    /// canvas. A photo can therefore be dragged out of the panel and dropped on
+    /// the page; a modal sheet would isolate the drag source from its target.
+    private func compactPanel(_ panel: EditorPanel) -> some View {
+        VStack(spacing: 0) {
+            HStack {
+                Label(panel.title, systemImage: panel.symbol)
+                    .font(.headline)
+                Spacer()
+                Button("Fermer le panneau", systemImage: "xmark") {
+                    mobilePanel = nil
+                }
+                .labelStyle(.iconOnly)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+
+            Divider()
+            panelContent(panel)
+        }
+        .frame(minHeight: 180, idealHeight: 260, maxHeight: 320)
+        .background(.bar)
+        .accessibilityElement(children: .contain)
+    }
+
+    @ToolbarContentBuilder
+    private var editorToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .topBarLeading) {
+            Button("Retour aux albums", systemImage: "chevron.left") {
+                closeEditor()
+            }
+            if horizontalSizeClass == .regular {
+                Button("Aide", systemImage: "questionmark.circle") {
+                    openContextHelp()
                 }
             }
+        }
 
-            ToolbarItemGroup(placement: .secondaryAction) {
+        ToolbarItem(placement: .principal) {
+            Button {
+                showsRename = true
+            } label: {
+                VStack(spacing: 1) {
+                    HStack(spacing: 4) {
+                        Text(model.album?.name ?? "Album")
+                            .font(.headline)
+                            .lineLimit(1)
+                        Image(systemName: "pencil")
+                            .font(.caption)
+                            .accessibilityHidden(true)
+                    }
+                    Label(model.saveState.label, systemImage: model.saveState.symbol)
+                        .font(.caption2)
+                        .foregroundStyle(
+                            model.saveState == .failed ? Color.red : .secondary
+                        )
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(model.album == nil || model.isReadOnly)
+            .accessibilityLabel("Renommer l’album")
+            .accessibilityValue(model.saveState.label)
+            .accessibilityHint("Ouvre le formulaire de renommage. L’état de sauvegarde est annoncé comme valeur.")
+        }
+
+        ToolbarItemGroup(placement: .topBarTrailing) {
+            if horizontalSizeClass == .regular {
+                Button("Sauvegarder", systemImage: "externaldrive.badge.checkmark") {
+                    Task { await model.save() }
+                }
+                .disabled(!model.canSave)
+                .keyboardShortcut("s", modifiers: .command)
+
                 Button("Annuler", systemImage: "arrow.uturn.backward") {
                     Task { await model.undo() }
                 }
-                .disabled(!model.canUndo)
+                .disabled(!model.canUndo || model.cropDraft != nil || model.isReadOnly)
+                .keyboardShortcut("z", modifiers: .command)
 
                 Button("Rétablir", systemImage: "arrow.uturn.forward") {
                     Task { await model.redo() }
                 }
-                .disabled(!model.canRedo)
+                .disabled(!model.canRedo || model.cropDraft != nil || model.isReadOnly)
+                .keyboardShortcut("z", modifiers: [.command, .shift])
 
-                Button("Gérer les pages", systemImage: "rectangle.stack") {
-                    model.isShowingPageManager = true
+                Button("Couper", systemImage: "scissors") {
+                    Task { await model.cutSelected() }
+                }
+                .disabled(model.selectedElement == nil || model.cropDraft != nil || model.isReadOnly)
+                .keyboardShortcut("x", modifiers: .command)
+
+                Button("Copier", systemImage: "doc.on.doc") {
+                    Task { await model.copySelected() }
+                }
+                .disabled(model.selectedElement == nil || model.cropDraft != nil || model.isReadOnly)
+                .keyboardShortcut("c", modifiers: .command)
+
+                Button("Coller", systemImage: "doc.on.clipboard") {
+                    Task { await model.paste() }
+                }
+                .disabled(!model.canPaste || model.cropDraft != nil || model.isReadOnly)
+                .keyboardShortcut("v", modifiers: .command)
+            } else {
+                Button("Aide", systemImage: "questionmark.circle") {
+                    openContextHelp()
+                }
+                compactCommandMenu
+            }
+        }
+    }
+
+    private var compactCommandMenu: some View {
+        Menu("Plus", systemImage: "ellipsis.circle") {
+            Button("Sauvegarder", systemImage: "externaldrive.badge.checkmark") {
+                Task { await model.save() }
+            }
+            .disabled(!model.canSave)
+            .keyboardShortcut("s", modifiers: .command)
+
+            Divider()
+
+            Button("Annuler", systemImage: "arrow.uturn.backward") {
+                Task { await model.undo() }
+            }
+            .disabled(!model.canUndo || model.cropDraft != nil || model.isReadOnly)
+            .keyboardShortcut("z", modifiers: .command)
+
+            Button("Rétablir", systemImage: "arrow.uturn.forward") {
+                Task { await model.redo() }
+            }
+            .disabled(!model.canRedo || model.cropDraft != nil || model.isReadOnly)
+            .keyboardShortcut("z", modifiers: [.command, .shift])
+
+            Divider()
+
+            Button("Couper", systemImage: "scissors") {
+                Task { await model.cutSelected() }
+            }
+            .disabled(model.selectedElement == nil || model.cropDraft != nil || model.isReadOnly)
+            .keyboardShortcut("x", modifiers: .command)
+
+            Button("Copier", systemImage: "doc.on.doc") {
+                Task { await model.copySelected() }
+            }
+            .disabled(model.selectedElement == nil || model.cropDraft != nil || model.isReadOnly)
+            .keyboardShortcut("c", modifiers: .command)
+
+            Button("Coller", systemImage: "doc.on.clipboard") {
+                Task { await model.paste() }
+            }
+            .disabled(!model.canPaste || model.cropDraft != nil || model.isReadOnly)
+            .keyboardShortcut("v", modifiers: .command)
+        }
+    }
+
+    @ViewBuilder
+    private var bottomCommands: some View {
+        if model.presentationMode == .preview {
+            HStack {
+                Button("Quitter la prévisualisation", systemImage: "xmark") {
+                    model.presentationMode = .page
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(8)
+            .background(.bar)
+        } else if model.presentationMode == .global {
+            Picker("Mode d’affichage", selection: $model.presentationMode) {
+                ForEach(EditorPresentationMode.allCases) { mode in
+                    Label(mode.title, systemImage: mode.symbol)
+                        .tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: 460)
+            .padding(8)
+            .frame(maxWidth: .infinity)
+            .background(.bar)
+        } else if model.presentationMode == .page {
+            if model.cropDraft != nil {
+                cropCommands
+            } else {
+                editorBottomBar
+            }
+        }
+    }
+
+    private var editorBottomBar: some View {
+        VStack(spacing: 0) {
+            if model.selectedElement != nil {
+                selectedElementCommands
+                Divider()
+            }
+
+            HStack(spacing: 10) {
+                if horizontalSizeClass != .regular {
+                    ForEach(EditorPanel.allCases) { panel in
+                        Button(panel.title, systemImage: panel.symbol) {
+                            model.activePanel = panel
+                            mobilePanel = panel
+                        }
+                        .labelStyle(.iconOnly)
+                    }
+                    Divider().frame(height: 24)
                 }
 
-                Button("Choisir le fond", systemImage: "paintpalette") {
-                    model.isShowingBackgrounds = true
+                if model.activePage?.elements.isEmpty == false {
+                    elementSelectionMenu
+                    Divider().frame(height: 24)
+                }
+
+                Picker("Mode d’affichage", selection: $model.presentationMode) {
+                    ForEach(EditorPresentationMode.allCases) { mode in
+                        Label(mode.title, systemImage: mode.symbol)
+                            .tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: 460)
+                .accessibilityLabel("Vue de l’éditeur")
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .background(.bar)
+    }
+
+    private var selectedElementCommands: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                if let frame = model.selectedPhotoFrame {
+                    Button(
+                        frame.content == nil ? "Ajouter une photo" : "Remplacer",
+                        systemImage: frame.content == nil
+                            ? "photo.badge.plus" : "arrow.triangle.2.circlepath"
+                    ) {
+                        openPhotosPanel()
+                    }
+
+                    if frame.content != nil {
+                        Button("Retirer la photo", systemImage: "photo.badge.minus") {
+                            Task { await model.removePhotoFromSelectedFrame() }
+                        }
+
+                        qualityBadge
+                        Button("Recadrer", systemImage: "crop") {
+                            model.beginCrop()
+                        }
+
+                        Button("Pivoter à gauche", systemImage: "rotate.left") {
+                            Task { await model.rotatePhotoContent(by: -1) }
+                        }
+
+                        Button("Pivoter à droite", systemImage: "rotate.right") {
+                            Task { await model.rotatePhotoContent(by: 1) }
+                        }
+
+                        Button(
+                            "Retourner horizontalement",
+                            systemImage: "arrow.left.and.right"
+                        ) {
+                            Task { await model.flipPhotoContent() }
+                        }
+
+                        Button(
+                            "Description accessible…",
+                            systemImage: "accessibility"
+                        ) {
+                            guard let pageID = model.activePageID else { return }
+                            photoDescriptionRequest = PhotoDescriptionRequest(
+                                pageID: pageID,
+                                elementID: frame.id,
+                                initialDescription: frame.content?
+                                    .accessibilityDescription ?? ""
+                            )
+                        }
+                    }
+                }
+
+                Button("Rotation…", systemImage: "rotate.right") {
+                    guard let element = model.selectedElement else { return }
+                    rotationRequest = RotationEditorRequest(
+                        elementID: element.id,
+                        initialRadians: element.geometry.rotationRadians
+                    )
+                }
+
+                Button("Dupliquer", systemImage: "plus.square.on.square") {
+                    Task { await model.duplicateSelectedElement() }
+                }
+
+                depthMenu
+                geometryMenu
+
+                Button("Supprimer", systemImage: "trash", role: .destructive) {
+                    Task { await model.deleteSelectedElement() }
+                }
+                .keyboardShortcut(.delete, modifiers: [])
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            .disabled(model.isReadOnly)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+    }
+
+    @ViewBuilder
+    private var qualityBadge: some View {
+        if let quality = selectedPhotoQuality {
+            Label(qualityLabel(quality), systemImage: qualitySymbol(quality))
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(qualityColor(quality))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(.thinMaterial, in: Capsule())
+                .accessibilityLabel("Qualité photo : \(qualityLabel(quality))")
+        }
+    }
+
+    private var depthMenu: some View {
+        Menu("Profondeur", systemImage: "square.3.layers.3d") {
+            Button("Premier plan", systemImage: "arrow.up.to.line") {
+                Task { await model.moveSelectedElementDepth(.front) }
+            }
+            .disabled(!canMoveDepthForward)
+
+            Button("Avancer", systemImage: "arrow.up") {
+                Task { await model.moveSelectedElementDepth(.forward) }
+            }
+            .disabled(!canMoveDepthForward)
+
+            Button("Reculer", systemImage: "arrow.down") {
+                Task { await model.moveSelectedElementDepth(.backward) }
+            }
+            .disabled(!canMoveDepthBackward)
+
+            Button("Arrière-plan", systemImage: "arrow.down.to.line") {
+                Task { await model.moveSelectedElementDepth(.back) }
+            }
+            .disabled(!canMoveDepthBackward)
+        }
+    }
+
+    private var geometryMenu: some View {
+        Menu("Position et taille", systemImage: "move.3d") {
+            ControlGroup("Déplacer") {
+                Button("Gauche", systemImage: "arrow.left") {
+                    Task { await model.adjustSelectedGeometry(deltaX: -0.01) }
+                }
+                .keyboardShortcut(.leftArrow, modifiers: [])
+                Button("Droite", systemImage: "arrow.right") {
+                    Task { await model.adjustSelectedGeometry(deltaX: 0.01) }
+                }
+                .keyboardShortcut(.rightArrow, modifiers: [])
+                Button("Haut", systemImage: "arrow.up") {
+                    Task { await model.adjustSelectedGeometry(deltaY: -0.01) }
+                }
+                .keyboardShortcut(.upArrow, modifiers: [])
+                Button("Bas", systemImage: "arrow.down") {
+                    Task { await model.adjustSelectedGeometry(deltaY: 0.01) }
+                }
+                .keyboardShortcut(.downArrow, modifiers: [])
+            }
+
+            ControlGroup("Déplacer précisément") {
+                Button("Gauche précise", systemImage: "arrow.left") {
+                    Task { await model.adjustSelectedGeometry(deltaX: -0.0025) }
+                }
+                .keyboardShortcut(.leftArrow, modifiers: [.option])
+                Button("Droite précise", systemImage: "arrow.right") {
+                    Task { await model.adjustSelectedGeometry(deltaX: 0.0025) }
+                }
+                .keyboardShortcut(.rightArrow, modifiers: [.option])
+                Button("Haut précis", systemImage: "arrow.up") {
+                    Task { await model.adjustSelectedGeometry(deltaY: -0.0025) }
+                }
+                .keyboardShortcut(.upArrow, modifiers: [.option])
+                Button("Bas précis", systemImage: "arrow.down") {
+                    Task { await model.adjustSelectedGeometry(deltaY: 0.0025) }
+                }
+                .keyboardShortcut(.downArrow, modifiers: [.option])
+            }
+
+            Button("Agrandir", systemImage: "plus.magnifyingglass") {
+                Task {
+                    await model.adjustSelectedGeometry(
+                        deltaWidth: 0.05,
+                        deltaHeight: 0.05
+                    )
+                }
+            }
+            Button("Réduire", systemImage: "minus.magnifyingglass") {
+                Task {
+                    await model.adjustSelectedGeometry(
+                        deltaWidth: -0.05,
+                        deltaHeight: -0.05
+                    )
+                }
+            }
+            Button("Pleine page", systemImage: "rectangle.inset.filled") {
+                Task { await model.makeSelectedElementFullPage() }
+            }
+        }
+    }
+
+    private var elementSelectionMenu: some View {
+        Menu("Sélectionner un élément", systemImage: "cursorarrow.click.2") {
+            if let page = model.activePage {
+                ForEach(Array(page.orderedElements.reversed())) { element in
+                    Button(elementLabel(element)) {
+                        model.select(elementID: element.id)
+                    }
                 }
             }
         }
-        .sheet(isPresented: $model.isShowingPageManager) {
-            PageManagerView(model: model, assetStore: assetStore)
-        }
-        .sheet(isPresented: $model.isShowingBackgrounds) {
-            BackgroundPickerView(model: model)
-        }
-        .alert(
-            "Supprimer cette page ?",
-            isPresented: $model.isConfirmingPageDeletion
-        ) {
-            Button("Annuler", role: .cancel) {}
-            Button("Supprimer", role: .destructive) {
-                Task { await model.deleteActivePage() }
+        .accessibilityHint("Permet notamment de sélectionner un élément masqué")
+    }
+
+    private func elementLabel(_ element: PageElement) -> String {
+        switch element {
+        case let .photo(frame):
+            if let description = frame.content?.accessibilityDescription,
+               !description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                return "Photo — \(description)"
             }
-        } message: {
-            Text("Cette action pourra être annulée pendant la session.")
-        }
-        .onChange(of: scenePhase) { _, newPhase in
-            if newPhase != .active {
-                model.closeSession()
-            }
-        }
-        .onChange(of: selectedPhoto) { _, item in
-            guard let item else { return }
-            Task {
-                defer { selectedPhoto = nil }
-                guard let data = try? await item.loadTransferable(type: Data.self), let id = try? assetStore.importData(data) else { model.errorMessage = "Impossible d’importer la photo."; return }
-                await model.setMedia(id)
-            }
-        }
-        .alert(
-            "Erreur",
-            isPresented: Binding(
-                get: { model.errorMessage != nil },
-                set: { if !$0 { model.errorMessage = nil } }
+            return frame.content == nil ? "Cadre photo vide" : "Photo"
+        case let .text(text):
+            let excerpt = text.content.plainText.trimmingCharacters(
+                in: .whitespacesAndNewlines
             )
-        ) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(model.errorMessage ?? "")
+            return excerpt.isEmpty ? "Zone de texte vide" : "Texte — \(excerpt.prefix(32))"
+        case .sticker:
+            return "Sticker"
         }
+    }
+
+    private var cropCommands: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Label("Zoom photo", systemImage: "magnifyingglass")
+                    .font(.caption.weight(.semibold))
+                if let draft = model.cropDraft {
+                    Slider(
+                        value: Binding(
+                            get: { draft.placement.nativeScale },
+                            set: { model.setCropScale($0) }
+                        ),
+                        in: draft.sessionMinimum...AlbumPhotoConstants.maximumNativeScale
+                    )
+                    Text(draft.placement.nativeScale, format: .number.precision(.fractionLength(2)))
+                        .font(.caption.monospacedDigit())
+                        .frame(width: 48)
+                    Button(
+                        "Réduire le zoom photo de 0,01×",
+                        systemImage: "minus.circle"
+                    ) {
+                        model.setCropScale(draft.placement.nativeScale - 0.01)
+                    }
+                    .labelStyle(.iconOnly)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .disabled(draft.placement.nativeScale <= draft.sessionMinimum)
+
+                    Button(
+                        "Augmenter le zoom photo de 0,01×",
+                        systemImage: "plus.circle"
+                    ) {
+                        model.setCropScale(draft.placement.nativeScale + 0.01)
+                    }
+                    .labelStyle(.iconOnly)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .disabled(
+                        draft.placement.nativeScale
+                            >= AlbumPhotoConstants.maximumNativeScale
+                    )
+                }
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    Button(role: .cancel) {
+                        model.cancelCrop()
+                    } label: {
+                        Label("Annuler", systemImage: "xmark")
+                    }
+                    Button("Réinitialiser", systemImage: "arrow.counterclockwise") {
+                        model.resetCrop()
+                    }
+                    Button("Pivoter à gauche", systemImage: "rotate.left") {
+                        model.rotateCrop(by: -1)
+                    }
+                    Button("Pivoter à droite", systemImage: "rotate.right") {
+                        model.rotateCrop(by: 1)
+                    }
+                    Button(
+                        "Retourner horizontalement",
+                        systemImage: "arrow.left.and.right"
+                    ) {
+                        model.flipCrop()
+                    }
+                    Button("Terminé", systemImage: "checkmark") {
+                        Task { await model.commitCrop() }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(.bar)
+    }
+
+    private var canMoveDepthForward: Bool {
+        guard let page = model.activePage,
+              let selectedID = model.selectedElementID,
+              let index = page.orderedElements.firstIndex(where: { $0.id == selectedID }) else {
+            return false
+        }
+        return index < page.orderedElements.count - 1
+    }
+
+    private var canMoveDepthBackward: Bool {
+        guard let page = model.activePage,
+              let selectedID = model.selectedElementID,
+              let index = page.orderedElements.firstIndex(where: { $0.id == selectedID }) else {
+            return false
+        }
+        return index > 0
+    }
+
+    private var selectedPhotoQuality: PhotoQualityState? {
+        guard let placement = model.selectedPhotoFrame?.content else { return nil }
+        return DefaultPhotoQualityPolicy.state(for: placement)
+    }
+
+    private func qualityLabel(_ quality: PhotoQualityState) -> String {
+        switch quality {
+        case .ok: "OK"
+        case .acceptable: "Acceptable"
+        case .insufficient: "Insuffisante"
+        }
+    }
+
+    private func qualitySymbol(_ quality: PhotoQualityState) -> String {
+        switch quality {
+        case .ok: "checkmark.circle"
+        case .acceptable: "exclamationmark.circle"
+        case .insufficient: "exclamationmark.triangle"
+        }
+    }
+
+    private func qualityColor(_ quality: PhotoQualityState) -> Color {
+        switch quality {
+        case .ok: .green
+        case .acceptable: .orange
+        case .insufficient: .red
+        }
+    }
+
+    private func openPhotosPanel() {
+        if horizontalSizeClass == .regular {
+            model.activePanel = .photos
+            if reduceMotion {
+                showsInspector = true
+            } else {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showsInspector = true
+                }
+            }
+        } else {
+            model.activePanel = .photos
+            mobilePanel = .photos
+        }
+    }
+
+    private func openContextHelp() {
+        if model.cropDraft != nil {
+            model.helpContext = .crop
+        } else {
+            model.helpContext = model.presentationMode == .global
+                ? .globalPages : .editor
+        }
+    }
+
+    private func closeEditor() {
+        guard !isClosing else { return }
+        isClosing = true
+        model.cancelImportTask()
+        let closingToken = model.beginClosingTransition()
+        let pending = lifecycleTask
+        Task {
+            defer { model.endClosingTransition(closingToken) }
+            await pending?.value
+            guard await model.save() else {
+                isClosing = false
+                return
+            }
+            guard await model.close(reacquireOnFailure: true) else {
+                isClosing = false
+                return
+            }
+            dismiss()
+        }
+    }
+
+    private func enqueueLifecycleTransition(_ phase: ScenePhase) {
+        guard phase == .background || phase == .active else { return }
+        let tokensToRelease: [UUID]
+        if phase == .background {
+            model.cancelImportTask()
+            lifecycleOperationBlockTokens.append(model.beginClosingTransition())
+            tokensToRelease = []
+        } else {
+            tokensToRelease = lifecycleOperationBlockTokens
+            lifecycleOperationBlockTokens.removeAll(keepingCapacity: true)
+        }
+        let previous = lifecycleTask
+        lifecycleTask = Task {
+            await previous?.value
+            if phase == .background {
+                _ = await model.save()
+                _ = await model.close()
+            } else {
+                for token in tokensToRelease {
+                    model.endClosingTransition(token)
+                }
+                await model.load()
+            }
+        }
+    }
+}
+
+private struct PreviewPageView: View {
+    @ObservedObject var model: EditorViewModel
+    @State private var swipeEligible = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            GeometryReader { geometry in
+                if let page = model.activePage {
+                    PageCompositionView(
+                        page: page,
+                        assets: Dictionary(
+                            uniqueKeysWithValues: model.photos.map { ($0.id, $0) }
+                        ),
+                        imageCache: model.imageCache,
+                        purpose: .preview,
+                        pageNumber: model.activePageIndex + 1
+                    )
+                    .accessibilityLabel(previewPageAccessibilityLabel(page))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(24)
+                    .background(Color.black.opacity(0.92))
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 18)
+                            .onChanged { value in
+                                swipeEligible = abs(value.translation.width)
+                                    > abs(value.translation.height) * 1.25
+                            }
+                            .onEnded { value in
+                                defer { swipeEligible = false }
+                                guard swipeEligible else { return }
+                                model.navigateBySwipe(
+                                    translation: value.translation,
+                                    pageWidth: geometry.size.width
+                                )
+                            }
+                    )
+                    .overlay(alignment: .top) {
+                        let emptyCount = page.elements.filter {
+                            $0.photoFrame != nil && $0.photoFrame?.content == nil
+                        }.count
+                        if emptyCount > 0 {
+                            Label(
+                                "\(emptyCount) cadre(s) photo vide(s) masqué(s) dans la prévisualisation",
+                                systemImage: "exclamationmark.square"
+                            )
+                            .font(.caption.weight(.semibold))
+                            .padding(8)
+                            .background(.regularMaterial, in: Capsule())
+                            .padding()
+                        }
+                    }
+                }
+            }
+            pagePreviewNavigation
+        }
+    }
+
+    private var pagePreviewNavigation: some View {
+        HStack(spacing: 18) {
+            Button("Précédent", systemImage: "chevron.left") { model.goPrevious() }
+                .disabled(!model.canGoPrevious)
+            Text("Page \(model.activePageIndex + 1) sur \(model.album?.pages.count ?? 1)")
+                .font(.subheadline.monospacedDigit())
+            Button("Suivant", systemImage: "chevron.right") { model.goNext() }
+                .disabled(!model.canGoNext)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .padding(8)
+        .frame(maxWidth: .infinity)
+        .background(.bar)
+    }
+
+    private func previewPageAccessibilityLabel(_ page: PageSnapshot) -> String {
+        let frames = page.elements.filter { $0.photoFrame != nil }
+        let emptyCount = frames.filter { $0.photoFrame?.content == nil }.count
+        let textCount = page.elements.filter { $0.textBox != nil }.count
+        let stickerCount = page.elements.filter { $0.sticker != nil }.count
+        let qualityStates = frames.compactMap { frame -> PhotoQualityState? in
+            guard let placement = frame.photoFrame?.content else { return nil }
+            return DefaultPhotoQualityPolicy.state(for: placement)
+        }
+        let acceptableCount = qualityStates.filter { $0 == .acceptable }.count
+        let insufficientCount = qualityStates.filter { $0 == .insufficient }.count
+        let qualitySummary = acceptableCount == 0 && insufficientCount == 0
+            ? "aucune alerte qualité"
+            : "alertes qualité : \(insufficientCount) insuffisantes, "
+                + "\(acceptableCount) acceptables"
+        return "Page \(model.activePageIndex + 1) sur \(model.album?.pages.count ?? 1), "
+            + "\(frames.count) cadres photo dont \(emptyCount) vides, "
+            + "\(textCount) zones de texte, \(stickerCount) stickers, "
+            + qualitySummary
+    }
+}
+
+private struct PhotoDescriptionSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let onConfirm: (String) -> Void
+    @State private var description: String
+
+    init(
+        initialDescription: String,
+        onConfirm: @escaping (String) -> Void
+    ) {
+        self.onConfirm = onConfirm
+        _description = State(initialValue: String(initialDescription.prefix(500)))
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextEditor(text: $description)
+                        .frame(minHeight: 160)
+                        .accessibilityLabel("Description accessible de la photo")
+                        .onChange(of: description) { _, value in
+                            if value.count > 500 {
+                                description = String(value.prefix(500))
+                            }
+                        }
+                } footer: {
+                    Text(
+                        "\(description.count) sur 500 caractères. "
+                            + "Laissez vide pour utiliser « Photo, page N »."
+                    )
+                }
+            }
+            .navigationTitle("Description accessible")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Enregistrer") { onConfirm(description) }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}
+
+private struct EditorRenameSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let initialName: String
+    let onConfirm: (String) -> Void
+
+    @State private var name: String
+
+    init(initialName: String, onConfirm: @escaping (String) -> Void) {
+        self.initialName = initialName
+        self.onConfirm = onConfirm
+        _name = State(initialValue: initialName)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField("Nom de l’album", text: $name)
+                    .submitLabel(.done)
+                    .onSubmit(confirm)
+            }
+            .navigationTitle("Renommer l’album")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Renommer", action: confirm)
+                        .disabled(trimmedName.isEmpty)
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private var trimmedName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func confirm() {
+        guard !trimmedName.isEmpty else { return }
+        onConfirm(trimmedName)
+    }
+}
+
+private struct ElementRotationSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let onConfirm: (Double) -> Void
+    @State private var degrees: Double
+
+    init(initialRadians: Double, onConfirm: @escaping (Double) -> Void) {
+        self.onConfirm = onConfirm
+        _degrees = State(initialValue: Self.normalizedDegrees(
+            initialRadians * 180 / .pi
+        ))
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Angle du cadre") {
+                    Slider(value: $degrees, in: -180...179, step: 1)
+                        .accessibilityLabel("Rotation en degrés")
+                    Text("\(degrees.formatted(.number.precision(.fractionLength(0))))°")
+                        .font(.title2.monospacedDigit())
+                        .frame(maxWidth: .infinity)
+                }
+
+                Section("Réglages rapides") {
+                    ControlGroup {
+                        Button("−90°") { degrees = Self.normalizedDegrees(degrees - 90) }
+                        Button("+90°") { degrees = Self.normalizedDegrees(degrees + 90) }
+                        Button("Réinitialiser") { degrees = 0 }
+                    }
+                }
+            }
+            .navigationTitle("Rotation")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Valider") { onConfirm(degrees) }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private static func normalizedDegrees(_ value: Double) -> Double {
+        var normalized = value.truncatingRemainder(dividingBy: 360)
+        if normalized >= 180 { normalized -= 360 }
+        if normalized < -180 { normalized += 360 }
+        return normalized.rounded()
     }
 }

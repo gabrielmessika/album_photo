@@ -1,100 +1,62 @@
 import AlbumPhotoCore
 import SwiftUI
 
+/// Rendu partagé des fonds du lot 1. Les trois images sont embarquées dans
+/// `Backgrounds.xcassets` afin que le manifeste Swift Playgrounds reste généré.
 struct AlbumPageBackground: View {
-    let backgroundID: String
-    var showsLeadingBinding = true
+    let selection: BackgroundSelection
+    var imageCache: PhotoImageCache?
 
     var body: some View {
-        switch BackgroundCatalog.theme(id: backgroundID).id {
-        case "album.travelKraft":
-            TexturedPageBackground(
-                colors: [.brown.opacity(0.75), .orange.opacity(0.28)],
-                label: "Fond Carnet de voyage"
-            )
-        case "album.minimalDark":
-            TexturedPageBackground(
-                colors: [.black, Color(red: 0.12, green: 0.15, blue: 0.22)],
-                label: "Fond Nuit minimaliste"
-            )
-        default:
-            ClassicSpiralPageBackground(showsLeadingBinding: showsLeadingBinding)
-                .accessibilityLabel("Fond Album classique à spirales")
-        }
-    }
-}
-
-private struct TexturedPageBackground: View {
-    let colors: [Color]
-    let label: String
-
-    var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(
-                LinearGradient(
-                    colors: colors,
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+        Group {
+            switch selection {
+            case .none:
+                Color.white
+            case let .solid(color):
+                color.swiftUIColor
+            case let .catalog(reference):
+                BundledBackgroundImage(
+                    dataAssetName: Self.dataAssetName(for: reference.catalogID),
+                    fallbackContentHash: reference.fallbackContentHash,
+                    cache: imageCache
                 )
-            )
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.white.opacity(0.15))
+                    .aspectRatio(4.0 / 5.0, contentMode: .fill)
             }
-            .accessibilityLabel(label)
-    }
-}
-
-private struct ClassicSpiralPageBackground: View {
-    private let paper = Color(red: 0.96, green: 0.91, blue: 0.78)
-    private let paperEdge = Color(red: 0.76, green: 0.60, blue: 0.38)
-    let showsLeadingBinding: Bool
-
-    var body: some View {
-        GeometryReader { geometry in
-            let bindingWidth = min(38, max(8, geometry.size.width * 0.14))
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        LinearGradient(
-                            colors: [paperEdge, paper, paper],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-
-                if showsLeadingBinding {
-                    SpiralBindingView()
-                        .frame(width: bindingWidth)
-                        .offset(x: -bindingWidth * 0.2)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-    }
-}
-
-struct SpiralBindingView: View {
-    private let metal = Color(red: 0.18, green: 0.18, blue: 0.2)
-
-    var body: some View {
-        GeometryReader { geometry in
-            let ringWidth = max(1, geometry.size.width)
-            let ringHeight = min(10, max(3, ringWidth * 0.26))
-            let strokeWidth = min(3, max(1, ringWidth * 0.08))
-            VStack {
-                ForEach(0..<12, id: \.self) { _ in
-                    Capsule()
-                        .stroke(metal, lineWidth: strokeWidth)
-                        .background(Capsule().fill(.black.opacity(0.08)))
-                        .frame(width: ringWidth, height: ringHeight)
-                    if geometry.size.height > 220 {
-                        Spacer(minLength: 3)
-                    }
-                }
-            }
-            .padding(.vertical, 12)
-        }
+        .clipped()
         .accessibilityHidden(true)
+    }
+
+    static func localizedName(for selection: BackgroundSelection) -> String {
+        switch selection {
+        case .none:
+            return "Aucun"
+        case .solid:
+            return "Couleur unie"
+        case let .catalog(reference):
+            return BackgroundCatalog.theme(id: reference.catalogID)?.localizedName
+                ?? "Fond indisponible"
+        }
+    }
+
+    static func dataAssetName(for catalogID: String) -> String {
+        switch catalogID {
+        case "album.classicSpiral": "AlbumClassicSpiralData"
+        case "album.travelKraft": "AlbumTravelKraftData"
+        case "album.minimalDark": "AlbumMinimalDarkData"
+        default: "MissingCatalogResource"
+        }
+    }
+}
+
+extension SRGBAColor {
+    var swiftUIColor: Color {
+        Color(
+            .sRGB,
+            red: red,
+            green: green,
+            blue: blue,
+            opacity: alpha
+        )
     }
 }

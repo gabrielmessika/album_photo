@@ -1,127 +1,108 @@
 import AlbumPhotoCore
 import SwiftUI
 
-@MainActor
-@Observable
-final class TrashViewModel {
-    private let service: AlbumService
-
-    var albums: [Album] = []
-    var albumPendingPermanentDeletion: Album?
-    var isConfirmingPermanentDeletion = false
-    var errorMessage: String?
-
-    init(service: AlbumService) {
-        self.service = service
-    }
-
-    func load() async {
-        do {
-            _ = try await service.purgeExpiredTrashedAlbums()
-            albums = try await service.trashedAlbums()
-        } catch {
-            errorMessage = "Impossible de charger la corbeille."
-        }
-    }
-
-    func restore(_ album: Album) async {
-        do {
-            _ = try await service.restoreAlbum(album.id)
-            albums = try await service.trashedAlbums()
-        } catch {
-            errorMessage = "Impossible de restaurer l’album."
-        }
-    }
-
-    func permanentlyDeletePendingAlbum() async {
-        guard let album = albumPendingPermanentDeletion else { return }
-        do {
-            try await service.permanentlyDeleteAlbum(album.id)
-            albumPendingPermanentDeletion = nil
-            isConfirmingPermanentDeletion = false
-            albums = try await service.trashedAlbums()
-        } catch {
-            albumPendingPermanentDeletion = nil
-            isConfirmingPermanentDeletion = false
-            errorMessage = "Impossible de supprimer définitivement l’album."
-        }
-    }
+private struct PermanentAlbumDeletionRequest: Identifiable {
+    let album: AlbumSnapshot
+    var id: UUID { album.id }
 }
 
 struct TrashView: View {
-    @State private var model: TrashViewModel
+    @EnvironmentObject private var appModel: AppModel
+    @Environment(\.dismiss) private var dismiss
 
-    init(service: AlbumService) {
-        _model = State(initialValue: TrashViewModel(service: service))
-    }
+    @State private var deletionRequest: PermanentAlbumDeletionRequest?
 
     var body: some View {
-        Group {
-            if model.albums.isEmpty {
-                ContentUnavailableView(
-                    "Corbeille vide",
-                    systemImage: "trash",
-                    description: Text("Les albums supprimés apparaîtront ici.")
-                )
-            } else {
-                List(model.albums) { album in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(album.name)
-                                .font(.headline)
-                            if let trashedAt = album.trashedAt {
-                                Text(
-                                    "Supprimé le \(trashedAt.formatted(date: .abbreviated, time: .shortened))"
+        NavigationStack {
+            Group {
+                if appModel.trashedAlbums.isEmpty {
+                    ContentUnavailableView(
+                        "Corbeille vide",
+                        systemImage: "trash",
+                        description: Text(
+                            "Les albums placés ici peuvent être restaurés pendant 30 jours."
+                        )
+                    )
+                } else {
+                    List {
+                        ForEach(appModel.trashedAlbums) { album in
+                            HStack(spacing: 14) {
+                                AlbumCoverView(
+                                    album: album,
+                                    library: appModel.librarySnapshot,
+                                    imageCache: appModel.imageCache
                                 )
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .frame(width: 96)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(album.name)
+                                        .font(.headline)
+                                    if let trashedAt = album.trashedAt {
+                                        Text(expirationText(for: trashedAt))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+
+                                Spacer()
+
+                                Menu {
+                                    Button("Restaurer", systemImage: "arrow.uturn.backward") {
+                                        Task { await appModel.restore(id: album.id) }
+                                    }
+                                    Button(
+                                        "Supprimer définitivement",
+                                        systemImage: "trash.slash",
+                                        role: .destructive
+                                    ) {
+                                        deletionRequest = PermanentAlbumDeletionRequest(
+                                            album: album
+                                        )
+                                    }
+                                } label: {
+                                    Label("Actions pour \(album.name)", systemImage: "ellipsis.circle")
+                                        .labelStyle(.iconOnly)
+                                }
+                            }
+                            .accessibilityElement(children: .combine)
+                            .accessibilityAction(named: "Restaurer") {
+                                Task { await appModel.restore(id: album.id) }
+                            }
+                            .accessibilityAction(named: "Supprimer définitivement") {
+                                deletionRequest = PermanentAlbumDeletionRequest(album: album)
                             }
                         }
-                        Spacer()
-                        Button("Restaurer") {
-                            Task { await model.restore(album) }
-                        }
-                        .buttonStyle(.bordered)
-                        Button("Supprimer", role: .destructive) {
-                            model.albumPendingPermanentDeletion = album
-                            model.isConfirmingPermanentDeletion = true
-                        }
-                        .buttonStyle(.bordered)
                     }
                 }
             }
-        }
-        .navigationTitle("Corbeille")
-        .task {
-            await model.load()
-        }
-        .alert(
-            "Supprimer définitivement cet album ?",
-            isPresented: Binding(
-                get: { model.isConfirmingPermanentDeletion },
-                set: { model.isConfirmingPermanentDeletion = $0 }
-            )
-        ) {
-            Button("Annuler", role: .cancel) {
-                model.albumPendingPermanentDeletion = nil
-                model.isConfirmingPermanentDeletion = false
+            .navigationTitle("Corbeille")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Fermer") { dismiss() }
+                }
             }
-            Button("Supprimer définitivement", role: .destructive) {
-                Task { await model.permanentlyDeletePendingAlbum() }
-            }
-        } message: {
-            Text("Cette action est irréversible.")
+            .task { await appModel.loadLibrary() }
         }
-        .alert(
-            "Erreur",
-            isPresented: Binding(
-                get: { model.errorMessage != nil },
-                set: { if !$0 { model.errorMessage = nil } }
+        .alert(item: $deletionRequest) { request in
+            Alert(
+                title: Text("Supprimer définitivement « \(request.album.name) » ?"),
+                message: Text(
+                    "Cette action retirera définitivement l’album de la bibliothèque locale. "
+                        + "Les photos encore référencées par un autre album restent conservées. "
+                        + "Elle ne peut pas être annulée."
+                ),
+                primaryButton: .destructive(Text("Supprimer définitivement")) {
+                    Task { _ = await appModel.permanentlyDelete(id: request.album.id) }
+                },
+                secondaryButton: .cancel(Text("Annuler"))
             )
-        ) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(model.errorMessage ?? "")
         }
+    }
+
+    private func expirationText(for trashedAt: Date) -> String {
+        let expiration = trashedAt.addingTimeInterval(30 * 24 * 60 * 60)
+        if expiration <= Date() { return "Suppression automatique imminente" }
+        return "Suppression automatique \(expiration.formatted(.relative(presentation: .named)))"
     }
 }

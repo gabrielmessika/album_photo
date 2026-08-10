@@ -1,0 +1,45 @@
+{
+  "formatVersion": 1,
+  "minimumReaderVersion": 1,
+  "formatGeneration": "album-photo-canvas-v1",
+  "generator": {
+    "bundleIdentifier": "example.albumzh",
+    "appVersion": "0.1.0",
+    "build": "1"
+  },
+  "exportedAt": "2026-08-06T12:00:00.000Z",
+  "album": {
+    "modelGeneration": "album-photo-canvas-v1",
+    "schemaVersion": 1,
+    "id": "00000000-0000-4000-8000-000000000001",
+    "name": "Exemple minimal",
+    "coverSelection": {
+      "type": "automatic"
+    },
+    "photoAssetIDs": [],
+    "pages": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "background": {
+          "type": "none"
+        },
+        "layout": {
+          "isAutoLayoutEnabled": false,
+          "photoMode": "free",
+          "templateID": null,
+          "templateVersion": null,
+          "density": "balanced"
+        },
+        "elements": [],
+        "accessibilityOrder": []
+      }
+    ],
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z",
+    "trashedAt": null
+  },
+  "assets": [],
+  "catalogResources": [],
+  "coverPreviewPath": null
+}
+

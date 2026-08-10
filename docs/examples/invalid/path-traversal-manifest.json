@@ -1,0 +1,62 @@
+{
+  "formatVersion": 1,
+  "minimumReaderVersion": 1,
+  "formatGeneration": "album-photo-canvas-v1",
+  "generator": {
+    "bundleIdentifier": "invalid.fixture",
+    "appVersion": "0",
+    "build": "0"
+  },
+  "exportedAt": "2026-08-06T12:00:00.000Z",
+  "album": {
+    "modelGeneration": "album-photo-canvas-v1",
+    "schemaVersion": 1,
+    "id": "00000000-0000-4000-8000-000000000001",
+    "name": "Fixture traversée de chemin",
+    "coverSelection": {
+      "type": "automatic"
+    },
+    "photoAssetIDs": [
+      "00000000-0000-4000-8000-000000000099"
+    ],
+    "pages": [
+      {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "background": {
+          "type": "none"
+        },
+        "layout": {
+          "isAutoLayoutEnabled": false,
+          "photoMode": "free",
+          "templateID": null,
+          "templateVersion": null,
+          "density": "balanced"
+        },
+        "elements": [],
+        "accessibilityOrder": []
+      }
+    ],
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z",
+    "trashedAt": null
+  },
+  "assets": [
+    {
+      "id": "00000000-0000-4000-8000-000000000099",
+      "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mimeType": "image/jpeg",
+      "byteCount": 10,
+      "relativePath": "../outside.jpg",
+      "pixelWidth": 1,
+      "pixelHeight": 1,
+      "originalFilename": "outside.jpg",
+      "colorSpaceName": null,
+      "isHDR": false,
+      "source": "files",
+      "capturedAt": null,
+      "importedAt": "2026-08-06T12:00:00.000Z"
+    }
+  ],
+  "catalogResources": [],
+  "coverPreviewPath": null
+}

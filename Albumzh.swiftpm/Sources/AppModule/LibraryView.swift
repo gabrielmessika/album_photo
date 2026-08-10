@@ -1,316 +1,297 @@
 import AlbumPhotoCore
+import Combine
 import SwiftUI
 
-@MainActor
-@Observable
-final class LibraryViewModel {
-    private struct RenameAction {
-        let albumID: UUID
-        let oldName: String
-        let newName: String
-    }
+private struct AlbumRenameRequest: Identifiable {
+    let album: AlbumSnapshot
+    var id: UUID { album.id }
+}
 
-    let service: AlbumService
+private struct AlbumTrashRequest: Identifiable {
+    let album: AlbumSnapshot
+    var id: UUID { album.id }
+}
 
-    var albums: [Album] = []
-    var isCreatingAlbum = false
-    var proposedName = ""
-    var isRenamingAlbum = false
-    var albumBeingRenamed: Album?
-    var proposedRename = ""
-    var isConfirmingTrash = false
-    var albumPendingTrash: Album?
-    var albumChoosingCover: Album?
-    var errorMessage: String?
-    private var undoRenames: [RenameAction] = []
-    private var redoRenames: [RenameAction] = []
-
-    var canUndoRename: Bool { !undoRenames.isEmpty }
-    var canRedoRename: Bool { !redoRenames.isEmpty }
-
-    init(service: AlbumService) {
-        self.service = service
-    }
-
-    func load() async {
-        do {
-            _ = try await service.purgeExpiredTrashedAlbums()
-            albums = try await service.albums()
-        } catch {
-            errorMessage = "Impossible de charger les albums."
-        }
-    }
-
-    func update(_ album: Album) {
-        guard let index = albums.firstIndex(where: { $0.id == album.id }) else { return }
-        albums[index] = album
-    }
-
-    func createAlbum() async {
-        do {
-            _ = try await service.createAlbum(named: proposedName)
-            proposedName = ""
-            isCreatingAlbum = false
-            albums = try await service.albums()
-        } catch AlbumValidationError.emptyName {
-            errorMessage = "Le nom de l’album ne peut pas être vide."
-        } catch {
-            errorMessage = "Impossible de créer l’album."
-        }
-    }
-
-    func beginRenaming(_ album: Album) {
-        albumBeingRenamed = album
-        proposedRename = album.name
-        isRenamingAlbum = true
-    }
-
-    func cancelRenaming() {
-        isRenamingAlbum = false
-        albumBeingRenamed = nil
-        proposedRename = ""
-    }
-
-    func beginMovingToTrash(_ album: Album) {
-        albumPendingTrash = album
-        isConfirmingTrash = true
-    }
-
-    func cancelMovingToTrash() {
-        isConfirmingTrash = false
-        albumPendingTrash = nil
-    }
-
-    func renameAlbum() async {
-        guard let album = albumBeingRenamed else { return }
-
-        do {
-            let renamed = try await service.renameAlbum(
-                album.id,
-                to: proposedRename
-            )
-            undoRenames.append(
-                RenameAction(
-                    albumID: album.id,
-                    oldName: album.name,
-                    newName: renamed.name
-                )
-            )
-            redoRenames.removeAll()
-            cancelRenaming()
-            albums = try await service.albums()
-        } catch AlbumValidationError.emptyName {
-            cancelRenaming()
-            errorMessage = "Le nom de l’album ne peut pas être vide."
-        } catch {
-            cancelRenaming()
-            errorMessage = "Impossible de renommer l’album."
-        }
-    }
-
-    func movePendingAlbumToTrash() async {
-        guard let album = albumPendingTrash else { return }
-
-        do {
-            _ = try await service.moveAlbumToTrash(album.id)
-            cancelMovingToTrash()
-            albums = try await service.albums()
-        } catch {
-            cancelMovingToTrash()
-            errorMessage = "Impossible de déplacer l’album dans la corbeille."
-        }
-    }
-
-    func undoRename() async {
-        guard let action = undoRenames.popLast() else { return }
-
-        do {
-            _ = try await service.renameAlbum(
-                action.albumID,
-                to: action.oldName
-            )
-            redoRenames.append(action)
-            albums = try await service.albums()
-        } catch {
-            undoRenames.append(action)
-            errorMessage = "Impossible d’annuler le renommage."
-        }
-    }
-
-    func redoRename() async {
-        guard let action = redoRenames.popLast() else { return }
-
-        do {
-            _ = try await service.renameAlbum(
-                action.albumID,
-                to: action.newName
-            )
-            undoRenames.append(action)
-            albums = try await service.albums()
-        } catch {
-            redoRenames.append(action)
-            errorMessage = "Impossible de rétablir le renommage."
-        }
-    }
+private struct AlbumCoverRequest: Identifiable {
+    let albumID: UUID
+    var id: UUID { albumID }
 }
 
 struct LibraryView: View {
-    @State private var model: LibraryViewModel
+    @EnvironmentObject private var appModel: AppModel
 
-    let assetStore: MediaAssetStore
-    init(service: AlbumService, assetStore: MediaAssetStore) {
-        _model = State(initialValue: LibraryViewModel(service: service))
-        self.assetStore = assetStore
-    }
+    @State private var showsCreateAlbum = false
+    @State private var renameRequest: AlbumRenameRequest?
+    @State private var trashRequest: AlbumTrashRequest?
+    @State private var coverRequest: AlbumCoverRequest?
+    @State private var showsTrash = false
+    @State private var openedAlbum: AlbumRoute?
+
+    private let maintenanceTimer = Timer.publish(
+        every: 6 * 60 * 60,
+        on: .main,
+        in: .common
+    ).autoconnect()
 
     private let columns = [
-        GridItem(.adaptive(minimum: 180), spacing: 16)
+        GridItem(.adaptive(minimum: 210, maximum: 340), spacing: 22)
     ]
 
     var body: some View {
         NavigationStack {
             Group {
-                if model.albums.isEmpty {
+                if appModel.isLoading && appModel.albums.isEmpty {
+                    ProgressView("Chargement de vos albums…")
+                } else if appModel.albums.isEmpty {
                     ContentUnavailableView {
-                        Label("Aucun album", systemImage: "photo.on.rectangle.angled")
+                        Label("Aucun album", systemImage: "rectangle.stack.badge.plus")
                     } description: {
-                        Text("Créez votre premier album photo.")
+                        Text("Créez un album pour composer librement chaque page.")
                     } actions: {
-                        Button("Créer un album") {
-                            model.isCreatingAlbum = true
-                        }
-                        .buttonStyle(.borderedProminent)
+                        Button("Créer un album") { showsCreateAlbum = true }
+                            .buttonStyle(.borderedProminent)
                     }
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(model.albums) { album in
-                                NavigationLink {
-                                    AlbumEditorView(album: album, service: model.service, assetStore: assetStore)
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        AlbumCoverView(album: album, assetStore: assetStore)
-                                        Text(album.name)
-                                            .font(.headline)
-                                        Text(
-                                            album.updatedAt,
-                                            format: .dateTime.day().month().year()
-                                        )
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    }
-                                    .accessibilityElement(children: .combine)
-                                }
-                                .buttonStyle(.plain)
-                                .contextMenu {
-                                    Button("Renommer", systemImage: "pencil") {
-                                        model.beginRenaming(album)
-                                    }
-                                    Button("Choisir la couverture", systemImage: "photo") {
-                                        model.albumChoosingCover = album
-                                    }
-                                    Button(
-                                        "Supprimer",
-                                        systemImage: "trash",
-                                        role: .destructive
-                                    ) {
-                                        model.beginMovingToTrash(album)
-                                    }
-                                }
+                        LazyVGrid(columns: columns, spacing: 24) {
+                            ForEach(appModel.albums) { album in
+                                albumCard(album)
                             }
                         }
                         .padding()
                     }
                 }
             }
-            .navigationTitle("Albums")
+            .navigationTitle("Mes albums")
             .toolbar {
-                ToolbarItemGroup(placement: .secondaryAction) {
-                    Button("Annuler le renommage", systemImage: "arrow.uturn.backward") {
-                        Task { await model.undoRename() }
+                ToolbarItemGroup(placement: .topBarLeading) {
+                    Button("Annuler", systemImage: "arrow.uturn.backward") {
+                        Task { await appModel.undoLibraryAction() }
                     }
-                    .disabled(!model.canUndoRename)
+                    .disabled(!appModel.canUndoLibrary)
+                    .keyboardShortcut("z", modifiers: .command)
 
-                    Button("Rétablir le renommage", systemImage: "arrow.uturn.forward") {
-                        Task { await model.redoRename() }
+                    Button("Rétablir", systemImage: "arrow.uturn.forward") {
+                        Task { await appModel.redoLibraryAction() }
                     }
-                    .disabled(!model.canRedoRename)
-
-                    NavigationLink {
-                        TrashView(service: model.service)
-                    } label: {
-                        Label("Corbeille", systemImage: "trash")
-                    }
+                    .disabled(!appModel.canRedoLibrary)
+                    .keyboardShortcut("z", modifiers: [.command, .shift])
                 }
 
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Créer", systemImage: "plus") {
-                        model.isCreatingAlbum = true
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button("Corbeille", systemImage: "trash") {
+                        showsTrash = true
                     }
+
+                    Button("Créer un album", systemImage: "plus") {
+                        showsCreateAlbum = true
+                    }
+                    .keyboardShortcut("n", modifiers: .command)
                 }
             }
-            .onAppear {
-                Task { await model.load() }
-            }
-            .alert("Nouvel album", isPresented: $model.isCreatingAlbum) {
-                TextField("Nom", text: $model.proposedName)
-                Button("Annuler", role: .cancel) {
-                    model.proposedName = ""
-                }
-                Button("Créer") {
-                    Task { await model.createAlbum() }
-                }
-            } message: {
-                Text("Choisissez un nom pour l’album.")
-            }
-            .alert(
-                "Renommer l’album",
-                isPresented: $model.isRenamingAlbum
-            ) {
-                TextField("Nom", text: $model.proposedRename)
-                Button("Annuler", role: .cancel) {
-                    model.cancelRenaming()
-                }
-                Button("Renommer") {
-                    Task { await model.renameAlbum() }
-                }
-            } message: {
-                Text("Saisissez le nouveau nom de l’album.")
-            }
-            .alert(
-                "Placer cet album dans la corbeille ?",
-                isPresented: $model.isConfirmingTrash
-            ) {
-                Button("Annuler", role: .cancel) {
-                    model.cancelMovingToTrash()
-                }
-                Button("Placer dans la corbeille", role: .destructive) {
-                    Task { await model.movePendingAlbumToTrash() }
-                }
-            } message: {
-                Text(
-                    "L’album pourra être restauré pendant trente jours."
-                )
-            }
-            .alert(
-                "Erreur",
-                isPresented: Binding(
-                    get: { model.errorMessage != nil },
-                    set: { if !$0 { model.errorMessage = nil } }
-                )
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(model.errorMessage ?? "")
-            }
-            .sheet(item: $model.albumChoosingCover) { album in
-                CoverPickerView(
-                    album: album,
-                    service: model.service,
-                    assetStore: assetStore,
-                    onAlbumChanged: model.update
-                )
+            .task { await appModel.loadLibrary() }
+            .refreshable { await appModel.loadLibrary() }
+            .onReceive(maintenanceTimer) { _ in
+                Task { await appModel.loadLibrary() }
             }
         }
+        .sheet(isPresented: $showsCreateAlbum) {
+            AlbumNameSheet(
+                title: "Nouvel album",
+                actionTitle: "Créer",
+                initialName: ""
+            ) { name in
+                showsCreateAlbum = false
+                Task {
+                    guard let album = await appModel.createAlbum(named: name),
+                          await appModel.prepareToOpenAlbum(album.id) else { return }
+                    openedAlbum = AlbumRoute(albumID: album.id)
+                }
+            }
+        }
+        .sheet(item: $renameRequest) { request in
+            AlbumNameSheet(
+                title: "Renommer l’album",
+                actionTitle: "Renommer",
+                initialName: request.album.name
+            ) { name in
+                let albumID = request.album.id
+                renameRequest = nil
+                Task { _ = await appModel.renameAlbum(id: albumID, to: name) }
+            }
+        }
+        .sheet(item: $coverRequest) { request in
+            CoverPickerView(albumID: request.albumID)
+                .environmentObject(appModel)
+        }
+        .sheet(isPresented: $showsTrash) {
+            TrashView()
+                .environmentObject(appModel)
+        }
+        .fullScreenCover(item: $openedAlbum, onDismiss: {
+            Task { try? await appModel.refreshLibrary() }
+        }) { route in
+            AlbumEditorView(albumID: route.albumID)
+                .environmentObject(appModel)
+        }
+        .alert(item: $trashRequest) { request in
+            Alert(
+                title: Text("Placer « \(request.album.name) » dans la corbeille ?"),
+                message: Text(
+                    "L’album pourra être restauré pendant 30 jours avant sa suppression automatique."
+                ),
+                primaryButton: .destructive(Text("Mettre à la corbeille")) {
+                    Task { _ = await appModel.moveToTrash(id: request.album.id) }
+                },
+                secondaryButton: .cancel(Text("Annuler"))
+            )
+        }
+        .alert(
+            "Une action n’a pas pu être terminée",
+            isPresented: Binding(
+                get: { appModel.errorMessage != nil },
+                set: { if !$0 { appModel.clearError() } }
+            )
+        ) {
+            Button("OK") { appModel.clearError() }
+        } message: {
+            Text(appModel.errorMessage ?? "")
+        }
+    }
+
+    private func albumCard(_ album: AlbumSnapshot) -> some View {
+        Button {
+            openAlbum(album.id)
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                AlbumCoverView(
+                    album: album,
+                    library: appModel.librarySnapshot,
+                    imageCache: appModel.imageCache
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(.secondary.opacity(0.25), lineWidth: 1)
+                }
+                .shadow(color: .black.opacity(0.13), radius: 7, y: 3)
+
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(album.name)
+                            .font(.headline)
+                            .lineLimit(2)
+                        Text("\(album.pages.count) page\(album.pages.count > 1 ? "s" : "")")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(
+                            "Modifié \(album.updatedAt.formatted(.relative(presentation: .named)))"
+                        )
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.tertiary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            Button("Ouvrir", systemImage: "square.and.pencil") {
+                openAlbum(album.id)
+            }
+            Button("Renommer", systemImage: "pencil") {
+                renameRequest = AlbumRenameRequest(album: album)
+            }
+            Button("Choisir la couverture", systemImage: "photo.on.rectangle") {
+                coverRequest = AlbumCoverRequest(albumID: album.id)
+            }
+            Divider()
+            Button("Mettre à la corbeille", systemImage: "trash", role: .destructive) {
+                trashRequest = AlbumTrashRequest(album: album)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(album.name), \(album.pages.count) pages")
+        .accessibilityHint("Ouvre l’album dans l’éditeur")
+        .accessibilityAction(named: "Renommer") {
+            renameRequest = AlbumRenameRequest(album: album)
+        }
+        .accessibilityAction(named: "Choisir la couverture") {
+            coverRequest = AlbumCoverRequest(albumID: album.id)
+        }
+        .accessibilityAction(named: "Mettre à la corbeille") {
+            trashRequest = AlbumTrashRequest(album: album)
+        }
+    }
+
+    private func openAlbum(_ albumID: UUID) {
+        Task {
+            guard await appModel.prepareToOpenAlbum(albumID) else { return }
+            openedAlbum = AlbumRoute(albumID: albumID)
+        }
+    }
+}
+
+private struct AlbumNameSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let title: String
+    let actionTitle: String
+    let initialName: String
+    let onConfirm: (String) -> Void
+
+    @State private var name: String
+
+    init(
+        title: String,
+        actionTitle: String,
+        initialName: String,
+        onConfirm: @escaping (String) -> Void
+    ) {
+        self.title = title
+        self.actionTitle = actionTitle
+        self.initialName = initialName
+        self.onConfirm = onConfirm
+        _name = State(initialValue: initialName)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField("Nom de l’album", text: $name)
+                    .textInputAutocapitalization(.sentences)
+                    .submitLabel(.done)
+                    .onSubmit(confirm)
+
+                if trimmedName.isEmpty {
+                    Label("Saisissez un nom non vide.", systemImage: "exclamationmark.circle")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(actionTitle, action: confirm)
+                        .disabled(trimmedName.isEmpty)
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private var trimmedName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func confirm() {
+        guard !trimmedName.isEmpty else { return }
+        onConfirm(trimmedName)
     }
 }

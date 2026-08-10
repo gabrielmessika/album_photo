@@ -1,0 +1,253 @@
+{
+  "registryVersion": 1,
+  "resources": [
+    {
+      "catalogID": "album.classicSpiral",
+      "catalogVersion": 1,
+      "category": "background",
+      "localizedNameKey": "background.classicSpiral",
+      "payloadKind": "asset",
+      "relativePath": "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumClassicSpiralData.dataset/album-classic-spiral-v1.png",
+      "mimeType": "image/png",
+      "byteCount": 2466104,
+      "pixelWidth": 1120,
+      "pixelHeight": 1400,
+      "sha256": "b27bf6c33ea7bb7efc22a29ec12960f04276bd868f2ed8b6cf43a879009613a8",
+      "textContrastHint": "darkText",
+      "license": "project-generated-original",
+      "source": "docs/assets/background-prompts-v1.md"
+    },
+    {
+      "catalogID": "album.travelKraft",
+      "catalogVersion": 1,
+      "category": "background",
+      "localizedNameKey": "background.travelKraft",
+      "payloadKind": "asset",
+      "relativePath": "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumTravelKraftData.dataset/album-travel-kraft-v1.png",
+      "mimeType": "image/png",
+      "byteCount": 3179776,
+      "pixelWidth": 1120,
+      "pixelHeight": 1400,
+      "sha256": "ab81aea2a31595bef6827a86d62656165fab901982aca415beb9c49d2aa73e41",
+      "textContrastHint": "darkText",
+      "license": "project-generated-original",
+      "source": "docs/assets/background-prompts-v1.md"
+    },
+    {
+      "catalogID": "album.minimalDark",
+      "catalogVersion": 1,
+      "category": "background",
+      "localizedNameKey": "background.minimalDark",
+      "payloadKind": "asset",
+      "relativePath": "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumMinimalDarkData.dataset/album-minimal-dark-v1.png",
+      "mimeType": "image/png",
+      "byteCount": 1978753,
+      "pixelWidth": 1120,
+      "pixelHeight": 1400,
+      "sha256": "44244ccc379b566d5b3b27e3d67255eaf52d8ea5362221bb7633b1f5f3ea86b9",
+      "textContrastHint": "lightText",
+      "license": "project-generated-original",
+      "source": "docs/assets/background-prompts-v1.md"
+    },
+    {
+      "catalogID": "shape.rectangle",
+      "catalogVersion": 1,
+      "category": "shape",
+      "localizedNameKey": "shape.rectangle",
+      "payloadKind": "nativeVector",
+      "rendererID": "shape.rectangle",
+      "rendererContract": {
+        "coordinateSpace": "unitBoundingBoxTopLeft",
+        "primitive": "rectangle",
+        "parameters": {
+          "kind": "bounds",
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1
+        },
+        "pathClosure": "closed",
+        "fillRule": "nonzero",
+        "intrinsicStroke": "none",
+        "clipToElementBounds": true,
+        "goldenMask": {
+          "relativePath": "golden/shape-masks-v1/shape-rectangle.pbm",
+          "format": "pbm-p1",
+          "sampleLocation": "pixelCenter",
+          "width": 64,
+          "height": 48,
+          "byteCount": 6153,
+          "sha256": "2690338ccd22e03a38e6d80c6b21c9ef5dbdf0ba14ea888df47089d56ee1b8f1"
+        }
+      },
+      "license": "project-code"
+    },
+    {
+      "catalogID": "shape.roundedRectangle",
+      "catalogVersion": 1,
+      "category": "shape",
+      "localizedNameKey": "shape.roundedRectangle",
+      "payloadKind": "nativeVector",
+      "rendererID": "shape.roundedRectangle",
+      "rendererContract": {
+        "coordinateSpace": "unitBoundingBoxTopLeft",
+        "primitive": "roundedRectangle",
+        "parameters": {
+          "kind": "roundedBounds",
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1,
+          "cornerRadiusFactor": 0.12,
+          "cornerRadiusRelativeTo": "minElementDimension"
+        },
+        "pathClosure": "closed",
+        "fillRule": "nonzero",
+        "intrinsicStroke": "none",
+        "clipToElementBounds": true,
+        "goldenMask": {
+          "relativePath": "golden/shape-masks-v1/shape-roundedRectangle.pbm",
+          "format": "pbm-p1",
+          "sampleLocation": "pixelCenter",
+          "width": 64,
+          "height": 48,
+          "byteCount": 6153,
+          "sha256": "822ff8d71f44121bc84b4e0d5d4451ebece3317557f3751045156b971312aca1"
+        }
+      },
+      "license": "project-code"
+    },
+    {
+      "catalogID": "shape.circle",
+      "catalogVersion": 1,
+      "category": "shape",
+      "localizedNameKey": "shape.circle",
+      "payloadKind": "nativeVector",
+      "rendererID": "shape.circle",
+      "rendererContract": {
+        "coordinateSpace": "unitBoundingBoxTopLeft",
+        "primitive": "circle",
+        "parameters": {
+          "kind": "centeredCircle",
+          "centerX": 0.5,
+          "centerY": 0.5,
+          "radiusFactor": 0.5,
+          "radiusRelativeTo": "minElementDimension"
+        },
+        "pathClosure": "closed",
+        "fillRule": "nonzero",
+        "intrinsicStroke": "none",
+        "clipToElementBounds": true,
+        "goldenMask": {
+          "relativePath": "golden/shape-masks-v1/shape-circle.pbm",
+          "format": "pbm-p1",
+          "sampleLocation": "pixelCenter",
+          "width": 64,
+          "height": 48,
+          "byteCount": 6153,
+          "sha256": "b1ea230295decfdd14b04d51a5e22274ae89180a6c993d75d6869f9000a1081b"
+        }
+      },
+      "license": "project-code"
+    },
+    {
+      "catalogID": "shape.oval",
+      "catalogVersion": 1,
+      "category": "shape",
+      "localizedNameKey": "shape.oval",
+      "payloadKind": "nativeVector",
+      "rendererID": "shape.oval",
+      "rendererContract": {
+        "coordinateSpace": "unitBoundingBoxTopLeft",
+        "primitive": "ellipse",
+        "parameters": {
+          "kind": "ellipseInBounds",
+          "centerX": 0.5,
+          "centerY": 0.5,
+          "radiusX": 0.5,
+          "radiusY": 0.5
+        },
+        "pathClosure": "closed",
+        "fillRule": "nonzero",
+        "intrinsicStroke": "none",
+        "clipToElementBounds": true,
+        "goldenMask": {
+          "relativePath": "golden/shape-masks-v1/shape-oval.pbm",
+          "format": "pbm-p1",
+          "sampleLocation": "pixelCenter",
+          "width": 64,
+          "height": 48,
+          "byteCount": 6153,
+          "sha256": "1c22fbeb1c0030e72ea731536adcbb1575ad503a49a39f7a8d2a880de64dafd9"
+        }
+      },
+      "license": "project-code"
+    },
+    {
+      "catalogID": "shape.heart",
+      "catalogVersion": 1,
+      "category": "shape",
+      "localizedNameKey": "shape.heart",
+      "payloadKind": "nativeVector",
+      "rendererID": "shape.heart",
+      "rendererContract": {
+        "coordinateSpace": "unitBoundingBoxTopLeft",
+        "primitive": "cubicBezierPath",
+        "parameters": {
+          "kind": "svgCubicPath",
+          "path": "M .50 .95 C .44 .88 .08 .65 .08 .34 C .08 .15 .21 .05 .36 .05 C .44 .05 .49 .10 .50 .17 C .51 .10 .56 .05 .64 .05 C .79 .05 .92 .15 .92 .34 C .92 .65 .56 .88 .50 .95 Z"
+        },
+        "pathClosure": "closed",
+        "fillRule": "nonzero",
+        "intrinsicStroke": "none",
+        "clipToElementBounds": true,
+        "goldenMask": {
+          "relativePath": "golden/shape-masks-v1/shape-heart.pbm",
+          "format": "pbm-p1",
+          "sampleLocation": "pixelCenter",
+          "width": 64,
+          "height": 48,
+          "byteCount": 6153,
+          "sha256": "fda470ca05a0e8bfc923d726f9035df62b1673d743d8438de6bd58a8cdb116cd"
+        }
+      },
+      "license": "project-code"
+    },
+    {
+      "catalogID": "shape.star",
+      "catalogVersion": 1,
+      "category": "shape",
+      "localizedNameKey": "shape.star",
+      "payloadKind": "nativeVector",
+      "rendererID": "shape.star",
+      "rendererContract": {
+        "coordinateSpace": "unitBoundingBoxTopLeft",
+        "primitive": "alternatingRadialPolygon",
+        "parameters": {
+          "kind": "alternatingRadialPolygon",
+          "centerX": 0.5,
+          "centerY": 0.5,
+          "vertexCount": 10,
+          "startAnglePi": -0.5,
+          "angularStepPi": 0.2,
+          "evenVertexRadius": 0.5,
+          "oddVertexRadius": 0.22
+        },
+        "pathClosure": "closed",
+        "fillRule": "nonzero",
+        "intrinsicStroke": "none",
+        "clipToElementBounds": true,
+        "goldenMask": {
+          "relativePath": "golden/shape-masks-v1/shape-star.pbm",
+          "format": "pbm-p1",
+          "sampleLocation": "pixelCenter",
+          "width": 64,
+          "height": 48,
+          "byteCount": 6153,
+          "sha256": "518a5fbb66784e12362ad264212651cd6284d1b0ff6284f846e9e8362afb8599"
+        }
+      },
+      "license": "project-code"
+    }
+  ]
+}

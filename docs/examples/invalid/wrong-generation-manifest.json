@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "minimumReaderVersion": 1,
+  "formatGeneration": "album-photo-prototype-2.1",
+  "generator": {
+    "bundleIdentifier": "invalid.fixture",
+    "appVersion": "0",
+    "build": "0"
+  },
+  "exportedAt": "2026-08-06T12:00:00.000Z",
+  "album": "THIS VALUE MUST NEVER BE DECODED",
+  "assets": [],
+  "catalogResources": [],
+  "coverPreviewPath": null
+}
+

@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://albumzh.example/schema/catalog-resources-v1.schema.json",
+  "title": "Album Photo catalog resource registry v1",
+  "$comment": "JSON Schema cannot express the cross-field pixel-ratio and inset-sum invariants. They are normative in docs/catalog-renderer-contracts-v1.md and enforced by tools/validate_contracts.pl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registryVersion", "resources"],
+  "properties": {
+    "registryVersion": { "const": 1 },
+    "resources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/resource" }
+    }
+  },
+  "$defs": {
+    "catalogID": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-zA-Z0-9._-]{0,95}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[^\\\\]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "resource": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "catalogID",
+            "catalogVersion",
+            "category",
+            "localizedNameKey",
+            "payloadKind",
+            "relativePath",
+            "mimeType",
+            "byteCount",
+            "pixelWidth",
+            "pixelHeight",
+            "sha256",
+            "license",
+            "source"
+          ],
+          "properties": {
+            "catalogID": { "$ref": "#/$defs/catalogID" },
+            "catalogVersion": { "type": "integer", "minimum": 1 },
+            "category": { "enum": ["background", "sticker", "decorativeFrame"] },
+            "localizedNameKey": { "type": "string", "minLength": 1 },
+            "payloadKind": { "const": "asset" },
+            "relativePath": { "$ref": "#/$defs/relativePath" },
+            "mimeType": { "type": "string", "minLength": 1 },
+            "byteCount": { "type": "integer", "minimum": 1 },
+            "pixelWidth": { "type": "integer", "minimum": 1 },
+            "pixelHeight": { "type": "integer", "minimum": 1 },
+            "sha256": { "$ref": "#/$defs/sha256" },
+            "textContrastHint": { "enum": ["darkText", "lightText"] },
+            "localizedTags": { "$ref": "#/$defs/localizedTags" },
+            "stickerCategory": {
+              "enum": ["travel", "transport", "nature", "weather", "symbols"]
+            },
+            "intrinsicAspectRatio": { "$ref": "#/$defs/intrinsicAspectRatio" },
+            "sourceCapInsetsPixels": { "$ref": "#/$defs/sourceCapInsetsPixels" },
+            "destinationCapInsets": { "$ref": "#/$defs/destinationCapInsets" },
+            "nineSliceContract": { "$ref": "#/$defs/nineSliceContract" },
+            "license": { "type": "string", "minLength": 1 },
+            "source": { "type": "string", "minLength": 1 }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "category": { "const": "background" } },
+                "required": ["category"]
+              },
+              "then": { "required": ["textContrastHint"] }
+            },
+            {
+              "if": {
+                "properties": { "category": { "const": "sticker" } },
+                "required": ["category"]
+              },
+              "then": {
+                "required": ["localizedTags", "stickerCategory", "intrinsicAspectRatio"]
+              }
+            },
+            {
+              "if": {
+                "properties": { "category": { "const": "decorativeFrame" } },
+                "required": ["category"]
+              },
+              "then": {
+                "required": [
+                  "sourceCapInsetsPixels",
+                  "destinationCapInsets",
+                  "nineSliceContract"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "catalogID",
+            "catalogVersion",
+            "category",
+            "localizedNameKey",
+            "payloadKind",
+            "rendererID",
+            "rendererContract",
+            "license"
+          ],
+          "properties": {
+            "catalogID": { "$ref": "#/$defs/catalogID" },
+            "catalogVersion": { "type": "integer", "minimum": 1 },
+            "category": { "const": "shape" },
+            "localizedNameKey": { "type": "string", "minLength": 1 },
+            "payloadKind": { "const": "nativeVector" },
+            "rendererID": { "$ref": "#/$defs/catalogID" },
+            "rendererContract": { "$ref": "#/$defs/rendererContract" },
+            "license": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "localizedTags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fr"],
+      "properties": {
+        "fr": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "intrinsicAspectRatio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "sourceCapInsetsPixels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["top", "left", "bottom", "right"],
+      "properties": {
+        "top": { "type": "integer", "minimum": 0 },
+        "left": { "type": "integer", "minimum": 0 },
+        "bottom": { "type": "integer", "minimum": 0 },
+        "right": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "destinationCapInsets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["top", "left", "bottom", "right"],
+      "properties": {
+        "top": { "type": "number", "minimum": 0, "exclusiveMaximum": 0.5 },
+        "left": { "type": "number", "minimum": 0, "exclusiveMaximum": 0.5 },
+        "bottom": { "type": "number", "minimum": 0, "exclusiveMaximum": 0.5 },
+        "right": { "type": "number", "minimum": 0, "exclusiveMaximum": 0.5 }
+      }
+    },
+    "nineSliceContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "sourceCoordinates",
+        "destinationCoordinates",
+        "interpolation",
+        "composition",
+        "followsElementTransformAndClip",
+        "goldenImage"
+      ],
+      "properties": {
+        "algorithm": { "const": "nineSliceStretch" },
+        "sourceCoordinates": { "const": "orientedPixels" },
+        "destinationCoordinates": { "const": "fractionOfUnrotatedElementBounds" },
+        "interpolation": { "const": "bilinear" },
+        "composition": { "const": "sourceOverAboveMaskedPhotoAndStroke" },
+        "followsElementTransformAndClip": { "const": true },
+        "goldenImage": { "$ref": "#/$defs/goldenImage" }
+      }
+    },
+    "goldenImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relativePath", "mimeType", "pixelWidth", "pixelHeight", "byteCount", "sha256"],
+      "properties": {
+        "relativePath": { "$ref": "#/$defs/relativePath" },
+        "mimeType": { "type": "string", "minLength": 1 },
+        "pixelWidth": { "type": "integer", "minimum": 1 },
+        "pixelHeight": { "type": "integer", "minimum": 1 },
+        "byteCount": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "rendererContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coordinateSpace",
+        "primitive",
+        "parameters",
+        "pathClosure",
+        "fillRule",
+        "intrinsicStroke",
+        "clipToElementBounds",
+        "goldenMask"
+      ],
+      "properties": {
+        "coordinateSpace": { "const": "unitBoundingBoxTopLeft" },
+        "primitive": {
+          "enum": [
+            "rectangle",
+            "roundedRectangle",
+            "circle",
+            "ellipse",
+            "cubicBezierPath",
+            "alternatingRadialPolygon"
+          ]
+        },
+        "parameters": { "$ref": "#/$defs/rendererParameters" },
+        "pathClosure": { "const": "closed" },
+        "fillRule": { "const": "nonzero" },
+        "intrinsicStroke": { "const": "none" },
+        "clipToElementBounds": { "const": true },
+        "goldenMask": { "$ref": "#/$defs/goldenMask" }
+      }
+    },
+    "rendererParameters": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "x", "y", "width", "height"],
+          "properties": {
+            "kind": { "const": "bounds" },
+            "x": { "const": 0 },
+            "y": { "const": 0 },
+            "width": { "const": 1 },
+            "height": { "const": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "x", "y", "width", "height", "cornerRadiusFactor", "cornerRadiusRelativeTo"],
+          "properties": {
+            "kind": { "const": "roundedBounds" },
+            "x": { "const": 0 },
+            "y": { "const": 0 },
+            "width": { "const": 1 },
+            "height": { "const": 1 },
+            "cornerRadiusFactor": { "const": 0.12 },
+            "cornerRadiusRelativeTo": { "const": "minElementDimension" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "centerX", "centerY", "radiusFactor", "radiusRelativeTo"],
+          "properties": {
+            "kind": { "const": "centeredCircle" },
+            "centerX": { "const": 0.5 },
+            "centerY": { "const": 0.5 },
+            "radiusFactor": { "const": 0.5 },
+            "radiusRelativeTo": { "const": "minElementDimension" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "centerX", "centerY", "radiusX", "radiusY"],
+          "properties": {
+            "kind": { "const": "ellipseInBounds" },
+            "centerX": { "const": 0.5 },
+            "centerY": { "const": 0.5 },
+            "radiusX": { "const": 0.5 },
+            "radiusY": { "const": 0.5 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "path"],
+          "properties": {
+            "kind": { "const": "svgCubicPath" },
+            "path": {
+              "const": "M .50 .95 C .44 .88 .08 .65 .08 .34 C .08 .15 .21 .05 .36 .05 C .44 .05 .49 .10 .50 .17 C .51 .10 .56 .05 .64 .05 C .79 .05 .92 .15 .92 .34 C .92 .65 .56 .88 .50 .95 Z"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "centerX",
+            "centerY",
+            "vertexCount",
+            "startAnglePi",
+            "angularStepPi",
+            "evenVertexRadius",
+            "oddVertexRadius"
+          ],
+          "properties": {
+            "kind": { "const": "alternatingRadialPolygon" },
+            "centerX": { "const": 0.5 },
+            "centerY": { "const": 0.5 },
+            "vertexCount": { "const": 10 },
+            "startAnglePi": { "const": -0.5 },
+            "angularStepPi": { "const": 0.2 },
+            "evenVertexRadius": { "const": 0.5 },
+            "oddVertexRadius": { "const": 0.22 }
+          }
+        }
+      ]
+    },
+    "goldenMask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relativePath",
+        "format",
+        "sampleLocation",
+        "width",
+        "height",
+        "byteCount",
+        "sha256"
+      ],
+      "properties": {
+        "relativePath": { "$ref": "#/$defs/relativePath" },
+        "format": { "const": "pbm-p1" },
+        "sampleLocation": { "const": "pixelCenter" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "byteCount": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

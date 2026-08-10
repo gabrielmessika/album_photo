@@ -1,0 +1,318 @@
+import Foundation
+import XCTest
+@testable import AlbumPhotoCore
+
+final class PrototypeEngineTests: XCTestCase {
+    private func template(
+        id: String = "layout.one",
+        version: Int = 1,
+        active: Bool = true,
+        photos: Int,
+        texts: Int = 0
+    ) -> LayoutTemplateDefinition {
+        var slots: [LayoutSlotDefinition] = []
+        for index in 0..<photos {
+            slots.append(LayoutSlotDefinition(
+                id: "p\(index)",
+                kind: .photo,
+                geometry: LayoutSlotGeometry(
+                    centerX: 0.25 + Double(index % 2) * 0.5,
+                    centerY: 0.25 + Double(index / 2) * 0.4,
+                    width: 0.35,
+                    height: 0.25
+                ),
+                readingOrder: slots.count,
+                defaultPhotoStyle: PhotoFrameStyleDefaults()
+            ))
+        }
+        for index in 0..<texts {
+            slots.append(LayoutSlotDefinition(
+                id: "t\(index)",
+                kind: .text,
+                geometry: LayoutSlotGeometry(
+                    centerX: 0.5,
+                    centerY: 0.8 - Double(index) * 0.15,
+                    width: 0.6,
+                    height: 0.1
+                ),
+                readingOrder: slots.count,
+                defaultTextStyle: TextStyleDefaults()
+            ))
+        }
+        return LayoutTemplateDefinition(
+            id: id,
+            version: version,
+            isActive: active,
+            localizedNameKey: "template.\(id)",
+            slots: slots
+        )
+    }
+
+    private func filledFrame(id: UUID, assetID: UUID, order: Int64) -> PageElement {
+        .photo(PhotoFrameElement(
+            id: id,
+            geometry: ElementGeometry(order: order),
+            content: PhotoPlacement(
+                assetID: assetID,
+                nativeScale: 0.75,
+                focalX: 0.2,
+                focalY: 0.8,
+                quarterTurns: 1,
+                flippedHorizontally: true
+            )
+        ))
+    }
+
+    // 3:TPL-019, 3:TST-006
+    func testTemplateCatalogRejectsDuplicateVersionAndMultipleActiveVersions() throws {
+        let one = template(photos: 1)
+        XCTAssertNoThrow(try LayoutTemplateEngine.validateCatalog([one]))
+        XCTAssertThrowsError(try LayoutTemplateEngine.validateCatalog([one, one]))
+        XCTAssertThrowsError(try LayoutTemplateEngine.validateCatalog([
+            one,
+            template(id: one.id, version: 2, active: true, photos: 1)
+        ]))
+        XCTAssertNoThrow(try LayoutTemplateEngine.validateCatalog([
+            one,
+            template(id: one.id, version: 2, active: false, photos: 1)
+        ]))
+    }
+
+    // 3:TPL-004...3:TPL-010, 3:CRP-007
+    func testSmallerTemplateRequiresConfirmationAndPreservesSurvivingCrop() throws {
+        let frameIDs = [UUID(), UUID(), UUID()]
+        let assetIDs = [UUID(), UUID(), UUID()]
+        let page = PageSnapshot(
+            elements: zip(frameIDs, assetIDs).enumerated().map { index, pair in
+                filledFrame(
+                    id: pair.0,
+                    assetID: pair.1,
+                    order: Int64(index + 1) * AlbumPhotoConstants.elementOrderStep
+                )
+            },
+            accessibilityOrder: frameIDs
+        )
+        let smaller = template(photos: 2)
+        XCTAssertEqual(
+            LayoutTemplateEngine.preview(applying: smaller, to: page).disposition,
+            .requiresPhotoRemovalConfirmation(count: 1)
+        )
+        XCTAssertThrowsError(try LayoutTemplateEngine.apply(
+            smaller,
+            to: page,
+            confirmsPhotoRemoval: false
+        ))
+        let applied = try LayoutTemplateEngine.apply(
+            smaller,
+            to: page,
+            confirmsPhotoRemoval: true
+        )
+        let frames = applied.elements.compactMap(\.photoFrame)
+        XCTAssertEqual(frames.map(\.id), Array(frameIDs.prefix(2)))
+        XCTAssertEqual(frames[0].content, page.elements[0].photoFrame?.content)
+        XCTAssertEqual(applied.layout.photoMode, .template)
+        XCTAssertEqual(applied.layout.templateID, smaller.id)
+    }
+
+    // 3:TPL-006, 3:TPL-011
+    func testTemplateNeverSilentlyRemovesNonemptyText() {
+        let textID = UUID()
+        let style = TextStyleDefaults()
+        let text = TextBoxElement(
+            id: textID,
+            content: TextBoxContent(paragraphs: [
+                TextParagraph(runs: [TextRun(text: "À conserver", style: style)])
+            ])
+        )
+        let page = PageSnapshot(
+            elements: [.text(text)],
+            accessibilityOrder: [textID]
+        )
+        XCTAssertEqual(
+            LayoutTemplateEngine.preview(applying: template(photos: 1), to: page).disposition,
+            .disabledBecauseTextWouldBeRemoved(count: 1)
+        )
+    }
+
+    // 3:RND-001...3:RND-006
+    func testShuffleBagUsesOnlyExactCompatibleSetWithoutImmediateRepeat() {
+        let frameID = UUID()
+        let page = PageSnapshot(
+            elements: [.photo(PhotoFrameElement(id: frameID))],
+            accessibilityOrder: [frameID]
+        )
+        let templates = [
+            template(id: "layout.a", photos: 1),
+            template(id: "layout.b", photos: 1),
+            template(id: "layout.c", photos: 1),
+            template(id: "layout.wrong", photos: 2)
+        ]
+        let compatible = templates.filter { LayoutTemplateEngine.compatibleWithDice($0, page: page) }
+        XCTAssertEqual(compatible.count, 3)
+        var bag = LayoutShuffleBag()
+        var random = PredictableRandomNumberGenerator([0])
+        let initial = LayoutTemplateKey(id: "layout.a", version: 1)
+        let first = bag.choose(compatible: compatible, current: initial, using: &random)
+        let second = bag.choose(compatible: compatible, current: first, using: &random)
+        let third = bag.choose(compatible: compatible, current: second, using: &random)
+        XCTAssertNotEqual(first, initial)
+        XCTAssertNotEqual(second, first)
+        XCTAssertNotEqual(third, second)
+        XCTAssertEqual(Set([initial, first!, second!]), Set(compatible.map {
+            LayoutTemplateKey(id: $0.id, version: $0.version)
+        }))
+    }
+
+    // 3:AUT-012, 3:DAT-037
+    func testAutomaticGeneratorIsDeterministicAndValidForZeroThroughTwenty() throws {
+        for count in 0...20 {
+            let first = try AutoLayoutEngine.geometries(count: count, density: .balanced)
+            let second = try AutoLayoutEngine.geometries(count: count, density: .balanced)
+            XCTAssertEqual(first, second)
+            XCTAssertEqual(first.count, count)
+            for geometry in first { XCTAssertNoThrow(try DomainValidator.validate(geometry)) }
+        }
+        XCTAssertThrowsError(try AutoLayoutEngine.geometries(count: 21, density: .dense))
+    }
+
+    // 3:AUT-012, 3:AUT-014, 3:AUT-016
+    func testAutomaticGeneratorPrefersBestExactTemplateBeforeFallbackGrid() throws {
+        func candidate(id: String, centerX: Double, width: Double, height: Double)
+            -> LayoutTemplateDefinition {
+            LayoutTemplateDefinition(
+                id: id,
+                version: 1,
+                localizedNameKey: "template.\(id)",
+                slots: [LayoutSlotDefinition(
+                    id: "photo-1",
+                    kind: .photo,
+                    geometry: LayoutSlotGeometry(
+                        centerX: centerX,
+                        centerY: 0.5,
+                        width: width,
+                        height: height
+                    ),
+                    readingOrder: 0
+                )]
+            )
+        }
+        let portrait = candidate(id: "layout.portrait", centerX: 0.25, width: 0.3, height: 0.7)
+        let landscape = candidate(id: "layout.landscape", centerX: 0.75, width: 0.8, height: 0.32)
+        let result = try AutoLayoutEngine.geometries(
+            count: 1,
+            density: .balanced,
+            photoAspectRatios: [2],
+            templates: [portrait, landscape]
+        )
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result[0].centerX, 0.75)
+        XCTAssertEqual(result[0].order, AlbumPhotoConstants.elementOrderStep)
+    }
+
+    // 3:AUT-006...3:AUT-015, 3:CRP-007
+    func testAutoRecomposeRemovesEmptyFramesAndPreservesCropInAccessibilityOrder() throws {
+        let firstID = UUID(), secondID = UUID(), emptyID = UUID()
+        let firstAsset = UUID(), secondAsset = UUID()
+        let first = filledFrame(id: firstID, assetID: firstAsset, order: 1_024)
+        let second = filledFrame(id: secondID, assetID: secondAsset, order: 2_048)
+        let empty = PageElement.photo(PhotoFrameElement(
+            id: emptyID,
+            geometry: ElementGeometry(order: 3_072)
+        ))
+        var page = PageSnapshot(
+            elements: [first, second, empty],
+            accessibilityOrder: [secondID, emptyID, firstID]
+        )
+        page.layout.density = .airy
+        let recomposed = try AutoLayoutEngine.recompose(
+            page: page,
+            metadataByAssetID: [
+                firstAsset: TestFixtures.metadata(id: firstAsset),
+                secondAsset: TestFixtures.metadata(id: secondAsset, width: 1_800, height: 2_400)
+            ]
+        )
+        XCTAssertNil(recomposed.element(id: emptyID))
+        XCTAssertEqual(recomposed.accessibilityOrder, [secondID, firstID])
+        XCTAssertEqual(
+            recomposed.element(id: firstID)?.photoFrame?.content,
+            first.photoFrame?.content
+        )
+        XCTAssertTrue(recomposed.layout.isAutoLayoutEnabled)
+        XCTAssertEqual(recomposed.layout.photoMode, .automatic)
+        XCTAssertNil(recomposed.layout.templateID)
+    }
+
+    // 3:NAV-004...3:NAV-007, 3:ANI-002...3:ANI-008
+    func testPageTurnThresholdVelocityDirectionBoundsAndSingleTransition() {
+        var state = PageTurnStateMachine()
+        state.update(
+            horizontalTranslation: -25,
+            verticalTranslation: 0,
+            availableWidth: 100,
+            canGoPrevious: true,
+            canGoNext: true
+        )
+        XCTAssertNil(state.end(velocity: -600))
+        state.finishAnimation()
+        state.update(
+            horizontalTranslation: -10,
+            verticalTranslation: 0,
+            availableWidth: 100,
+            canGoPrevious: true,
+            canGoNext: true
+        )
+        XCTAssertNil(state.end(velocity: 900))
+        state.finishAnimation()
+        state.update(
+            horizontalTranslation: -10,
+            verticalTranslation: 0,
+            availableWidth: 100,
+            canGoPrevious: true,
+            canGoNext: true
+        )
+        XCTAssertEqual(state.end(velocity: -601), .next)
+        state.finishAnimation()
+        state.update(
+            horizontalTranslation: -80,
+            verticalTranslation: 0,
+            availableWidth: 100,
+            canGoPrevious: true,
+            canGoNext: false
+        )
+        XCTAssertNil(state.end(velocity: -900))
+        XCTAssertTrue(state.beginButtonTransition(direction: .previous, canNavigate: true))
+        XCTAssertFalse(state.beginButtonTransition(direction: .next, canNavigate: true))
+        XCTAssertEqual(PageTurnStateMachine.buttonDurationSeconds, 0.35, accuracy: 0.000_001)
+    }
+
+    // Lot 0, 3:SYN-001...3:SYN-007
+    func testCloudPlannerChangesOnePageIndependentlyAndQueuesThroughProtocol() async throws {
+        let firstID = UUID(), secondID = UUID()
+        var before = AlbumSnapshot(
+            id: TestFixtures.albumID,
+            name: "Guatemala",
+            firstPageID: firstID,
+            createdAt: TestFixtures.date
+        )
+        before.pages.append(PageSnapshot(id: secondID))
+        var after = before
+        after.pages[0].background = .solid(.white)
+        after.updatedAt = before.updatedAt.addingTimeInterval(1)
+        let plan = try CloudRecordPlanner.changes(from: before, to: after)
+        XCTAssertEqual(plan.zoneName, "AlbumZone")
+        XCTAssertEqual(plan.records.filter { $0.type == .album }.count, 1)
+        XCTAssertEqual(plan.records.filter { $0.type == .page }.map(\.recordName), [
+            "page-\(firstID.uuidString.lowercased())"
+        ])
+        XCTAssertFalse(plan.records.contains {
+            $0.recordName == "page-\(secondID.uuidString.lowercased())"
+        })
+        XCTAssertTrue(plan.batches.allSatisfy {
+            $0.records.count <= 200 && $0.inlineByteCount <= 1_000_000
+        })
+        let recorder = RecordingCloudSyncService()
+        try await recorder.enqueue(plan)
+        let recorded = await recorder.plans
+        XCTAssertEqual(recorded, [plan])
+    }
+}

@@ -1,0 +1,420 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://albumzh.example/schema/photoalbum-format-v1.schema.json",
+  "title": "Album Photo editable package manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "formatVersion",
+    "minimumReaderVersion",
+    "formatGeneration",
+    "generator",
+    "exportedAt",
+    "album",
+    "assets",
+    "catalogResources",
+    "coverPreviewPath"
+  ],
+  "properties": {
+    "formatVersion": { "const": 1 },
+    "minimumReaderVersion": { "const": 1 },
+    "formatGeneration": { "const": "album-photo-canvas-v1" },
+    "generator": { "$ref": "#/$defs/generator" },
+    "exportedAt": { "$ref": "#/$defs/date" },
+    "album": { "$ref": "#/$defs/album" },
+    "assets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/photoAsset" }
+    },
+    "catalogResources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/catalogResource" }
+    },
+    "coverPreviewPath": {
+      "oneOf": [
+        { "$ref": "#/$defs/path" },
+        { "type": "null" }
+      ]
+    }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[^\\\\]+$"
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundleIdentifier", "appVersion", "build"],
+      "properties": {
+        "bundleIdentifier": { "type": "string", "minLength": 1 },
+        "appVersion": { "type": "string", "minLength": 1 },
+        "build": { "type": "string", "minLength": 1 }
+      }
+    },
+    "catalogReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["catalogID", "catalogVersion"],
+      "properties": {
+        "catalogID": { "type": "string", "minLength": 1 },
+        "catalogVersion": { "type": "integer", "minimum": 1 },
+        "fallbackContentHash": {
+          "oneOf": [
+            { "$ref": "#/$defs/hash" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "background": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type"],
+          "properties": { "type": { "const": "none" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "red", "green", "blue", "alpha"],
+          "properties": {
+            "type": { "const": "solid" },
+            "red": { "type": "number", "minimum": 0, "maximum": 1 },
+            "green": { "type": "number", "minimum": 0, "maximum": 1 },
+            "blue": { "type": "number", "minimum": 0, "maximum": 1 },
+            "alpha": { "const": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "resource"],
+          "properties": {
+            "type": { "const": "catalog" },
+            "resource": { "$ref": "#/$defs/catalogReference" }
+          }
+        }
+      ]
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["isAutoLayoutEnabled", "photoMode", "templateID", "templateVersion", "density"],
+      "properties": {
+        "isAutoLayoutEnabled": { "type": "boolean" },
+        "photoMode": { "enum": ["free", "template", "automatic"] },
+        "templateID": { "type": ["string", "null"] },
+        "templateVersion": { "type": ["integer", "null"], "minimum": 1 },
+        "density": { "enum": ["airy", "balanced", "dense"] }
+      }
+    },
+    "color": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["red", "green", "blue", "alpha"],
+      "properties": {
+        "red": { "type": "number", "minimum": 0, "maximum": 1 },
+        "green": { "type": "number", "minimum": 0, "maximum": 1 },
+        "blue": { "type": "number", "minimum": 0, "maximum": 1 },
+        "alpha": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["centerX", "centerY", "width", "height", "rotationRadians", "order"],
+      "properties": {
+        "centerX": { "type": "number", "minimum": 0, "maximum": 1 },
+        "centerY": { "type": "number", "minimum": 0, "maximum": 1 },
+        "width": { "type": "number", "minimum": 0.05 },
+        "height": { "type": "number", "minimum": 0.05 },
+        "rotationRadians": { "type": "number" },
+        "order": { "type": "integer" }
+      }
+    },
+    "photoPlacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assetID", "nativeScale", "focalX", "focalY", "quarterTurns", "flippedHorizontally"],
+      "properties": {
+        "assetID": { "$ref": "#/$defs/uuid" },
+        "nativeScale": { "type": "number", "exclusiveMinimum": 0, "maximum": 8 },
+        "focalX": { "type": "number", "minimum": 0, "maximum": 1 },
+        "focalY": { "type": "number", "minimum": 0, "maximum": 1 },
+        "quarterTurns": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "flippedHorizontally": { "type": "boolean" },
+        "accessibilityDescription": { "type": ["string", "null"], "maxLength": 500 }
+      }
+    },
+    "photoBorder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "color"],
+      "properties": {
+        "width": { "type": "number", "minimum": 0, "maximum": 0.03 },
+        "color": { "$ref": "#/$defs/color" }
+      }
+    },
+    "photoFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "geometry", "mask", "border"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "geometry": { "$ref": "#/$defs/geometry" },
+        "sourceTemplateSlotID": { "type": ["string", "null"] },
+        "content": { "oneOf": [{ "$ref": "#/$defs/photoPlacement" }, { "type": "null" }] },
+        "mask": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["shape"],
+          "properties": { "shape": { "$ref": "#/$defs/catalogReference" } }
+        },
+        "border": { "$ref": "#/$defs/photoBorder" },
+        "decorativeFrame": { "oneOf": [{ "$ref": "#/$defs/catalogReference" }, { "type": "null" }] }
+      }
+    },
+    "textStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fontID", "relativeFontSize", "weight", "isItalic", "color", "alignment", "lineSpacing"],
+      "properties": {
+        "fontID": { "type": "string", "minLength": 1 },
+        "relativeFontSize": { "type": "number", "exclusiveMinimum": 0 },
+        "weight": { "enum": ["regular", "bold"] },
+        "isItalic": { "type": "boolean" },
+        "color": { "$ref": "#/$defs/color" },
+        "alignment": { "enum": ["leading", "center", "trailing", "justified"] },
+        "lineSpacing": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "textRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "fontID", "relativeFontSize", "weight", "isItalic", "color"],
+      "properties": {
+        "text": { "type": "string", "maxLength": 1000 },
+        "fontID": { "type": "string", "minLength": 1 },
+        "relativeFontSize": { "type": "number", "exclusiveMinimum": 0 },
+        "weight": { "enum": ["regular", "bold"] },
+        "isItalic": { "type": "boolean" },
+        "color": { "$ref": "#/$defs/color" }
+      }
+    },
+    "textParagraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alignment", "lineSpacing", "runs"],
+      "properties": {
+        "alignment": { "enum": ["leading", "center", "trailing", "justified"] },
+        "lineSpacing": { "type": "number", "exclusiveMinimum": 0 },
+        "runs": { "type": "array", "items": { "$ref": "#/$defs/textRun" } }
+      }
+    },
+    "textBox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "geometry", "content", "typingDefaults", "opacity", "usesAutomaticHeight"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "geometry": { "$ref": "#/$defs/geometry" },
+        "sourceTemplateSlotID": { "type": ["string", "null"] },
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["paragraphs"],
+          "properties": {
+            "paragraphs": { "type": "array", "items": { "$ref": "#/$defs/textParagraph" } }
+          }
+        },
+        "typingDefaults": { "$ref": "#/$defs/textStyle" },
+        "opacity": { "type": "number", "minimum": 0.1, "maximum": 1 },
+        "usesAutomaticHeight": { "type": "boolean" }
+      }
+    },
+    "sticker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "geometry", "resource", "opacity", "flippedHorizontally"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "geometry": { "$ref": "#/$defs/geometry" },
+        "resource": { "$ref": "#/$defs/catalogReference" },
+        "opacity": { "type": "number", "minimum": 0.1, "maximum": 1 },
+        "flippedHorizontally": { "type": "boolean" }
+      }
+    },
+    "pageElement": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "photo"],
+          "properties": {
+            "type": { "const": "photo" },
+            "photo": { "$ref": "#/$defs/photoFrame" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "text"],
+          "properties": {
+            "type": { "const": "text" },
+            "text": { "$ref": "#/$defs/textBox" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "sticker"],
+          "properties": {
+            "type": { "const": "sticker" },
+            "sticker": { "$ref": "#/$defs/sticker" }
+          }
+        }
+      ]
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "background", "layout", "elements", "accessibilityOrder"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "background": { "$ref": "#/$defs/background" },
+        "layout": { "$ref": "#/$defs/layout" },
+        "elements": { "type": "array", "items": { "$ref": "#/$defs/pageElement" } },
+        "accessibilityOrder": { "type": "array", "items": { "$ref": "#/$defs/uuid" } }
+      }
+    },
+    "album": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modelGeneration", "schemaVersion", "id", "name", "coverSelection", "photoAssetIDs", "pages", "createdAt", "updatedAt", "trashedAt"],
+      "properties": {
+        "modelGeneration": { "const": "album-photo-canvas-v1" },
+        "schemaVersion": { "const": 1 },
+        "id": { "$ref": "#/$defs/uuid" },
+        "name": { "type": "string", "minLength": 1 },
+        "coverSelection": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type"],
+              "properties": { "type": { "const": "automatic" } }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "pageID", "elementID"],
+              "properties": {
+                "type": { "const": "pagePhoto" },
+                "pageID": { "$ref": "#/$defs/uuid" },
+                "elementID": { "$ref": "#/$defs/uuid" }
+              }
+            }
+          ]
+        },
+        "photoAssetIDs": { "type": "array", "items": { "$ref": "#/$defs/uuid" } },
+        "pages": { "type": "array", "minItems": 1, "maxItems": 10000, "items": { "$ref": "#/$defs/page" } },
+        "createdAt": { "$ref": "#/$defs/date" },
+        "updatedAt": { "$ref": "#/$defs/date" },
+        "trashedAt": { "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] }
+      }
+    },
+    "photoAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "contentHash", "mimeType", "byteCount", "relativePath", "pixelWidth", "pixelHeight", "originalFilename", "colorSpaceName", "isHDR", "source", "capturedAt", "importedAt"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "contentHash": { "$ref": "#/$defs/hash" },
+        "mimeType": {
+          "enum": [
+            "image/jpeg",
+            "image/png",
+            "image/heic",
+            "image/heif",
+            "image/tiff",
+            "image/x-raw",
+            "image/x-adobe-dng",
+            "image/x-canon-cr2",
+            "image/x-canon-crw",
+            "image/x-epson-erf",
+            "image/x-fuji-raf",
+            "image/x-kodak-dcr",
+            "image/x-kodak-k25",
+            "image/x-kodak-kdc",
+            "image/x-minolta-mrw",
+            "image/x-nikon-nef",
+            "image/x-olympus-orf",
+            "image/x-panasonic-raw",
+            "image/x-panasonic-rw2",
+            "image/x-pentax-pef",
+            "image/x-sigma-x3f",
+            "image/x-sony-arw",
+            "image/x-sony-sr2",
+            "image/x-sony-srf"
+          ]
+        },
+        "byteCount": { "type": "integer", "minimum": 1 },
+        "relativePath": { "$ref": "#/$defs/path" },
+        "pixelWidth": { "type": "integer", "minimum": 1 },
+        "pixelHeight": { "type": "integer", "minimum": 1 },
+        "originalFilename": { "type": ["string", "null"] },
+        "colorSpaceName": { "type": ["string", "null"] },
+        "isHDR": { "type": "boolean" },
+        "source": { "enum": ["applePhotos", "files", "reusedAlbum", "googlePhotos", "importedPackage"] },
+        "capturedAt": { "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+        "importedAt": { "$ref": "#/$defs/date" }
+      }
+    },
+    "catalogResource": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["catalogID", "catalogVersion", "payloadKind", "relativePath", "mimeType", "byteCount", "sha256"],
+          "properties": {
+            "catalogID": { "type": "string", "minLength": 1 },
+            "catalogVersion": { "type": "integer", "minimum": 1 },
+            "payloadKind": { "const": "asset" },
+            "relativePath": { "$ref": "#/$defs/path" },
+            "mimeType": { "type": "string", "minLength": 1 },
+            "byteCount": { "type": "integer", "minimum": 1 },
+            "sha256": { "$ref": "#/$defs/hash" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["catalogID", "catalogVersion", "payloadKind", "rendererID"],
+          "properties": {
+            "catalogID": { "type": "string", "minLength": 1 },
+            "catalogVersion": { "type": "integer", "minimum": 1 },
+            "payloadKind": { "const": "nativeVector" },
+            "rendererID": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    }
+  }
+}
