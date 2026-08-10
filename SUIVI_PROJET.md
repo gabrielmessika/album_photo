@@ -16,10 +16,10 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-10 |
-| Phase courante | Candidat Lot 1 inchangé ; arbitrage des lots appliqué, spécification de campagne à figer |
+| Phase courante | Candidat Lot 1 et spécification figés ; campagne iPad prête |
 | Base avant reconstruction | `06aaa59` |
 | Commit candidat | `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` |
-| Spécification de campagne | `SPEC_COMMIT_LOTS` — à remplacer après le commit normatif |
+| Spécification de campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Enveloppe iPad conservée | `Albumzh.swiftpm` ; son `Package.swift` généré n’a pas été recréé |
 | Sources | Anciennes sources 2.1 supprimées, nouvelles sources 3.0 écrites from scratch |
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
@@ -65,7 +65,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 
 | Périmètre | État | Preuve actuelle | Condition de sortie restante |
 |---|---|---|---|
-| Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` ; ADR, schémas, contrats et traçabilité présents | Figer le nouveau commit de spécification dans la campagne, puis qualifier sur Apple |
+| Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core et ses tests | Compiler sur iPad ; prouver les capacités Apple encore bloquées |
 | Lot 1 — Création locale | 🟡 | Nouvelle bibliothèque et nouvel éditeur une page implémentés ; noyau portable couvert par 121 tests | Exécuter les 46 fiches `IPAD-L1-063` à `IPAD-L1-108` sur le commit figé |
 | Lot 2 — Parité de composition | ⏸️ | Moteurs purs ou schéma préparatoires seulement ; aucune commande publique Lot 2 | Démarrer après validation du Lot 1 ; sortie `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128`, `ACPT-130` |
@@ -216,19 +216,18 @@ présente modification documentaire.
 
 ## Prochaines actions
 
-1. Figer le commit normatif et remplacer `SPEC_COMMIT_LOTS` dans les 50 cartes
-   détaillées avant toute exécution manuelle.
-2. Transférer le commit candidat
-   `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` sur l’iPad, relever le modèle, iPadOS et Swift
-   Playgrounds, puis exécuter en premier la compilation et le lancement à
-   froid.
-3. Exécuter la campagne Lot 1 une fiche à la fois ; enregistrer chaque réponse
+1. Transférer le commit candidat
+   `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` sur l’iPad, relever le modèle,
+   iPadOS et Swift Playgrounds, puis exécuter en premier la compilation et le
+   lancement à froid contre la spécification
+   `031d2e46c70128c7e633db1f04663949e4531309`.
+2. Exécuter la campagne Lot 1 une fiche à la fois ; enregistrer chaque réponse
    sous la forme `IPAD-L1-xxx OK`, `BLOQUÉ` ou `BUG : …` sans extrapolation.
-4. Corriger chaque anomalie sur un nouveau commit et créer un nouvel identifiant
+3. Corriger chaque anomalie sur un nouveau commit et créer un nouvel identifiant
    de régression lorsque la preuve précédente devient insuffisante.
-5. Après viabilité iPad, préparer les nouveaux identifiants de tests du Lot 2
+4. Après viabilité iPad, préparer les nouveaux identifiants de tests du Lot 2
    pour `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128` et `ACPT-130`.
-6. Organiser ensuite les campagnes iPhone, Xcode/macOS,
+5. Organiser ensuite les campagnes iPhone, Xcode/macOS,
    accessibilité, performance et interruption transactionnelle.
 
 ## Journal des mises à jour
@@ -238,7 +237,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
-| 2026-08-10 | Codex | Arbitrage des lots appliqué sans modification du candidat : Lot 1 Photos/Fonds, Lot 2 composition Photoweb complète et presse-papiers multi-types, Lot 3 lecture/documents | `spec.md`, `README.md`, `docs/traceability/lot0-lot1.md`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `DEC-38`, `ARC-014`, `ACPT-123`, `ACPT-127`, `ACPT-130` | Contrats OK ; sorties et lots de validation cohérents ; 46 fiches, 13 Apple, 50 cartes et 276 références manuelles résolues ; `git diff --check` OK ; tests Core non relancés car code inchangé ; spécification encore `SPEC_COMMIT_LOTS` |
+| 2026-08-10 | Codex | Arbitrage des lots appliqué sans modification du candidat : Lot 1 Photos/Fonds, Lot 2 composition Photoweb complète et presse-papiers multi-types, Lot 3 lecture/documents ; empreinte normative injectée dans toute la campagne | `spec.md`, `README.md`, `docs/traceability/lot0-lot1.md`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `DEC-38`, `ARC-014`, `ACPT-123`, `ACPT-127`, `ACPT-130` | Spécification `031d2e46c70128c7e633db1f04663949e4531309` ; contrats OK ; sorties cohérentes ; 46 fiches, 13 Apple, 50 cartes et 276 références manuelles résolues ; tests Core non relancés car code inchangé |
 | 2026-08-10 | Codex | Gel du candidat d’implémentation et de spécification, puis injection de son empreinte Git exacte dans les 46 fiches iPad et les validations Apple différées | `suivi_tests.md`, `SUIVI_PROJET.md` ; `TST-001` à `TST-016`, `DONE-001` à `DONE-005` | Candidat `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; toutes les fiches restent ⚪ NON TESTÉ ; aucune preuve Apple extrapolée |
 | 2026-08-10 | Codex | Audit final avant gel : correction de la frontière de publication transactionnelle, SHA-256 et vérification en flux, annulation/nettoyage des imports initiaux et repris, suppression de page sûre, poignées pleine page, panneau compact glissable, accessibilité de prévisualisation, risques résiduels documentés et traçabilité exhaustive | `Albumzh.swiftpm/Sources/AlbumPhotoCore/`, `Albumzh.swiftpm/Sources/AppModule/`, `Tests/AlbumPhotoCoreTests/`, `docs/traceability/lot0-lot1.md`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `LOC-011` à `LOC-026`, `APL-006`, `PERF-009`, `PERF-011`, `SEC-008`, `PAG-006`, `ELM-005` à `ELM-009`, `ACC-001` à `ACC-021` | 121 tests Core sans échec (6,696 s) ; contrats, 10 checksums, 6 goldens, parse AppModule, syntaxe C, manifestes, registre, traçabilité et `git diff --check` OK ; Apple/iPad NON TESTÉ ; candidat encore `À figer` |
 | 2026-08-10 | Codex | Finalisation avant gel : file FIFO commune du service et barrière FIFO de l’éditeur, baux de bibliothèque/édition, dérivé RAW immuable et indexé, renderer pur des 6 formes avec golden masks, cache de couverture, progression d’import, descriptions accessibles et fiche de régression des commandes rapides | `Albumzh.swiftpm/Sources/AlbumPhotoCore/`, `Albumzh.swiftpm/Sources/AppModule/`, `Tests/AlbumPhotoCoreTests/`, `docs/catalog-*`, `docs/golden/`, `tools/`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `APP-002`, `APP-005`, `LOC-011` à `LOC-014`, `PHO-015` à `PHO-018`, `FMT-002`, `CAT-009`, `COV-007`, `APL-006`, `ACC-001` à `ACC-020` | 118 tests Core sans échec ; contrats OK ; 10/10 checksums ; 6 goldens régénérés à l’identique ; parse AppModule, syntaxe C, manifestes inchangés et `git diff --check` OK ; Apple/iPad NON TESTÉ ; candidat encore `À figer` |

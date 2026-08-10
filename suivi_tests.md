@@ -14,7 +14,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Information | Valeur obligatoire |
 |---|---|
 | Commit d’implémentation | `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` |
-| Spécification | 3.0 (`SPEC_COMMIT_LOTS`) |
+| Spécification | 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`) |
 | App Playground | `Albumzh.swiftpm` |
 | Build ou copie testée | À renseigner |
 | Appareil | À renseigner : modèle exact |
@@ -25,11 +25,11 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Date et heure de début | À renseigner |
 
 Le code d’implémentation reste figé par l’empreinte Git exacte
-`314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`. `SPEC_COMMIT_LOTS` est un marqueur
-temporaire pour l’arbitrage normatif des lots ; il doit être remplacé par le
-commit exact de la spécification avant le premier test. Si le code ou une
-exigence applicable change ensuite, créer un nouvel identifiant de régression,
-sans réutiliser ni modifier rétroactivement l’identité d’une preuve exécutée.
+`314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`. La spécification 3.0 et
+l’arbitrage normatif des lots sont figés par
+`031d2e46c70128c7e633db1f04663949e4531309`. Si le code ou une exigence
+applicable change ensuite, créer un nouvel identifiant de régression, sans
+réutiliser ni modifier rétroactivement l’identité d’une preuve exécutée.
 
 ## Mode de réponse
 
@@ -138,7 +138,7 @@ fichier effectivement utilisé dans la preuve de `IPAD-L1-076` ou
 ## Registre synthétique
 
 Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spécification 3.0
-`SPEC_COMMIT_LOTS`.
+`031d2e46c70128c7e633db1f04663949e4531309`.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -194,7 +194,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-063` — Compilation et lancement sur racine 3.0 neuve
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:LOT-001`, `3:ENV-002`, `3:ENV-005`, `3:LOC-029`,
   `3:LOC-031`, `3:DONE-005`.
 - Préconditions : transférer exactement `Albumzh.swiftpm` du candidat ; choisir
@@ -220,7 +220,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-064` — État vide, noms, création et durabilité
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ALB-004`, sous-périmètre Créer de `3:ALB-009`,
   `3:ALB-011` à `3:ALB-016`, `3:APP-005`, `3:LOC-011`, `3:LOC-012`,
   `3:LOC-013`, `3:ACPT-100`.
@@ -250,7 +250,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-065` — Grille, cartes, tri et durabilité de la bibliothèque
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ALB-001` à `3:ALB-003`, `3:ALB-006`, `3:ALB-010`,
   `3:APP-001`, `3:APP-005`, `3:L10N-005`.
 - Préconditions : disposer de `Guatemala` et des deux albums `Voyage` créés en
@@ -272,7 +272,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-066` — Renommage ciblé et pile Annuler/Rétablir
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : sous-périmètre Renommer de `3:ALB-007`, `3:ALB-011`,
   `3:ALB-021`, `3:UND-011`. Choisir la couverture est couvert par
   `IPAD-L1-074` ; Exporter reste différé au Lot 3.
@@ -298,7 +298,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-067` — Corbeille, impossibilité d’éditer et restauration
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ALB-008`, `3:ALB-017`, `3:ALB-018`, `3:ALB-019`,
   `3:ACPT-102`, `3:DEC-16`, `3:DEC-25`.
 - Préconditions : albums `Voyage`, `Voyage B` et `Famille test` présents ;
@@ -327,7 +327,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-068` — Suppression définitive ciblée et blob partagé
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ALB-018`, `3:LOC-008`, `3:LOC-022`.
 - Préconditions : créer `À supprimer A`, y importer et placer
   `small-landscape-600x400.png` ; créer `À supprimer B`, y réutiliser cette
@@ -356,7 +356,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-069` — Bail d’édition multi-fenêtre
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:APP-002`, `3:APP-010`, `3:APP-011`, `3:DEC-29`.
 - Préconditions : iPad permettant deux scènes de l’app ; album `Bail test` avec
   deux pages. Si Swift Playgrounds ne permet pas deux scènes, arrêter et
@@ -381,7 +381,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-070` — Ajout, suppression et restauration d’une page remplie
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:PAG-001`, `3:PAG-002`, `3:PAG-006`, `3:PAG-007`,
   `3:PAG-008`, `3:PAG-009`, `3:PAG-010`, `3:PAG-013`, `3:PAG-015`,
   `3:UND-004`.
@@ -414,7 +414,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-071` — Déplacer la page 5, la supprimer puis annuler
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:PAG-003`, `3:PAG-004`, `3:PAG-005`, `3:PAG-011`,
   `3:PAG-014`, `3:GLO-003`, `3:GLO-004`, `3:GLO-005`, `3:UND-004`,
   `3:ACPT-104`.
@@ -445,7 +445,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-072` — Une seule page active et fidélité de la vue globale
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEC-05`, `3:GLO-001` à `3:GLO-009`, `3:CAN-004`,
   `3:UND-006`.
 - Préconditions : album de trois pages, chacune avec fond et photo distincts ;
@@ -469,7 +469,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-073` — Fonds par page, portée globale, annulation et hors ligne
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:BG-001` à `3:BG-005`, sous-périmètre Lot 1 de `3:BG-006`,
   `3:BG-010`, `3:BG-012`, `3:BG-013`, `3:BG-014`, `3:BG-015`,
   `3:DAT-039`. Le fond manquant de
@@ -503,7 +503,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-074` — Couverture automatique, manuelle, identité et repli
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:COV-001`, sous-périmètre Lot 1 de `3:COV-002`, `3:COV-003`,
   `3:COV-004`, `3:COV-005`, `3:COV-006`, `3:DAT-005`, `3:ALB-021`,
   `3:ACPT-103`. Le cache de `3:COV-007` est réservé à `APPLE-L1-013`.
@@ -543,7 +543,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-075` — PhotosPicker multiple, ordre, hors ligne et annulation
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:PHO-007`, `3:PHO-008`, `3:APL-001`, `3:APL-002`,
   `3:APL-003`, `3:APL-004`, `3:APL-005`, `3:APL-007`, `3:ERR-001`.
   La progression dépassant 500 ms de `3:APL-006` est isolée dans
@@ -577,7 +577,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-076` — Import Fichiers et placements statiques distincts
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:APL-001`, `3:APL-002`, `3:APL-004`, `3:APL-005`,
   `3:APL-007`, `3:FMT-001`, `3:FMT-002`, `3:FMT-003`, `3:FMT-005`,
   `3:FMT-007`, `3:DAT-043`, `3:TST-011`. `3:FMT-008` est différée au PDF
@@ -612,7 +612,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-077` — Refus, échec partiel et nouvelle tentative sûre
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:PHO-007`, `3:PHO-008`, `3:APL-008`, `3:FMT-004`,
   `3:FMT-006`, `3:ERR-002` à `3:ERR-004`, `3:ERR-021`, `3:TST-011`.
 - Préconditions : album contenant déjà un cadre rempli ; corpus JPEG valide,
@@ -648,7 +648,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-078` — Panneau Photos, tri, compteur et suppression logique
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEC-34`, `3:PHO-001` à `3:PHO-003`, `3:PHO-009`,
   `3:PHO-010`, `3:UND-004`, `3:UND-010`.
 - Préconditions : album avec au moins trois photos ayant noms, dates de prise
@@ -678,7 +678,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-079` — Réutilisation, annulation et indépendance interalbum
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEC-37`, `3:PHO-015`, `3:PHO-016`, `3:PHO-017`,
   `3:PHO-018`, `3:LOC-007`, `3:LOC-008`, `3:LOC-015`, `3:LOC-016`,
   `3:UND-004`.
@@ -721,7 +721,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-080` — Placement par pression et album sans photo
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:PHO-004`, `3:PHO-005`, `3:PHO-006`, `3:PHO-011`,
   `3:PHO-012`, `3:PHO-013`, `3:FRM-004`, `3:FRM-009`.
 - Préconditions : deux albums neufs et sans photo : `Choix cadre`, dont la page
@@ -764,7 +764,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-081` — Placement par glisser-déposer sur iPad
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:PHO-004`, `3:PHO-005`, `3:PHO-006`, `3:ACC-020`.
 - Préconditions : iPad, panneau Photos ouvert, une page contenant un cadre
   vide, un cadre rempli et une grande zone libre ; trois photos disponibles.
@@ -792,7 +792,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-082` — Remplacer, retirer et supprimer : trois opérations distinctes
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:FRM-001` à `3:FRM-009`, `3:ELM-010`, `3:UND-004`.
 - Préconditions : cadre rempli par la fixture carrée, déplacé, redimensionné et
   cadré de façon reconnaissable ; seconde photo disponible.
@@ -819,7 +819,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-083` — Dupliquer et presse-papiers compatible/incompatible
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ELM-009`, `3:FRM-007`, `3:CLP-001`, `3:CLP-002`,
   `3:CLP-003`, `3:CLP-004`, `3:UND-001` à `3:UND-007`.
 - Préconditions : album source de deux pages ; page 1 avec trois cadres
@@ -861,7 +861,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-084` — Sélection, chevauchement et profondeur des cadres
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:CAN-002`, `3:CAN-003`, `3:ELM-001`, `3:ELM-008`,
   `3:ELM-014`, `3:EDT-017`.
 - Préconditions : trois cadres photo qui se chevauchent fortement ; petite
@@ -889,7 +889,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-085` — Déplacement, huit poignées, rotation et gestes à deux doigts
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ELM-002` à `3:ELM-004`, `3:ELM-007`, `3:ELM-012`,
   `3:ELM-013`, `3:ACC-005`, `3:ACC-013`.
 - Préconditions : un cadre photo sélectionné, sans mode cadrage.
@@ -919,7 +919,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-086` — Guides, accrochage, haptique et bornes géométriques
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:CAN-005`, `3:CAN-006`, `3:ELM-005` à `3:ELM-007`,
   `3:PERF-017`.
 - Préconditions : deux cadres de tailles différentes ; retour haptique activé
@@ -946,7 +946,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-087` — Petite photo 600 × 400 centrée à `1×`
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEC-07`, section 3.1, `3:CAN-009`, `3:CRP-001`,
   `3:CRP-004`, `3:CRP-006`, `3:FRM-009`, `3:ACPT-124`.
 - Préconditions : importer exactement
@@ -976,7 +976,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-088` — Commande Pleine page et borne dynamique `0,5×`
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEC-07`, section 3.1, `3:CAN-009`, `3:CRP-001`,
   `3:CRP-004`, `3:CRP-006`, `3:DAT-006`, `3:ACPT-124`.
 - Préconditions : importer exactement
@@ -1011,7 +1011,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-089` — Cadrage indépendant et original non destructif
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:CRP-002` à `3:CRP-007`, `3:DAT-006` à `3:DAT-010`,
   `3:EDT-015`, `3:UND-004`.
 - Préconditions : deux occurrences distinctes du même asset
@@ -1054,7 +1054,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-090` — Paliers et commandes du zoom du canevas
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ZOM-001`, `3:ZOM-002`, `3:ZOM-007`, `3:EDT-010`.
 - Préconditions : page avec un cadre sélectionné ; sortir du mode cadrage.
 - Étapes :
@@ -1078,7 +1078,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-091` — Pincement ancré, déplacement de fenêtre et mémoire par page
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ZOM-003` à `3:ZOM-008`, `3:GLO-008`.
 - Préconditions : album de deux pages avec détails placés dans des coins
   distincts ; aucun élément sélectionné au début.
@@ -1106,7 +1106,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-092` — Navigation par boutons/balayage et priorité des gestes
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:NAV-001` à `3:NAV-007`, `3:ZOM-005`, `3:PAG-013`,
   `3:UND-005`.
 - Préconditions : album de trois pages reconnaissables ; page 2 contient un
@@ -1138,7 +1138,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-093` — Sauvegarde pendant geste, arrière-plan et relance
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:APP-005`, `3:APP-006`, `3:APP-008`, `3:APP-009`,
   `3:SAV-001`, `3:SAV-002`, sous-périmètre réussite de `3:SAV-003`,
   `3:LOC-011`, `3:LOC-026`, `3:UND-012`. `3:APP-007` est exclue car elle
@@ -1172,7 +1172,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-094` — Interruption après une commande validée et reprise locale
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:APP-009`, `3:LOC-004`, `3:LOC-005`, `3:LOC-011` à
   `3:LOC-014`, `3:LOC-023`, `3:ERR-014`, `3:TST-012`.
 - Préconditions : album jetable avec un état A connu ; aucun test de manque
@@ -1201,7 +1201,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-095` — Prévisualisation et rendu commun du sous-périmètre Lot 1
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:CAN-003`, `3:CAN-004`, `3:CAN-008`, `3:CAN-009`,
   `3:GLO-007`, `3:GLO-008`.
 - Préconditions : page avec fond, trois cadres remplis superposés, rotations,
@@ -1229,7 +1229,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-096` — Cadre vide et alertes dans la vue globale/prévisualisation
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:FRM-001`, `3:FRM-008`, `3:CAN-004`, `3:GLO-006`,
   `3:GLO-007`.
 - Préconditions : page 1 avec un cadre vide ; page 2 avec une petite photo
@@ -1256,7 +1256,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-097` — Qualité, seuils exacts et format régional
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:QLT-001`, `3:QLT-002`, `3:QLT-003`, `3:QLT-004`,
   `3:QLT-005`, sous-périmètre édition/sauvegarde de `3:QLT-006`,
   `3:L10N-005`, `3:GLO-006`.
@@ -1293,7 +1293,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-098` — Interface régulière/compacte, orientations et apparence
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEC-05`, `3:DEC-17`, `3:EDT-002`, `3:EDT-004`,
   `3:EDT-005`, `3:EDT-006`, `3:EDT-011`, `3:EDT-016`, sous-périmètre
   Ajouter une photo de `3:EDT-020`, `3:GLO-001`, `3:ACC-021`, `3:TST-008`.
@@ -1327,7 +1327,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-099` — Dynamic Type, description accessible et VoiceOver
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ACC-001`, `3:ACC-002`, `3:ACC-003`, `3:ACC-004`,
   `3:ACC-005`, `3:ACC-007`, `3:ACC-008`, `3:ACC-011`, `3:ACC-012`,
   `3:ACC-017`, `3:ACC-020`, `3:EDT-010`, `3:TST-008`.
@@ -1369,7 +1369,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-100` — Clavier, Option + flèches et aide
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:EDT-009`, `3:ELM-011`, `3:ELM-012`, `3:ELM-013`,
   `3:ACC-005`, `3:ACC-013`, `3:ACC-014`, `3:ACC-015`, `3:TST-008`.
 - Préconditions : clavier matériel ou compatible, trackpad/pointeur ; page avec
@@ -1405,7 +1405,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-101` — Fonctionnement local hors ligne
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEV-005`, `3:LOC-001` à `3:LOC-005`, `3:SEC-001`,
   `3:ERR-008`, `3:ACPT-100`.
 - Préconditions : deux albums avec fonds intégrés, photos importées depuis
@@ -1432,7 +1432,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-102` — Ancien store 2.1 laissé intact et ignoré
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:DEC-33`, `3:DAT-025`, `3:DAT-026`, `3:LOC-010`,
   `3:LOC-029` à `3:LOC-031`, `3:ERR-024`.
 - Préconditions : copie de l’app contenant réellement un store du prototype
@@ -1462,7 +1462,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-103` — Enveloppe 100 pages et 20 occurrences photo
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:PAG-012`, sous-périmètre occurrence photo de `3:LOC-018`,
   `3:PERF-008`, `3:PERF-015`, `3:PERF-017`.
 - Préconditions : album de stress non personnel ; alimentation branchée ; ne
@@ -1500,7 +1500,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-104` — Matrice commandes, icônes et états en largeurs régulière/compacte
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : sous-périmètre Lot 1 de `3:EDT-003`, `3:EDT-004`, tableaux
   7.2.1 et 7.2.2, `3:EDT-007`, `3:EDT-010`, `3:EDT-012`, `3:EDT-013`,
   `3:EDT-014`, `3:EDT-015`, `3:EDT-016`, `3:EDT-017`, `3:FRM-005`,
@@ -1561,7 +1561,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-105` — Réduire les animations
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:ACC-006`, sous-périmètre Lot 1 de `3:TST-010`.
 - Préconditions : album de trois pages reconnaissables ; enregistrer une courte
   vidéo de référence avec Réduire les animations désactivé, puis activer
@@ -1588,7 +1588,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-106` — Aide contextuelle disponible hors ligne
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : sous-périmètre Lot 1 de `3:EDT-019`, `3:ARC-014`, `3:DEC-38`.
 - Préconditions : album avec un cadre vide, un cadre rempli et une alerte de
   qualité ; activer le mode Avion avant de lancer l’app.
@@ -1619,7 +1619,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-107` — Progression, annulation et nettoyage d’un import long
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:APL-006`, `3:PERF-009`, `3:PERF-011`, `3:APP-006`,
   `3:SEC-008`.
 - Préconditions : préparer au moins deux photos statiques non personnelles,
@@ -1666,7 +1666,7 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 ### `IPAD-L1-108` — Commandes rapides sérialisées sans perte ni erreur de révision
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Exigences : `3:APP-002`, `3:APP-005`, `3:LOC-011` à `3:LOC-014`,
   `3:UND-011`, `3:ARC-007`.
 - Préconditions : album `Commandes rapides` enregistré, contenant une première
@@ -1726,7 +1726,7 @@ un nouveau candidat explicitement enregistré.
 ### `APPLE-L1-010` — Fond manquant et repli validé
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Type : test Apple instrumenté avec catalogue et stockage injectables ; aucun
   crochet de test ne doit être compilé dans la version publique.
 - Exigences : `3:BG-008`, `3:ERR-017`.
@@ -1762,7 +1762,7 @@ un nouveau candidat explicitement enregistré.
 ### `APPLE-L1-011` — Échec de sauvegarde, Réessayer et fermeture
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Type : test Apple avec dépôt/journal injecté en échec déterministe.
 - Exigences : `3:SAV-003`, `3:SAV-004`, `3:ERR-014`.
 - Préconditions : album possédant un snapshot durable A et un hash canonique
@@ -1793,7 +1793,7 @@ un nouveau candidat explicitement enregistré.
 ### `APPLE-L1-012` — Preuve réseau de confidentialité des photos
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Type : capture réseau sur appareil/simulateur et inspection statique du
   binaire/configuration du candidat.
 - Exigences : `3:SEC-001`, `3:SEC-010`.
@@ -1825,7 +1825,7 @@ un nouveau candidat explicitement enregistré.
 ### `APPLE-L1-013` — Rendu composite et cache de couverture
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`SPEC_COMMIT_LOTS`).
+- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
 - Type : test du moteur de rendu avec compteur injecté de compositions et
   métriques explicites de hit/miss/invalidation du cache.
 - Exigences : `3:COV-007`.
