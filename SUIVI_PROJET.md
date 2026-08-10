@@ -16,9 +16,9 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-10 |
-| Phase courante | Reconstruction complète des lots 0 et 1, avant qualification Apple |
+| Phase courante | Candidat des lots 0 et 1 figé ; campagne iPad prête, avant qualification Apple |
 | Base avant reconstruction | `06aaa59` |
-| Commit candidat | `À figer` — arbre de travail non encore commité |
+| Commit candidat | `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` |
 | Enveloppe iPad conservée | `Albumzh.swiftpm` ; son `Package.swift` généré n’a pas été recréé |
 | Sources | Anciennes sources 2.1 supprimées, nouvelles sources 3.0 écrites from scratch |
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
@@ -129,9 +129,9 @@ la chaîne Apple.
 ### Sortie du lot 1
 
 Le code candidat couvre le périmètre d’implémentation retenu, mais le lot reste
-🟡. Il manque le commit figé, la compilation Apple et les résultats détaillés
-`IPAD-L1-063+`. Aucun comportement n’est déclaré durable ou tactilement valide
-sur la seule base des tests Linux.
+🟡. Le commit est figé ; il manque la compilation Apple et les résultats
+détaillés `IPAD-L1-063+`. Aucun comportement n’est déclaré durable ou
+tactilement valide sur la seule base des tests Linux.
 
 ## Ambiguïté normative à clarifier
 
@@ -218,20 +218,17 @@ modifier les critères de sortie.
 
 ## Prochaines actions
 
-1. Créer le commit d’implémentation candidat sans modifier ni recréer
-   `Albumzh.swiftpm/Package.swift`, puis fixer son hash dans les deux suivis.
-2. Vérifier l’unicité et la continuité des 46 fiches détaillées
-   `IPAD-L1-063` à `IPAD-L1-108`, toutes initialisées à ⚪ `NON TESTÉ`.
-3. Transférer ce commit sur l’iPad, relever le modèle, iPadOS et Swift
+1. Transférer le commit candidat
+   `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` sur l’iPad, relever le modèle, iPadOS et Swift
    Playgrounds, puis exécuter en premier la compilation et le lancement à
    froid.
-4. Exécuter la campagne Lot 1 une fiche à la fois ; enregistrer chaque réponse
+2. Exécuter la campagne Lot 1 une fiche à la fois ; enregistrer chaque réponse
    sous la forme `IPAD-L1-xxx OK`, `BLOQUÉ` ou `BUG : …` sans extrapolation.
-5. Corriger chaque anomalie sur un nouveau commit et créer un nouvel identifiant
+3. Corriger chaque anomalie sur un nouveau commit et créer un nouvel identifiant
    de régression lorsque la preuve précédente devient insuffisante.
-6. Arbitrer la frontière normative de `ACPT-123`, `ACPT-127` et `ACPT-130`
+4. Arbitrer la frontière normative de `ACPT-123`, `ACPT-127` et `ACPT-130`
    avant d’ajouter des commandes de lots 2 ou 3.
-7. Après viabilité iPad, organiser les campagnes iPhone, Xcode/macOS,
+5. Après viabilité iPad, organiser les campagnes iPhone, Xcode/macOS,
    accessibilité, performance et interruption transactionnelle.
 
 ## Journal des mises à jour
@@ -241,6 +238,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-10 | Codex | Gel du candidat d’implémentation et de spécification, puis injection de son empreinte Git exacte dans les 46 fiches iPad et les validations Apple différées | `suivi_tests.md`, `SUIVI_PROJET.md` ; `TST-001` à `TST-016`, `DONE-001` à `DONE-005` | Candidat `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; toutes les fiches restent ⚪ NON TESTÉ ; aucune preuve Apple extrapolée |
 | 2026-08-10 | Codex | Audit final avant gel : correction de la frontière de publication transactionnelle, SHA-256 et vérification en flux, annulation/nettoyage des imports initiaux et repris, suppression de page sûre, poignées pleine page, panneau compact glissable, accessibilité de prévisualisation, risques résiduels documentés et traçabilité exhaustive | `Albumzh.swiftpm/Sources/AlbumPhotoCore/`, `Albumzh.swiftpm/Sources/AppModule/`, `Tests/AlbumPhotoCoreTests/`, `docs/traceability/lot0-lot1.md`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `LOC-011` à `LOC-026`, `APL-006`, `PERF-009`, `PERF-011`, `SEC-008`, `PAG-006`, `ELM-005` à `ELM-009`, `ACC-001` à `ACC-021` | 121 tests Core sans échec (6,696 s) ; contrats, 10 checksums, 6 goldens, parse AppModule, syntaxe C, manifestes, registre, traçabilité et `git diff --check` OK ; Apple/iPad NON TESTÉ ; candidat encore `À figer` |
 | 2026-08-10 | Codex | Finalisation avant gel : file FIFO commune du service et barrière FIFO de l’éditeur, baux de bibliothèque/édition, dérivé RAW immuable et indexé, renderer pur des 6 formes avec golden masks, cache de couverture, progression d’import, descriptions accessibles et fiche de régression des commandes rapides | `Albumzh.swiftpm/Sources/AlbumPhotoCore/`, `Albumzh.swiftpm/Sources/AppModule/`, `Tests/AlbumPhotoCoreTests/`, `docs/catalog-*`, `docs/golden/`, `tools/`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `APP-002`, `APP-005`, `LOC-011` à `LOC-014`, `PHO-015` à `PHO-018`, `FMT-002`, `CAT-009`, `COV-007`, `APL-006`, `ACC-001` à `ACC-020` | 118 tests Core sans échec ; contrats OK ; 10/10 checksums ; 6 goldens régénérés à l’identique ; parse AppModule, syntaxe C, manifestes inchangés et `git diff --check` OK ; Apple/iPad NON TESTÉ ; candidat encore `À figer` |
 | 2026-08-10 | Codex | Reprise après interruption, gel du Core à 91 tests, finalisation des dérivés RAW persistants, de la qualité régionale, des baux par scène et des arbitrages de gestes ; relance de toutes les validations WSL avant le commit candidat | `Albumzh.swiftpm/Sources/AlbumPhotoCore/`, `Albumzh.swiftpm/Sources/AppModule/`, `Tests/AlbumPhotoCoreTests/`, `README.md`, `SUIVI_PROJET.md` ; `ALB-020`, `PHO-015`, `APL-007`, `FMT-002`, `QLT-001` à `QLT-006`, `APP-002`, `APP-011`, `ELM-009`, `CRP-003`, `ZOM-006` | 91 tests Core sans échec ; contrats, checksums, parse AppModule, syntaxe C, manifestes inchangés et `git diff --check` réussis ; Apple/iPad toujours NON TESTÉ ; candidat encore `À figer` |
