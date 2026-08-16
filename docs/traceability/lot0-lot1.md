@@ -15,9 +15,9 @@ mais le candidat correctif rend les preuves concernées insuffisantes. Le commit
 `IPAD-L1-132` enregistre le second échec. Le correctif
 `638c659925e1b036570484a98c0fc016602687c9` a ensuite compilé : `102`,
 `109…131` et `133` totalisent 19 réussites, 4 échecs et 2 blocages de procédure.
-Les nouvelles régressions `134…140` ciblent le prochain candidat et restent ⚪
-`NON TESTÉ`. Aucun scénario d'acceptation complet n'est déclaré réussi par ce
-document.
+Les nouvelles régressions `134…140` ciblent
+`7a0f2a442f5f13a98663c5c02a97b8110bd943d6` et restent ⚪ `NON TESTÉ`. Aucun
+scénario d'acceptation complet n'est déclaré réussi par ce document.
 
 ## Convention et frontière des lots
 
@@ -95,7 +95,7 @@ l'exigence ou du scénario complet.
 | Registre public : `CAT-001` à `CAT-009`, `SHR-010` à `SHR-013` pour le contrat publié | `A-CATALOG`, `A-SHAPE`, `A-MANIFEST` | `APPLE-L1-010` | Les trois fonds et six formes sont figés. Les 40 stickers, six cadres et goldens neuf zones doivent être ajoutés avant leur build Lot 2. |
 | Prototype CloudKit page par page : `SYN-001` à `SYN-007` | `A-NAV-CLOUD` | `APPLE-L0-008` | Planificateur pur seulement ; entitlements, zone CloudKit et comportement réseau restent différés. |
 | Registre et discipline de test : `TST-001`, `TST-002`, `TST-005` à `TST-007`, `TST-011`, `TST-012`, `TST-016` | Cette matrice, suites `Tests/AlbumPhotoCoreTests`, `A-MANIFEST` | Corpus et `IPAD-L1-063` à `IPAD-L1-140`; `APPLE-L1-004` | La présence du lien satisfait la traçabilité structurelle, pas le résultat du test. |
-| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-140`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | La seconde campagne est enregistrée ; `134…140` restent non testés sur le prochain correctif. |
+| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-140`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | La seconde campagne est enregistrée ; `134…140` restent non testés sur `7a0f2a4…`. |
 
 ## Matrice des exigences fonctionnelles du lot 1
 
@@ -207,7 +207,7 @@ les étapes manuelles.
 | `IPAD-L1-131` | `ALB-006`, `APP-002`, `APP-005`, `EDT-021`, `LOC-011` à `LOC-014`, `UND-011` | `A-ALB`, `A-CONC`, `A-STORE` ; transitions UI manuelles |
 | `IPAD-L1-132` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | 🔴 Échec Apple sur `84ec71e…` ; appel catalogue incomplet |
 | `IPAD-L1-133` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | 🟢 Compilation Swift Playgrounds réussie sur `638c659…` |
-| `IPAD-L1-134` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | Compilation Swift Playgrounds du prochain candidat indispensable |
+| `IPAD-L1-134` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | Compilation Swift Playgrounds de `7a0f2a4…` indispensable |
 | `IPAD-L1-135` | `EDT-002`, `EDT-006`, `EDT-020` photo, `PHO-002`, `PHO-011` à `PHO-013`, `ACC-021` | Revue UI Apple portrait/paysage |
 | `IPAD-L1-136` | `ALB-017`, `ALB-018`, `ALB-025`, `L10N-005` | `A-ALB`, `A-STORE` ; langue UI manuelle |
 | `IPAD-L1-137` | `PAG-004`, `PAG-005`, `PAG-010`, `PAG-016`, `GLO-003`, `ACC-006` | `A-PAGE` ; glisser-déposer et présentation manuels |
@@ -271,7 +271,7 @@ ou « contrat » ne signifie jamais que le scénario utilisateur complet passe.
   `094…101` et `103…108` devenues obsolètes ne prouvent pas les correctifs.
   `IPAD-L1-102`, `109…131` et `133` sont enregistrés sur `638c659…` ; les
   quatre anomalies et deux procédures incomplètes sont relayées par
-  `IPAD-L1-134…140`, encore non testés sur le prochain candidat.
+  `IPAD-L1-134…140`, encore non testés sur `7a0f2a4…`.
 - Les validations Apple listées ci-dessus sont différées et ne peuvent pas être
   remplacées par les tests Linux.
 - `L10N-002` n'a pas de test de catalogue de chaînes identifié.

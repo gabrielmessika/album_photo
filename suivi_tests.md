@@ -18,10 +18,10 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif rejeté à la compilation Apple | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — argument `maximumPixelSize` manquant et inférence générique impossible dans `AppModel` |
 | Second candidat rejeté à la compilation Apple | `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` — deux appels de préchargement dans `AlbumCoverView` omettaient encore `maximumPixelSize` |
 | Correctif compilé et testé lors de la deuxième campagne | `638c659925e1b036570484a98c0fc016602687c9` |
-| Prochain candidat correctif | À figer après commit |
+| Candidat correctif à tester | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
-| Copie à tester après les nouvelles corrections | Doit porter exactement le prochain candidat une fois figé |
+| Copie à tester après les nouvelles corrections | Doit porter exactement `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Appareil | iPad 8e génération (déclaré « iPad 8 ») |
 | iPadOS | 26.5.2 |
 | Swift Playgrounds | 4.7 |
@@ -42,8 +42,8 @@ conserve la preuve. Le candidat `638c659925e1b036570484a98c0fc016602687c9`
 a ensuite compilé et les procédures `IPAD-L1-102`, `IPAD-L1-109…131` et
 `IPAD-L1-133` ont été exécutées. La campagne compte 19 réussites, 4 échecs et
 2 blocages de procédure. Les nouvelles fiches `IPAD-L1-134…140` ciblent les
-corrections issues de ces retours et recevront leur empreinte exacte après le
-commit d’implémentation.
+corrections issues de ces retours dans le candidat exact
+`7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 
 ## Mode de réponse
 
@@ -160,7 +160,7 @@ sur `638c659925e1b036570484a98c0fc016602687c9`. Les réponses explicites donnent
 19 réussites, 4 échecs et 2 blocages : `112` n’a pas été compris et `124` n’a
 pas satisfait sa précondition d’une occurrence dans la cible. `IPAD-L1-132`
 conserve l’échec de `84ec71e…`. Les fiches `134…140`, initialisées ⚪
-`NON TESTÉ`, couvriront le prochain candidat correctif.
+`NON TESTÉ`, couvrent `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -235,7 +235,7 @@ conserve l’échec de `84ec71e…`. Les fiches `134…140`, initialisées ⚪
 | `IPAD-L1-131` | Commandes rapides après correction des transitions d’interface | `3:ALB-006`, `3:APP-002`, `3:APP-005`, `3:EDT-021`, `3:LOC-011` à `3:LOC-014`, `3:UND-011` | 🟢 `RÉUSSI` |
 | `IPAD-L1-132` | Compilation du correctif dans Swift Playgrounds | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — appel `catalogImage(for:)` incomplet dans `AlbumCoverView` |
 | `IPAD-L1-133` | Recompilation après correction de tous les appels catalogue | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | 🟢 `RÉUSSI` |
-| `IPAD-L1-134` | Compilation du prochain correctif | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-134` | Compilation du candidat `7a0f2a4…` | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-135` | Bannière de choix et inspecteur adaptatif | `3:EDT-002`, `3:EDT-020`, `3:PHO-011`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-136` | Dates françaises de corbeille | `3:ALB-025`, `3:L10N-005` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-137` | Page active et insertion entre miniatures | `3:GLO-003`, `3:PAG-016`, `3:ACC-006` | ⚪ `NON TESTÉ` |
@@ -2153,14 +2153,14 @@ restent la preuve historique de ce candidat.
 
 ## Campagne ciblée après les résultats `102`, `109…131` et `133`
 
-Les sept fiches suivantes doivent toutes viser le même prochain candidat exact.
-Son empreinte remplacera la mention `À figer` après le commit d’implémentation.
-Elles ne remettent pas en cause les réussites acquises sur `638c659…`, mais
-rejouent chaque comportement dont le code ou la preuve vient de changer.
+Les sept fiches suivantes visent toutes le même candidat exact
+`7a0f2a442f5f13a98663c5c02a97b8110bd943d6`. Elles ne remettent pas en cause
+les réussites acquises sur `638c659…`, mais rejouent chaque comportement dont
+le code ou la preuve vient de changer.
 
 ### `IPAD-L1-134` — Compilation du correctif d’interface et de gestes
 
-- Candidat : `À figer`.
+- Candidat : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 - Spécification : 3.0, avec clarification de `3:EDT-002`, `3:PHO-011`,
   `3:PAG-016`, `3:GLO-003` et `3:ZOM-003` à `3:ZOM-005` dans le candidat.
 - Exigences : `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005`.
@@ -2176,7 +2176,7 @@ rejouent chaque comportement dont le code ou la preuve vient de changer.
 
 ### `IPAD-L1-135` — Bannière de choix et inspecteur adaptatif
 
-- Candidat : `À figer`.
+- Candidat : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 - Exigences : `3:EDT-002`, `3:EDT-006`, sous-périmètre photo de `3:EDT-020`,
   `3:PHO-002`, `3:PHO-011` à `3:PHO-013`, `3:ACC-021`.
 - Préconditions : au moins huit photos, un cadre vide et un cadre rempli ;
@@ -2196,7 +2196,7 @@ rejouent chaque comportement dont le code ou la preuve vient de changer.
 
 ### `IPAD-L1-136` — Dates françaises de corbeille
 
-- Candidat : `À figer`.
+- Candidat : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 - Exigences : `3:ALB-017`, `3:ALB-018`, `3:ALB-025`, `3:L10N-005`.
 - Préconditions : langue Français, région France et date système connue ; album
   jetable actif.
@@ -2211,7 +2211,7 @@ rejouent chaque comportement dont le code ou la preuve vient de changer.
 
 ### `IPAD-L1-137` — Page active et insertion entre miniatures
 
-- Candidat : `À figer`.
+- Candidat : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 - Exigences : `3:PAG-004`, `3:PAG-005`, `3:PAG-010`, `3:PAG-016`,
   `3:GLO-003`, `3:ACC-006`.
 - Préconditions : cinq pages reconnaissables ; refaire une fois avec Réduire les
@@ -2230,7 +2230,7 @@ rejouent chaque comportement dont le code ou la preuve vient de changer.
 
 ### `IPAD-L1-138` — Gestes canevas sur vide et cadres non sélectionnés
 
-- Candidat : `À figer`.
+- Candidat : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 - Exigences : `3:ZOM-003` à `3:ZOM-006`, `3:ELM-003`, `3:NAV-001` à
   `3:NAV-005`.
 - Préconditions : page 1 avec trois cadres vides espacés, aucun sélectionné ;
@@ -2251,7 +2251,7 @@ rejouent chaque comportement dont le code ou la preuve vient de changer.
 
 ### `IPAD-L1-139` — Qualité et séparateurs régionaux explicités
 
-- Candidat : `À figer`.
+- Candidat : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 - Exigences : `3:QLT-001` à `3:QLT-006`, `3:EDT-021`, `3:L10N-005`.
 - Préconditions : grande fixture dans un cadre rempli ; langue Français et
   région France. Ici « format régional » désigne le séparateur décimal choisi
@@ -2271,7 +2271,7 @@ rejouent chaque comportement dont le code ou la preuve vient de changer.
 
 ### `IPAD-L1-140` — Compteur autonome après réutilisation interalbum
 
-- Candidat : `À figer`.
+- Candidat : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`.
 - Exigences : `3:PHO-002`, `3:PHO-009`, `3:PHO-015` à `3:PHO-019`.
 - Préconditions : album A avec exactement deux occurrences d’une photo ; album
   B sans cette empreinte et avec une page vide.

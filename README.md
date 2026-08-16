@@ -27,7 +27,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 - Implémentation : après les échecs de compilation de `06c30b9…` et
   `84ec71e…`, le candidat
   `638c659925e1b036570484a98c0fc016602687c9` a compilé et sa campagne iPad a
-  confirmé 19 parcours. Le prochain correctif traite les quatre écarts observés
+  confirmé 19 parcours. Le correctif
+  `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` traite les quatre écarts observés
   sur l’adaptation de l’inspecteur, les dates de corbeille, les signaux de Vue
   globale et les gestes du canevas ; il clarifie aussi les procédures régionale
   et interalbum. Le candidat et le canevas multiélément restent reconstruits
@@ -43,8 +44,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 - Validation actuelle : 124 tests du noyau multiplateforme et la syntaxe
   AppModule sont validés sous WSL. Les campagnes iPad `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
-  4 échecs et 2 blocages de procédure sur `638c659…`. Après gel du prochain
-  candidat, exécuter `134`, puis `135…140` selon
+  4 échecs et 2 blocages de procédure sur `638c659…`. Sur le candidat exact
+  `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`, exécuter `134`, puis `135…140` selon
   [`suivi_tests.md`](suivi_tests.md).
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application : App Playground Swift existant
