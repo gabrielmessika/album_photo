@@ -21,7 +21,7 @@ Les régressions `134…140` sur
 `48e9fef9c317835f605df430c4112320d8cb66c3` : `141` est réussi par preuve
 indirecte de lancement et `142` échoue encore en portrait sur le débordement
 global. Les remplacements `143…144` visent
-`101e2948252f51991933b8d61f767f52aa6b629d` et restent ⚪ `NON TESTÉ`. Aucun
+`101e2948252f51991933b8d61f767f52aa6b629d` et sont 🟢 `RÉUSSI`. Aucun
 scénario d'acceptation complet n'est déclaré réussi par ce document.
 
 ## Convention et frontière des lots
@@ -100,7 +100,7 @@ l'exigence ou du scénario complet.
 | Registre public : `CAT-001` à `CAT-009`, `SHR-010` à `SHR-013` pour le contrat publié | `A-CATALOG`, `A-SHAPE`, `A-MANIFEST` | `APPLE-L1-010` | Les trois fonds et six formes sont figés. Les 40 stickers, six cadres et goldens neuf zones doivent être ajoutés avant leur build Lot 2. |
 | Prototype CloudKit page par page : `SYN-001` à `SYN-007` | `A-NAV-CLOUD` | `APPLE-L0-008` | Planificateur pur seulement ; entitlements, zone CloudKit et comportement réseau restent différés. |
 | Registre et discipline de test : `TST-001`, `TST-002`, `TST-005` à `TST-007`, `TST-011`, `TST-012`, `TST-016` | Cette matrice, suites `Tests/AlbumPhotoCoreTests`, `A-MANIFEST` | Corpus et `IPAD-L1-063` à `IPAD-L1-144`; `APPLE-L1-004` | La présence du lien satisfait la traçabilité structurelle, pas le résultat du test. |
-| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-144`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | La quatrième campagne ciblée est enregistrée ; `143…144` restent non testés sur `101e294…`. |
+| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-144`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | Les campagnes ciblées sont enregistrées ; `143…144` réussissent sur `101e294…`, sans qualifier les validations Apple différées. |
 
 ## Matrice des exigences fonctionnelles du lot 1
 
@@ -114,7 +114,7 @@ l'exigence ou du scénario complet.
 | Vue globale `GLO-001` à `GLO-009` | `A-PAGE`, `A-GEOM` pour l'état sans mutation | `IPAD-L1-071`, `IPAD-L1-072`, `IPAD-L1-095`, `IPAD-L1-096`, `IPAD-L1-137` | Badge actif et insertion intercartes validés par `137` ; autres appareils non qualifiés. |
 | Fonds `BG-001` à `BG-010`, `BG-012` à `BG-015`, `DAT-039` | `A-PAGE`, `A-DOM`, `A-CATALOG`, `A-STORE` | `IPAD-L1-073`, `IPAD-L1-095`, `APPLE-L1-010` | `BG-006`, `BG-008` sont partiels jusqu'aux injections ; clauses texte de `BG-011`/`BG-016` attendent Lot 2. |
 | Couverture `COV-001` à `COV-007`, `DAT-005` | `A-PAGE`, `A-STORE` | `IPAD-L1-074`, `APPLE-L1-013` | Cache et fidélité composite sont différés ; styles Lot 2 de `COV-002` restent hors interface. |
-| Photothèque interne `PHO-001` à `PHO-013`, `PHO-015` à `PHO-019`, `DAT-036`, `DAT-043` | `A-PHOTO`, `A-REUSE`, `A-DOM`, `A-RAW`, `A-STORE` | `IPAD-L1-075`, `IPAD-L1-077` à `IPAD-L1-081`, `IPAD-L1-111`, `IPAD-L1-121`, `IPAD-L1-124`, `IPAD-L1-125`, `IPAD-L1-135`, `IPAD-L1-140`, `IPAD-L1-142`, `IPAD-L1-144`, `APPLE-L1-005` | Déduplication, modes et compteur interalbum ont une preuve ; seule la présentation de grille modifiée attend `144`. `PHO-014`, couplé à Auto, reste Lot 2. |
+| Photothèque interne `PHO-001` à `PHO-013`, `PHO-015` à `PHO-019`, `DAT-036`, `DAT-043` | `A-PHOTO`, `A-REUSE`, `A-DOM`, `A-RAW`, `A-STORE` | `IPAD-L1-075`, `IPAD-L1-077` à `IPAD-L1-081`, `IPAD-L1-111`, `IPAD-L1-121`, `IPAD-L1-124`, `IPAD-L1-125`, `IPAD-L1-135`, `IPAD-L1-140`, `IPAD-L1-142`, `IPAD-L1-144`, `APPLE-L1-005` | Déduplication, modes, compteur interalbum et présentation finale ont une preuve iPad ; `PHO-014`, couplé à Auto, reste Lot 2. |
 | Sources Apple `APL-001` à `APL-008` | Ordre et atomicité : `A-PHOTO`; validation metadata : `A-DOM`/`A-RAW` | `IPAD-L1-075` à `IPAD-L1-077`, `IPAD-L1-107` | Sélecteurs, progression et nouvelles tentatives sont manuels. |
 | Formats `FMT-001` à `FMT-007`, `DAT-010`, `DAT-043` | `A-DOM`, `A-RAW`, `A-MANIFEST` | `IPAD-L1-076`, `IPAD-L1-077`, `APPLE-L1-005` | `FMT-008` dépend du PDF Lot 3. |
 | Cadres photo `FRM-001` à `FRM-009` | `A-PHOTO`, `A-GEOM` | `IPAD-L1-080` à `IPAD-L1-083`, `IPAD-L1-096`, `IPAD-L1-104` | Rendu, libellés et commandes sont à vérifier sur iPad. |
@@ -126,7 +126,7 @@ l'exigence ou du scénario complet.
 | Sauvegarde `SAV-001` à `SAV-004` | Journal et clôture : `A-STORE`, `A-CONC` | `IPAD-L1-093`, `IPAD-L1-109`, `IPAD-L1-129`, `APPLE-L1-011` | Fin de flux tactile réussie sur Apple ; seul l’échec durable injecté reste différé. |
 | Presse-papiers `CLP-001` à `CLP-006` | `A-CLIP` | `IPAD-L1-083`, `IPAD-L1-130` | Portée de session validée pour le cadre photo public ; texte/sticker Lot 2. |
 | Qualité `QLT-001` à `QLT-006` | `A-GEOM` | `IPAD-L1-097`, `IPAD-L1-112`, `IPAD-L1-139`, `APPLE-L1-006` | États et procédure régionale validés par `139` ; export de `QLT-006` attend Lot 3. |
-| Interface éditeur `EDT-001` à `EDT-021` applicable aux panneaux Photos/Fonds | État métier indirect : `A-PHOTO`, `A-PAGE`, `A-GEOM` | `IPAD-L1-113`, `IPAD-L1-118` à `IPAD-L1-120`, `IPAD-L1-127`, `IPAD-L1-131`, `IPAD-L1-135`, `IPAD-L1-142`, `IPAD-L1-144`, `APPLE-L1-003` | Commandes et groupes sont validés ; `142` échoue encore et l’adaptation finale attend `144`, panneaux Lots 2/3 exclus. |
+| Interface éditeur `EDT-001` à `EDT-021` applicable aux panneaux Photos/Fonds | État métier indirect : `A-PHOTO`, `A-PAGE`, `A-GEOM` | `IPAD-L1-113`, `IPAD-L1-118` à `IPAD-L1-120`, `IPAD-L1-127`, `IPAD-L1-131`, `IPAD-L1-135`, `IPAD-L1-142`, `IPAD-L1-144`, `APPLE-L1-003` | L’adaptation Photos/Fonds est validée sur l’iPad 8 par `144`; panneaux du Lot 2 et matrice iPhone/Xcode encore exclus. |
 | Accessibilité `ACC-001` à `ACC-008`, `ACC-011` à `ACC-017`, `ACC-020`, `ACC-021` | Description et géométrie : `A-DOM`, `A-PHOTO`, `A-GEOM` | `IPAD-L1-081`, `IPAD-L1-089`, `IPAD-L1-098` à `IPAD-L1-100`, `IPAD-L1-105`, `APPLE-L1-007` | Inspection exhaustive non exécutée. |
 | Localisation `L10N-001` à `L10N-005` | Aucun test de catalogue de chaînes | `IPAD-L1-097` à `IPAD-L1-100`, `IPAD-L1-112`, `IPAD-L1-136`, `IPAD-L1-139`, `APPLE-L1-002` | Dates et séparateurs validés par `136`/`139` ; écart explicite pour `L10N-002`. |
 | Capacité/performance Lot 1 : `PAG-012`, `LOC-017`, `LOC-018`, `PERF-007` à `PERF-009`, `PERF-011`, `PERF-015` à `PERF-017` | `A-CAP`, hachage/vérification en flux `A-STORE`/`A-REUSE`, plus tests de déduplication `A-PHOTO`/`A-RAW` | `IPAD-L1-116`, `IPAD-L1-117`, `IPAD-L1-121`, `IPAD-L1-122`, `APPLE-L1-005`, `APPLE-L1-006` | Les quatre contrôles iPad sont réussis sans mesures jointes ; enveloppe 5 Go, mémoire et Instruments restent différés. |
@@ -221,8 +221,8 @@ les étapes manuelles.
 | `IPAD-L1-140` | `PHO-002`, `PHO-009`, `PHO-015` à `PHO-019` | 🟢 Parcours métier et compteurs validés ; présentation désormais reprise par `144` |
 | `IPAD-L1-141` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | 🟢 Compilation de `48e9fef…` prouvée indirectement par son exécution fonctionnelle |
 | `IPAD-L1-142` | `EDT-002`, `EDT-006`, `EDT-020` photo, `PHO-002`, `PHO-011` à `PHO-013`, `PHO-019`, `ACC-021` | 🔴 Débordement global encore observé en portrait |
-| `IPAD-L1-143` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | Compilation Swift Playgrounds de `101e294…` indispensable |
-| `IPAD-L1-144` | `EDT-002`, `EDT-006`, `EDT-020` photo, `PHO-002`, `PHO-011` à `PHO-013`, `PHO-019`, `ACC-021` | Revue UI Apple portrait/paysage ciblant rail, inspecteur, grille et commandes |
+| `IPAD-L1-143` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | 🟢 Compilation Swift Playgrounds prouvée indirectement sur `101e294…` |
+| `IPAD-L1-144` | `EDT-002`, `EDT-006`, `EDT-020` photo, `PHO-002`, `PHO-011` à `PHO-013`, `PHO-019`, `ACC-021` | 🟢 Rail, inspecteur, grille et commandes validés en portrait/paysage |
 
 ## Index des validations Apple différées
 
@@ -280,8 +280,8 @@ ou « contrat » ne signifie jamais que le scénario utilisateur complet passe.
   `094…101` et `103…108` devenues obsolètes ne prouvent pas les correctifs.
   `IPAD-L1-102`, `109…131` et `133` sont enregistrés sur `638c659…` ; `134` et
   `136…140` réussissent sur `7a0f2a4…`. Sur `48e9fef…`, `141` réussit
-  indirectement et `142` échoue ; ils sont relayés par `IPAD-L1-143…144`,
-  encore non testés sur `101e294…`.
+  indirectement et `142` échoue ; `IPAD-L1-143…144` réussissent ensuite sur
+  `101e294…` et clôturent cette régression iPad.
 - Les validations Apple listées ci-dessus sont différées et ne peuvent pas être
   remplacées par les tests Linux.
 - `L10N-002` n'a pas de test de catalogue de chaînes identifié.

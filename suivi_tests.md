@@ -20,10 +20,10 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif compilé et testé lors de la deuxième campagne | `638c659925e1b036570484a98c0fc016602687c9` |
 | Correctif compilé et testé lors de la troisième campagne | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — 6 réussites, 1 échec |
 | Candidat testé lors de la quatrième campagne ciblée | `48e9fef9c317835f605df430c4112320d8cb66c3` — `141` réussi implicitement, `142` échoué en portrait |
-| Nouveau candidat d’adaptation à tester | `101e2948252f51991933b8d61f767f52aa6b629d` ; fiches `IPAD-L1-143…144` préparées |
+| Candidat d’adaptation validé lors de la cinquième campagne ciblée | `101e2948252f51991933b8d61f767f52aa6b629d` — `143…144` réussis |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
-| Copie à tester après la nouvelle adaptation | Doit porter exactement `101e2948252f51991933b8d61f767f52aa6b629d` |
+| Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
 | Appareil | iPad 8e génération (déclaré « iPad 8 ») |
 | iPadOS | 26.5.2 |
 | Swift Playgrounds | 4.7 |
@@ -174,8 +174,10 @@ conserve l’échec de `84ec71e…`. Sur
 sont réussies ; `135` échoue encore sur l’adaptation. Les nouvelles fiches
 `141…142` ont été exécutées sur
 `48e9fef9c317835f605df430c4112320d8cb66c3` : `141` est réussi par preuve
-indirecte de lancement et `142` échoue en portrait. `143…144` sont initialisées
-⚪ `NON TESTÉ` pour `101e2948252f51991933b8d61f767f52aa6b629d`.
+indirecte de lancement et `142` échoue en portrait. Sur
+`101e2948252f51991933b8d61f767f52aa6b629d`, `143` et `144` sont réussis :
+la compilation, le rail Photos/Fonds, l’inspecteur, les trois colonnes et les
+commandes adaptatives sont confirmés par le retour « tout est ok maintenant ».
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -259,8 +261,8 @@ indirecte de lancement et `142` échoue en portrait. `143…144` sont initialis�
 | `IPAD-L1-140` | Compteur autonome après réutilisation interalbum | `3:PHO-002`, `3:PHO-015` à `3:PHO-019` | 🟢 `RÉUSSI` — présentation de grille désormais à rejouer sous `144` |
 | `IPAD-L1-141` | Compilation du candidat `48e9fef…` | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | 🟢 `RÉUSSI` — preuve indirecte par l’exécution fonctionnelle de `142` |
 | `IPAD-L1-142` | Trois colonnes contraintes et action locale adaptative | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — portrait toujours débordant, accès Photos/Fonds absent |
-| `IPAD-L1-143` | Compilation du correctif de largeur globale | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-144` | Rail, inspecteur et commandes du canevas entièrement adaptatifs | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-143` | Compilation du correctif de largeur globale | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | 🟢 `RÉUSSI` — preuve indirecte par l’exécution fonctionnelle de `144` |
+| `IPAD-L1-144` | Rail, inspecteur et commandes du canevas entièrement adaptatifs | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | 🟢 `RÉUSSI` |
 
 ## Fiches détaillées
 
@@ -2397,9 +2399,13 @@ repousser hors écran le rail et l’inspecteur fixe. Le candidat exact est
   l’app puis ouvrir un album jusqu’au canevas et à l’inspecteur Photos.
 - Résultat attendu : aucune erreur ni avertissement bloquant ; le store et les
   albums précédents restent lisibles.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : capture du build réussi, album ouvert et empreinte Git.
-- Environnement : à renseigner intégralement.
+- Résultat : 🟢 `RÉUSSI` — l’app a nécessairement compilé et démarré pour
+  permettre la validation fonctionnelle de `144`.
+- Preuve : retour utilisateur « tout est ok maintenant » après exécution du
+  candidat ; aucune capture distincte du build n’a été fournie, la preuve de
+  compilation reste donc indirecte.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ;
+  16 août 2026 ; Paris, France ; français (France).
 
 ### `IPAD-L1-144` — Rail, inspecteur et commandes entièrement contenus
 
@@ -2421,10 +2427,11 @@ repousser hors écran le rail et l’inspecteur fixe. Le candidat exact est
   normale. En paysage, le groupe tient sur une rangée et les trois colonnes
   restent entières. L’icône d’ajout est annoncée « Ajouter une photo » et ouvre
   le mode de choix. Noms, badges et trois bandeaux restent entièrement contenus.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : captures portrait/paysage montrant le rail, les trois colonnes, les
-  bords du canevas et l’intégralité des commandes locales.
-- Environnement : à renseigner intégralement.
+- Résultat : 🟢 `RÉUSSI` — toutes les attentes de la fiche sont confirmées.
+- Preuve : retour utilisateur explicite « tout est ok maintenant » en réponse
+  au correctif ciblé ; aucune capture supplémentaire n’a été jointe.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ;
+  16 août 2026 ; Paris, France ; français (France).
 
 ## Qualification différée Apple/macOS/Xcode
 
@@ -2597,6 +2604,7 @@ identifiants lors du Lot 2.
 | `IPAD-L1-102`, `109…131`, `133` sur `638c659…` | 16 août 2026 | 25 fiches : 19 réussies, 4 échouées (`113`, `123`, `126`, `128`) et 2 bloquées (`112`, `124`) | Retours par identifiant et captures `IMG_4184.jpg` portrait / `IMG_4185.jpg` paysage conservées hors Git | Corrections et procédures de remplacement `IPAD-L1-134…140` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; Paris, France ; français (France) |
 | `IPAD-L1-134…140` sur `7a0f2a4…` | 16 août 2026 | 7 fiches : 6 réussies ; `135` échoue encore sur la grille et le bouton local | Retour explicite « tout est ok sauf `135` » ; `IMG_4186.jpg` portrait et `IMG_4187.jpg` paysage conservées hors Git | Grille et action locale reprises par `IPAD-L1-141…142` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; Paris, France ; français (France) |
 | `IPAD-L1-141…142` sur `48e9fef…` | 16 août 2026 | 2 fiches : `141` réussi par preuve indirecte de lancement ; `142` échoué en portrait | Retour : troisième colonne presque hors écran, bouton d’ajout coupé à gauche et accès Photos/Fonds absent ; aucun résultat paysage distinct extrapolé | Largeur minimale de tout le groupe du canevas reprise par `IPAD-L1-143…144` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; Paris, France ; français (France) |
+| `IPAD-L1-143…144` sur `101e294…` | 16 août 2026 | 2 fiches réussies ; compilation prouvée indirectement et adaptation portrait/paysage confirmée | Retour explicite « tout est ok maintenant » sur le seul correctif restant ; aucune capture supplémentaire jointe | Passage autorisé à un incrément interne du Lot 2 ; qualifications Apple différées inchangées | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; Paris, France ; français (France) |
 
 ## Règle de clôture
 
