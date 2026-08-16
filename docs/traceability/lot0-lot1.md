@@ -20,8 +20,8 @@ Les régressions `134…140` sur
 `135` sur l’adaptation Photos. Les remplacements `141…142` visent
 `48e9fef9c317835f605df430c4112320d8cb66c3` : `141` est réussi par preuve
 indirecte de lancement et `142` échoue encore en portrait sur le débordement
-global. Les remplacements `143…144` visent le nouveau candidat à figer et
-restent ⚪ `NON TESTÉ`. Aucun
+global. Les remplacements `143…144` visent
+`101e2948252f51991933b8d61f767f52aa6b629d` et restent ⚪ `NON TESTÉ`. Aucun
 scénario d'acceptation complet n'est déclaré réussi par ce document.
 
 ## Convention et frontière des lots
@@ -100,7 +100,7 @@ l'exigence ou du scénario complet.
 | Registre public : `CAT-001` à `CAT-009`, `SHR-010` à `SHR-013` pour le contrat publié | `A-CATALOG`, `A-SHAPE`, `A-MANIFEST` | `APPLE-L1-010` | Les trois fonds et six formes sont figés. Les 40 stickers, six cadres et goldens neuf zones doivent être ajoutés avant leur build Lot 2. |
 | Prototype CloudKit page par page : `SYN-001` à `SYN-007` | `A-NAV-CLOUD` | `APPLE-L0-008` | Planificateur pur seulement ; entitlements, zone CloudKit et comportement réseau restent différés. |
 | Registre et discipline de test : `TST-001`, `TST-002`, `TST-005` à `TST-007`, `TST-011`, `TST-012`, `TST-016` | Cette matrice, suites `Tests/AlbumPhotoCoreTests`, `A-MANIFEST` | Corpus et `IPAD-L1-063` à `IPAD-L1-144`; `APPLE-L1-004` | La présence du lien satisfait la traçabilité structurelle, pas le résultat du test. |
-| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-144`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | La quatrième campagne ciblée est enregistrée ; `143…144` restent non testés sur le nouveau candidat. |
+| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-144`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | La quatrième campagne ciblée est enregistrée ; `143…144` restent non testés sur `101e294…`. |
 
 ## Matrice des exigences fonctionnelles du lot 1
 
@@ -221,7 +221,7 @@ les étapes manuelles.
 | `IPAD-L1-140` | `PHO-002`, `PHO-009`, `PHO-015` à `PHO-019` | 🟢 Parcours métier et compteurs validés ; présentation désormais reprise par `144` |
 | `IPAD-L1-141` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | 🟢 Compilation de `48e9fef…` prouvée indirectement par son exécution fonctionnelle |
 | `IPAD-L1-142` | `EDT-002`, `EDT-006`, `EDT-020` photo, `PHO-002`, `PHO-011` à `PHO-013`, `PHO-019`, `ACC-021` | 🔴 Débordement global encore observé en portrait |
-| `IPAD-L1-143` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | Compilation Swift Playgrounds du nouveau candidat indispensable |
+| `IPAD-L1-143` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | Compilation Swift Playgrounds de `101e294…` indispensable |
 | `IPAD-L1-144` | `EDT-002`, `EDT-006`, `EDT-020` photo, `PHO-002`, `PHO-011` à `PHO-013`, `PHO-019`, `ACC-021` | Revue UI Apple portrait/paysage ciblant rail, inspecteur, grille et commandes |
 
 ## Index des validations Apple différées
@@ -281,7 +281,7 @@ ou « contrat » ne signifie jamais que le scénario utilisateur complet passe.
   `IPAD-L1-102`, `109…131` et `133` sont enregistrés sur `638c659…` ; `134` et
   `136…140` réussissent sur `7a0f2a4…`. Sur `48e9fef…`, `141` réussit
   indirectement et `142` échoue ; ils sont relayés par `IPAD-L1-143…144`,
-  encore non testés sur le nouveau candidat.
+  encore non testés sur `101e294…`.
 - Les validations Apple listées ci-dessus sont différées et ne peuvent pas être
   remplacées par les tests Linux.
 - `L10N-002` n'a pas de test de catalogue de chaînes identifié.

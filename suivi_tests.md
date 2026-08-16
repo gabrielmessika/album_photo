@@ -20,10 +20,10 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif compilé et testé lors de la deuxième campagne | `638c659925e1b036570484a98c0fc016602687c9` |
 | Correctif compilé et testé lors de la troisième campagne | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — 6 réussites, 1 échec |
 | Candidat testé lors de la quatrième campagne ciblée | `48e9fef9c317835f605df430c4112320d8cb66c3` — `141` réussi implicitement, `142` échoué en portrait |
-| Nouveau candidat d’adaptation à tester | À figer après le commit d’implémentation ; fiches `IPAD-L1-143…144` préparées |
+| Nouveau candidat d’adaptation à tester | `101e2948252f51991933b8d61f767f52aa6b629d` ; fiches `IPAD-L1-143…144` préparées |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
-| Copie à tester après la nouvelle adaptation | Doit porter exactement l’empreinte qui sera injectée dans `IPAD-L1-143…144` |
+| Copie à tester après la nouvelle adaptation | Doit porter exactement `101e2948252f51991933b8d61f767f52aa6b629d` |
 | Appareil | iPad 8e génération (déclaré « iPad 8 ») |
 | iPadOS | 26.5.2 |
 | Swift Playgrounds | 4.7 |
@@ -52,8 +52,8 @@ Les remplacements `141…142` visent le candidat exact
 l’éditeur prouve indirectement `141`, mais `142` échoue encore en portrait :
 la troisième colonne est presque entièrement hors écran, le bouton local est
 coupé à gauche et l’accès permettant de choisir Photos ou Fonds n’est plus
-affiché dans l’état signalé. Les remplacements `143…144` visent le nouveau
-candidat à figer.
+affiché dans l’état signalé. Les remplacements `143…144` visent le candidat
+exact `101e2948252f51991933b8d61f767f52aa6b629d`.
 
 ## Mode de réponse
 
@@ -175,7 +175,7 @@ sont réussies ; `135` échoue encore sur l’adaptation. Les nouvelles fiches
 `141…142` ont été exécutées sur
 `48e9fef9c317835f605df430c4112320d8cb66c3` : `141` est réussi par preuve
 indirecte de lancement et `142` échoue en portrait. `143…144` sont initialisées
-⚪ `NON TESTÉ` pour le nouveau candidat à figer.
+⚪ `NON TESTÉ` pour `101e2948252f51991933b8d61f767f52aa6b629d`.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -2382,12 +2382,12 @@ Le correctif suivant rend adaptatif le groupe complet situé sous le canevas.
 Il conserve les variantes sur une rangée lorsqu’elles tiennent et utilise en
 dernier recours deux rangées de hauteur normale : ajout par icône et zoom,
 puis navigation. Cette largeur minimale réduite doit empêcher le canevas de
-repousser hors écran le rail et l’inspecteur fixe. Le candidat exact sera figé
-dans les deux fiches après le commit d’implémentation.
+repousser hors écran le rail et l’inspecteur fixe. Le candidat exact est
+`101e2948252f51991933b8d61f767f52aa6b629d`.
 
 ### `IPAD-L1-143` — Compilation du correctif de largeur globale
 
-- Candidat : à figer après le commit d’implémentation.
+- Candidat : `101e2948252f51991933b8d61f767f52aa6b629d`.
 - Spécification : 3.0, avec clarification de `3:EDT-002` et `3:EDT-020` dans
   le candidat.
 - Exigences : `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005`.
@@ -2403,7 +2403,7 @@ dans les deux fiches après le commit d’implémentation.
 
 ### `IPAD-L1-144` — Rail, inspecteur et commandes entièrement contenus
 
-- Candidat : à figer après le commit d’implémentation.
+- Candidat : `101e2948252f51991933b8d61f767f52aa6b629d`.
 - Exigences : `3:EDT-002`, `3:EDT-006`, sous-périmètre photo de `3:EDT-020`,
   `3:PHO-002`, `3:PHO-011` à `3:PHO-013`, `3:PHO-019`, `3:ACC-021`.
 - Préconditions : au moins huit photos avec des noms longs et des compteurs
