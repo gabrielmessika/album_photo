@@ -12,8 +12,9 @@ commit exact restent ceux enregistrés dans `suivi_tests.md` et
 mais le candidat correctif rend les preuves concernées insuffisantes. Le commit
 `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` a échoué à la compilation Apple ;
 les régressions `109…131`, la fiche `102` et le nouveau contrôle de compilation
-`132` attendent le prochain commit figé et restent ⚪ `NON TESTÉ`. Aucun scénario
-d'acceptation n'est donc déclaré réussi par ce document.
+`132` ciblent désormais le correctif figé
+`84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` et restent ⚪ `NON TESTÉ`. Aucun
+scénario d'acceptation n'est donc déclaré réussi par ce document.
 
 ## Convention et frontière des lots
 
@@ -257,8 +258,9 @@ ou « contrat » ne signifie jamais que le scénario utilisateur complet passe.
 
 - Les résultats `IPAD-L1-063…093` visent l’ancienne copie ; les fiches
   `094…101` et `103…108` devenues obsolètes ne prouvent pas le correctif.
-  `IPAD-L1-102` reste non testé, les 23 régressions `109…131` attendent le
-  commit correctif figé et `IPAD-L1-132` doit d’abord en prouver la compilation.
+  `IPAD-L1-102` reste non testé, les 23 régressions `109…131` ciblent
+  `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` et `IPAD-L1-132` doit d’abord en
+  prouver la compilation.
 - Les validations Apple listées ci-dessus sont différées et ne peuvent pas être
   remplacées par les tests Linux.
 - `L10N-002` n'a pas de test de catalogue de chaînes identifié.
