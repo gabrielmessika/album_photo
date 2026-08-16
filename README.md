@@ -24,12 +24,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   dynamique sont confirmés. La frontière des lots est également figée :
   création photo locale au Lot 1, composition Photoweb complète au Lot 2,
   lecture et documents au Lot 3 (`DEC-38`).
-- Implémentation : le correctif `06c30b9…` a révélé deux erreurs de compilation
-  Apple, désormais corrigées dans le commit
-  `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e`. Le candidat et le canevas
-  multiélément restent reconstruits from scratch, en conservant uniquement
-  l’enveloppe de l’App Playground. Le prototype 2.1 reste historique. La
-  nouvelle app utilise une
+- Implémentation : les correctifs `06c30b9…` puis `84ec71e…` ont révélé des
+  erreurs de compilation Apple. Le dernier appel incomplet dans
+  `AlbumCoverView` est corrigé dans l’arbre de travail à figer. Le candidat et
+  le canevas multiélément restent reconstruits from scratch, en conservant
+  uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
+  historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
   migration. Les panneaux publics de ce candidat sont strictement `Photos`
@@ -38,9 +38,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : 123 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La première campagne iPad `063…093`
-  est enregistrée ; le candidat `06c30b9…` ne compile pas avec le SDK Apple.
-  Exécuter `132`, puis `102` et `109…131` sur le correctif minimal exact indiqué
-  dans [`suivi_tests.md`](suivi_tests.md).
+  est enregistrée ; les candidats `06c30b9…` et `84ec71e…` ne compilent pas
+  avec le SDK Apple. Après gel du correctif minimal, exécuter `133`, puis `102`
+  et `109…131` selon [`suivi_tests.md`](suivi_tests.md).
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application : App Playground Swift existant
   [`Albumzh.swiftpm`](Albumzh.swiftpm), dont le manifeste généré par Swift

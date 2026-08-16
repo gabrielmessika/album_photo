@@ -125,12 +125,18 @@ struct AlbumCoverView: View {
             }
             if case let .catalog(reference) = page.background,
                let hash = reference.fallbackContentHash {
-                _ = await imageCache.catalogImage(for: hash)
+                _ = await imageCache.catalogImage(
+                    for: hash,
+                    maximumPixelSize: 480
+                )
             }
         }
 
         if let defaultHash = BackgroundCatalog.defaultTheme.fallbackContentHash {
-            _ = await imageCache.catalogImage(for: defaultHash)
+            _ = await imageCache.catalogImage(
+                for: defaultHash,
+                maximumPixelSize: 480
+            )
         }
     }
 
