@@ -19,10 +19,10 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Second candidat rejeté à la compilation Apple | `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` — deux appels de préchargement dans `AlbumCoverView` omettaient encore `maximumPixelSize` |
 | Correctif compilé et testé lors de la deuxième campagne | `638c659925e1b036570484a98c0fc016602687c9` |
 | Correctif compilé et testé lors de la troisième campagne | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — 6 réussites, 1 échec |
-| Prochain candidat d’adaptation | À figer après commit ; fiches `IPAD-L1-141…142` préparées |
+| Candidat d’adaptation à tester | `48e9fef9c317835f605df430c4112320d8cb66c3` ; fiches `IPAD-L1-141…142` préparées |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
-| Copie à tester après la nouvelle adaptation | Doit porter exactement le prochain candidat une fois figé |
+| Copie à tester après la nouvelle adaptation | Doit porter exactement `48e9fef9c317835f605df430c4112320d8cb66c3` |
 | Appareil | iPad 8e génération (déclaré « iPad 8 ») |
 | iPadOS | 26.5.2 |
 | Swift Playgrounds | 4.7 |
@@ -46,7 +46,8 @@ a ensuite compilé et les procédures `IPAD-L1-102`, `IPAD-L1-109…131` et
 corrections issues de ces retours dans le candidat exact
 `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`. Ce candidat a ensuite réussi
 `134` et `136…140` ; `135` reste en échec sur la grille et l’action locale.
-Les remplacements `141…142` recevront l’empreinte du prochain commit.
+Les remplacements `141…142` visent le candidat exact
+`48e9fef9c317835f605df430c4112320d8cb66c3`.
 
 ## Mode de réponse
 
@@ -165,7 +166,8 @@ pas satisfait sa précondition d’une occurrence dans la cible. `IPAD-L1-132`
 conserve l’échec de `84ec71e…`. Sur
 `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`, les fiches `134` et `136…140`
 sont réussies ; `135` échoue encore sur l’adaptation. Les nouvelles fiches
-`141…142` sont initialisées ⚪ `NON TESTÉ` pour le prochain candidat.
+`141…142` sont initialisées ⚪ `NON TESTÉ` pour
+`48e9fef9c317835f605df430c4112320d8cb66c3`.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -247,7 +249,7 @@ sont réussies ; `135` échoue encore sur l’adaptation. Les nouvelles fiches
 | `IPAD-L1-138` | Gestes canevas sur vide et cadres non sélectionnés | `3:ZOM-003` à `3:ZOM-006`, `3:NAV-005` | 🟢 `RÉUSSI` |
 | `IPAD-L1-139` | Qualité et séparateurs régionaux explicités | `3:QLT-001` à `3:QLT-006`, `3:L10N-005` | 🟢 `RÉUSSI` |
 | `IPAD-L1-140` | Compteur autonome après réutilisation interalbum | `3:PHO-002`, `3:PHO-015` à `3:PHO-019` | 🟢 `RÉUSSI` — présentation de grille à rejouer sous `142` |
-| `IPAD-L1-141` | Compilation du prochain correctif adaptatif | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-141` | Compilation du candidat `48e9fef…` | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-142` | Trois colonnes contraintes et action locale adaptative | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
@@ -2314,17 +2316,17 @@ le code ou la preuve vient de changer.
 
 ## Régression après le second échec d’adaptation de `135`
 
-Les deux fiches suivantes viseront le même prochain candidat exact. Son
-empreinte remplacera la mention `À figer` après le commit d’implémentation.
-Elles ne rouvrent pas les réussites `136…140`, sauf la seule présentation de
-grille partagée avec `140` et explicitement reprise par `142`.
+Les deux fiches suivantes visent le même candidat exact
+`48e9fef9c317835f605df430c4112320d8cb66c3`. Elles ne rouvrent pas les
+réussites `136…140`, sauf la seule présentation de grille partagée avec `140`
+et explicitement reprise par `142`.
 
 ### `IPAD-L1-141` — Compilation du correctif adaptatif final
 
-- Candidat : `À figer`.
+- Candidat : `48e9fef9c317835f605df430c4112320d8cb66c3`.
 - Spécification : 3.0, avec clarification de `3:EDT-020` dans le candidat.
 - Exigences : `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005`.
-- Préconditions : copier exactement le prochain candidat dans Swift
+- Préconditions : copier exactement `48e9fef9c317835f605df430c4112320d8cb66c3` dans Swift
   Playgrounds sans modification locale et conserver le store précédent.
 - Étapes : effacer les anciens diagnostics, compiler `Albumzh.swiftpm`, lancer
   l’app puis ouvrir un album jusqu’au canevas et à l’inspecteur Photos.
@@ -2336,7 +2338,7 @@ grille partagée avec `140` et explicitement reprise par `142`.
 
 ### `IPAD-L1-142` — Trois colonnes contraintes et action locale sans troncature
 
-- Candidat : `À figer`.
+- Candidat : `48e9fef9c317835f605df430c4112320d8cb66c3`.
 - Exigences : `3:EDT-002`, `3:EDT-006`, sous-périmètre photo de `3:EDT-020`,
   `3:PHO-002`, `3:PHO-011` à `3:PHO-013`, `3:PHO-019`, `3:ACC-021`.
 - Préconditions : au moins huit photos avec des noms longs et des compteurs

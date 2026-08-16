@@ -31,9 +31,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` compile et réussit six des sept
   régressions `134…140` : dates, pages, gestes, qualité et réutilisation
   interalbum sont confirmés. `135` révèle encore des miniatures et une action
-  locale tronquées ; le prochain correctif contraint trois colonnes et adapte
-  le libellé du bouton sans agrandir la barre. Le candidat et le canevas
-  multiélément restent reconstruits from scratch, en conservant
+  locale tronquées ; `48e9fef9c317835f605df430c4112320d8cb66c3`
+  contraint trois colonnes et adapte le libellé du bouton sans agrandir la
+  barre. Le candidat et le canevas multiélément restent reconstruits from
+  scratch, en conservant
   uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
@@ -46,8 +47,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   AppModule sont validés sous WSL. Les campagnes iPad `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur
-  `7a0f2a4…` compte 6 réussites et l’échec `135`. Après gel du prochain
-  candidat, exécuter `141`, puis uniquement `142` selon
+  `7a0f2a4…` compte 6 réussites et l’échec `135`. Sur le candidat exact
+  `48e9fef9c317835f605df430c4112320d8cb66c3`, exécuter `141`, puis uniquement
+  `142` selon
   [`suivi_tests.md`](suivi_tests.md).
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application : App Playground Swift existant
