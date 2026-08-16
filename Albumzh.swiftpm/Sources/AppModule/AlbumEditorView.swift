@@ -227,27 +227,43 @@ private struct AlbumEditorScene: View {
 
             EditablePageCanvas(model: model)
 
-            HStack(spacing: 14) {
-                if model.cropDraft == nil {
-                    adaptiveAddPhotoButton
-                }
-                CanvasZoomControls(model: model)
-                Divider().frame(height: 26)
-                pageNavigation
-            }
+            pageWorkspaceCommands
             .padding(.horizontal)
             .padding(.vertical, 8)
             .background(.bar)
         }
     }
 
-    private var adaptiveAddPhotoButton: some View {
+    private var pageWorkspaceCommands: some View {
         ViewThatFits(in: .horizontal) {
-            addPhotoButton(title: "Ajouter une photo")
+            pageWorkspaceCommandRow(addPhotoTitle: "Ajouter une photo")
                 .fixedSize(horizontal: true, vertical: false)
-            addPhotoButton(title: "Ajouter")
+            pageWorkspaceCommandRow(addPhotoTitle: "Ajouter")
                 .fixedSize(horizontal: true, vertical: false)
-            addPhotoButton(title: nil)
+            pageWorkspaceCommandRow(addPhotoTitle: nil)
+                .fixedSize(horizontal: true, vertical: false)
+            VStack(spacing: 6) {
+                HStack(spacing: 14) {
+                    if model.cropDraft == nil {
+                        addPhotoButton(title: nil)
+                    }
+                    CanvasZoomControls(model: model)
+                }
+                pageNavigation
+            }
+            .fixedSize(horizontal: true, vertical: false)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func pageWorkspaceCommandRow(addPhotoTitle: String?) -> some View {
+        HStack(spacing: 14) {
+            if model.cropDraft == nil {
+                addPhotoButton(title: addPhotoTitle)
+            }
+            CanvasZoomControls(model: model)
+            Divider().frame(height: 26)
+            pageNavigation
         }
     }
 

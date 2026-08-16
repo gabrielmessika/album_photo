@@ -16,24 +16,25 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-16 |
-| Phase courante | Correctif d’adaptation du Lot 1 après troisième campagne iPad |
+| Phase courante | Correctif d’adaptation du Lot 1 après quatrième campagne iPad ciblée |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
 | Second candidat correctif rejeté | `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` — appel catalogue incomplet dans `AlbumCoverView` |
 | Candidat de deuxième campagne compilé et testé | `638c659925e1b036570484a98c0fc016602687c9`, basé sur `7b13cbd697bbde77c20b85245515874760991d3c` |
 | Candidat de troisième campagne compilé et testé | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — `134` et `136…140` réussis, `135` échoué |
-| Candidat d’adaptation à tester | `48e9fef9c317835f605df430c4112320d8cb66c3` ; fiches `IPAD-L1-141…142` préparées |
+| Candidat de quatrième campagne ciblée | `48e9fef9c317835f605df430c4112320d8cb66c3` — `141` réussi indirectement, `142` échoué en portrait |
+| Nouveau candidat d’adaptation à tester | À figer après le commit d’implémentation ; fiches `IPAD-L1-143…144` préparées |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
-| Spécification du candidat courant | `spec.md` inclus dans `48e9fef9c317835f605df430c4112320d8cb66c3` |
+| Spécification du candidat courant | `spec.md` clarifie `EDT-002` et `EDT-020` ; commit à figer |
 | Enveloppe iPad conservée | `Albumzh.swiftpm` ; son `Package.swift` généré n’a pas été recréé |
 | Sources | Anciennes sources 2.1 supprimées, nouvelles sources 3.0 écrites from scratch |
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Compiler `48e9fef9c317835f605df430c4112320d8cb66c3` par `IPAD-L1-141`, puis exécuter `IPAD-L1-142` et la qualification Apple différée |
-| État global | 🟡 **Troisième candidat compilé et validé sauf adaptation Photos ; dernier correctif ciblé à qualifier** |
+| Validation indispensable restante | Compiler le nouveau candidat par `IPAD-L1-143`, puis exécuter `IPAD-L1-144` et la qualification Apple différée |
+| État global | 🟡 **Le candidat `48e9fef…` compile mais déborde encore en portrait ; correctif global du canevas à qualifier** |
 
 ## Légende
 
@@ -74,7 +75,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 |---|---|---|---|
 | Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core et ses tests | Compiler sur iPad ; prouver les capacités Apple encore bloquées |
-| Lot 1 — Création locale | 🟡 | `7a0f2a4…` compile ; `134` et `136…140` réussissent, seul `135` échoue encore sur l’adaptation Photos | Compiler `48e9fef…` puis exécuter `IPAD-L1-142` |
+| Lot 1 — Création locale | 🟡 | `7a0f2a4…` valide les parcours métier ; `48e9fef…` compile mais `142` confirme encore le débordement portrait global | Compiler le nouveau candidat par `143`, puis exécuter `144` |
 | Lot 2 — Parité de composition | ⏸️ | Moteurs purs ou schéma préparatoires seulement ; aucune commande publique Lot 2 | Démarrer après validation du Lot 1 ; sortie `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128`, `ACPT-130` |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
@@ -84,8 +85,12 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 deuxième campagne sur `638c659…` ajoute 19 réussites, dont la compilation Apple,
 4 échecs (`113`, `123`, `126`, `128`) et 2 blocages de procédure (`112`, `124`).
 La troisième campagne sur `7a0f2a4…` ajoute 6 réussites et un échec : `135`
-reste en défaut sur les miniatures et le bouton local. Les autres corrections
-sont confirmées ; l’adaptation reste 🟡 jusqu’à `IPAD-L1-141…142`.
+reste en défaut sur les miniatures et le bouton local. La quatrième campagne
+ciblée sur `48e9fef…` prouve indirectement sa compilation, mais `142` échoue
+encore en portrait : troisième colonne presque hors écran, bouton local coupé
+à gauche et accès Photos/Fonds absent dans l’état signalé. Les autres
+corrections restent confirmées ; l’adaptation reste 🟡 jusqu’à
+`IPAD-L1-143…144`.
 
 ## Première campagne iPad du 16 août 2026
 
@@ -112,9 +117,16 @@ sont confirmées ; l’adaptation reste 🟡 jusqu’à `IPAD-L1-141…142`.
 
 | Groupe | Résultat confirmé sur `7a0f2a4…` | Suite |
 |---|---|---|
-| Compilation | `IPAD-L1-134` réussi | Compiler `48e9fef…` par `141` |
-| Dates, pages, gestes, qualité et interalbum | `IPAD-L1-136…140` réussis | Conserver les preuves métier ; `142` rejoue seulement la présentation de grille partagée avec `140` |
-| Photos et barre du canevas | `IPAD-L1-135` échoué malgré une hauteur de barre corrigée | Trois colonnes contraintes, noms bornés et bouton à trois rendus ; rejouer `142` |
+| Compilation | `IPAD-L1-134` réussi | `48e9fef…` a ensuite été exécuté lors de la quatrième campagne ciblée |
+| Dates, pages, gestes, qualité et interalbum | `IPAD-L1-136…140` réussis | Conserver les preuves métier ; seule la présentation de grille partagée avec `140` est rejouée |
+| Photos et barre du canevas | `IPAD-L1-135` échoué malgré une hauteur de barre corrigée | `142` a confirmé que l’adaptation restait insuffisante |
+
+## Quatrième campagne iPad ciblée du 16 août 2026
+
+| Groupe | Résultat confirmé sur `48e9fef…` | Suite |
+|---|---|---|
+| Compilation | `IPAD-L1-141` réussi par preuve indirecte : l’éditeur a été lancé et observé | Recompiler le prochain candidat par `143` |
+| Portrait, panneau et barre du canevas | `IPAD-L1-142` échoué : troisième colonne presque hors écran, bouton d’ajout coupé à gauche et accès Photos/Fonds absent dans l’état signalé | Rendre adaptatif tout le groupe ajout/zoom/navigation et rejouer `144` en portrait puis paysage |
 
 Le RAW synthétique `raw.dng` reste volontairement hors de ce correctif : son
 refus ne permet pas de distinguer une anomalie applicative d’une fixture non
@@ -137,7 +149,7 @@ extrapolé.
 | Contrats de catalogue | 🟡 | Schéma extensible aux stickers/cadres futurs mais registre runtime limité à 3 fonds et 6 formes ; rendu Swift pur des formes, 6 masques golden 64 × 48, 32 modèles et 10 empreintes validés (`CAT-001` à `CAT-009`, `TPL-019`) | Reconfirmer chargement depuis le bundle Apple et repli hors ligne ; figer les payloads Lot 2 avant de les publier |
 | Package `.photoalbum` | 🟡 | Schéma v1, documentation, exemple minimal et exemples invalides présents (`PKG-001` à `PKG-022`, `IMP-001` à `IMP-025`) | 🟠 Déclaration UTType, ouverture Fichiers et partage non testées dans Swift Playgrounds |
 | CloudKit page par page | 🟠 | Planificateur pur et note de prototype présents (`SYN-001` à `SYN-003`) | Entitlements, zone et opérations CloudKit exigent un environnement Apple compatible |
-| Traçabilité | 🟡 | Matrice détaillée par familles, méthodes automatisées, 80 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` | Exécuter `141…142` sur `48e9fef…` et enregistrer leurs résultats |
+| Traçabilité | 🟡 | Matrice détaillée par familles, méthodes automatisées, 82 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` | Exécuter `143…144` sur le nouveau candidat et enregistrer leurs résultats |
 
 ### Sortie du lot 0
 
@@ -159,8 +171,8 @@ chaîne Apple.
 | Couverture | 🟡 | Choix automatique de la première occurrence ou choix manuel par `pageID + elementID`, empreinte logique et cache de rendu préchargé (`ACPT-103`, `COV-001` à `COV-007`) | Transparence, cadrage, invalidation/suppression de l’occurrence et instrumentation du cache |
 | Assets et transactions | 🟡 | Copie locale adressée par SHA-256 en flux borné, index global, dérivé RAW immuable, reprise de journal, commandes atomiques sérialisées et contrôle d’espace (`LOC-001` à `LOC-031`, section 22.8) | Interruption forcée et volume réel sur iPad |
 | Import Apple multiple | 🟡 | PhotosPicker ordonné, import Fichiers multiple, progression/annulation/nettoyage, erreurs partielles et déduplication intra-album par `contentHash` sans commande vide (`PHO-001` à `PHO-019`, `APL-001` à `APL-008`, `SEC-008`) | Rejouer imports répétés/lot/annulation ; RAW explicitement différé (`IPAD-L1-121`) |
-| Réutilisation interalbum | 🟡 | Parcours autonome `×0→×1→×0`, suppression de la source et compteurs validés par `140` (`DEC-37`, `PHO-002`, `PHO-015` à `PHO-019`) | Rejouer seulement la présentation de grille modifiée sous `142` |
-| Cadres multiples | 🟡 | Les trois modes et VoiceOver sont fonctionnels ; bandeau renforcé, mais la fiche commune `135` échoue encore sur la grille et l’action locale (`FRM-001` à `FRM-009`, `PHO-011` à `PHO-013`, `ELM-014`) | Valider l’adaptation finale par `142` |
+| Réutilisation interalbum | 🟡 | Parcours autonome `×0→×1→×0`, suppression de la source et compteurs validés par `140` (`DEC-37`, `PHO-002`, `PHO-015` à `PHO-019`) | Rejouer seulement la présentation de grille modifiée sous `144` |
+| Cadres multiples | 🟡 | Les trois modes et VoiceOver sont fonctionnels ; bandeau renforcé, mais `142` échoue encore sur la présentation de grille et l’action locale (`FRM-001` à `FRM-009`, `PHO-011` à `PHO-013`, `ELM-014`) | Valider l’adaptation finale par `144` |
 | Cadrage photo | 🟡 | `1×` natif centré, fond visible, borne basse dynamique, zoom continu, déplacement, rotation/retournement, Réinitialiser/Annuler/Terminé (`CRP-001` à `CRP-007`) | Cas 600×400 et 4 800×6 000, masque, persistance et priorité des gestes |
 | Manipulation des éléments | 🟡 | Contour, poignées hybrides, sélection non ambiguë et rotation validés par `115` et `127` (`ELM-001` à `ELM-014`, `EDT-021`) | Haptique indisponible et qualification iPhone/Xcode |
 | Zoom du canevas | 🟡 | Pont fixé à la fenêtre et règle vide/élément non sélectionné testée dans le Core puis validée tactilement par `138` (`ZOM-001` à `ZOM-008`) | Qualification XCTest différée |
@@ -169,15 +181,16 @@ chaîne Apple.
 | Presse-papiers | 🟡 | Portée session/album et invalidation après fermeture ou arrière-plan validées par `IPAD-L1-130` (`CLP-001` à `CLP-006`) | Étendre et requalifier avec les types du Lot 2 |
 | Navigation | 🟡 | Boutons, balayages et arbitrage avec le pont gestuel validés par `138` (`NAV-001` à `NAV-007`) | Qualification XCTest/iPhone différée |
 | Prévisualisation et aide | 🟡 | Rendu sans aides d’édition, alerte de cadre vide et aide hors ligne contextuelle pour les panneaux exposés | Comparer rendu éditeur/global/prévisualisation et accessibilité |
-| Adaptation/accessibilité | 🟡 | Commandes, VoiceOver, Dynamic Type, pointeur et Réduire les animations validés ; `135` confirme la hauteur de barre mais révèle encore grille et bouton tronqués (`EDT-002`, `EDT-020`, `ACC-001` à `ACC-021`) | Valider trois colonnes bornées et bouton adaptatif par `142`, puis iPhone/Xcode |
+| Adaptation/accessibilité | 🟡 | Commandes, VoiceOver, Dynamic Type, pointeur et Réduire les animations validés ; `142` confirme que la largeur minimale globale repousse encore rail, inspecteur et bouton en portrait (`EDT-002`, `EDT-020`, `ACC-001` à `ACC-021`) | Valider la barre à deux rangées, le rail et les trois colonnes par `144`, puis iPhone/Xcode |
 
 ### Sortie du lot 1
 
 Le lot reste 🟡. Le candidat `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`
 compile dans Swift Playgrounds et confirme six des sept régressions ciblées.
-Dates, pages, gestes, qualité et réutilisation interalbum sont validés ; seule
-l’adaptation Photos reste en échec. `48e9fef9c317835f605df430c4112320d8cb66c3`
-ne sera déclaré valide qu’après `IPAD-L1-141…142`.
+Dates, pages, gestes, qualité et réutilisation interalbum sont validés. Le
+candidat `48e9fef9c317835f605df430c4112320d8cb66c3` compile lui aussi, mais
+`IPAD-L1-142` confirme que l’adaptation Photos reste en échec en portrait. Le
+nouveau candidat ne sera déclaré viable qu’après `IPAD-L1-143…144`.
 
 ## Arbitrage normatif appliqué
 
@@ -216,15 +229,16 @@ campagne iPad.
 
 | Environnement | Commande ou contrôle | Résultat connu | Portée et limite |
 |---|---|---|---|
+| iPad 8, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-16 | `IPAD-L1-141…142` sur `48e9fef9c317835f605df430c4112320d8cb66c3` | **1 réussite indirecte, 1 échec** | L’exécution fonctionnelle prouve la compilation de `141` sans capture de build séparée ; `142` échoue en portrait sur le débordement global, aucun résultat paysage distinct n’est extrapolé |
 | iPad 8, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-16 | `IPAD-L1-134…140` sur `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` | **6 réussites, 1 échec** ; compilation réussie | `135` échoue encore ; captures `IMG_4186.jpg` portrait et `IMG_4187.jpg` paysage non versionnées ; autres réussites issues du retour exclusif « tout est ok sauf 135 » |
-| WSL, Swift 6.3.3, 2026-08-16 | `swift test --parallel` après le second correctif d’adaptation | **124 tests, 0 échec** | Noyau portable inchangé ; ne valide ni la mise en page SwiftUI ni le rendu Apple |
+| WSL, Swift 6.3.3, 2026-08-16 | `swift test --parallel` après le correctif de largeur globale | **124 tests, 0 échec** | Noyau portable inchangé ; ne valide ni la mise en page SwiftUI ni le rendu Apple |
 | iPad 8, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-16 | `IPAD-L1-102`, `109…131`, `133` sur `638c659925e1b036570484a98c0fc016602687c9` | **19 réussites, 4 échecs, 2 blocages** ; compilation réussie | Retours par ID ; captures `IMG_4184.jpg` portrait et `IMG_4185.jpg` paysage non versionnées ; anomalies relayées par la campagne suivante |
 | WSL, Swift 6.3.3, 2026-08-16 | `swift test --quiet` après correction des appels de couverture | **123 tests, 0 échec**, 7,938 s | Noyau portable ; la correction ne change pas le domaine et ne valide pas SwiftUI/iOS |
 | WSL, frontend Swift, 2026-08-16 | `find Albumzh.swiftpm/Sources/AppModule -name '*.swift' -print0 \| xargs -0 swiftc -frontend -parse` | **OK** sur toutes les sources AppModule corrigées | Syntaxe seulement ; ni type-check SwiftUI, ni disponibilité SDK Apple |
 | iPad 8, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-16 | Compilation des sources applicatives de `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` | **ÉCHEC** : argument `maximumPixelSize` manquant dans `AlbumCoverView` ; paramètre générique non inféré dans `AppModel` | Retour utilisateur ; aucun test fonctionnel du correctif n’est validé |
 | iPad 8, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-16 | `IPAD-L1-132` sur `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` | **ÉCHEC** : ligne 128 d’`AlbumCoverView`, appel `catalogImage(for:)` sans `maximumPixelSize` | Retour utilisateur ; remplacé par `IPAD-L1-133` |
 | WSL, contrats, 2026-08-16 | `perl tools/validate_contracts.pl` puis `sha256sum -c catalog-checksums-v1.sha256` dans `docs/` | **OK** : 32 modèles, 3 fonds, 6 formes, schémas/package ; **10/10 empreintes OK** | Contrats et intégrité du dépôt, pas chargement/cache sur iPad |
-| Dépôt, registre et diff, 2026-08-16 | Comptage des IDs synthétiques/détaillés, doublons, références nouvelles, espaces invisibles et `git diff --check` | **OK** : 80 IDs synthétiques, 80 fiches détaillées, aucun doublon ni espace U+200B ; diff propre | Contrôle structurel ; ne transforme aucune régression iPad en réussite |
+| Dépôt, registre et diff, 2026-08-16 | Comptage des IDs synthétiques/détaillés, continuité, espaces invisibles et `git diff --check` | **OK** : 82 IDs synthétiques, 82 fiches détaillées, continuité `063…144`, aucun espace U+200B ; diff propre | Contrôle structurel ; ne transforme aucune régression iPad en réussite |
 | WSL, Swift 6.3.3, 2026-08-10 | `timeout 240 /home/gmessika/.local/share/swiftly/toolchains/6.3.3/usr/bin/swift test` | **121 tests, 0 échec**, 6,696 s | Noyau `AlbumPhotoCore` uniquement ; ne valide pas SwiftUI/iOS |
 | WSL | `perl tools/validate_contracts.pl` | **OK** : 32 modèles, 3 fonds, 6 formes, schémas et package exemple | Contrats statiques uniquement |
 | WSL | `(cd docs && sha256sum -c catalog-checksums-v1.sha256)` | **10/10 OK** : modèles, catalogue, schéma, contrat du renderer et 6 masques | Intégrité des fichiers du dépôt, pas leur chargement Apple |
@@ -232,7 +246,7 @@ campagne iPad.
 | WSL, frontend Swift, 2026-08-10 | `find Albumzh.swiftpm/Sources/AppModule -name '*.swift' -print0 \| xargs -0 /home/gmessika/.local/share/swiftly/toolchains/6.3.3/usr/bin/swiftc -frontend -parse` | **OK** sur toutes les sources AppModule | Analyse syntaxique seulement, sans SDK ni type-check SwiftUI |
 | WSL, C | `cc -Wall -Wextra -pedantic -fsyntax-only tools/generate_photo_fixture.c tools/normalize_png_4x5.c` | **OK** | Syntaxe des générateurs seulement |
 | Dépôt, registre manuel, 2026-08-10 | Contrôle de continuité, champs obligatoires, états et références normatives | **OK historique** : 46 fiches détaillées `063…108`, alors toutes ⚪, 13 validations Apple, 276 références résolues | État du registre avant la première campagne ; remplacé par le contrôle du 16 août ci-dessus |
-| Dépôt, traçabilité, 2026-08-16 | Contrôle des identifiants, méthodes, classes et liens de `docs/traceability/lot0-lot1.md` | **OK structurel** : 80 contrôles iPad avec `IPAD-L1-142`, 13 Apple et 24 `ACPT` | Ne transforme aucune couverture structurelle en réussite fonctionnelle |
+| Dépôt, traçabilité, 2026-08-16 | Contrôle des identifiants et liens de `docs/traceability/lot0-lot1.md` | **OK structurel** : 82 contrôles iPad jusqu’à `IPAD-L1-144`, 13 Apple et 24 `ACPT` | Ne transforme aucune couverture structurelle en réussite fonctionnelle |
 | Dépôt, arbitrage des lots, 2026-08-10 | Vérification de `DEC-38`, des trois lots de validation, des sorties de la section 31 et du registre manuel | **OK** : Lot 1 = six sorties photo locales ; `ACPT-123`/`130` au Lot 2 ; `ACPT-127` au Lot 3 ; 276 références manuelles résolues | Documentation uniquement ; tests Core non relancés car aucune source ni ressource n’a changé |
 | Dépôt | `git diff --exit-code -- Albumzh.swiftpm/Package.swift Package.swift` | **OK** : les deux manifestes sont inchangés | Confirme la conservation de l’enveloppe, pas sa compilation Apple |
 | Dépôt | `git diff --check` | **OK** après écriture du code, des contrats et du registre manuel ; à rejouer après fixation des hashes | Contrôle des espaces et marqueurs de conflit, pas une preuve fonctionnelle |
@@ -241,8 +255,8 @@ campagne iPad.
 
 | Validation | État | Motif |
 |---|---|---|
-| Compilation de `48e9fef…` | ⚪ Non testée | `IPAD-L1-134` a validé `7a0f2a4…` ; le nouveau code doit être compilé par `IPAD-L1-141` |
-| Régression adaptative de `48e9fef…` | ⚪ Non testée | `IPAD-L1-142` remplace `135` et rejoue la présentation de grille partagée avec `140` |
+| Compilation du nouveau candidat | ⚪ Non testée | `48e9fef…` a été exécuté, mais le nouveau code SwiftUI doit être compilé par `IPAD-L1-143` |
+| Régression adaptative du nouveau candidat | ⚪ Non testée | `IPAD-L1-144` remplace `142` et rejoue uniquement la présentation de grille partagée avec `140` |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
 | Accessibilité et adaptation exhaustives iPhone/Xcode | ⚪ Non testées | `114`, `115`, `118…120` réussis sur l’iPad 8 ; matrice iPhone et Accessibility Inspector toujours absents |
@@ -258,11 +272,11 @@ campagne iPad.
 | `RSK-3.0-001` | Élevé | Le ledger ne recense pas encore toutes les références récupérables futures (révisions, conflits, certains états différés). Une purge physique naïve pourrait supprimer trop tôt. | La purge physique reste désactivée au Lot 1 ; accepter une fuite disque temporaire plutôt qu’une perte. Compléter le ledger avant toute purge. |
 | `RSK-3.0-002` | Moyen | `DAT-042` n’est couvert que partiellement : résolution et provenance complètes des placements de modèle restent à finaliser. | Ne pas exposer modèles/dé/Auto avant le Lot 2 et ajouter des golden tests de résolution. |
 | `RSK-3.0-003` | Élevé | Le hachage, la déduplication et la réutilisation sont désormais en flux borné, mais ImageIO, la création du dérivé et certains chemins d’affichage chargent encore le média complet ; un RAW volumineux peut donc créer un pic mémoire. | Mesurer sur iPad et instrumenter les chemins de décodage avant de revendiquer l’enveloppe 5 Go. |
-| `RSK-3.0-004` | Moyen | Risque matérialisé sur `06c30b9…` puis `84ec71e…` : l’analyse syntaxique Linux n’avait pas détecté les erreurs de type SwiftUI. `7a0f2a4…` compile sur Apple, mais `48e9fef…` modifie encore deux vues. | Garder un contrôle de compilation séparé (`IPAD-L1-141`) avant la régression fonctionnelle. |
+| `RSK-3.0-004` | Moyen | Risque matérialisé sur `06c30b9…` puis `84ec71e…` : l’analyse syntaxique Linux n’avait pas détecté les erreurs de type SwiftUI. `48e9fef…` compile sur Apple, mais le nouveau candidat modifie encore la composition SwiftUI du canevas. | Garder un contrôle de compilation séparé (`IPAD-L1-143`) avant la régression fonctionnelle. |
 | `RSK-3.0-005` | Levé | Les anciennes sorties de Lot 1 pour `ACPT-123`, `ACPT-127` et `ACPT-130` contredisaient la frontière des lots. | Arbitrage utilisateur enregistré par `DEC-38` : scénarios déplacés respectivement aux Lots 2, 3 et 2. |
 | `RSK-3.0-006` | Moyen | Le risque tactile s’était matérialisé : le pont attaché à une sous-vue SwiftUI ne recevait aucun geste de canevas hors sélection. Le pont fenêtre est désormais validé par `IPAD-L1-138`. | Conserver la preuve iPad et compléter par la qualification XCTest différée. |
 | `RSK-3.0-007` | Moyen | Lancement, Fonds, cent pages et déplacement continu ont été déclarés OK sur l’iPad 8, sans joindre les durées ni instrumentation. | Conserver la preuve manuelle limitée et mesurer ensuite avec Instruments avant toute revendication de marge. |
-| `RSK-3.0-008` | Élevé | `IPAD-L1-135` confirme un second défaut d’adaptation : le nombre de colonnes change, mais les tuiles débordent toujours et le bouton local est tronqué. Aucune matrice iPhone/Xcode n’existe. | Contraindre explicitement trois colonnes, borner les contenus et valider le bouton adaptatif par `142`, puis tester Split View et iPhone réel. |
+| `RSK-3.0-008` | Élevé | `IPAD-L1-142` confirme un troisième défaut d’adaptation : malgré trois colonnes contraintes, la largeur minimale du groupe ajout/zoom/navigation repousse le rail et l’inspecteur hors écran en portrait ; la troisième colonne et le bouton local restent coupés. Aucune matrice iPhone/Xcode n’existe. | Permettre deux rangées de commandes à largeur réduite et valider rail, inspecteur, grille et barre par `144`, puis tester Split View et iPhone réel. |
 | `RSK-3.0-009` | Élevé | CloudKit et le type de document package dépendent de capacités ou réglages Swift Playgrounds non prouvés. | Prototype Apple ciblé ; escalade vers Xcode/macOS si indisponible. |
 | `RSK-3.0-010` | Moyen | `L10N-002` n’est pas encore satisfait : les libellés français sont présents dans les vues mais aucun catalogue `.xcstrings` n’est livré. | Conserver le candidat interne ; créer et valider le catalogue au lot Qualité avant de déclarer une fonctionnalité terminée. |
 | `RSK-3.0-011` | Moyen | Le cache de couverture SwiftUI n’a pas encore de preuve instrumentée d’invalidation ni de budget mémoire sur appareil. | Exécuter le parcours couverture, puis instrumenter le cache avant de déclarer `COV-007` satisfait. |
@@ -273,9 +287,9 @@ campagne iPad.
 
 ## Prochaines actions
 
-1. Transférer exactement `48e9fef9c317835f605df430c4112320d8cb66c3` sur l’iPad 8
-   et exécuter d’abord `IPAD-L1-141`.
-2. Après compilation réussie, exécuter uniquement `IPAD-L1-142` en portrait
+1. Figer le commit exact du nouveau candidat puis le transférer sur l’iPad 8
+   et exécuter d’abord `IPAD-L1-143`.
+2. Après compilation réussie, exécuter uniquement `IPAD-L1-144` en portrait
    puis paysage ; les réussites `136…140` restent acquises hors présentation de grille.
 3. Le RAW reste hors de cette campagne immédiate.
 4. Après viabilité du correctif iPad, préparer les nouveaux identifiants de tests du Lot 2
@@ -290,6 +304,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-16 | Codex | Enregistrement de la quatrième campagne ciblée (`141` réussi indirectement, `142` échoué) et correction de la largeur minimale globale : variantes sur une rangée puis repli sur deux rangées pour conserver rail, inspecteur et commandes en portrait ; tests `143…144` préparés | `AlbumEditorView.swift`, `spec.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot0-lot1.md` ; `EDT-002`, `EDT-020`, `PHO-002`, `PHO-011`, `PHO-019`, `ACC-021` | WSL : 124 tests, 0 échec ; parse AppModule, contrats, 10/10 empreintes, registre 82/82 et diff OK ; compilation/rendu Apple du nouveau candidat NON TESTÉS |
 | 2026-08-16 | Codex | Gel documentaire du second correctif d’adaptation et injection de son empreinte dans `141…142` | `README.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `docs/traceability/lot0-lot1.md` ; `TST-001` à `TST-005`, `DONE-001` à `DONE-005` | Sources applicatives exactes : `48e9fef9c317835f605df430c4112320d8cb66c3` ; `141…142` restent ⚪ NON TESTÉ ; aucune preuve Apple extrapolée |
 | 2026-08-16 | Codex | Enregistrement de la troisième campagne (`6` réussites, `1` échec), analyse des captures et second correctif d’adaptation : trois colonnes flexibles contraintes, noms de fichiers bornés et action locale à libellé complet/court/icône ; tests `141…142` préparés | `PhotosPanelView.swift`, `AlbumEditorView.swift`, `spec.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot0-lot1.md` ; `EDT-002`, `EDT-020`, `PHO-002`, `PHO-011`, `PHO-019`, `ACC-021` | WSL : 124 tests, 0 échec ; parse AppModule, contrats, 10/10 empreintes et registre 80/80 OK ; captures `IMG_4186.jpg`/`IMG_4187.jpg` examinées mais non versionnées ; compilation et rendu Apple NON TESTÉS |
 | 2026-08-16 | Codex | Gel documentaire du correctif de la deuxième campagne et injection de son empreinte dans les sept fiches `134…140` | `README.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `docs/traceability/lot0-lot1.md` ; `TST-001` à `TST-005`, `DONE-001` à `DONE-005` | Sources applicatives exactes : `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` ; les sept fiches restent ⚪ NON TESTÉ ; aucune preuve Apple extrapolée |

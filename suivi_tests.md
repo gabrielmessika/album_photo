@@ -19,10 +19,11 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Second candidat rejeté à la compilation Apple | `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` — deux appels de préchargement dans `AlbumCoverView` omettaient encore `maximumPixelSize` |
 | Correctif compilé et testé lors de la deuxième campagne | `638c659925e1b036570484a98c0fc016602687c9` |
 | Correctif compilé et testé lors de la troisième campagne | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — 6 réussites, 1 échec |
-| Candidat d’adaptation à tester | `48e9fef9c317835f605df430c4112320d8cb66c3` ; fiches `IPAD-L1-141…142` préparées |
+| Candidat testé lors de la quatrième campagne ciblée | `48e9fef9c317835f605df430c4112320d8cb66c3` — `141` réussi implicitement, `142` échoué en portrait |
+| Nouveau candidat d’adaptation à tester | À figer après le commit d’implémentation ; fiches `IPAD-L1-143…144` préparées |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
-| Copie à tester après la nouvelle adaptation | Doit porter exactement `48e9fef9c317835f605df430c4112320d8cb66c3` |
+| Copie à tester après la nouvelle adaptation | Doit porter exactement l’empreinte qui sera injectée dans `IPAD-L1-143…144` |
 | Appareil | iPad 8e génération (déclaré « iPad 8 ») |
 | iPadOS | 26.5.2 |
 | Swift Playgrounds | 4.7 |
@@ -47,7 +48,12 @@ corrections issues de ces retours dans le candidat exact
 `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`. Ce candidat a ensuite réussi
 `134` et `136…140` ; `135` reste en échec sur la grille et l’action locale.
 Les remplacements `141…142` visent le candidat exact
-`48e9fef9c317835f605df430c4112320d8cb66c3`.
+`48e9fef9c317835f605df430c4112320d8cb66c3`. L’ouverture fonctionnelle de
+l’éditeur prouve indirectement `141`, mais `142` échoue encore en portrait :
+la troisième colonne est presque entièrement hors écran, le bouton local est
+coupé à gauche et l’accès permettant de choisir Photos ou Fonds n’est plus
+affiché dans l’état signalé. Les remplacements `143…144` visent le nouveau
+candidat à figer.
 
 ## Mode de réponse
 
@@ -166,8 +172,10 @@ pas satisfait sa précondition d’une occurrence dans la cible. `IPAD-L1-132`
 conserve l’échec de `84ec71e…`. Sur
 `7a0f2a442f5f13a98663c5c02a97b8110bd943d6`, les fiches `134` et `136…140`
 sont réussies ; `135` échoue encore sur l’adaptation. Les nouvelles fiches
-`141…142` sont initialisées ⚪ `NON TESTÉ` pour
-`48e9fef9c317835f605df430c4112320d8cb66c3`.
+`141…142` ont été exécutées sur
+`48e9fef9c317835f605df430c4112320d8cb66c3` : `141` est réussi par preuve
+indirecte de lancement et `142` échoue en portrait. `143…144` sont initialisées
+⚪ `NON TESTÉ` pour le nouveau candidat à figer.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -248,9 +256,11 @@ sont réussies ; `135` échoue encore sur l’adaptation. Les nouvelles fiches
 | `IPAD-L1-137` | Page active et insertion entre miniatures | `3:GLO-003`, `3:PAG-016`, `3:ACC-006` | 🟢 `RÉUSSI` |
 | `IPAD-L1-138` | Gestes canevas sur vide et cadres non sélectionnés | `3:ZOM-003` à `3:ZOM-006`, `3:NAV-005` | 🟢 `RÉUSSI` |
 | `IPAD-L1-139` | Qualité et séparateurs régionaux explicités | `3:QLT-001` à `3:QLT-006`, `3:L10N-005` | 🟢 `RÉUSSI` |
-| `IPAD-L1-140` | Compteur autonome après réutilisation interalbum | `3:PHO-002`, `3:PHO-015` à `3:PHO-019` | 🟢 `RÉUSSI` — présentation de grille à rejouer sous `142` |
-| `IPAD-L1-141` | Compilation du candidat `48e9fef…` | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-142` | Trois colonnes contraintes et action locale adaptative | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-140` | Compteur autonome après réutilisation interalbum | `3:PHO-002`, `3:PHO-015` à `3:PHO-019` | 🟢 `RÉUSSI` — présentation de grille désormais à rejouer sous `144` |
+| `IPAD-L1-141` | Compilation du candidat `48e9fef…` | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | 🟢 `RÉUSSI` — preuve indirecte par l’exécution fonctionnelle de `142` |
+| `IPAD-L1-142` | Trois colonnes contraintes et action locale adaptative | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — portrait toujours débordant, accès Photos/Fonds absent |
+| `IPAD-L1-143` | Compilation du correctif de largeur globale | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-144` | Rail, inspecteur et commandes du canevas entièrement adaptatifs | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -2307,8 +2317,7 @@ le code ou la preuve vient de changer.
   du même `assetID` ; supprimer A ne change ni la photo ni le compteur de B ;
   miniatures et badges restent carrés, entiers et non superposés.
 - Résultat : 🟢 `RÉUSSI` — le parcours métier et les compteurs sont validés ;
-  la présentation de la grille sera néanmoins rejouée sous `142`, car le
-  correctif suivant modifie ses contraintes.
+  après l’échec de présentation sous `142`, la grille sera rejouée sous `144`.
 - Preuve : retour utilisateur explicite « tout est ok sauf le
   `IPAD-L1-135` » ; captures successives dédiées non jointes.
 - Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ;
@@ -2319,7 +2328,7 @@ le code ou la preuve vient de changer.
 Les deux fiches suivantes visent le même candidat exact
 `48e9fef9c317835f605df430c4112320d8cb66c3`. Elles ne rouvrent pas les
 réussites `136…140`, sauf la seule présentation de grille partagée avec `140`
-et explicitement reprise par `142`.
+et explicitement reprise par `142`, puis par `144` après son nouvel échec.
 
 ### `IPAD-L1-141` — Compilation du correctif adaptatif final
 
@@ -2332,9 +2341,13 @@ et explicitement reprise par `142`.
   l’app puis ouvrir un album jusqu’au canevas et à l’inspecteur Photos.
 - Résultat attendu : aucune erreur ni avertissement bloquant ; le store et les
   albums précédents restent lisibles.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : capture du build réussi, album ouvert et empreinte Git.
-- Environnement : à renseigner intégralement.
+- Résultat : 🟢 `RÉUSSI` — l’app a nécessairement compilé et démarré pour
+  permettre les observations fonctionnelles précises de `142`.
+- Preuve : retour utilisateur décrivant le rendu du canevas et du panneau sur
+  le candidat ; aucune capture distincte du build n’a été fournie, la preuve de
+  compilation reste donc indirecte.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ;
+  16 août 2026 ; Paris, France ; français (France).
 
 ### `IPAD-L1-142` — Trois colonnes contraintes et action locale sans troncature
 
@@ -2353,9 +2366,64 @@ et explicitement reprise par `142`.
   complet s’il tient, sinon « Ajouter », sinon l’icône seule, jamais des points
   de suspension ni une forme coupée ; son annonce reste « Ajouter une photo »
   et l’action ouvre bien le mode de choix sans agrandir la barre.
+- Résultat : 🔴 `ÉCHOUÉ` — en portrait, la grille revient bien à trois colonnes,
+  mais la troisième est presque entièrement hors écran ; le bouton « Ajouter
+  une photo » reste légèrement coupé à gauche et l’accès permettant de choisir
+  Photos ou Fonds n’est plus affiché dans l’état signalé. Aucun résultat
+  paysage distinct n’est extrapolé de ce retour.
+- Preuve : retours utilisateur successifs décrivant les trois défauts visibles ;
+  les captures antérieures `IMG_4186.jpg` et `IMG_4187.jpg` restent hors Git.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ;
+  16 août 2026 ; Paris, France ; français (France).
+
+## Régression après débordement global du candidat `48e9fef…`
+
+Le correctif suivant rend adaptatif le groupe complet situé sous le canevas.
+Il conserve les variantes sur une rangée lorsqu’elles tiennent et utilise en
+dernier recours deux rangées de hauteur normale : ajout par icône et zoom,
+puis navigation. Cette largeur minimale réduite doit empêcher le canevas de
+repousser hors écran le rail et l’inspecteur fixe. Le candidat exact sera figé
+dans les deux fiches après le commit d’implémentation.
+
+### `IPAD-L1-143` — Compilation du correctif de largeur globale
+
+- Candidat : à figer après le commit d’implémentation.
+- Spécification : 3.0, avec clarification de `3:EDT-002` et `3:EDT-020` dans
+  le candidat.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005`.
+- Préconditions : copier exactement le commit indiqué dans cette fiche dans
+  Swift Playgrounds sans modification locale et conserver le store précédent.
+- Étapes : effacer les anciens diagnostics, compiler `Albumzh.swiftpm`, lancer
+  l’app puis ouvrir un album jusqu’au canevas et à l’inspecteur Photos.
+- Résultat attendu : aucune erreur ni avertissement bloquant ; le store et les
+  albums précédents restent lisibles.
 - Résultat : ⚪ `NON TESTÉ`.
-- Preuve : captures portrait/paysage avec au moins deux rangées, bord droit,
-  badges et bouton local ; indiquer lequel de ses trois rendus est choisi.
+- Preuve : capture du build réussi, album ouvert et empreinte Git.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-144` — Rail, inspecteur et commandes entièrement contenus
+
+- Candidat : à figer après le commit d’implémentation.
+- Exigences : `3:EDT-002`, `3:EDT-006`, sous-périmètre photo de `3:EDT-020`,
+  `3:PHO-002`, `3:PHO-011` à `3:PHO-013`, `3:PHO-019`, `3:ACC-021`.
+- Préconditions : au moins huit photos avec des noms longs et des compteurs
+  `×0`, `×1` et `×3` visibles ; un cadre vide et un cadre rempli.
+- Étapes : en portrait, vérifier que le rail Photos/Fonds est visible, ouvrir
+  chacun des deux panneaux puis revenir à Photos ; faire défiler toute la
+  grille et vérifier ses deux bords. Vérifier sous le canevas l’ajout, le zoom
+  et la navigation, puis lancer Ajouter, Remplir et Remplacer et les annuler.
+  Tourner enfin l’iPad en paysage et refaire les contrôles de visibilité.
+- Résultat attendu : en portrait, le rail Photos/Fonds et l’inspecteur ouvert
+  sont entièrement visibles ; les trois colonnes de miniatures sont carrées,
+  égales et non coupées. La barre du canevas choisit une variante qui tient,
+  si nécessaire deux rangées avec l’icône Ajouter et le zoom au-dessus de la
+  navigation ; aucune commande n’est coupée et toutes gardent leur hauteur
+  normale. En paysage, le groupe tient sur une rangée et les trois colonnes
+  restent entières. L’icône d’ajout est annoncée « Ajouter une photo » et ouvre
+  le mode de choix. Noms, badges et trois bandeaux restent entièrement contenus.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures portrait/paysage montrant le rail, les trois colonnes, les
+  bords du canevas et l’intégralité des commandes locales.
 - Environnement : à renseigner intégralement.
 
 ## Qualification différée Apple/macOS/Xcode
@@ -2528,6 +2596,7 @@ identifiants lors du Lot 2.
 | `IPAD-L1-132` sur `84ec71e…` | 16 août 2026 | 🔴 Échec de compilation : appel `catalogImage(for:)` sans `maximumPixelSize` à la ligne 128 d’`AlbumCoverView` | Diagnostic exact transmis par l’utilisateur | Deux appels corrigés ; nouveau contrôle `IPAD-L1-133` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 |
 | `IPAD-L1-102`, `109…131`, `133` sur `638c659…` | 16 août 2026 | 25 fiches : 19 réussies, 4 échouées (`113`, `123`, `126`, `128`) et 2 bloquées (`112`, `124`) | Retours par identifiant et captures `IMG_4184.jpg` portrait / `IMG_4185.jpg` paysage conservées hors Git | Corrections et procédures de remplacement `IPAD-L1-134…140` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; Paris, France ; français (France) |
 | `IPAD-L1-134…140` sur `7a0f2a4…` | 16 août 2026 | 7 fiches : 6 réussies ; `135` échoue encore sur la grille et le bouton local | Retour explicite « tout est ok sauf `135` » ; `IMG_4186.jpg` portrait et `IMG_4187.jpg` paysage conservées hors Git | Grille et action locale reprises par `IPAD-L1-141…142` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; Paris, France ; français (France) |
+| `IPAD-L1-141…142` sur `48e9fef…` | 16 août 2026 | 2 fiches : `141` réussi par preuve indirecte de lancement ; `142` échoué en portrait | Retour : troisième colonne presque hors écran, bouton d’ajout coupé à gauche et accès Photos/Fonds absent ; aucun résultat paysage distinct extrapolé | Largeur minimale de tout le groupe du canevas reprise par `IPAD-L1-143…144` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; Paris, France ; français (France) |
 
 ## Règle de clôture
 
