@@ -224,6 +224,21 @@ final class GeometryEngineTests: XCTestCase {
         XCTAssertEqual(zoomed.centerY, 0.7, accuracy: 1e-12)
     }
 
+    // 3:ZOM-003...3:ZOM-005
+    func testCanvasTwoFingerTransformComposesScaleAndTranslation() {
+        let transformed = CanvasZoomEngine.transformed(
+            .fitted,
+            magnification: 2,
+            translationPoints: GeometryPoint(x: 80, y: -50),
+            anchorNormalized: GeometryPoint(x: 0.5, y: 0.5),
+            fittedPageSizePoints: GeometrySize(width: 400, height: 500),
+            viewportSizePoints: GeometrySize(width: 400, height: 500)
+        )
+        XCTAssertEqual(transformed.zoom, 2, accuracy: 1e-12)
+        XCTAssertEqual(transformed.centerX, 0.4, accuracy: 1e-12)
+        XCTAssertEqual(transformed.centerY, 0.55, accuracy: 1e-12)
+    }
+
     // 3:QLT-001, 3:QLT-002
     func testQualityThresholdsAreExact() throws {
         XCTAssertEqual(try PhotoQualityEngine.state(for: 300), .ok)

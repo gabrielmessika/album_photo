@@ -26,6 +26,8 @@ struct LibraryView: View {
     @State private var coverRequest: AlbumCoverRequest?
     @State private var showsTrash = false
     @State private var openedAlbum: AlbumRoute?
+    @State private var pendingCreatedAlbumID: UUID?
+    @State private var isCreatingAlbum = false
 
     private let maintenanceTimer = Timer.publish(
         every: 6 * 60 * 60,
@@ -95,17 +97,23 @@ struct LibraryView: View {
                 Task { await appModel.loadLibrary() }
             }
         }
-        .sheet(isPresented: $showsCreateAlbum) {
+        .sheet(isPresented: $showsCreateAlbum, onDismiss: openPendingCreatedAlbum) {
             AlbumNameSheet(
                 title: "Nouvel album",
                 actionTitle: "Créer",
-                initialName: ""
+                initialName: "",
+                isWorking: isCreatingAlbum
             ) { name in
-                showsCreateAlbum = false
+                guard !isCreatingAlbum else { return }
+                isCreatingAlbum = true
                 Task {
-                    guard let album = await appModel.createAlbum(named: name),
-                          await appModel.prepareToOpenAlbum(album.id) else { return }
-                    openedAlbum = AlbumRoute(albumID: album.id)
+                    guard let album = await appModel.createAlbum(named: name) else {
+                        isCreatingAlbum = false
+                        return
+                    }
+                    pendingCreatedAlbumID = album.id
+                    isCreatingAlbum = false
+                    showsCreateAlbum = false
                 }
             }
         }
@@ -232,6 +240,15 @@ struct LibraryView: View {
             openedAlbum = AlbumRoute(albumID: albumID)
         }
     }
+
+    private func openPendingCreatedAlbum() {
+        guard let albumID = pendingCreatedAlbumID else { return }
+        pendingCreatedAlbumID = nil
+        Task {
+            guard await appModel.prepareToOpenAlbum(albumID) else { return }
+            openedAlbum = AlbumRoute(albumID: albumID)
+        }
+    }
 }
 
 private struct AlbumNameSheet: View {
@@ -240,6 +257,7 @@ private struct AlbumNameSheet: View {
     let title: String
     let actionTitle: String
     let initialName: String
+    var isWorking = false
     let onConfirm: (String) -> Void
 
     @State private var name: String
@@ -248,11 +266,13 @@ private struct AlbumNameSheet: View {
         title: String,
         actionTitle: String,
         initialName: String,
+        isWorking: Bool = false,
         onConfirm: @escaping (String) -> Void
     ) {
         self.title = title
         self.actionTitle = actionTitle
         self.initialName = initialName
+        self.isWorking = isWorking
         self.onConfirm = onConfirm
         _name = State(initialValue: initialName)
     }
@@ -276,14 +296,21 @@ private struct AlbumNameSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Annuler") { dismiss() }
+                        .disabled(isWorking)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(actionTitle, action: confirm)
-                        .disabled(trimmedName.isEmpty)
+                    if isWorking {
+                        ProgressView()
+                            .accessibilityLabel("Création de l’album")
+                    } else {
+                        Button(actionTitle, action: confirm)
+                            .disabled(trimmedName.isEmpty)
+                    }
                 }
             }
         }
         .presentationDetents([.medium])
+        .interactiveDismissDisabled(isWorking)
     }
 
     private var trimmedName: String {
@@ -291,7 +318,7 @@ private struct AlbumNameSheet: View {
     }
 
     private func confirm() {
-        guard !trimmedName.isEmpty else { return }
+        guard !trimmedName.isEmpty, !isWorking else { return }
         onConfirm(trimmedName)
     }
 }

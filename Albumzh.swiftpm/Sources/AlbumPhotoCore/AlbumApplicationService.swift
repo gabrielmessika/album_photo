@@ -808,7 +808,9 @@ public actor AlbumApplicationService {
         )
     }
 
-    /// 3:APL-002 / 3:PHO-007 — preserves picker order and creates one undo item.
+    /// 3:APL-002 / 3:PHO-007 / 3:PHO-019 — preserves the selection order of
+    /// new content, ignores hashes already owned by this album and creates at
+    /// most one undo item.
     @discardableResult
     public func registerPhotos(
         _ registrations: [PhotoRegistration],
@@ -849,15 +851,24 @@ public actor AlbumApplicationService {
         }
         return try await mutateAlbum(albumID, label: "Importer des photos", now: now, commandID: commandID) {
             album, state in
+            var ownedContentHashes = Set(
+                state.photoAssets(in: albumID).map(\.contentHash)
+            )
             for registration in registrations {
                 let metadata = registration.metadata
                 let blob = registration.blob
-                guard !album.photoAssetIDs.contains(metadata.id),
-                      !state.photoAssets.contains(where: { $0.id == metadata.id }) else {
+                guard !state.photoAssets.contains(where: { $0.id == metadata.id }) else {
+                    throw DomainValidationError.assetAlreadyBelongsToAlbum(metadata.id)
+                }
+                guard !ownedContentHashes.contains(metadata.contentHash) else {
+                    continue
+                }
+                guard !album.photoAssetIDs.contains(metadata.id) else {
                     throw DomainValidationError.assetAlreadyBelongsToAlbum(metadata.id)
                 }
                 album.photoAssetIDs.append(metadata.id)
                 state.photoAssets.append(PhotoAssetRecord(albumID: albumID, metadata: metadata))
+                ownedContentHashes.insert(metadata.contentHash)
                 if let index = state.blobIndex.firstIndex(where: { $0.contentHash == blob.contentHash }) {
                     guard state.blobIndex[index].byteCount == blob.byteCount,
                           state.blobIndex[index].detectedContentType == blob.detectedContentType else {

@@ -65,9 +65,11 @@ enum BundledBackgroundResources {
     ]
 
     static func bootstrapInputs(
+        catalogIDs: Set<String>? = nil,
         bundle: Bundle = AppModuleResources.bundle
     ) -> [CatalogResourceBootstrapInput] {
         resources.compactMap { catalogID, filename, dataAssetName in
+            guard catalogIDs?.contains(catalogID) ?? true else { return nil }
             let data: Data?
             if let url = bundle.url(forResource: filename, withExtension: "png") {
                 data = try? Data(contentsOf: url, options: [.mappedIfSafe])
@@ -476,14 +478,14 @@ struct PhotoAssetDragPayload: Codable, Transferable, Sendable {
     }
 }
 
-/// Pont UIKit limité au déplacement du viewport. Le recognizer est attaché au
-/// conteneur SwiftUI afin que la vue transparente n’intercepte pas les gestes à
-/// un doigt. Son prédicat refuse tout départ sur un élément ou pendant le crop.
-struct TwoFingerPanGestureBridge: UIViewRepresentable {
+/// Pont UIKit unifié pour le zoom et le déplacement du viewport. Pan et pinch
+/// partagent une origine et peuvent reconnaître simultanément ; aucun des deux
+/// ne gagne arbitrairement la séquence à deux doigts (3:ZOM-003...3:ZOM-005).
+struct TwoFingerCanvasGestureBridge: UIViewRepresentable {
     var isEnabled: Bool
     var shouldBegin: (CGPoint) -> Bool
-    var onBegan: () -> Void
-    var onChanged: (CGSize) -> Void
+    var onBegan: (CGPoint) -> Void
+    var onChanged: (CGSize, Double, CGPoint) -> Void
     var onEnded: () -> Void
 
     func makeCoordinator() -> Coordinator {
@@ -511,6 +513,7 @@ struct TwoFingerPanGestureBridge: UIViewRepresentable {
         context.coordinator.onChanged = onChanged
         context.coordinator.onEnded = onEnded
         context.coordinator.panGesture.isEnabled = isEnabled
+        context.coordinator.pinchGesture.isEnabled = isEnabled
         view.requestAttachment()
     }
 
@@ -546,10 +549,14 @@ struct TwoFingerPanGestureBridge: UIViewRepresentable {
     final class Coordinator: NSObject, UIGestureRecognizerDelegate {
         var isEnabled: Bool
         var shouldBegin: (CGPoint) -> Bool
-        var onBegan: () -> Void
-        var onChanged: (CGSize) -> Void
+        var onBegan: (CGPoint) -> Void
+        var onChanged: (CGSize, Double, CGPoint) -> Void
         var onEnded: () -> Void
         weak var hostView: UIView?
+        private var isTransforming = false
+        private var anchor = CGPoint.zero
+        private var lastTranslation = CGSize.zero
+        private var lastMagnification = 1.0
 
         lazy var panGesture: UIPanGestureRecognizer = {
             let value = UIPanGestureRecognizer(
@@ -558,7 +565,19 @@ struct TwoFingerPanGestureBridge: UIViewRepresentable {
             )
             value.minimumNumberOfTouches = 2
             value.maximumNumberOfTouches = 2
-            value.cancelsTouchesInView = false
+            value.cancelsTouchesInView = true
+            value.delaysTouchesBegan = false
+            value.delaysTouchesEnded = false
+            value.delegate = self
+            return value
+        }()
+
+        lazy var pinchGesture: UIPinchGestureRecognizer = {
+            let value = UIPinchGestureRecognizer(
+                target: self,
+                action: #selector(handlePinch(_:))
+            )
+            value.cancelsTouchesInView = true
             value.delaysTouchesBegan = false
             value.delaysTouchesEnded = false
             value.delegate = self
@@ -568,8 +587,8 @@ struct TwoFingerPanGestureBridge: UIViewRepresentable {
         init(
             isEnabled: Bool,
             shouldBegin: @escaping (CGPoint) -> Bool,
-            onBegan: @escaping () -> Void,
-            onChanged: @escaping (CGSize) -> Void,
+            onBegan: @escaping (CGPoint) -> Void,
+            onChanged: @escaping (CGSize, Double, CGPoint) -> Void,
             onEnded: @escaping () -> Void
         ) {
             self.isEnabled = isEnabled
@@ -583,16 +602,19 @@ struct TwoFingerPanGestureBridge: UIViewRepresentable {
             guard hostView !== host else { return }
             detach()
             host.addGestureRecognizer(panGesture)
+            host.addGestureRecognizer(pinchGesture)
             hostView = host
         }
 
         func detach() {
             hostView?.removeGestureRecognizer(panGesture)
+            hostView?.removeGestureRecognizer(pinchGesture)
             hostView = nil
         }
 
         func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
             guard isEnabled, let hostView else { return false }
+            if isTransforming { return true }
             return shouldBegin(gestureRecognizer.location(in: hostView))
         }
 
@@ -600,22 +622,63 @@ struct TwoFingerPanGestureBridge: UIViewRepresentable {
             _ gestureRecognizer: UIGestureRecognizer,
             shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
         ) -> Bool {
-            false
+            (gestureRecognizer === panGesture && otherGestureRecognizer === pinchGesture)
+                || (gestureRecognizer === pinchGesture && otherGestureRecognizer === panGesture)
         }
 
         @objc private func handlePan(_ sender: UIPanGestureRecognizer) {
             guard let hostView else { return }
             switch sender.state {
             case .began:
-                onBegan()
+                beginIfNeeded(at: sender.location(in: hostView))
             case .changed:
                 let value = sender.translation(in: hostView)
-                onChanged(CGSize(width: value.x, height: value.y))
+                lastTranslation = CGSize(width: value.x, height: value.y)
+                emitChange()
             case .ended, .cancelled, .failed:
-                onEnded()
+                finishIfNeeded()
             default:
                 break
             }
+        }
+
+        @objc private func handlePinch(_ sender: UIPinchGestureRecognizer) {
+            guard let hostView else { return }
+            switch sender.state {
+            case .began:
+                beginIfNeeded(at: sender.location(in: hostView))
+            case .changed:
+                lastMagnification = Double(sender.scale)
+                emitChange()
+            case .ended, .cancelled, .failed:
+                finishIfNeeded()
+            default:
+                break
+            }
+        }
+
+        private func beginIfNeeded(at location: CGPoint) {
+            guard !isTransforming else { return }
+            isTransforming = true
+            anchor = location
+            lastTranslation = .zero
+            lastMagnification = 1
+            onBegan(location)
+        }
+
+        private func emitChange() {
+            guard isTransforming else { return }
+            onChanged(lastTranslation, lastMagnification, anchor)
+        }
+
+        private func finishIfNeeded() {
+            let panIsActive = panGesture.state == .began || panGesture.state == .changed
+            let pinchIsActive = pinchGesture.state == .began || pinchGesture.state == .changed
+            guard isTransforming, !panIsActive, !pinchIsActive else { return }
+            isTransforming = false
+            onEnded()
+            lastTranslation = .zero
+            lastMagnification = 1
         }
     }
 }
@@ -666,10 +729,19 @@ final class PhotoImageCache {
         return value
     }
 
-    func catalogImage(for contentHash: String) async -> UIImage? {
-        let key = "catalog-\(contentHash)" as NSString
-        if let value = cachedCatalogImage(for: contentHash) { return value }
-        guard let data = try? await mediaStore.data(for: contentHash),
+    func catalogImage(
+        for contentHash: String,
+        maximumPixelSize: Int
+    ) async -> UIImage? {
+        let key = "catalog-\(contentHash)-\(maximumPixelSize)" as NSString
+        if let value = cachedCatalogImage(
+            for: contentHash,
+            maximumPixelSize: maximumPixelSize
+        ) { return value }
+        guard let data = try? await mediaStore.displayData(
+            for: contentHash,
+            maximumPixelSize: maximumPixelSize
+        ),
               let value = UIImage(data: data) else {
             return nil
         }
@@ -677,8 +749,13 @@ final class PhotoImageCache {
         return value
     }
 
-    func cachedCatalogImage(for contentHash: String) -> UIImage? {
-        cache.object(forKey: "catalog-\(contentHash)" as NSString)
+    func cachedCatalogImage(
+        for contentHash: String,
+        maximumPixelSize: Int
+    ) -> UIImage? {
+        cache.object(
+            forKey: "catalog-\(contentHash)-\(maximumPixelSize)" as NSString
+        )
     }
 
     func coverImage(forKey key: String) -> UIImage? {
@@ -735,8 +812,10 @@ struct BundledBackgroundImage: View {
     let dataAssetName: String
     let fallbackContentHash: String?
     let cache: PhotoImageCache?
+    var maximumPixelSize = 2_048
 
     @State private var renderedImage: UIImage?
+    private static let validatedDataCache = NSCache<NSString, NSData>()
 
     var body: some View {
         Group {
@@ -748,16 +827,20 @@ struct BundledBackgroundImage: View {
                 Color.white
             }
         }
-        .task(id: "\(dataAssetName)|\(fallbackContentHash ?? "")") {
+        .task(id: "\(dataAssetName)|\(fallbackContentHash ?? "")|\(maximumPixelSize)") {
             renderedImage = nil
             if let fallbackContentHash, let cache,
-               let stored = await cache.catalogImage(for: fallbackContentHash) {
+               let stored = await cache.catalogImage(
+                   for: fallbackContentHash,
+                   maximumPixelSize: maximumPixelSize
+               ) {
                 renderedImage = stored
                 return
             }
-            if let bundled = Self.validatedBundledImage(
+            if let bundled = await Self.validatedBundledImage(
                 named: dataAssetName,
-                expectedHash: fallbackContentHash
+                expectedHash: fallbackContentHash,
+                maximumPixelSize: maximumPixelSize
             ) {
                 renderedImage = bundled
                 return
@@ -767,50 +850,57 @@ struct BundledBackgroundImage: View {
             if let defaultHash = defaultTheme.fallbackContentHash,
                defaultHash != fallbackContentHash,
                let cache,
-               let storedDefault = await cache.catalogImage(for: defaultHash) {
+               let storedDefault = await cache.catalogImage(
+                   for: defaultHash,
+                   maximumPixelSize: maximumPixelSize
+               ) {
                 renderedImage = storedDefault
                 return
             }
-            renderedImage = Self.validatedBundledImage(
+            renderedImage = await Self.validatedBundledImage(
                 named: "AlbumClassicSpiralData",
-                expectedHash: defaultTheme.fallbackContentHash
+                expectedHash: defaultTheme.fallbackContentHash,
+                maximumPixelSize: maximumPixelSize
             )
         }
     }
 
     private var immediatelyAvailableImage: UIImage? {
         if let fallbackContentHash, let cache,
-           let stored = cache.cachedCatalogImage(for: fallbackContentHash) {
+           let stored = cache.cachedCatalogImage(
+               for: fallbackContentHash,
+               maximumPixelSize: maximumPixelSize
+           ) {
             return stored
         }
-        if let bundled = Self.validatedBundledImage(
-            named: dataAssetName,
-            expectedHash: fallbackContentHash
-        ) {
-            return bundled
-        }
-
         let defaultTheme = BackgroundCatalog.defaultTheme
         if let defaultHash = defaultTheme.fallbackContentHash,
            let cache,
-           let storedDefault = cache.cachedCatalogImage(for: defaultHash) {
+           let storedDefault = cache.cachedCatalogImage(
+               for: defaultHash,
+               maximumPixelSize: maximumPixelSize
+           ) {
             return storedDefault
         }
-        return Self.validatedBundledImage(
-            named: "AlbumClassicSpiralData",
-            expectedHash: defaultTheme.fallbackContentHash
-        )
+        return nil
     }
 
+    @MainActor
     private static func validatedBundledImage(
         named name: String,
-        expectedHash: String?
-    ) -> UIImage? {
-        guard let expectedHash,
-              let asset = NSDataAsset(
-                  name: name,
-                  bundle: AppModuleResources.bundle
-              ),
+        expectedHash: String?,
+        maximumPixelSize: Int
+    ) async -> UIImage? {
+        guard let expectedHash else { return nil }
+        let cacheKey = "\(name)-\(expectedHash)" as NSString
+        let data: Data
+        if let cached = validatedDataCache.object(forKey: cacheKey) {
+            data = cached as Data
+        } else {
+            guard let asset = NSDataAsset(
+                name: name,
+                bundle: AppModuleResources.bundle
+            ),
               let descriptor = BuiltInCatalogRegistry.entries.first(where: { entry in
                   guard case let .asset(hash, mimeType, byteCount) = entry.payload else {
                       return false
@@ -818,12 +908,23 @@ struct BundledBackgroundImage: View {
                   return hash == expectedHash
                       && mimeType == "image/png"
                       && byteCount == Int64(asset.data.count)
-              }),
-              case let .asset(hash, _, _) = descriptor.payload,
-              SHA256.hexDigest(asset.data) == hash else {
-            return nil
+              }), case let .asset(hash, _, _) = descriptor.payload else { return nil }
+            let candidate = asset.data
+            let digest = await Task.detached(priority: .utility) {
+                SHA256.hexDigest(candidate)
+            }.value
+            guard digest == hash else { return nil }
+            validatedDataCache.setObject(candidate as NSData, forKey: cacheKey)
+            data = candidate
         }
-        return UIImage(data: asset.data)
+        guard let image = UIImage(data: data) else { return nil }
+        let longest = max(image.size.width, image.size.height)
+        guard longest > CGFloat(maximumPixelSize) else { return image }
+        let ratio = CGFloat(maximumPixelSize) / longest
+        return image.preparingThumbnail(of: CGSize(
+            width: max(1, image.size.width * ratio),
+            height: max(1, image.size.height * ratio)
+        ))
     }
 }
 

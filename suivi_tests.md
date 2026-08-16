@@ -16,13 +16,14 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Commit d’implémentation | `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` |
 | Spécification | 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`) |
 | App Playground | `Albumzh.swiftpm` |
-| Build ou copie testée | À renseigner |
-| Appareil | À renseigner : modèle exact |
-| iPadOS | À renseigner : version exacte |
-| Swift Playgrounds | À renseigner : version exacte |
+| Build ou copie testée | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation figé |
+| Appareil | iPad 8e génération (déclaré « iPad 8 ») |
+| iPadOS | 26.5.2 |
+| Swift Playgrounds | 4.7 |
 | Orientation initiale | Portrait |
 | Réseau initial | Connecté, sauf test hors ligne |
-| Date et heure de début | À renseigner |
+| Date et lieu de la campagne | 16 août 2026 — Paris, France |
+| Langue et région | Français — France |
 
 Le code d’implémentation reste figé par l’empreinte Git exacte
 `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`. La spécification 3.0 et
@@ -126,7 +127,7 @@ fichier effectivement utilisé dans la preuve de `IPAD-L1-076` ou
 | HEIC/HEIF statique | Accepté | À renseigner |
 | JPEG statique | Accepté | À renseigner |
 | PNG statique | Accepté ; les quatre fixtures ci-dessus conviennent | Voir empreintes ci-dessus |
-| RAW décodable par iPadOS | Original conservé, dérivé statique affiché | À renseigner : extension et appareil producteur |
+| RAW décodable par iPadOS | Original conservé, dérivé statique affiché | Différé : `raw.dng` synthétique, modèle `OpenAI iOS Test RAW`, 1 600 × 1 200, 16 bits RGGB, 3 840 384 octets, SHA-256 `6e5b0c9a1a19c698a2f393d53ee2dd50c7abca30f5405fe730a8ebd45d6321eb`, refusé par ImageIO ; nouveau test avec un RAW décodable à fournir |
 | Live Photo | Seule la composante fixe est importée | À créer dans Photos sans contenu personnel |
 | HDR statique | Accepté si décodable | À renseigner |
 | GIF animé | Refusé | À renseigner |
@@ -137,57 +138,84 @@ fichier effectivement utilisé dans la preuve de `IPAD-L1-076` ou
 
 ## Registre synthétique
 
-Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spécification 3.0
-`031d2e46c70128c7e633db1f04663949e4531309`.
+Les fiches exécutées ou rendues obsolètes parmi `IPAD-L1-063…108` ciblent le
+candidat d’origine `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` (copie iPad
+`aeae5c…`). Les régressions `IPAD-L1-109…131` ciblent le correctif en cours et
+restent « À figer » jusqu’à son commit exact. La fiche indépendante
+`IPAD-L1-102`, jamais exécutée, conserve son ID et son état ⚪ `NON TESTÉ`, mais
+sera figée sur le même correctif avant son exécution.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
-| `IPAD-L1-063` | Compilation et lancement sur racine 3.0 neuve | `3:LOT-001`, `3:LOC-029`, `3:LOC-031` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-064` | État vide, noms, création et durabilité | `3:ALB-004`, sous-périmètre création de `3:ALB-009`, `3:ALB-011` à `3:ALB-016`, `3:ACPT-100` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-065` | Grille, cartes, tri et durabilité | `3:ALB-001`, `3:ALB-002`, `3:ALB-003`, `3:APP-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-066` | Renommage ciblé et Annuler/Rétablir | sous-périmètre Renommer de `3:ALB-007`, `3:ALB-021`, `3:UND-011` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-067` | Corbeille, impossibilité d'éditer et restauration | `3:ALB-008`, `3:ALB-017`, `3:ALB-018`, `3:ALB-019`, `3:ACPT-102` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-068` | Suppression définitive ciblée et blob partagé | `3:ALB-018`, `3:LOC-008`, `3:LOC-022` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-069` | Bail d’édition multi-fenêtre | `3:APP-002`, `3:APP-010`, `3:APP-011` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-070` | Ajout, suppression et restauration d'une page remplie | `3:PAG-001`, `3:PAG-002`, `3:PAG-006`, `3:PAG-007`, `3:PAG-008`, `3:PAG-009`, `3:PAG-010` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-071` | Déplacer la page 5, la supprimer puis annuler | `3:PAG-003`, `3:PAG-004`, `3:PAG-005`, `3:PAG-011`, `3:GLO-003`, `3:GLO-004`, `3:GLO-005`, `3:ACPT-104` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-072` | Une seule page et fidélité globale | `3:GLO-001` à `3:GLO-009` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-073` | Fonds par page, portée globale et hors ligne | `3:BG-001` à `3:BG-005`, sous-périmètre Lot 1 de `3:BG-006`, `3:BG-010`, `3:BG-012`, `3:BG-013`, `3:BG-014`, `3:BG-015` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-074` | Couverture automatique, manuelle, identité et repli | `3:COV-001`, sous-périmètre Lot 1 de `3:COV-002`, `3:COV-003`, `3:COV-004`, `3:COV-005`, `3:COV-006`, `3:DAT-005`, `3:ACPT-103` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-075` | PhotosPicker multiple, ordre, hors ligne et annulation | `3:PHO-007`, `3:PHO-008`, `3:APL-001`, `3:APL-002`, `3:APL-003`, `3:APL-004`, `3:APL-005`, `3:APL-007`, `3:ERR-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-076` | Fichiers : formats statiques acceptés | `3:FMT-001`, `3:FMT-002`, `3:FMT-003`, `3:FMT-005`, `3:FMT-007`, `3:TST-011` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-077` | Refus, échec partiel et nouvelle tentative | `3:PHO-007`, `3:PHO-008`, `3:FMT-004`, `3:FMT-006`, `3:APL-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-078` | Panneau Photos, tri, compteur et suppression | `3:PHO-001` à `3:PHO-003`, `3:PHO-009`, `3:PHO-010` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-079` | Réutilisation, annulation et indépendance interalbum | `3:PHO-015`, `3:PHO-016`, `3:PHO-017`, `3:PHO-018`, `3:LOC-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-080` | Placement par pression et album sans photo | `3:PHO-004`, `3:PHO-005`, `3:PHO-006`, `3:PHO-011`, `3:PHO-012`, `3:PHO-013` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-081` | Placement par glisser-déposer | `3:PHO-004`, `3:PHO-005`, `3:ACC-020` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-082` | Remplacer, retirer et supprimer distinctement | `3:FRM-001` à `3:FRM-009` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-083` | Dupliquer et presse-papiers compatible/incompatible | `3:ELM-009`, `3:CLP-001`, `3:CLP-002`, `3:CLP-003`, `3:CLP-004` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-084` | Sélection, chevauchement et profondeur | `3:ELM-001`, `3:ELM-008`, `3:ELM-014` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-085` | Déplacement, huit poignées et rotation | `3:ELM-002` à `3:ELM-004`, `3:ELM-007`, `3:ELM-013` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-086` | Guides, accrochage, haptique et bornes | `3:CAN-005`, `3:CAN-006`, `3:ELM-005`, `3:ELM-006` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-087` | Petite photo 600 × 400 à `1×` | `3:DEC-07`, `3:CRP-001`, `3:CRP-004`, `3:CRP-006` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-088` | Commande Pleine page et grande photo à `0,5×` | `3:DEC-07`, `3:CRP-001`, `3:CRP-004` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-089` | Cadrage indépendant et original non destructif | `3:CRP-002`, `3:CRP-003`, `3:CRP-004`, `3:CRP-005`, `3:CRP-006`, `3:CRP-007`, `3:DAT-006` à `3:DAT-010` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-090` | Paliers du zoom du canevas | `3:ZOM-001`, `3:ZOM-002`, `3:ZOM-007` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-091` | Pincement ancré, panoramique et mémoire par page | `3:ZOM-003` à `3:ZOM-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-092` | Navigation et priorité des gestes | `3:NAV-001` à `3:NAV-007`, `3:ZOM-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-093` | Sauvegarde pendant geste, arrière-plan et relance | `3:APP-005`, `3:APP-006`, `3:APP-008`, `3:APP-009`, `3:SAV-001`, `3:SAV-002`, sous-périmètre réussite de `3:SAV-003` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-094` | Interruption après commande validée | `3:LOC-011` à `3:LOC-014`, `3:LOC-026` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-095` | Prévisualisation et rendu commun | `3:CAN-003`, `3:CAN-004`, `3:CAN-008`, `3:GLO-007`, `3:GLO-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-096` | Cadre vide et alertes de miniature | `3:FRM-001`, `3:FRM-008`, `3:GLO-006` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-097` | Qualité, seuils exacts et format régional | `3:QLT-001`, `3:QLT-002`, `3:QLT-003`, `3:QLT-004`, `3:QLT-005`, sous-périmètre édition/sauvegarde de `3:QLT-006`, `3:L10N-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-098` | Interface régulière/compacte, orientations et apparence | `3:EDT-002`, `3:EDT-004`, `3:EDT-005`, `3:EDT-006`, `3:EDT-011`, `3:EDT-016`, sous-périmètre photo de `3:EDT-020`, `3:ACC-021` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-099` | Dynamic Type, description accessible et VoiceOver | `3:ACC-001` à `3:ACC-005`, `3:ACC-007`, `3:ACC-008`, `3:ACC-011`, `3:ACC-012`, `3:ACC-017`, `3:ACC-020`, `3:EDT-010` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-100` | Clavier, Option + flèches et aide | `3:EDT-009`, `3:ELM-011`, `3:ELM-012`, `3:ELM-013`, `3:ACC-005`, `3:ACC-013`, `3:ACC-014`, `3:ACC-015` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-101` | Fonctionnement local hors ligne | `3:LOC-001`, `3:SEC-001`, `3:ERR-008` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-063` | Compilation et lancement sur racine 3.0 neuve | `3:LOT-001`, `3:LOC-029`, `3:LOC-031` | 🟢 `RÉUSSI` — performance de lancement à corriger séparément |
+| `IPAD-L1-064` | État vide, noms, création et durabilité | `3:ALB-004`, sous-périmètre création de `3:ALB-009`, `3:ALB-011` à `3:ALB-016`, `3:ACPT-100` | 🟢 `RÉUSSI` — anomalie de retour post-création séparée |
+| `IPAD-L1-065` | Grille, cartes, tri et durabilité | `3:ALB-001`, `3:ALB-002`, `3:ALB-003`, `3:APP-005` | 🟢 `RÉUSSI` |
+| `IPAD-L1-066` | Renommage ciblé et Annuler/Rétablir | sous-périmètre Renommer de `3:ALB-007`, `3:ALB-021`, `3:UND-011` | 🟢 `RÉUSSI` |
+| `IPAD-L1-067` | Corbeille, impossibilité d'éditer et restauration | `3:ALB-008`, `3:ALB-017`, `3:ALB-018`, `3:ALB-019`, `3:ACPT-102` | 🔴 `ÉCHOUÉ` — dates et localisation |
+| `IPAD-L1-068` | Suppression définitive ciblée et blob partagé | `3:ALB-018`, `3:LOC-008`, `3:LOC-022` | 🟢 `RÉUSSI` — compteur `×2` incohérent séparé |
+| `IPAD-L1-069` | Bail d’édition multi-fenêtre | `3:APP-002`, `3:APP-010`, `3:APP-011` | 🟠 `BLOQUÉ` — Swift Playgrounds sans multi-fenêtre sur cet iPad |
+| `IPAD-L1-070` | Ajout, suppression et restauration d'une page remplie | `3:PAG-001`, `3:PAG-002`, `3:PAG-006`, `3:PAG-007`, `3:PAG-008`, `3:PAG-009`, `3:PAG-010` | 🟢 `RÉUSSI` |
+| `IPAD-L1-071` | Déplacer la page 5, la supprimer puis annuler | `3:PAG-003`, `3:PAG-004`, `3:PAG-005`, `3:PAG-011`, `3:GLO-003`, `3:GLO-004`, `3:GLO-005`, `3:ACPT-104` | 🟢 `RÉUSSI` — indicateur d’insertion demandé |
+| `IPAD-L1-072` | Une seule page et fidélité globale | `3:GLO-001` à `3:GLO-009` | 🟢 `RÉUSSI` |
+| `IPAD-L1-073` | Fonds par page, portée globale et hors ligne | `3:BG-001` à `3:BG-005`, sous-périmètre Lot 1 de `3:BG-006`, `3:BG-010`, `3:BG-012`, `3:BG-013`, `3:BG-014`, `3:BG-015` | 🟢 `RÉUSSI` |
+| `IPAD-L1-074` | Couverture automatique, manuelle, identité et repli | `3:COV-001`, sous-périmètre Lot 1 de `3:COV-002`, `3:COV-003`, `3:COV-004`, `3:COV-005`, `3:COV-006`, `3:DAT-005`, `3:ACPT-103` | 🟢 `RÉUSSI` |
+| `IPAD-L1-075` | PhotosPicker multiple, ordre, hors ligne et annulation | `3:PHO-007`, `3:PHO-008`, `3:APL-001`, `3:APL-002`, `3:APL-003`, `3:APL-004`, `3:APL-005`, `3:APL-007`, `3:ERR-001` | 🟢 `RÉUSSI` |
+| `IPAD-L1-076` | Fichiers : formats statiques acceptés | `3:FMT-001`, `3:FMT-002`, `3:FMT-003`, `3:FMT-005`, `3:FMT-007`, `3:TST-011` | 🟠 `BLOQUÉ` — fixture RAW non décodable ; grille à corriger séparément |
+| `IPAD-L1-077` | Refus, échec partiel et nouvelle tentative | `3:PHO-007`, `3:PHO-008`, `3:FMT-004`, `3:FMT-006`, `3:APL-008` | 🟢 `RÉUSSI` — déduplication intra-album ajoutée séparément |
+| `IPAD-L1-078` | Panneau Photos, tri, compteur et suppression | `3:PHO-001` à `3:PHO-003`, `3:PHO-009`, `3:PHO-010` | 🔴 `ÉCHOUÉ` — annonce « Utilisée 2 fois » absente |
+| `IPAD-L1-079` | Réutilisation, annulation et indépendance interalbum | `3:PHO-015`, `3:PHO-016`, `3:PHO-017`, `3:PHO-018`, `3:LOC-008` | 🔴 `ÉCHOUÉ` — grille source inutilisable |
+| `IPAD-L1-080` | Placement par pression et album sans photo | `3:PHO-004`, `3:PHO-005`, `3:PHO-006`, `3:PHO-011`, `3:PHO-012`, `3:PHO-013` | 🔴 `ÉCHOUÉ` — mode de choix invisible |
+| `IPAD-L1-081` | Placement par glisser-déposer | `3:PHO-004`, `3:PHO-005`, `3:ACC-020` | 🟠 `BLOQUÉ` — largeur compacte et glisser inter-apps indisponibles |
+| `IPAD-L1-082` | Remplacer, retirer et supprimer distinctement | `3:FRM-001` à `3:FRM-009` | 🟢 `RÉUSSI` — ergonomie de l’inspecteur à corriger |
+| `IPAD-L1-083` | Dupliquer et presse-papiers compatible/incompatible | `3:ELM-009`, `3:CLP-001`, `3:CLP-002`, `3:CLP-003`, `3:CLP-004` | ⚫ `NON APPLICABLE` — étapes 8–9 contraires à la portée de session confirmée |
+| `IPAD-L1-084` | Sélection, chevauchement et profondeur | `3:ELM-001`, `3:ELM-008`, `3:ELM-014` | 🔴 `ÉCHOUÉ` — choix « Photo » ambigus |
+| `IPAD-L1-085` | Déplacement, huit poignées et rotation | `3:ELM-002` à `3:ELM-004`, `3:ELM-007`, `3:ELM-013` | 🟢 `RÉUSSI` — ergonomie poignées/aperçu à améliorer |
+| `IPAD-L1-086` | Guides, accrochage, haptique et bornes | `3:CAN-005`, `3:CAN-006`, `3:ELM-005`, `3:ELM-006` | 🟠 `BLOQUÉ` — haptique indisponible sur l’iPad 8 |
+| `IPAD-L1-087` | Petite photo 600 × 400 à `1×` | `3:DEC-07`, `3:CRP-001`, `3:CRP-004`, `3:CRP-006` | 🟢 `RÉUSSI` |
+| `IPAD-L1-088` | Commande Pleine page et grande photo à `0,5×` | `3:DEC-07`, `3:CRP-001`, `3:CRP-004` | 🟢 `RÉUSSI` |
+| `IPAD-L1-089` | Cadrage indépendant et original non destructif | `3:CRP-002`, `3:CRP-003`, `3:CRP-004`, `3:CRP-005`, `3:CRP-006`, `3:CRP-007`, `3:DAT-006` à `3:DAT-010` | 🟢 `RÉUSSI` |
+| `IPAD-L1-090` | Paliers du zoom du canevas | `3:ZOM-001`, `3:ZOM-002`, `3:ZOM-007` | 🟢 `RÉUSSI` — page active après Rétablir à corriger séparément |
+| `IPAD-L1-091` | Pincement ancré, panoramique et mémoire par page | `3:ZOM-003` à `3:ZOM-008` | 🔴 `ÉCHOUÉ` — panoramique à deux doigts inaccessible |
+| `IPAD-L1-092` | Navigation et priorité des gestes | `3:NAV-001` à `3:NAV-007`, `3:ZOM-005` | 🔴 `ÉCHOUÉ` — balayage inopérant après retour page 1 |
+| `IPAD-L1-093` | Sauvegarde pendant geste, arrière-plan et relance | `3:APP-005`, `3:APP-006`, `3:APP-008`, `3:APP-009`, `3:SAV-001`, `3:SAV-002`, sous-périmètre réussite de `3:SAV-003` | 🔴 `ÉCHOUÉ` — saut et double commande après Sauvegarder |
+| `IPAD-L1-094` | Interruption après commande validée | `3:LOC-011` à `3:LOC-014`, `3:LOC-026` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-109` |
+| `IPAD-L1-095` | Prévisualisation et rendu commun | `3:CAN-003`, `3:CAN-004`, `3:CAN-008`, `3:GLO-007`, `3:GLO-008` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-110` |
+| `IPAD-L1-096` | Cadre vide et alertes de miniature | `3:FRM-001`, `3:FRM-008`, `3:GLO-006` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-111` |
+| `IPAD-L1-097` | Qualité, seuils exacts et format régional | `3:QLT-001`, `3:QLT-002`, `3:QLT-003`, `3:QLT-004`, `3:QLT-005`, sous-périmètre édition/sauvegarde de `3:QLT-006`, `3:L10N-005` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-112` |
+| `IPAD-L1-098` | Interface régulière/compacte, orientations et apparence | `3:EDT-002`, `3:EDT-004`, `3:EDT-005`, `3:EDT-006`, `3:EDT-011`, `3:EDT-016`, sous-périmètre photo de `3:EDT-020`, `3:ACC-021` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-113` |
+| `IPAD-L1-099` | Dynamic Type, description accessible et VoiceOver | `3:ACC-001` à `3:ACC-005`, `3:ACC-007`, `3:ACC-008`, `3:ACC-011`, `3:ACC-012`, `3:ACC-017`, `3:ACC-020`, `3:EDT-010` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-114` |
+| `IPAD-L1-100` | Clavier, Option + flèches et aide | `3:EDT-009`, `3:ELM-011`, `3:ELM-012`, `3:ELM-013`, `3:ACC-005`, `3:ACC-013`, `3:ACC-014`, `3:ACC-015` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-115` |
+| `IPAD-L1-101` | Fonctionnement local hors ligne | `3:LOC-001`, `3:SEC-001`, `3:ERR-008` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-116` |
 | `IPAD-L1-102` | Store du prototype 2.1 ignoré | `3:DEC-33`, `3:LOC-029` à `3:LOC-031` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-103` | Enveloppe 100 pages et 20 occurrences photo | `3:PAG-012`, sous-périmètre photo de `3:LOC-018`, `3:PERF-008`, `3:PERF-015`, `3:PERF-017` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-104` | Matrice commandes, icônes et états en largeurs régulière/compacte | sous-périmètre Lot 1 de `3:EDT-003`, `3:EDT-004`, `3:EDT-007`, `3:EDT-010`, `3:EDT-012`, `3:EDT-013`, `3:EDT-014`, `3:EDT-015`, `3:EDT-016`, `3:EDT-017`, `3:FRM-005`, `3:FRM-006` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-105` | Réduire les animations | `3:ACC-006`, sous-périmètre Lot 1 de `3:TST-010` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-106` | Aide contextuelle disponible hors ligne | sous-périmètre Lot 1 de `3:EDT-019`, `3:ARC-014`, `3:DEC-38` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-107` | Progression, annulation et nettoyage d’un import long | `3:APL-006`, `3:PERF-009`, `3:PERF-011`, `3:APP-006`, `3:SEC-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L1-108` | Commandes rapides sérialisées sans perte ni erreur de révision | `3:APP-002`, `3:APP-005`, `3:LOC-011` à `3:LOC-014`, `3:UND-011` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-103` | Enveloppe 100 pages et 20 occurrences photo | `3:PAG-012`, sous-périmètre photo de `3:LOC-018`, `3:PERF-008`, `3:PERF-015`, `3:PERF-017` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-117` |
+| `IPAD-L1-104` | Matrice commandes, icônes et états en largeurs régulière/compacte | sous-périmètre Lot 1 de `3:EDT-003`, `3:EDT-004`, `3:EDT-007`, `3:EDT-010`, `3:EDT-012`, `3:EDT-013`, `3:EDT-014`, `3:EDT-015`, `3:EDT-016`, `3:EDT-017`, `3:FRM-005`, `3:FRM-006` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-118` |
+| `IPAD-L1-105` | Réduire les animations | `3:ACC-006`, sous-périmètre Lot 1 de `3:TST-010` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-119` |
+| `IPAD-L1-106` | Aide contextuelle disponible hors ligne | sous-périmètre Lot 1 de `3:EDT-019`, `3:ARC-014`, `3:DEC-38` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-120` |
+| `IPAD-L1-107` | Progression, annulation et nettoyage d’un import long | `3:APL-006`, `3:PERF-009`, `3:PERF-011`, `3:APP-006`, `3:SEC-008` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-121` |
+| `IPAD-L1-108` | Commandes rapides sérialisées sans perte ni erreur de révision | `3:APP-002`, `3:APP-005`, `3:LOC-011` à `3:LOC-014`, `3:UND-011` | ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par `IPAD-L1-131` |
+| `IPAD-L1-109` | Interruption et sauvegarde après correctifs gestuels | `3:SAV-001`, `3:LOC-011` à `3:LOC-014`, `3:LOC-026` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-110` | Prévisualisation et fonds mis en cache | `3:CAN-003`, `3:CAN-004`, `3:CAN-008`, `3:PERF-016` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-111` | Cadre vide et mode de choix explicite | `3:FRM-001`, `3:FRM-008`, `3:PHO-011` à `3:PHO-013` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-112` | Qualité informative et format régional | `3:QLT-001` à `3:QLT-006`, `3:EDT-021`, `3:L10N-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-113` | Inspecteur droit et adaptation compacte | `3:EDT-002`, `3:EDT-006`, `3:EDT-021`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-114` | Dynamic Type, choix non ambigu et VoiceOver | `3:ELM-002`, `3:ELM-014`, `3:ACC-001` à `3:ACC-020` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-115` | Pointeur, poignées hybrides et rotation directe | `3:ELM-002`, `3:ELM-011` à `3:ELM-013`, `3:ACC-013` à `3:ACC-015` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-116` | Relance locale et cache des fonds hors ligne | `3:LOC-001`, `3:SEC-001`, `3:PERF-007`, `3:PERF-016` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-117` | Cent pages, compteurs et déplacement continu | `3:PAG-012`, `3:PHO-002`, `3:PERF-008`, `3:PERF-015`, `3:PERF-017` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-118` | Matrice des commandes dans le nouvel inspecteur | `3:EDT-010` à `3:EDT-017`, `3:EDT-021`, `3:FRM-005`, `3:FRM-006` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-119` | Réduire les animations avec inspecteur droit | `3:ACC-006`, `3:EDT-002`, sous-périmètre Lot 1 de `3:TST-010` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-120` | Aide contextuelle depuis le nouvel inspecteur | `3:EDT-019`, `3:EDT-021`, `3:ARC-014`, `3:DEC-38` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-121` | Import long, annulation et déduplication | `3:APL-006`, `3:PHO-019`, `3:PERF-009`, `3:PERF-011`, `3:SEC-008` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-122` | Lancement et réouverture rapide des Fonds | `3:PERF-004`, `3:PERF-007`, `3:PERF-016`, `3:BG-008` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-123` | Retour après création et dates de corbeille | `3:ALB-006`, `3:ALB-017` à `3:ALB-025` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-124` | Compteur exact et grilles photo carrées | `3:PHO-002`, `3:PHO-009`, `3:PHO-015`, `3:PHO-019` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-125` | Modes Ajouter, Remplir et Remplacer explicites | `3:PHO-004`, `3:PHO-011` à `3:PHO-013`, `3:FRM-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-126` | Insertion de page et activation après Rétablir | `3:PAG-004`, `3:PAG-005`, `3:PAG-010`, `3:PAG-016` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-127` | Sélection non ambiguë, poignées hybrides et rotation | `3:ELM-002`, `3:ELM-013`, `3:ELM-014`, `3:EDT-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-128` | Pincement, panoramique et balayage après retour | `3:ZOM-003` à `3:ZOM-006`, `3:NAV-001` à `3:NAV-007` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-129` | Sauvegarde au milieu d’un déplacement | `3:ELM-007`, `3:SAV-001` à `3:SAV-003`, `3:UND-007` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-130` | Presse-papiers strictement limité à la session | `3:CLP-001` à `3:CLP-006`, `3:UND-012` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-131` | Commandes rapides après correction des transitions d’interface | `3:ALB-006`, `3:APP-002`, `3:APP-005`, `3:EDT-021`, `3:LOC-011` à `3:LOC-014`, `3:UND-011` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -211,12 +239,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   albums », état vide utilisable, aucune donnée exemple ni erreur de stockage,
   et second lancement identique. Seule une racine 3.0 valide est présentée ;
   une initialisation partielle n’est jamais affichée comme réussie.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — capture de la bibliothèque et, en cas d’échec,
-  texte complet du diagnostic de compilation.
-- Environnement : à renseigner — appareil, iPadOS, Swift Playgrounds, copie
-  testée, date et heure.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Compilation et deux lancements réussis. Anomalie hors verdict : environ 15 s avant la bibliothèque à chaque relance.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-064` — État vide, noms, création et durabilité
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -242,11 +267,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   retirés ; l’album existe durablement avant l’ouverture ; après interruption,
   `Guatemala`, ses deux pages et leurs fonds réapparaissent sans corruption ;
   deux albums homonymes sont acceptés et restent deux objets distincts.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures du bouton désactivé, de `Guatemala` avec
-  deux pages après relance et des deux cartes homonymes.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Toutes les étapes prévues ont réussi. Après la création et l’ouverture automatique, « Retour aux albums » est resté sans effet ; le retour fonctionne après relance et ouverture manuelle.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-065` — Grille, cartes, tri et durabilité de la bibliothèque
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -265,10 +288,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 - Résultat attendu : grille adaptative, tri décroissant par modification,
   cartes homonymes distinctes, quatre albums et ordre conservés après relance ;
   une miniature absente ou en chargement ne bloque jamais l’ouverture.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures avant/après modification et après relance.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-066` — Renommage ciblé et pile Annuler/Rétablir
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -290,11 +312,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   Rétablir agissent sur le même identifiant malgré les noms identiques ;
   annuler la feuille ne crée aucune commande ; `Voyage B` persiste après
   relance.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo courte recommandée pour montrer les trois
-  cartes pendant Annuler/Rétablir.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-067` — Corbeille, impossibilité d’éditer et restauration
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -319,11 +339,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 - Résultat attendu : Annuler ne modifie rien ; confirmer déplace uniquement
   la cible ; l’album en corbeille est non modifiable et absent de la liste
   active ; Restaurer rend son contenu intact et durable.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures de la confirmation, de la corbeille et de
-  la carte restaurée après relance.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : Parcours métier réussi, mais Fonds prend environ 6 s à chaque ouverture, même après Photos dans le même album ; la corbeille affiche une échéance relative mêlant français et anglais et omet la date de mise à la corbeille.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-068` — Suppression définitive ciblée et blob partagé
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -348,11 +366,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   après relance et sa photo reste résolue hors ligne. La suppression directe
   d’A ne purge donc pas le blob encore référencé par B. L’expiration automatique
   à trente jours de `3:ALB-020` n’est pas couverte par cette fiche.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures du dialogue, de B seul en corbeille et de B
-  après relance.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Suppression ciblée et conservation du blob partagé réussies. Anomalie séparée : B ne contient qu’une occurrence visible mais sa miniature indique `×2`.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-069` — Bail d’édition multi-fenêtre
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -373,11 +389,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   cause et ne propose aucune écriture effective ; Réessayer acquiert le bail
   après fermeture de la première ; le bail ne survit pas au processus et la
   modification persiste.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — capture des deux fenêtres et du bandeau Lecture
-  seule, ou justification du blocage.
-- Environnement : à renseigner — préciser le mode de multi-fenêtrage.
-
+- Résultat : 🟠 `BLOQUÉ`.
+- Preuve : Swift Playgrounds ne permet pas le multi-fenêtre sur cet iPad ; le bail concurrent ne peut pas être exercé.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-070` — Ajout, suppression et restauration d’une page remplie
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -406,11 +420,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   suivante, reste annulable avec restauration exacte de ses deux cadres et du
   placement photo, puis rétablissable ; il reste toujours au moins une page et
   l’état final persiste.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo ou captures des compteurs et de la
-  confirmation.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-071` — Déplacer la page 5, la supprimer puis annuler
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -437,11 +449,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   l’ordre initial exact ; les contenus suivent leur identité, les numéros sont
   recalculés, Rétablir rejoue les deux commandes, l’alternative contextuelle
   produit le même ordre que le glisser et l’ordre final persiste.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures avant, après chaque déplacement et après
-  relance.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Réorganisation, suppression et annulation réussies ; amélioration demandée : indicateur d’insertion visible pendant le déplacement.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-072` — Une seule page active et fidélité de la vue globale
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -462,10 +472,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   les miniatures sont fidèles mais non éditables ; toucher page 3 l’active et
   le retour sans sélection conserve la dernière page active ; changer de vue
   ne crée aucune commande Annuler.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures Vue page et Vue globale.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-073` — Fonds par page, portée globale, annulation et hors ligne
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -495,11 +504,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   est une commande unique et n’altère aucun élément ; Annuler restaure les
   trois fonds ; relance hors ligne identique. Lecture et PDF ne sont pas
   couverts ici car ils appartiennent au Lot 3.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures des trois pages avant/après portée globale
-  et après relance hors ligne.
-- Environnement : à renseigner — inclure l’état réseau.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-074` — Couverture automatique, manuelle, identité et repli
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -536,10 +543,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   révélé restent fidèles ; supprimer la cible revient à la première occurrence,
   puis l’absence de toute occurrence affiche le nom sur le fond de la première
   page ; Annuler/Rétablir et chaque état durable ciblent la bonne occurrence.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures des quatre états de couverture.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-075` — PhotosPicker multiple, ordre, hors ligne et annulation
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -569,11 +575,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   et persistantes indépendamment du sélecteur ; annuler les placements ne
   supprime pas les assets importés et l’annulation finale du sélecteur ne
   modifie ni photothèque interne ni page.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — capture de l’ordre et, si visible, vidéo de la
-  progression ; noter si aucune copie n’a dépassé 500 ms.
-- Environnement : à renseigner — autorisation Photos choisie.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-076` — Import Fichiers et placements statiques distincts
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -604,11 +608,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   composante fixe de la Live Photo est copiée ; orientation/profil appliqués au
   rendu sans réécriture visible de l’original ; toutes les occurrences
   persistent hors ligne.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — tableau des fichiers réellement testés avec nom,
-  format, dimensions, SHA-256 et résultat individuel.
-- Environnement : à renseigner.
-
+- Résultat : 🟠 `BLOQUÉ`.
+- Preuve : Les formats statiques testés hors RAW ont réussi. `raw.dng` est refusé avec « dimensions invalides » et n’est pas établi décodable par ImageIO ; la vérification RAW est différée. Anomalie séparée : les miniatures sont tronquées lorsque la grille atteint quatre colonnes.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-077` — Refus, échec partiel et nouvelle tentative sûre
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -640,11 +642,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   partiel conservé à sa position, aucun contenu existant remplacé, Réessayer ne
   relance que les erreurs et ne duplique aucun succès, Ignorer conserve le JPEG
   réussi et la relance reste cohérente.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — capture de chaque message/état et liste des fichiers
-  que le sélecteur système a empêché de choisir.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Refus, succès partiel et reprise ont fonctionné. Écart produit séparé : réimporter exactement le JPEG déjà présent crée immédiatement une seconde miniature `×0` au lieu de réutiliser l’asset existant.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-078` — Panneau Photos, tri, compteur et suppression logique
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -670,11 +670,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   l’original ; confirmation identifie la photo ; suppression logique n’affecte
   ni Fichiers ni Photos ; Annuler restaure métadonnées et position, Rétablir
   retire de nouveau, état final durable.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures compteurs, action désactivée, confirmation
-  et ordre restauré.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : Les étapes non signalées ont réussi, mais le menu de la photo `×2` n’affiche pas l’annonce « Utilisée 2 fois ».
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-079` — Réutilisation, annulation et indépendance interalbum
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -712,12 +710,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   en une fois et cible intacte après suppression de la source et relance. Le
   dernier départage par octets UUID de `3:PHO-015`, invisible entre cartes
   distinctes, reste couvert par les tests Core.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures source/cible avant et après suppression ;
-  l’identité logique et la déduplication physique restent complétées par les
-  tests Core, car l’UI ne montre pas les UUID ni les chemins.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : À l’étape 3, les photos de l’album source sont énormes, très zoomées ou superposées ; sélection et poursuite impossibles.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-080` — Placement par pression et album sans photo
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -757,10 +752,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   placement arbitraire ; pression avec cadre rempli remplace uniquement le
   contenu ; chaque nouveau placement est centré à `1×`, sans rotation ni
   retournement ; Annuler, fermer le choix ou changer de page ne crée rien.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures des géométries avant/après remplacement.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : Étapes 1 à 3 réussies. À partir de l’étape 4, l’action locale « Ajouter une photo » ne produit aucun retour visible, contrairement à « Ajouter des photos » du panneau.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-081` — Placement par glisser-déposer sur iPad
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -784,11 +778,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   en largeur compacte iPad, source et cible restent dans la même fenêtre et le
   panneau ne masque pas le canevas ; l’alternative sans glisser produit les
   mêmes états métier.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — enregistrement d’écran recommandé avec point de
-  dépôt visible.
-- Environnement : à renseigner — préciser doigt, Pencil ou pointeur utilisé.
-
+- Résultat : 🟠 `BLOQUÉ`.
+- Preuve : Étapes 1 à 5 réussies. Étapes 6 et 7 non conclues : aucune présentation multi-fenêtre Swift Playgrounds ni glisser-déposer entre applications sur cet iPad ; la fiche mélangeait cette limite avec l’alternative par pression.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-082` — Remplacer, retirer et supprimer : trois opérations distinctes
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -812,10 +804,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   cadre/styles et original dans Photos ; Supprimer retire le cadre et son
   contenu sans confirmation ; chaque action est distincte, annulable et
   durable ; l’aide du cadre vide n’est qu’une aide d’édition.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures du cadre rempli, vide, supprimé et restauré.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Les effets métier Remplacer, Retirer et Supprimer ont réussi. Le bouton Remplacer n’annonce aucun mode ; un badge vert `OK` ressemble à un bouton inactif et les commandes horizontales sont difficiles à parcourir.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-083` — Dupliquer et presse-papiers compatible/incompatible
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -854,10 +845,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   restaure atomiquement les métadonnées de l’asset retiré ; le collage sans
   contenu et le payload photo dans un autre album restent désactivés ; état
   final durable. Texte et sticker ne sont pas testés, car ils relèvent du Lot 2.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo de l’ordre de profondeur et des annulations.
-- Environnement : à renseigner.
-
+- Résultat : ⚫ `NON APPLICABLE`.
+- Preuve : Étapes 1 à 7 compatibles avec la session réussies. Les étapes 8–9 exigeaient à tort une réactivation après fermeture ; l’utilisateur confirme que le presse-papiers doit rester limité à la session et à l’album.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-084` — Sélection, chevauchement et profondeur des cadres
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -882,10 +872,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   hit-testing ; sélecteur ordonné du premier plan vers l’arrière et descriptions
   non ambiguës ; profondeur modifiée uniquement sur commande ; zone vide
   désélectionne ; les cadres partagent une pile unique.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — enregistrement d’écran et ordre initial/final noté.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : À l’étape 4, le sélecteur propose trois choix identiques « Photo », rendant le cadre arrière impossible à identifier. Les autres étapes ont réussi ; l’inspecteur contextuel horizontal est jugé difficile d’accès.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-085` — Déplacement, huit poignées, rotation et gestes à deux doigts
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -912,10 +901,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   interne ni le canevas ; chaque geste continu produit une seule commande ;
   Rotation… est bornée dans `[-180, 180)`, au pas de 1°, distincte des quarts
   de tour du contenu ; toutes les actions ont une alternative accessible.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo des poignées, de la rotation et d’un Annuler.
-- Environnement : à renseigner — préciser doigt/Pencil/pointeur.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Toutes les transformations prévues ont réussi. Améliorations demandées : poignées visuelles sur les bordures réelles lorsque visibles et aperçu immédiat de Rotation…, avec Annuler restaurant l’angle initial.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-086` — Guides, accrochage, haptique et bornes géométriques
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -938,11 +926,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   après sortie/rentrée ; aucun guide de sécurité ; taille minimale respectée ;
   le centre reste dans la page même si le cadre déborde et le débordement est
   rogné ; une seule commande est persistée au relâchement.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo ; décrire les retours haptiques, qui ne sont
-  pas visibles dans une capture.
-- Environnement : à renseigner — réglage haptique inclus.
-
+- Résultat : 🟠 `BLOQUÉ`.
+- Preuve : Les contrôles autres que l’haptique ont réussi ; aucun retour haptique n’est disponible sur l’iPad 8, donc la fiche complète ne peut pas conclure.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-087` — Petite photo 600 × 400 centrée à `1×`
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -969,10 +955,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   cadre ; borne basse `1×` puisque la photo tient déjà ; fond visible normal,
   sans alerte de cadre vide ; Réinitialiser et relance gardent `1×` centré ;
   rendu utile cohérent dans toutes les sorties Lot 1.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures à `1,00×` dans les quatre vues.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-088` — Commande Pleine page et borne dynamique `0,5×`
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1004,10 +989,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   refusent une valeur inférieure ; `0,50×` persiste exactement et ne se
   confond jamais avec le zoom du canevas. Les contrôles du cadre pleine page ne
   sont ni rognés ni placés hors de la zone tactile visible.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — capture du curseur `0,50×` et de l’image entière.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-089` — Cadrage indépendant et original non destructif
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1046,11 +1030,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   modifiée. La comparaison Fichiers prouve l’absence de modification de la
   source externe ; l’immutabilité des octets stockés et leur hash avant/après
   restent prouvés par les tests Core, pas par cette observation UI.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo du cycle Annuler/Réinitialiser/Terminé et
-  SHA-256 source avant/après si disponible.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Retour utilisateur « ok » pour l’ensemble de la fiche.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-090` — Paliers et commandes du zoom du canevas
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1071,10 +1053,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
 - Résultat attendu : plage 50–400 %, paliers et états désactivés exacts ;
   Ajuster revient à 100 % centré ; contours et page changent seulement comme
   fenêtre visuelle ; aucune mutation métier ni commande d’annulation.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — relevé des valeurs affichées et capture des bornes.
-- Environnement : à renseigner.
-
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : Paliers et commandes de zoom réussis. Anomalie séparée : après Annuler puis Rétablir une suppression de page, la page recréée ne devient pas active.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-091` — Pincement ancré, déplacement de fenêtre et mémoire par page
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1098,11 +1079,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   deux doigts, aides constantes en points écran ; A et B restaurés pendant la
   scène malgré les changements de vue ; après relance, chaque page revient à
   `100 %` centrée et le document est inchangé.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo du point d’ancrage et tableau A/B avant/après
-  changement de vue et relance.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : Le pincement fonctionne, mais le déplacement à deux doigts est interprété comme un pincement et ne permet pas de déplacer la fenêtre.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-092` — Navigation par boutons/balayage et priorité des gestes
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1131,10 +1110,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   Suivant, droite = Précédent ; reconnaissance horizontale seulement au ratio
   > 1,25 ; priorité déterministe contenu > élément > fenêtre > navigation ;
   panneau et bornes ne naviguent pas ; jamais deux pages actives.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo continue couvrant chaque origine de geste.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : Après navigation puis retour à la page 1, le balayage horizontal sur zone vide ne fonctionne plus ; les autres contrôles non signalés ont réussi.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-093` — Sauvegarde pendant geste, arrière-plan et relance
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1164,11 +1142,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   bouton Sauvegarder ; arrière-plan consolide immédiatement le journal ;
   Sauvegarder n’annule pas le geste ; retour, fermeture et relance retrouvent le
   dernier état annoncé Enregistré ; nouvelle session sans anciennes piles.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo des états de sauvegarde et captures après les
-  deux réouvertures.
-- Environnement : à renseigner.
-
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : Toucher Sauvegarder pendant un déplacement valide une première position, puis le relâchement provoque un saut et une seconde commande au lieu d’ignorer la fin du flux tactile déjà validé.
+- Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` ; 16 août 2026 ; Paris, France ; français (France).
 ### `IPAD-L1-094` — Interruption après une commande validée et reprise locale
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1193,11 +1169,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   annoncé Disponible sans transaction valide ; dernière version valide jamais
   remplacée par une écriture partielle ; au plus le geste continu non validé
   est perdu ; aucun staging ou message technique brut ne bloque le lancement.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo ou chronologie horodatée des interruptions et
-  états retrouvés.
-- Environnement : à renseigner.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-109`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-095` — Prévisualisation et rendu commun du sous-périmètre Lot 1
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1222,10 +1196,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   absentes des sorties ; transparence révèle exactement les éléments inférieurs
   puis le fond ; état de session restauré sans mutation du document. Lecture,
   diaporama et PDF restent hors Lot 1.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures comparatives des trois rendus.
-- Environnement : à renseigner.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-110`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-096` — Cadre vide et alertes dans la vue globale/prévisualisation
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1248,11 +1221,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   miniature signale clairement le vide ; prévisualisation avertit sans bloquer
   et masque l’aide ; un cadre métier rempli reste rempli même sans couvrir son
   masque ; l’alerte disparaît après remplissage.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures page 1/page 2 en édition, globale et
-  prévisualisation.
-- Environnement : à renseigner.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-111`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-097` — Qualité, seuils exacts et format régional
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1285,11 +1256,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   jamais persisté ; forme/icône/libellé en plus de la couleur ; avertissement
   non bloquant pour édition et sauvegarde. L’avertissement avant export et le
   recalcul du format PDF choisi de `3:QLT-006` restent hors Lot 1.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures des trois états, de Vue globale et des
-  régions France/États-Unis à `1,08×`.
-- Environnement : à renseigner — régions et langues exactes.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-112`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-098` — Interface régulière/compacte, orientations et apparence
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1319,11 +1288,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   libellés stables, état actif non indiqué par couleur seule, page aspect-fit
   centrée, une seule page ; adaptation conserve sélection et contenu ; fonds
   Aucun/couleurs restent opaques et identiques en clair/sombre.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures des six combinaisons largeur/orientation/
-  apparence réellement exécutées.
-- Environnement : à renseigner — taille de fenêtre approximative.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-113`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-099` — Dynamic Type, description accessible et VoiceOver
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1361,11 +1328,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   états jamais uniquement colorés, lecture individuelle non ambiguë,
   alternatives complètes aux gestes, aucune modification de géométrie due à
   Dynamic Type et parcours principal réalisable sans vue inaccessible.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — enregistrement VoiceOver avec audio ou notes exactes
-  des annonces ; captures Dynamic Type.
-- Environnement : à renseigner — taille Dynamic Type et réglages VoiceOver.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-114`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-100` — Clavier, Option + flèches et aide
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1398,10 +1363,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   les raccourcis d’élément, raccourcis documentés dans l’aide,
   pointeur/trackpad utilisables, toutes transformations et réorganisations
   possibles sans geste multipoint.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — modèle de clavier/pointeur et vidéo des raccourcis.
-- Environnement : à renseigner.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-115`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-101` — Fonctionnement local hors ligne
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1424,15 +1388,13 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   modifiables, aucune photo envoyée vers un serveur propriétaire, aucune erreur
   réseau bloquante ; les commandes hors ligne persistent après relance ; le
   retour réseau ne change rien silencieusement.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — capture du mode Avion et de l’album après seconde
-  relance.
-- Environnement : à renseigner — état de chaque interface réseau.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-116`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-102` — Ancien store 2.1 laissé intact et ignoré
 
-- Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
-- Spécification : 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`).
+- Candidat : **À figer sur le commit correctif avant exécution**.
+- Spécification : 3.0, empreinte du correctif à figer avant exécution.
 - Exigences : `3:DEC-33`, `3:DAT-025`, `3:DAT-026`, `3:LOC-010`,
   `3:LOC-029` à `3:LOC-031`, `3:ERR-024`.
 - Préconditions : copie de l’app contenant réellement un store du prototype
@@ -1492,11 +1454,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   sûre ; le mouvement reste interactif sans signe de décodage plein format ni
   état Enregistrement… à chaque image, puis la commande finale est persistée ;
   état final durable.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — temps mesurés, modèle d’iPad, vidéo du défilement et
-  captures des avertissements.
-- Environnement : à renseigner — stockage libre approximatif et alimentation.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-117`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-104` — Matrice commandes, icônes et états en largeurs régulière/compacte
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1553,11 +1513,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   équivalent natif, libellé accessible inchangé et désactivation exacte ; la
   largeur compacte ne change aucun effet ni ordre métier. Les commandes Lots 2
   et 3 ne sont pas exposées conformément à `3:ARC-014`.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures annotées des cinq états en largeur régulière
-  et compacte, plus relevé VoiceOver commande/symbole/libellé/état.
-- Environnement : à renseigner — largeur de fenêtre et réglage VoiceOver.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-118`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-105` — Réduire les animations
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1581,10 +1539,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   réduite cohérente ; aucun état métier ni géométrie ne change. Le fondu de
   page final de `3:ANI-009` reste réservé à l’animation livrée au Lot 3 et n’est
   pas déclaré validé ici.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéos avant/après et valeur du réglage système.
-- Environnement : à renseigner.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-119`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-106` — Aide contextuelle disponible hors ligne
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1612,10 +1569,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   fonctions publiques Lot 1 sans marque tierce. Modèles, dé, Auto, texte et
   stickers exigés par l’intégralité de `3:EDT-019` seront ajoutés et testés au
   Lot 2 : cette fiche ne valide que l’aide des fonctions publiques du Lot 1.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures de chaque contexte avec mode Avion visible.
-- Environnement : à renseigner — état réseau exact.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-120`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-107` — Progression, annulation et nettoyage d’un import long
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1659,10 +1615,9 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   validées, nettoie les temporaires, ne laisse aucun état partiel et permet une
   nouvelle tentative. La fermeture ne libère pas la session sous un transfert
   PhotosPicker encore actif.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo horodatée et tableau taille/durée par fichier.
-- Environnement : à renseigner — stockage libre, appareil et source Fichiers.
-
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ; remplacée par `IPAD-L1-121`.
+- Preuve : non exécutée avant modification ; aucun résultat extrapolé.
+- Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-108` — Commandes rapides sérialisées sans perte ni erreur de révision
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -1695,10 +1650,379 @@ Toutes les fiches ciblent `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` et la spéc
   silencieuse ni écrasement d’un état plus récent ; Annuler/Rétablir conserve
   l’ordre de session, l’ouverture ne chevauche pas une mutation bibliothèque
   et la relance retrouve exactement l’état annoncé Enregistré.
+- Résultat : ⚫ `NON APPLICABLE` — fiche rendue obsolète par les corrections ;
+  remplacée par `IPAD-L1-131`.
+- Preuve : non exécutée avant modification ; le scénario traverse désormais la
+  transition post-création et l’inspecteur Fonds corrigés.
+- Environnement : sans objet.
+
+## Campagne de régression après retours du 16 août 2026
+
+Les fiches ci-dessous ciblent le prochain commit correctif. Elles sont préparées
+mais ne doivent pas être exécutées avant que « À figer » soit remplacé par son
+empreinte Git exacte et que la copie transférée porte cette même empreinte.
+
+### `IPAD-L1-109` — Interruption et sauvegarde après correctifs gestuels
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:SAV-001`, `3:APP-009`, `3:LOC-011` à `3:LOC-014`,
+  `3:LOC-026`.
+- Préconditions : album jetable avec deux pages et un cadre rempli.
+- Étapes : ajouter une page puis forcer la fermeture après confirmation ;
+  relancer ; déplacer ensuite un cadre, toucher Sauvegarder avant de relever le
+  doigt, relever le doigt, fermer de force puis relancer.
+- Résultat attendu : page et position validées retrouvées ; aucun saut après
+  Sauvegarder, une seule commande de déplacement et aucun état partiel.
 - Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo complète, ordre observé des commandes, nombre
-  final de pages, fond et noms intermédiaires/final.
-- Environnement : à renseigner — appareil, iPadOS et Swift Playgrounds.
+- Preuve : vidéo continue et captures après chaque relance.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-110` — Prévisualisation et fonds mis en cache
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:CAN-003`, `3:CAN-004`, `3:CAN-008`, `3:GLO-007`,
+  `3:PERF-016`.
+- Préconditions : page avec motif intégré et trois cadres superposés ; canevas
+  décentré à environ 175 %.
+- Étapes : comparer éditeur, Vue globale et Prévisualiser ; revenir à la page ;
+  ouvrir Photos puis Fonds trois fois sans quitter l’album et chronométrer le
+  premier retour visuel de chaque ouverture.
+- Résultat attendu : composition identique hors aides d’édition, état de fenêtre
+  restauré ; structure de Fonds visible en moins de 200 ms et aucune attente de
+  plusieurs secondes lors des réouvertures.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures comparatives et trois durées mesurées.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-111` — Cadre vide et mode de choix explicite
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:FRM-001`, `3:FRM-008`, `3:GLO-006`, `3:PHO-011` à
+  `3:PHO-013`.
+- Préconditions : page 1 avec cadre vide, page 2 vide, deux photos disponibles.
+- Étapes : toucher Ajouter une photo dans le cadre vide, vérifier l’annonce de
+  la cible puis Annuler ; recommencer et remplir ; page 2, utiliser l’ajout local,
+  vérifier « nouveau cadre », changer de page avant le choix puis recommencer.
+- Résultat attendu : modes visibles et annulables ; aucune création à
+  l’annulation ou au changement de page ; choix final remplit ou crée uniquement
+  la cible annoncée ; alertes de cadre vide restent cohérentes.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures de chaque bandeau de mode et des pages finales.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-112` — Qualité informative et format régional
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:QLT-001` à `3:QLT-006`, `3:EDT-021`, `3:L10N-005`.
+- Préconditions : grande fixture dans un cadre ; région France.
+- Étapes : valider successivement `1,00×`, `1,50×` et `3,00×`, puis refaire le
+  contrôle `1,08×` en France et aux États-Unis ; sélectionner le cadre dans les
+  deux largeurs d’interface.
+- Résultat attendu : états `OK`, `Acceptable`, `Insuffisante` et bascule
+  régionale attendus ; la qualité est un libellé informatif distinct des boutons,
+  accessible, et ne bloque ni édition ni sauvegarde.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures des états et régions.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-113` — Inspecteur droit et adaptation compacte
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:EDT-002`, `3:EDT-006`, `3:EDT-011`, `3:EDT-016`,
+  `3:EDT-021`, `3:ACC-021`.
+- Préconditions : iPad en largeur régulière puis compacte ; cadre rempli
+  sélectionné.
+- Étapes : ouvrir Photos et Fonds ; vérifier l’inspecteur à droite, ses groupes
+  Contenu/Cadre et son repli ; tourner l’iPad, passer si possible en largeur
+  compacte, ouvrir/fermer le panneau et retrouver la largeur régulière.
+- Résultat attendu : aucune commande inaccessible ou superposée ; sélection et
+  page conservées ; présentation compacte dans la même fenêtre et inspecteur
+  droit restauré en largeur régulière.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures régulière/compacte et orientations réellement disponibles.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-114` — Dynamic Type, choix non ambigu et VoiceOver
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ELM-014`, `3:ACC-001` à `3:ACC-005`, `3:ACC-007`,
+  `3:ACC-008`, `3:ACC-011`, `3:ACC-012`, `3:ACC-017`, `3:ACC-020`.
+- Préconditions : trois cadres photo fortement superposés, avec noms ou
+  descriptions distincts ; Dynamic Type élevé et VoiceOver disponibles.
+- Étapes : ouvrir Sélectionner un élément depuis la barre et le canevas ; lire
+  les trois choix ; sélectionner successivement arrière, milieu et avant ;
+  parcourir ensuite Photos, Fonds, corbeille et confirmations avec VoiceOver.
+- Résultat attendu : chaque choix annonce type, repère distinctif, position et
+  profondeur ; aucun libellé essentiel tronqué sans défilement et aucune
+  sélection ne change la profondeur.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : enregistrement VoiceOver avec audio.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-115` — Pointeur, poignées hybrides et rotation directe
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ELM-002`, `3:ELM-011` à `3:ELM-013`, `3:ACC-005`,
+  `3:ACC-013` à `3:ACC-015`.
+- Préconditions : clavier/pointeur si disponibles ; cadre partiellement hors
+  page puis cadre dont une bordure sort de la fenêtre.
+- Étapes : contrôler les neuf poignées aux bordures visibles et les cibles de
+  secours lorsque la bordure sort ; ouvrir Rotation…, déplacer le curseur et
+  utiliser `±90°`, Annuler, puis recommencer et Valider.
+- Résultat attendu : bordures et poignées visuelles coïncident lorsqu’elles sont
+  visibles ; les secours restent activables ; rotation visible en direct ;
+  Annuler restaure l’entrée et Valider crée une seule commande.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo avec pointeur ou doigt et un Annuler/Rétablir.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-116` — Relance locale et cache des fonds hors ligne
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:LOC-001`, `3:SEC-001`, `3:ERR-008`, `3:PERF-007`,
+  `3:PERF-016`.
+- Préconditions : deux albums utilisant les trois motifs intégrés ; mode Avion.
+- Étapes : relancer trois fois et chronométrer jusqu’au premier contenu ; ouvrir
+  chaque album et chaque fond ; alterner Photos/Fonds cinq fois ; modifier un
+  fond, enregistrer et relancer toujours hors ligne.
+- Résultat attendu : premier contenu en moins de deux secondes dans l’enveloppe
+  visée, aucune revalidation bloquante du catalogue, réouvertures immédiates et
+  état durable sans réseau.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : six durées et vidéo du parcours hors ligne.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-117` — Cent pages, compteurs et déplacement continu
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:PAG-012`, `3:PHO-002`, `3:PERF-008`, `3:PERF-015`,
+  `3:PERF-017`.
+- Préconditions : album de 100 pages et une fixture locale.
+- Étapes : chronométrer l’ouverture ; créer vingt occurrences du même asset et
+  vérifier `×20` ; déplacer un cadre plusieurs secondes ; créer la 21e
+  occurrence puis la 101e page et relancer.
+- Résultat attendu : compte exact des seuls cadres de l’album, avertissements
+  non bloquants, aucune écriture ou redécodage visible pendant le mouvement et
+  état final durable.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : durée, vidéo du déplacement et captures des compteurs/alertes.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-118` — Matrice des commandes dans le nouvel inspecteur
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:EDT-010` à `3:EDT-017`, `3:EDT-021`, `3:FRM-005`,
+  `3:FRM-006`.
+- Préconditions : cadre vide, cadre rempli, seconde photo et presse-papiers
+  vide ; largeurs régulière puis compacte.
+- Étapes : relever les états sans sélection, cadre vide, cadre rempli et
+  cadrage ; en régulier contrôler les groupes verticaux Contenu puis Cadre et
+  Supprimer à côté de Copier/Coller ; en compact contrôler les mêmes effets et
+  l’ordre relatif ; exercer Supprimer.
+- Résultat attendu : matrice complète, qualité non interactive, actions de
+  contenu séparées des transformations du cadre et Supprimer immédiatement
+  accessible sans ambiguïté.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures annotées des états.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-119` — Réduire les animations avec inspecteur droit
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ACC-006`, `3:EDT-002`, sous-périmètre Lot 1 de `3:TST-010`.
+- Préconditions : album de trois pages ; vidéos de référence avec Réduire les
+  animations désactivé puis activé.
+- Étapes : replier/afficher l’inspecteur, alterner Photos/Fonds, ouvrir/fermer
+  Aide, Vue globale et Prévisualiser, puis naviguer par boutons et balayage.
+- Résultat attendu : transitions réduites cohérentes, aucun mouvement ample et
+  aucun changement de page, sélection, zoom ou historique causé par l’interface.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéos comparatives.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-120` — Aide contextuelle depuis le nouvel inspecteur
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:EDT-019`, `3:EDT-021`, `3:ARC-014`, `3:DEC-38`.
+- Préconditions : mode Avion ; cadre vide, cadre rempli et alerte qualité.
+- Étapes : ouvrir Aide sans panneau, depuis Photos, depuis Fonds, pendant le
+  cadrage, depuis l’inspecteur de cadre puis depuis Vue globale.
+- Résultat attendu : aide locale contextualisée sur le panneau ou mode courant,
+  incluant la séparation Contenu/Cadre sans exposer les lots 2/3.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures de chaque contexte.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-121` — Import long, annulation et déduplication
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:APL-006`, `3:PHO-019`, `3:PERF-009`, `3:PERF-011`,
+  `3:APP-006`, `3:SEC-008`.
+- Préconditions : deux JPEG distincts dont la copie dépasse 500 ms et une copie
+  exacte du premier ; noms, tailles et SHA-256 notés.
+- Étapes : importer les deux distincts et suivre chaque état ; réimporter le
+  premier seul puis dans un lot où il apparaît deux fois ; lancer enfin un
+  import long et l’annuler avant la fin.
+- Résultat attendu : progression attribuée au bon fichier ; aucune seconde
+  miniature ni commande de contenu pour les empreintes déjà présentes ; ordre
+  des nouveautés conservé ; annulation nettoyée et relance cohérente.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo, hashes et ordre du panneau avant/après.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-122` — Lancement et réouverture rapide des Fonds
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:PERF-004`, `3:PERF-007`, `3:PERF-016`, `3:BG-008`.
+- Préconditions : stockage 3.0 existant avec au moins un album et les trois
+  fonds déjà utilisés une fois.
+- Étapes : relancer trois fois en chronométrant le premier contenu ; dans le
+  même album, alterner cinq fois Photos et Fonds.
+- Résultat attendu : lancement sous la cible de deux secondes, structure de
+  Fonds sous 200 ms, aucun blocage d’environ 6 ou 15 secondes et motifs chargés
+  progressivement sans écran figé.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : tableau des huit durées et vidéo.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-123` — Retour après création et dates de corbeille
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ALB-006`, `3:ALB-017` à `3:ALB-025`.
+- Préconditions : bibliothèque ouverte ; date système connue.
+- Étapes : créer un album, attendre son ouverture automatique puis toucher
+  immédiatement Retour aux albums ; le mettre à la corbeille et l’ouvrir.
+- Résultat attendu : retour fonctionnel sans relance ; deux dates absolues en
+  français, « Mise à la corbeille » et « Suppression définitive prévue »,
+  séparées de trente périodes de 24 h.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo création/retour et capture de la corbeille.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-124` — Compteur exact et grilles photo carrées
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:PHO-002`, `3:PHO-009`, `3:PHO-015`, `3:PHO-019`.
+- Préconditions : deux albums partageant les mêmes octets sous deux `assetID` ;
+  cible avec exactement une occurrence et au moins huit photos sources.
+- Étapes : vérifier `×1` dans la cible après suppression définitive de la
+  source ; ouvrir le menu et l’annonce d’usage ; afficher le panneau puis la
+  grille Depuis vos autres albums en largeur permettant quatre colonnes.
+- Résultat attendu : compte limité à l’`assetID` courant ; miniatures carrées,
+  non superposées et compteur entièrement visible dans toutes les colonnes.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures des deux grilles et du compteur.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-125` — Modes Ajouter, Remplir et Remplacer explicites
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:PHO-004`, `3:PHO-011` à `3:PHO-013`, `3:FRM-004`.
+- Préconditions : page vide, cadre vide, cadre rempli et deux photos disponibles.
+- Étapes : lancer successivement l’ajout local, l’ajout du cadre vide et
+  Remplacer ; pour chaque mode vérifier la cible, Annuler puis refaire et choisir
+  une miniature.
+- Résultat attendu : le panneau annonce respectivement Nouveau cadre, Remplir
+  ce cadre et Remplacer la photo ; Annuler est sans effet ; un seul objet cible
+  change après le choix.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : captures des trois annonces et états avant/après.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-126` — Insertion de page et activation après Rétablir
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:PAG-004`, `3:PAG-005`, `3:PAG-010`, `3:PAG-016`.
+- Préconditions : album de cinq pages reconnaissables.
+- Étapes : glisser la page 5 avant les pages 2 puis 4 et après la dernière en
+  observant l’indicateur ; supprimer la page active, Annuler puis Rétablir.
+- Résultat attendu : indicateur clignotant avant la cible ou en fin (fixe et
+  visible avec Réduire les animations), ordre conforme ; la
+  page recréée par Rétablir devient immédiatement active.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo du curseur d’insertion et du Rétablir.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-127` — Sélection non ambiguë, poignées hybrides et rotation
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ELM-002`, `3:ELM-013`, `3:ELM-014`, `3:EDT-021`.
+- Préconditions : trois cadres superposés nommés distinctement ; l’un déborde de
+  la page.
+- Étapes : identifier chaque cadre par Sélectionner un élément ; vérifier les
+  poignées sur les bordures visibles et les secours ; modifier Rotation… sans
+  valider, Annuler, puis modifier et Valider ; Annuler une fois.
+- Résultat attendu : choix non ambigus, commandes à droite séparées, aperçu en
+  direct, restauration exacte à Annuler et une seule commande après Valider.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo continue.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-128` — Pincement, panoramique et balayage après retour
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ZOM-003` à `3:ZOM-006`, `3:NAV-001` à `3:NAV-007`.
+- Préconditions : album de trois pages ; page 1 ajustée puis zoomée à 200 %.
+- Étapes : pincer seul, déplacer deux doigts à distance constante, combiner
+  zoom et translation ; naviguer 1→2→1 par boutons puis 1→2→1 par balayage sur
+  zone vide ; répéter après ouverture/fermeture de Photos.
+- Résultat attendu : zoom et translation tous deux utilisables et composables ;
+  aucun geste à deux doigts ne tourne la page ; le balayage reste disponible à
+  chaque retour page 1.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo des trajectoires.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-129` — Sauvegarde au milieu d’un déplacement
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ELM-007`, `3:SAV-001` à `3:SAV-003`, `3:UND-007`.
+- Préconditions : cadre sélectionné et position initiale repérée.
+- Étapes : commencer un déplacement, toucher Sauvegarder d’un second doigt,
+  continuer légèrement puis relever le premier ; toucher Annuler une fois puis
+  Rétablir une fois ; fermer et relancer.
+- Résultat attendu : position capturée au toucher Sauvegarder, aucun saut ni
+  seconde commande après le relâchement ; Annuler/Rétablir unique et état
+  durable après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo image par image et positions avant/après.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-130` — Presse-papiers strictement limité à la session
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:CLP-001` à `3:CLP-006`, `3:UND-012`.
+- Préconditions : album A avec cadre rempli et album B actif.
+- Étapes : copier dans A et coller sur une autre page de A ; copier de nouveau,
+  quitter vers la bibliothèque, ouvrir B puis A et relever Coller ; répéter avec
+  un passage en arrière-plan.
+- Résultat attendu : collage intrasession dans A réussi ; Coller désactivé dans
+  B et toujours désactivé au retour dans A ou après arrière-plan, sans
+  réactivation d’un ancien payload.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo des états de Coller.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-131` — Commandes rapides après correction des transitions d’interface
+
+- Candidat : **À figer après validation WSL du correctif**.
+- Exigences : `3:ALB-006`, `3:APP-002`, `3:APP-005`, `3:EDT-021`,
+  `3:LOC-011` à `3:LOC-014`, `3:UND-011`.
+- Préconditions : album A de trois pages avec photos et fonds distincts ;
+  bibliothèque prête à créer un album B.
+- Étapes : dans A, déclencher rapidement Ajouter une page, changer de fond,
+  Annuler puis Rétablir depuis le nouvel inspecteur ; revenir à la bibliothèque,
+  créer B, attendre son ouverture automatique, revenir immédiatement aux albums
+  puis rouvrir A ; renommer enfin A tout en enchaînant Annuler/Rétablir selon les
+  états activés, fermer et relancer.
+- Résultat attendu : chaque commande acceptée est exécutée une fois dans son
+  ordre durable, sans `staleRevision`, perte ni écrasement ; aucun chevauchement
+  de feuille et d’éditeur ne bloque Retour ; fonds, nombre de pages et nom final
+  correspondent aux commandes observées après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : vidéo continue, ordre des états activés, nom, fond et nombre final de
+  pages avant/après relance.
+- Environnement : à renseigner intégralement.
 
 ## Qualification différée Apple/macOS/Xcode
 
@@ -1865,7 +2189,7 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
-| — | — | Aucune fiche exécutée | — | — | — |
+| `IPAD-L1-063…093` | 16 août 2026 | 31 fiches retranscrites individuellement ci-dessus : 18 réussies, 8 échouées, 4 bloquées et 1 non applicable | Réponses et observations consignées dans chaque fiche ; aucune réussite extrapolée | Correctif regroupé et régressions `109…131` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` |
 
 ## Règle de clôture
 

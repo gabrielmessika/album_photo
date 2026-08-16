@@ -46,6 +46,8 @@ final class AppModel: ObservableObject {
     private var didPrepareStorage = false
     private var didEvaluateRetentionAtLaunch = false
     private var retentionMaintenanceTask: Task<Void, Never>?
+    private var catalogBootstrapTask: Task<Void, Never>?
+    private var defaultCatalogBootstrapTask: Task<Void, Never>?
 
     init(
         service: AlbumApplicationService,
@@ -62,6 +64,8 @@ final class AppModel: ObservableObject {
 
     deinit {
         retentionMaintenanceTask?.cancel()
+        catalogBootstrapTask?.cancel()
+        defaultCatalogBootstrapTask?.cancel()
     }
 
     func loadLibrary() async {
@@ -73,23 +77,13 @@ final class AppModel: ObservableObject {
                 try await mediaStore.prepareForLaunch()
                 didPrepareStorage = true
             }
-            for input in BundledBackgroundResources.bootstrapInputs() {
-                // Une ressource bundle absente ou corrompue ne bloque jamais
-                // l’accès : le blob déjà indexé reste le fallback de BG-008.
-                guard (try? await mediaStore.ensureStorageCapacity(
-                    forByteCount: Int64(input.data.count)
-                )) != nil else { continue }
-                _ = try? await catalogBootstrap.bootstrap(
-                    [input],
-                    commandID: Self.catalogBootstrapCommandID(input.catalogID)
-                )
-            }
             _ = try await service.evaluateTrashExpiration(
                 trigger: didEvaluateRetentionAtLaunch
                     ? .applicationActive : .applicationLaunch
             )
             didEvaluateRetentionAtLaunch = true
             try await refreshLibrary()
+            scheduleMissingCatalogBootstrapIfNeeded()
             startRetentionMaintenanceIfNeeded()
         } catch {
             present(error, fallback: "Impossible de charger la bibliothèque.")
@@ -108,6 +102,13 @@ final class AppModel: ObservableObject {
     }
 
     func createAlbum(named name: String) async -> AlbumSnapshot? {
+        if let defaultCatalogBootstrapTask {
+            await defaultCatalogBootstrapTask.value
+        }
+        guard defaultCatalogResourceIsReady else {
+            errorMessage = "Le fond par défaut n’est pas encore disponible. Réessayez."
+            return nil
+        }
         do {
             let album = try await service.createAlbum(named: name)
             try await refreshLibrary()
@@ -232,6 +233,10 @@ final class AppModel: ObservableObject {
         librarySnapshot.album(id: id)
     }
 
+    func waitForCatalogBootstrap() async {
+        await catalogBootstrapTask?.value
+    }
+
     func clearError() {
         errorMessage = nil
     }
@@ -245,6 +250,78 @@ final class AppModel: ObservableObject {
         default:
             return UUID(uuidString: "8d156ffa-9fb1-4b18-9ad4-ea22df2ce470")!
         }
+    }
+
+    /// PERF-007 / PERF-016 — le catalogue déjà indexé ne relit plus les PNG du
+    /// bundle à chaque relance. Une ressource réellement absente est copiée
+    /// après l’affichage de la bibliothèque et ne bloque jamais son ouverture.
+    private func scheduleMissingCatalogBootstrapIfNeeded() {
+        guard catalogBootstrapTask == nil else { return }
+        let indexedHashes = Set(
+            librarySnapshot.blobIndex
+                .filter { $0.state == .available }
+                .map(\.contentHash)
+        )
+        let missingCatalogIDs = Set(BackgroundCatalog.themes.compactMap { theme in
+            guard let hash = theme.fallbackContentHash,
+                  !indexedHashes.contains(hash) else { return nil }
+            return theme.id
+        })
+        guard !missingCatalogIDs.isEmpty else { return }
+
+        let defaultID = BackgroundCatalog.defaultTheme.catalogID
+        let needsDefault = missingCatalogIDs.contains(defaultID)
+        let remainingIDs = missingCatalogIDs.subtracting([defaultID])
+        let defaultTask: Task<Void, Never>? = needsDefault
+            ? Task { [weak self] in
+                await Task.yield()
+                await self?.bootstrapCatalogResources(
+                    catalogIDs: [defaultID],
+                    refreshesLibrary: true
+                )
+            }
+            : nil
+        defaultCatalogBootstrapTask = defaultTask
+
+        catalogBootstrapTask = Task { [weak self, defaultTask] in
+            await defaultTask?.value
+            guard let self, !Task.isCancelled else { return }
+            self.defaultCatalogBootstrapTask = nil
+            await self.bootstrapCatalogResources(
+                catalogIDs: remainingIDs,
+                refreshesLibrary: false
+            )
+            self.catalogBootstrapTask = nil
+        }
+    }
+
+    private var defaultCatalogResourceIsReady: Bool {
+        guard let hash = BackgroundCatalog.defaultTheme.fallbackContentHash else {
+            return false
+        }
+        return librarySnapshot.blobIndex.contains {
+            $0.contentHash == hash && $0.state == .available
+        }
+    }
+
+    private func bootstrapCatalogResources(
+        catalogIDs: Set<String>,
+        refreshesLibrary: Bool
+    ) async {
+        guard !catalogIDs.isEmpty else { return }
+        for input in BundledBackgroundResources.bootstrapInputs(
+            catalogIDs: catalogIDs
+        ) {
+            guard !Task.isCancelled,
+                  (try? await mediaStore.ensureStorageCapacity(
+                      forByteCount: Int64(input.data.count)
+                  )) != nil else { continue }
+            _ = try? await catalogBootstrap.bootstrap(
+                [input],
+                commandID: Self.catalogBootstrapCommandID(input.catalogID)
+            )
+        }
+        if refreshesLibrary { try? await refreshLibrary() }
     }
 
     /// ALB-023 — une seule boucle par conteneur réévalue la corbeille toutes

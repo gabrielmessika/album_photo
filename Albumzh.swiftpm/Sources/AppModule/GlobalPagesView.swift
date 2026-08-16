@@ -21,10 +21,29 @@ private struct PageDeletionRequest: Identifiable {
     var id: UUID { pageID }
 }
 
+private struct InsertionPulse: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isBright = false
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(reduceMotion ? 1 : (isBright ? 1 : 0.3))
+            .animation(
+                reduceMotion
+                    ? nil
+                    : .easeInOut(duration: 0.55).repeatForever(autoreverses: true),
+                value: isBright
+            )
+            .onAppear { isBright = true }
+    }
+}
+
 struct GlobalPagesView: View {
     @ObservedObject var model: EditorViewModel
 
     @State private var deletionRequest: PageDeletionRequest?
+    @State private var insertionTargetPageID: UUID?
+    @State private var isTerminalDropTargeted = false
 
     private let columns = [
         GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 20)
@@ -88,16 +107,29 @@ struct GlobalPagesView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(.secondary.opacity(0.35), style: StrokeStyle(dash: [6, 5]))
             }
-            .dropDestination(for: PageDragPayload.self) { payloads, _ in
-                guard let source = payloads.first?.pageID,
-                      !model.isReadOnly,
-                      album.pages.last?.id != source,
-                      album.pages.contains(where: { $0.id == source }) else {
-                    return false
+            .overlay(alignment: .top) {
+                if isTerminalDropTargeted {
+                    Capsule()
+                        .fill(Color.accentColor)
+                        .frame(height: 4)
+                        .padding(.horizontal, 8)
+                        .modifier(InsertionPulse())
                 }
-                Task { await model.movePageToEnd(source) }
-                return true
             }
+            .dropDestination(
+                for: PageDragPayload.self,
+                action: { payloads, _ in
+                    guard let source = payloads.first?.pageID,
+                          !model.isReadOnly,
+                          album.pages.last?.id != source,
+                          album.pages.contains(where: { $0.id == source }) else {
+                        return false
+                    }
+                    Task { await model.movePageToEnd(source) }
+                    return true
+                },
+                isTargeted: { isTerminalDropTargeted = $0 }
+            )
             .accessibilityHint("Accepte une page glissée pour la déplacer après toutes les autres.")
     }
 
@@ -168,16 +200,35 @@ struct GlobalPagesView: View {
         }
         .buttonStyle(.plain)
         .draggable(PageDragPayload(pageID: page.id))
-        .dropDestination(for: PageDragPayload.self) { payloads, _ in
-            guard let source = payloads.first?.pageID,
-                  !model.isReadOnly,
-                  source != page.id,
-                  album.pages.contains(where: { $0.id == source }) else {
-                return false
+        .overlay(alignment: .leading) {
+            if insertionTargetPageID == page.id {
+                Capsule()
+                    .fill(Color.accentColor)
+                    .frame(width: 5)
+                    .padding(.vertical, 4)
+                    .modifier(InsertionPulse())
             }
-            Task { await model.movePage(source, before: page.id) }
-            return true
         }
+        .dropDestination(
+            for: PageDragPayload.self,
+            action: { payloads, _ in
+                guard let source = payloads.first?.pageID,
+                      !model.isReadOnly,
+                      source != page.id,
+                      album.pages.contains(where: { $0.id == source }) else {
+                    return false
+                }
+                Task { await model.movePage(source, before: page.id) }
+                return true
+            },
+            isTargeted: { targeted in
+                if targeted {
+                    insertionTargetPageID = page.id
+                } else if insertionTargetPageID == page.id {
+                    insertionTargetPageID = nil
+                }
+            }
+        )
         .contextMenu {
             Button("Déplacer avant", systemImage: "arrow.up") {
                 Task { await model.movePageByOffset(page.id, delta: -1) }

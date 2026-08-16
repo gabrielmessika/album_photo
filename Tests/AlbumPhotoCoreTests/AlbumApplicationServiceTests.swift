@@ -321,6 +321,54 @@ final class AlbumApplicationServiceTests: XCTestCase {
         XCTAssertTrue(undone.photoAssetIDs.isEmpty)
     }
 
+    // 3:PHO-019, 3:DAT-036
+    func testRegistrationDeduplicatesContentHashWithinAlbumWithoutExtraUndo() async throws {
+        let service = TestFixtures.service()
+        let album = try await service.createAlbum(named: "Empreintes")
+        let sharedData = TestFixtures.data("same exact file")
+        let uniqueData = TestFixtures.data("new file in repeated batch")
+        let first = TestFixtures.metadata(id: UUID(), data: sharedData)
+        let duplicate = TestFixtures.metadata(id: UUID(), data: sharedData)
+        let batchDuplicate = TestFixtures.metadata(id: UUID(), data: sharedData)
+        let unique = TestFixtures.metadata(id: UUID(), data: uniqueData)
+        let repeatedUnique = TestFixtures.metadata(id: UUID(), data: uniqueData)
+
+        let imported = try await service.registerPhoto(
+            first,
+            blob: TestFixtures.blob(data: sharedData),
+            in: album.id
+        )
+        let unchanged = try await service.registerPhoto(
+            duplicate,
+            blob: TestFixtures.blob(data: sharedData),
+            in: album.id
+        )
+        let batchImported = try await service.registerPhotos([
+            PhotoRegistration(
+                metadata: batchDuplicate,
+                blob: TestFixtures.blob(data: sharedData)
+            ),
+            PhotoRegistration(
+                metadata: unique,
+                blob: TestFixtures.blob(data: uniqueData)
+            ),
+            PhotoRegistration(
+                metadata: repeatedUnique,
+                blob: TestFixtures.blob(data: uniqueData)
+            )
+        ], in: album.id)
+
+        XCTAssertEqual(imported.photoAssetIDs, [first.id])
+        XCTAssertEqual(unchanged.photoAssetIDs, [first.id])
+        XCTAssertEqual(batchImported.photoAssetIDs, [first.id, unique.id])
+        let undoneBatch = try await service.undo(albumID: album.id)
+        XCTAssertEqual(undoneBatch.photoAssetIDs, [first.id])
+        let undoneFirst = try await service.undo(albumID: album.id)
+        let canUndoAgain = await service.canUndo(albumID: album.id)
+        XCTAssertTrue(undoneFirst.photoAssetIDs.isEmpty)
+        XCTAssertFalse(canUndoAgain)
+    }
+
     // 3:ARC-007, 3:LOC-011
     func testRepeatedCommandIDIsIdempotentAndDoesNotDuplicateUndo() async throws {
         let service = TestFixtures.service()

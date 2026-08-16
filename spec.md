@@ -1,8 +1,8 @@
 # Spécification fonctionnelle et technique — Application iOS d’albums photo
 
 > **Version :** 3.0<br>
-> **Date :** 10 août 2026<br>
-> **Statut :** projet consolidé — zoom dynamique et frontières des lots 1 à 3 arbitrés<br>
+> **Date :** 16 août 2026<br>
+> **Statut :** projet consolidé — retours de la première campagne iPad intégrés<br>
 > **Plateformes :** iPhone et iPad  
 > **Version minimale :** iOS 26 et iPadOS 26  
 > **Technologies principales :** Swift et SwiftUI
@@ -426,6 +426,7 @@ photo dans le canevas et le calcul reproductible du contrôle de cadrage.
 | `ALB-022` | À partir de la version 1.1, renommer un album ou changer sa couverture DOIT créer une révision persistante après validation. |
 | `ALB-023` | L’expiration de la corbeille DOIT être évaluée au lancement et au moins une fois par jour lorsque l’application reste active. |
 | `ALB-024` | La durée de rétention DOIT être calculée comme trente périodes de vingt-quatre heures à partir de `trashedAt` en UTC. |
+| `ALB-025` | Chaque album de la corbeille DOIT afficher deux dates calendaires absolues et localisées : « Mise à la corbeille » pour `trashedAt`, puis « Suppression définitive prévue » pour `trashedAt + 30 × 24 h`. Une formulation relative ou mélangeant plusieurs langues NE DOIT PAS remplacer ces deux dates. |
 
 ## 6.2 Création
 
@@ -477,8 +478,8 @@ haut à gauche, largeur et hauteur normalisées de `0` à `1`.
 | ID | Exigence |
 |---|---|
 | `EDT-001` | Les cinq panneaux de création DOIVENT apparaître dans cet ordre stable : Photos, Mise en page, Fonds, Stickers, Cadres et formes. |
-| `EDT-002` | Sur iPad, ces panneaux DOIVENT utiliser un rail latéral et un inspecteur repliable ; sur iPhone, ils DOIVENT utiliser une barre inférieure et une feuille adaptative. Leur contenu et leur ordre fonctionnel restent identiques. |
-| `EDT-003` | Dans l’ordre fonctionnel, la barre principale DOIT proposer Retour, Aide, nom de l’album avec Renommer, état de sauvegarde, Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller, Mise en page auto, Créer — Vue page, Organiser — Vue globale, Prévisualiser puis Exporter. |
+| `EDT-002` | Sur iPad en largeur régulière, ces panneaux DOIVENT utiliser un rail latéral et un inspecteur repliable fixé à droite du canevas ; sur iPhone ou en largeur compacte, ils DOIVENT utiliser une barre inférieure et une présentation adaptative dans la même fenêtre. Leur contenu et leur ordre fonctionnel restent identiques. |
+| `EDT-003` | Dans l’ordre fonctionnel, la barre principale DOIT proposer Retour, Aide, nom de l’album avec Renommer, état de sauvegarde, Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller, Supprimer, Mise en page auto, Créer — Vue page, Organiser — Vue globale, Prévisualiser puis Exporter. |
 | `EDT-004` | Une commande trop large pour l’iPhone DOIT rester disponible dans un menu Plus sans changer son libellé, son effet ni son ordre relatif. |
 | `EDT-005` | La marge de sécurité, un prix, Commander et toute commande commerciale NE DOIVENT PAS apparaître. |
 | `EDT-006` | Changer ou fermer un panneau NE DOIT PAS modifier ni désélectionner l’élément courant. |
@@ -503,6 +504,7 @@ commande.
 | Barre principale | Couper | `scissors` | aucun élément sélectionné |
 | Barre principale | Copier | `doc.on.doc` | aucun élément sélectionné |
 | Barre principale | Coller | `doc.on.clipboard` | presse-papiers incompatible |
+| Barre principale | Supprimer | `trash` | aucun élément sélectionné |
 | Barre principale | Mise en page auto | `wand.and.stars` avec interrupteur | jamais, sauf tâche atomique en cours |
 | Barre principale | Créer — Vue page | `rectangle.portrait` | déjà active |
 | Barre principale | Organiser — Vue globale | `square.grid.2x2` | déjà active |
@@ -563,7 +565,7 @@ commande.
 |---|---|
 | `EDT-010` | Chaque commande des tableaux 7.2.1 et 7.2.2 DOIT conserver son ordre relatif, son libellé accessible et son état activé/désactivé sur iPhone et iPad. |
 | `EDT-011` | L’état actif d’un panneau ou d’une vue DOIT combiner forme, libellé ou indicateur avec la couleur ; la couleur seule est interdite. |
-| `EDT-012` | Sans sélection, Couper et Copier sont désactivés ; Photos, Mise en page, Fonds et Stickers, les deux ajouts locaux, le dé compatible, Auto, Vue globale et Prévisualiser restent accessibles. Cadres et formes est désactivé tant qu’aucun cadre photo n’est sélectionné. |
+| `EDT-012` | Sans sélection, Couper, Copier et Supprimer sont désactivés ; Photos, Mise en page, Fonds et Stickers, les deux ajouts locaux, le dé compatible, Auto, Vue globale et Prévisualiser restent accessibles. Cadres et formes est désactivé tant qu’aucun cadre photo n’est sélectionné. |
 | `EDT-013` | Avec un cadre vide sélectionné, la barre contextuelle DOIT proposer Ajouter une photo, Cadres et formes, Dupliquer, ordre de profondeur et Supprimer. Recadrer et les transformations du contenu sont désactivés. |
 | `EDT-014` | Avec une photo, un texte ou un sticker sélectionné, seule la barre propre au type définie par `FRM-005`, `TBX-009` ou `STK-016` DOIT apparaître, suivie des commandes communes dans le même ordre. |
 | `EDT-015` | En mode cadrage, les panneaux, navigation de page et transformations du cadre DOIVENT être temporairement désactivés ; la barre DOIT proposer Zoom photo avec sa valeur en `×`, Annuler, Réinitialiser et Terminé. Zoom photo expose toute la plage de `CRP-004`, y compris les valeurs inférieures à `1×`, avec un ajustement accessible sans pincement. Les commandes de zoom du canevas restent visuellement distinctes et désactivées jusqu’à la sortie du cadrage. |
@@ -572,13 +574,14 @@ commande.
 | `EDT-018` | Exporter DOIT ouvrir le choix défini par `EXP-001`. Sur iPad, cette commande reste la dernière action visible de la barre ; sur iPhone, elle PEUT être placée dans Plus après Prévisualiser. |
 | `EDT-019` | Aide DOIT ouvrir une aide native consultable hors ligne et contextualisée sur la vue ou le panneau actif. Elle explique au minimum sélection, ajout photo, cadre vide, modèle, dé, Auto, texte, stickers, vue globale et alertes de qualité, sans reprendre les textes ni la marque Photoweb. |
 | `EDT-020` | En largeur régulière, Ajouter une photo et Ajouter du texte DOIVENT rester deux boutons visibles près du canevas, dans cet ordre. En largeur compacte, ils PEUVENT être regroupés sous un bouton Ajouter avec le symbole `plus`, dont le menu conserve Photos puis Texte ; l’action reste accessible en deux activations au plus. |
+| `EDT-021` | En largeur régulière, la sélection d’un élément DOIT afficher ses commandes dans l’inspecteur droit, séparées en commandes du contenu et commandes du cadre ou de l’élément. Un état dérivé non interactif, notamment la qualité photo, NE DOIT PAS adopter l’apparence d’un bouton. En largeur compacte, les mêmes commandes PEUVENT rester dans une barre défilante ou un menu adaptatif sans changer leur effet. |
 
 ## 7.3 Sélection, gestes et barre contextuelle
 
 | ID | Exigence |
 |---|---|
 | `ELM-001` | Un seul élément PEUT être sélectionné. Une pression choisit l’élément de premier plan sous le point ; pour un cadre photo, toute sa forme de masque participe au hit-testing, y compris une partie non couverte par les pixels de la photo. Une pression sur une zone vide désélectionne. |
-| `ELM-002` | La sélection DOIT afficher un contour non exporté, quatre poignées d’angle, quatre poignées latérales et une poignée de rotation extérieure. |
+| `ELM-002` | La sélection DOIT afficher un contour non exporté, quatre poignées d’angle, quatre poignées latérales et une poignée de rotation extérieure. Les poignées visuelles suivent exactement les bordures réelles du cadre tant que leur centre reste visible. Lorsqu’une bordure ou une cible tactile sort de la fenêtre, une cible de secours recalée dans la zone visible DOIT préserver l’accès tactile et VoiceOver sans prétendre être la bordure réelle. |
 | `ELM-003` | Glisser l’intérieur déplace l’élément ; les poignées le redimensionnent ; la poignée de rotation le fait tourner. Un pincement et une rotation à deux doigts DOIVENT offrir les mêmes transformations. |
 | `ELM-004` | Les cadres photo et zones de texte PEUVENT changer de rapport ; les stickers DOIVENT conserver leurs proportions. |
 | `ELM-005` | Des guides magnétiques DOIVENT signaler l’alignement avec les bords et centres de la page ainsi qu’avec les bords et centres des autres éléments. Aucun guide de marge de sécurité NE DOIT exister. |
@@ -589,7 +592,7 @@ commande.
 | `ELM-010` | Supprimer un élément NE DOIT PAS demander confirmation et DOIT rester annulable. |
 | `ELM-011` | Les touches fléchées DOIVENT déplacer la sélection de `0,01` de la dimension correspondante ; avec la touche Option, le pas DOIT être `0,0025`. |
 | `ELM-012` | Le déplacement et le redimensionnement DOIVENT avoir des alternatives accessibles par menu ; aucune opération obligatoire NE DOIT dépendre uniquement d’un geste multipoint. |
-| `ELM-013` | Rotation… DOIT ouvrir un contrôle accessible exprimé en degrés, borné dans `[-180, 180)`, avec pas de `1°`, actions `−90°`, `+90°` et Réinitialiser à `0°`. Valider constitue une seule commande annulable sur la géométrie de l’élément ; pour une photo, cette rotation du cadre reste distincte des rotations de contenu de `FRM-005`. |
+| `ELM-013` | Rotation… DOIT ouvrir un contrôle accessible exprimé en degrés, borné dans `[-180, 180)`, avec pas de `1°`, actions `−90°`, `+90°` et Réinitialiser à `0°`. Toute variation DOIT être prévisualisée immédiatement sur le canevas en arrière-plan sans écrire de commande. Annuler, y compris la fermeture interactive, restaure exactement l’angle d’entrée ; Valider constitue une seule commande annulable sur la géométrie de l’élément. Pour une photo, cette rotation du cadre reste distincte des rotations de contenu de `FRM-005`. |
 | `ELM-014` | Une pression longue sur un point couvert par plusieurs éléments DOIT proposer Sélectionner un élément, lister les candidats du premier plan vers l’arrière-plan avec un type, un extrait ou une description accessible non ambiguë, puis sélectionner le choix sans changer sa profondeur. Une action VoiceOver équivalente DOIT permettre de retrouver notamment un texte entièrement masqué par une photo. |
 
 ### 7.3.1 Zoom du canevas
@@ -624,6 +627,7 @@ commande.
 | `PAG-013` | Vue page DOIT afficher sous le canevas une barre ordonnée Précédent, `Page N sur M`, Suivant. Les états suivent `NAV-001` à `NAV-003` et les icônes le tableau 7.2.1 ; le compteur est accessible mais non interactif. |
 | `PAG-014` | Vue globale DOIT placer Ajouter une page dans sa barre d’outils. Chaque miniature DOIT offrir Réorganiser par poignée ou geste et Supprimer la page par menu contextuel ; les alternatives VoiceOver appliquent les mêmes règles et icônes que le tableau 7.2.1. |
 | `PAG-015` | Une page créée par Ajouter une page DOIT utiliser le fond par défaut de `BG-002`, l’état de mise en page de `AUT-015`, une liste d’éléments et un ordre d’accessibilité vides. Elle NE DOIT PAS copier implicitement le fond ou les éléments de la page active. |
+| `PAG-016` | Pendant une réorganisation par glisser-déposer, Vue globale DOIT afficher un indicateur d’insertion clignotant avant la page cible ou après la dernière page. Si Réduire les animations est actif, l’indicateur reste fixe et visible. Après Rétablir d’une commande ayant recréé une page supprimée, cette page recréée DOIT devenir la page active. |
 
 ## 7.5 Raccourcis clavier
 
@@ -803,7 +807,7 @@ n’est rendue.
 | ID | Exigence |
 |---|---|
 | `PHO-001` | Le panneau Photos DOIT proposer Ajouter des photos, une grille de miniatures, Masquer les photos utilisées et un tri par date de prise de vue, nom ou date d’import. Ajouter des photos ouvre, dans cet ordre, Photothèque, Fichiers et Depuis vos autres albums, puis Google Photos lorsque la version 1.2 est disponible. |
-| `PHO-002` | Chaque miniature DOIT indiquer son nombre d’occurrences dans l’album ; Masquer les photos utilisées masque celles dont ce nombre est supérieur à zéro. |
+| `PHO-002` | Chaque miniature DOIT indiquer son nombre exact d’occurrences de son `assetID` dans les cadres des pages de l’album, sous la forme compacte `×0`, `×1`, `×2`, etc. Ce compte NE DOIT PAS inclure les références d’un autre album, d’un autre `assetID` partageant le même `contentHash`, du presse-papiers ou de l’historique. Masquer les photos utilisées masque celles dont ce nombre est supérieur à zéro. |
 | `PHO-003` | Chaque photo ajoutée appartient logiquement à la photothèque interne de l’album courant indépendamment de son placement et reste disponible après retrait d’une occurrence, jusqu’à une suppression explicite conforme à `PHO-009` et `PHO-010`. |
 | `PHO-004` | Sur iPad, une photo DOIT pouvoir être glissée sur un cadre vide, un cadre rempli ou une zone vide de la page. Sur iPhone et iPad, une pression sur sa miniature remplit le cadre photo sélectionné, vide ou rempli, ou crée un cadre au centre si aucun cadre photo n’est sélectionné. |
 | `PHO-005` | Déposer sur un cadre vide le remplit ; déposer sur un cadre rempli remplace uniquement sa photo ; déposer sur la page crée un nouveau cadre centré sur le dépôt. Tout contenu nouvellement affecté commence centré à `1×`, sans rotation ni retournement, selon `FRM-004` et `FRM-009`. |
@@ -812,7 +816,7 @@ n’est rendue.
 | `PHO-008` | Les états d’un import DOIVENT être En attente, Import en cours avec progression, Disponible, Interrompu, Format non pris en charge ou Fichier inaccessible. |
 | `PHO-009` | Chaque miniature DOIT proposer Supprimer de cet album avec le symbole `trash`. La commande est activée si et seulement si le nombre d’occurrences de cet `assetID` dans les pages de l’album courant vaut zéro au moment de l’affichage ; sinon elle est désactivée et annonce « Utilisée N fois ». Retirer une occurrence ou supprimer son cadre ne supprime jamais automatiquement l’asset. |
 | `PHO-010` | Activer Supprimer de cet album DOIT revalider atomiquement que le nombre d’occurrences dans l’album courant vaut zéro, puis demander confirmation en identifiant la photo et en proposant Annuler ou Supprimer. Si le compte est devenu positif, aucune confirmation destructive n’est validée, la miniature est actualisée et l’interface annonce que la photo est maintenant utilisée. Annuler ne modifie rien. Confirmer retire l’`assetID` et ses métadonnées logiques de la photothèque de cet album dans une seule commande annulable ; Annuler/Rétablir restaure ou retire l’entrée à son indice d’origine. L’action NE DOIT modifier ni Apple Photos, ni Fichiers, ni Google Photos, ni un autre album. La purge physique distincte suit `LOC-008` et `LOC-022` à `LOC-025`. |
-| `PHO-011` | Ajouter une photo depuis la page DOIT ouvrir le panneau Photos en mode de choix pour un nouveau cadre. La prochaine miniature pressée crée ce cadre selon `PHO-006`; Annuler, changer de page ou fermer le mode de choix ne crée rien. |
+| `PHO-011` | Ajouter une photo depuis la page DOIT ouvrir le panneau Photos dans un mode de choix visiblement annoncé pour un nouveau cadre. La prochaine miniature pressée crée ce cadre selon `PHO-006`; Annuler, changer de page ou fermer le mode de choix ne crée rien. Le mode Remplacer ou Remplir un cadre DOIT nommer sa cible et rester distinct de la consultation normale du panneau. |
 | `PHO-012` | Ajouter une photo dans un cadre vide DOIT ouvrir le même panneau en ciblant cet `elementID`. La prochaine miniature pressée remplit uniquement ce cadre avec les valeurs initiales de `FRM-009` ; Annuler le choix conserve le cadre vide. |
 | `PHO-013` | Si aucune photo n’est disponible, les modes de choix de `PHO-011` et `PHO-012` DOIVENT proposer le sélecteur système. Un import multiple ajoute toutes les photos au panneau puis revient au mode de choix sans en placer arbitrairement une ; l’utilisateur presse ensuite la miniature voulue. Ce parcours constitue l’alternative accessible au glisser-déposer. |
 | `PHO-014` | Lorsque Auto est actif, toute création d'occurrence demandée par `PHO-004`, `PHO-005`, `PHO-011` ou par le remplissage d'un cadre vide dans `PHO-012` ajoute d'abord le `PhotoPlacement` logique initialisé selon `FRM-009`, puis laisse `AUT-002` déterminer, dans la même commande, la géométrie de tous les cadres. Le placement libre de `PHO-006` et l'ancienne géométrie d'un éventuel cadre vide NE DOIVENT PAS être publiés comme état intermédiaire. `PHO-012` ne crée jamais un deuxième cadre avant cette recomposition. |
@@ -820,6 +824,7 @@ n’est rendue.
 | `PHO-016` | Dans un album source, une photo dont le `contentHash` appartient déjà à la photothèque cible DOIT porter l’état Déjà ajoutée et être désactivée. Une photo dont le binaire n’est pas localement disponible DOIT proposer son téléchargement ou Réessayer et ne peut être ajoutée avant vérification de l’empreinte. La source accepte une sélection multiple et annonce le nombre choisi. |
 | `PHO-017` | Valider Ajouter N photos depuis un autre album DOIT, dans l’ordre de sélection, créer pour chacune un nouvel `assetID` logique propre à l’album cible, l’ajouter à la fin de `photoAssetIDs` et copier ses métadonnées immuables. Le nouvel asset conserve `contentHash`, dimensions, type, nom d’origine, date de prise de vue et propriétés colorimétriques ; il fixe `source = .reusedAlbum` et `importedAt` à la date de validation. Aucun identifiant de l’album ou de l’asset source ne persiste dans le modèle cible. Le lot vérifie le quota logique `LOC-017`, journalise et valide métadonnées, index et appartenance dans la transaction de `LOC-016`, forme une seule commande annulable et ne modifie pas l’album source. |
 | `PHO-018` | La réutilisation interalbum DOIT référencer le même fichier immuable global par `contentHash` sans nouvelle copie binaire. L’asset cible reste néanmoins autonome : supprimer la photo ou l’album source ne l’affecte pas, supprimer l’asset cible n’affecte pas la source, et un export de l’album cible embarque ses propres octets selon `PKG-008`. Après l’ajout, les photos apparaissent dans le panneau cible sans être placées arbitrairement sur une page. |
+| `PHO-019` | Importer dans un album des octets dont le `contentHash` appartient déjà à sa photothèque interne DOIT réutiliser l’asset logique existant : aucune seconde miniature ni nouvel `assetID` ne sont créés, les occurrences existantes restent inchangées et l’ordre du panneau est conservé. Dans un import multiple, la première occurrence nouvelle de chaque empreinte est conservée dans l’ordre de sélection et les répétitions suivantes sont ignorées. Cette déduplication intra-album ne modifie pas l’autonomie interalbum de `PHO-017`. |
 
 ## 11.2 Import Apple
 
@@ -1200,6 +1205,7 @@ La bibliothèque possède une pile distincte, limitée à la présence de l’ut
 | `CLP-003` | Coller DOIT créer un nouvel identifiant sur la page active et appliquer le placement inter- ou intrapage de `ELM-009` ; une photo copiée référence le même asset immuable mais possède son propre cadrage. Si cet `assetID` a entre-temps été retiré de la photothèque de l’album courant par `PHO-010`, Coller DOIT d’abord restaurer atomiquement ce même asset et ses métadonnées à la fin de `photoAssetIDs`, puis créer l’occurrence dans la même commande. |
 | `CLP-004` | Coller DOIT être désactivé sans contenu compatible et NE DOIT interpréter aucune donnée externe comme élément de page sans validation. |
 | `CLP-005` | Le collage de texte externe dans une zone de texte suit uniquement `TBX-007` et NE crée pas un nouvel élément automatiquement. |
+| `CLP-006` | Le presse-papiers d’élément est strictement limité à la session d’édition et à l’album source. Quitter l’éditeur, changer d’album ou passer l’application en arrière-plan l’invalide ; revenir ensuite dans l’album source NE DOIT PAS le réactiver. |
 
 ---
 
@@ -2356,7 +2362,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 | `PERF-004` | Les imports, exports, empreintes, conversions d’images et synchronisations DOIVENT s’exécuter hors du thread principal. |
 | `PERF-005` | Les transformations d’éléments, guides et animations de page DOIVENT viser 60 images/s sur l’appareil de référence dans l’enveloppe garantie. |
 | `PERF-006` | Avec cent pages contenant chacune vingt photos, vingt textes et vingt stickers et cinq gigaoctets sur disque, le pic de mémoire résidente DOIT rester inférieur à 500 Mo. |
-| `PERF-007` | L’ouverture locale de la bibliothèque puis l’affichage de son premier contenu DOIT prendre moins de deux secondes avec cent albums et des miniatures déjà générées. |
+| `PERF-007` | L’ouverture locale de la bibliothèque puis l’affichage de son premier contenu DOIT prendre moins de deux secondes avec cent albums et des miniatures déjà générées. La validation ou la copie idempotente de ressources de catalogue intégrées NE DOIT PAS bloquer cet affichage et NE DOIT PAS être répétée lorsque l’index local valide prouve qu’elle est déjà terminée. |
 | `PERF-008` | L’ouverture d’un album de cent pages puis l’affichage de la première page DOIT prendre moins de deux secondes lorsque ses premiers assets sont locaux. |
 | `PERF-009` | Une tâche dépassant 500 ms DOIT afficher un état de progression ou d’activité et, lorsqu’elle modifie des fichiers, une annulation sûre. |
 | `PERF-010` | Une génération PDF ou un export PEUT durer plusieurs minutes si la progression continue, l’annulation et la cohérence sont assurées. |
@@ -2365,7 +2371,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 | `PERF-013` | Les nouvelles tentatives réseau DOIVENT respecter `Retry-After` lorsqu’il existe, sinon utiliser une attente exponentielle avec jitter de 1 seconde à 5 minutes. |
 | `PERF-014` | Une erreur non récupérable ou une action utilisateur DOIT interrompre la stratégie de nouvelle tentative. |
 | `PERF-015` | Les dépassements de cent pages, cinq gigaoctets ou vingt éléments d’un même type par page DOIVENT produire un avertissement non bloquant ; seul un risque de cohérence, de stockage ou de décodage PEUT bloquer. |
-| `PERF-016` | L’ouverture d’un panneau, l’application d’un modèle et le calcul du dé DOIVENT produire leur premier retour visuel en moins de 200 ms hors chargement d’asset. |
+| `PERF-016` | L’ouverture d’un panneau, l’application d’un modèle et le calcul du dé DOIVENT produire leur premier retour visuel en moins de 200 ms hors chargement d’asset. Le panneau Fonds DOIT afficher immédiatement sa structure et ses placeholders ; le hachage, le décodage et la génération de miniatures des motifs s’effectuent de façon asynchrone et sont mis en cache pour les ouvertures suivantes de la session. |
 | `PERF-017` | Le déplacement d’un élément NE DOIT déclencher aucun décodage pleine résolution ni écriture durable à chaque image ; la commande finale reste persistée selon `APP-005`. |
 
 ---

@@ -66,6 +66,21 @@ struct PhotosPanelView: View {
             }
             .font(.caption)
 
+            if let choice = model.photoChoiceMode {
+                HStack(alignment: .top, spacing: 8) {
+                    Label(choice.title, systemImage: "scope")
+                        .font(.subheadline.weight(.semibold))
+                    Spacer(minLength: 4)
+                    Button("Annuler le choix", systemImage: "xmark") {
+                        model.cancelPhotoChoice()
+                    }
+                    .labelStyle(.iconOnly)
+                }
+                .padding(9)
+                .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 9))
+                .accessibilityElement(children: .contain)
+            }
+
             if let progress = model.importProgress {
                 PhotoImportProgressView(progress: progress)
             }
@@ -194,6 +209,10 @@ struct PhotosPanelView: View {
         .sheet(isPresented: $showsOtherAlbums) {
             OtherAlbumsPhotoPicker(model: model)
         }
+        .onAppear { presentSourcesForEmptyChoiceIfNeeded() }
+        .onChange(of: model.photoChoiceMode) { _, _ in
+            presentSourcesForEmptyChoiceIfNeeded()
+        }
         .alert(item: $deletionRequest) { request in
             Alert(
                 title: Text(
@@ -222,6 +241,13 @@ struct PhotosPanelView: View {
                 Text(title)
             }
         }
+    }
+
+    private func presentSourcesForEmptyChoiceIfNeeded() {
+        guard model.photoChoiceMode != nil,
+              model.photos.isEmpty,
+              !model.isImportTaskRunning else { return }
+        showsSources = true
     }
 }
 
@@ -312,15 +338,7 @@ private struct PhotoPanelTile: View {
         Button(action: onPlace) {
             VStack(alignment: .leading, spacing: 5) {
                 ZStack(alignment: .topTrailing) {
-                    StoredPhotoImage(
-                        metadata: asset,
-                        cache: cache,
-                        maximumPixelSize: 320
-                    )
-                    .scaledToFill()
-                    .frame(minHeight: 86)
-                    .aspectRatio(1, contentMode: .fill)
-                    .clipped()
+                    squareThumbnail(maximumPixelSize: 320)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     Text("×\(occurrenceCount)")
@@ -354,6 +372,10 @@ private struct PhotoPanelTile: View {
         }
         .contextMenu {
             Button("Placer sur la page", systemImage: "photo.badge.plus", action: onPlace)
+            if occurrenceCount > 0 {
+                Button("Utilisée \(occurrenceCount) fois", systemImage: "lock") {}
+                    .disabled(true)
+            }
             Button("Supprimer de cet album", systemImage: "trash", role: .destructive) {
                 onDelete()
             }
@@ -367,6 +389,21 @@ private struct PhotoPanelTile: View {
                 ? "Utilisée \(occurrenceCount) fois. Faites glisser pour la placer. La suppression est indisponible."
                 : "Touchez ou faites glisser pour remplir le cadre sélectionné ou créer un cadre."
         )
+    }
+
+    private func squareThumbnail(maximumPixelSize: Int) -> some View {
+        GeometryReader { geometry in
+            StoredPhotoImage(
+                metadata: asset,
+                cache: cache,
+                maximumPixelSize: maximumPixelSize
+            )
+            .scaledToFill()
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .clipped()
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -474,14 +511,21 @@ private struct OtherAlbumsPhotoPicker: View {
                             }
                         } label: {
                             ZStack(alignment: .topTrailing) {
-                                StoredPhotoImage(
-                                    metadata: asset,
-                                    cache: model.imageCache,
-                                    maximumPixelSize: 360
-                                )
-                                .scaledToFill()
-                                .aspectRatio(1, contentMode: .fill)
-                                .clipped()
+                                GeometryReader { geometry in
+                                    StoredPhotoImage(
+                                        metadata: asset,
+                                        cache: model.imageCache,
+                                        maximumPixelSize: 360
+                                    )
+                                    .scaledToFill()
+                                    .frame(
+                                        width: geometry.size.width,
+                                        height: geometry.size.height
+                                    )
+                                    .clipped()
+                                }
+                                .aspectRatio(1, contentMode: .fit)
+                                .frame(maxWidth: .infinity)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
 
                                 Image(systemName: alreadyAdded

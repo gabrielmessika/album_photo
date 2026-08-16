@@ -73,6 +73,10 @@ private struct AlbumEditorScene: View {
             enqueueLifecycleTransition(phase)
         }
         .onChange(of: model.presentationMode) { oldMode, newMode in
+            if newMode != .page {
+                model.cancelPhotoChoice()
+                mobilePanel = nil
+            }
             if newMode == .preview, oldMode != .preview {
                 model.beginPreviewSession()
             } else if oldMode == .preview, newMode != .preview {
@@ -86,16 +90,29 @@ private struct AlbumEditorScene: View {
             }
         }
         .sheet(item: $rotationRequest) { request in
-            ElementRotationSheet(initialRadians: request.initialRadians) { degrees in
-                let elementID = request.elementID
-                rotationRequest = nil
-                Task {
-                    await model.setElementRotation(
-                        elementID: elementID,
+            ElementRotationSheet(
+                initialRadians: request.initialRadians,
+                onPreview: { degrees in
+                    model.previewElementRotation(
+                        elementID: request.elementID,
                         degrees: degrees
                     )
+                },
+                onCancel: {
+                    model.cancelElementRotationPreview(elementID: request.elementID)
+                    rotationRequest = nil
+                },
+                onConfirm: { degrees in
+                    let elementID = request.elementID
+                    rotationRequest = nil
+                    Task {
+                        await model.commitElementRotationPreview(
+                            elementID: elementID,
+                            degrees: degrees
+                        )
+                    }
                 }
-            }
+            )
         }
         .sheet(item: $photoDescriptionRequest) { request in
             PhotoDescriptionSheet(initialDescription: request.initialDescription) {
@@ -147,14 +164,14 @@ private struct AlbumEditorScene: View {
             HStack(spacing: 0) {
                 if model.cropDraft == nil {
                     editorRail
-                    if showsInspector {
-                        Divider()
-                        panelContent(model.activePanel)
-                            .frame(width: 320)
-                    }
                     Divider()
                 }
                 pageWorkspace
+                if model.cropDraft == nil, showsInspector {
+                    Divider()
+                    regularInspector
+                        .frame(width: 340)
+                }
             }
         } else if model.presentationMode == .page,
                   model.cropDraft == nil,
@@ -213,7 +230,7 @@ private struct AlbumEditorScene: View {
             HStack(spacing: 14) {
                 if model.cropDraft == nil {
                     Button("Ajouter une photo", systemImage: "photo.badge.plus") {
-                        model.select(elementID: nil)
+                        model.beginNewPhotoFrameChoice()
                         openPhotosPanel()
                     }
                     .buttonStyle(.borderedProminent)
@@ -243,6 +260,8 @@ private struct AlbumEditorScene: View {
                 "Page \(model.activePageIndex + 1) sur \(model.album?.pages.count ?? 1)"
             )
             .font(.subheadline.monospacedDigit())
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .accessibilityAddTraits(.isStaticText)
 
             Button("Suivant", systemImage: "chevron.right") {
@@ -287,6 +306,7 @@ private struct AlbumEditorScene: View {
             }
             Spacer()
             Button {
+                if showsInspector { model.cancelPhotoChoice() }
                 if reduceMotion {
                     showsInspector.toggle()
                 } else {
@@ -324,6 +344,113 @@ private struct AlbumEditorScene: View {
         }
     }
 
+    private var regularInspector: some View {
+        VStack(spacing: 0) {
+            if model.selectedElement != nil {
+                ScrollView {
+                    selectedElementInspector
+                        .padding(12)
+                }
+                .frame(maxHeight: 390)
+                Divider()
+            }
+            panelContent(model.activePanel)
+        }
+        .background(.bar)
+    }
+
+    private var selectedElementInspector: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if let frame = model.selectedPhotoFrame {
+                Text("Contenu photo")
+                    .font(.headline)
+
+                inspectorButton(
+                    frame.content == nil ? "Ajouter une photo" : "Remplacer",
+                    systemImage: frame.content == nil
+                        ? "photo.badge.plus" : "arrow.triangle.2.circlepath"
+                ) {
+                    model.beginSelectedPhotoFrameChoice()
+                    openPhotosPanel()
+                }
+
+                if frame.content != nil {
+                    inspectorButton("Retirer la photo", systemImage: "photo.badge.minus") {
+                        Task { await model.removePhotoFromSelectedFrame() }
+                    }
+
+                    if let quality = selectedPhotoQuality {
+                        HStack {
+                            Label(
+                                "Qualité : \(qualityLabel(quality))",
+                                systemImage: qualitySymbol(quality)
+                            )
+                            .foregroundStyle(qualityColor(quality))
+                            Spacer()
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .accessibilityLabel("Qualité photo : \(qualityLabel(quality))")
+                    }
+
+                    inspectorButton("Recadrer", systemImage: "crop") {
+                        model.beginCrop()
+                    }
+                    inspectorButton("Pivoter la photo à gauche", systemImage: "rotate.left") {
+                        Task { await model.rotatePhotoContent(by: -1) }
+                    }
+                    inspectorButton("Pivoter la photo à droite", systemImage: "rotate.right") {
+                        Task { await model.rotatePhotoContent(by: 1) }
+                    }
+                    inspectorButton(
+                        "Retourner la photo horizontalement",
+                        systemImage: "arrow.left.and.right"
+                    ) {
+                        Task { await model.flipPhotoContent() }
+                    }
+                    inspectorButton("Description accessible…", systemImage: "accessibility") {
+                        guard let pageID = model.activePageID else { return }
+                        photoDescriptionRequest = PhotoDescriptionRequest(
+                            pageID: pageID,
+                            elementID: frame.id,
+                            initialDescription: frame.content?.accessibilityDescription ?? ""
+                        )
+                    }
+                }
+                Divider()
+            }
+
+            Text("Cadre")
+                .font(.headline)
+            inspectorButton("Rotation…", systemImage: "rotate.right") {
+                presentRotationEditor()
+            }
+            inspectorButton("Dupliquer", systemImage: "plus.square.on.square") {
+                Task { await model.duplicateSelectedElement() }
+            }
+            depthMenu
+                .frame(maxWidth: .infinity, alignment: .leading)
+            geometryMenu
+                .frame(maxWidth: .infinity, alignment: .leading)
+            inspectorButton("Supprimer", systemImage: "trash", role: .destructive) {
+                Task { await model.deleteSelectedElement() }
+            }
+        }
+        .buttonStyle(.bordered)
+        .disabled(model.isReadOnly)
+    }
+
+    private func inspectorButton(
+        _ title: String,
+        systemImage: String,
+        role: ButtonRole? = nil,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(role: role, action: action) {
+            Label(title, systemImage: systemImage)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
     /// Compact iPad layouts keep the inspector in the same window as the
     /// canvas. A photo can therefore be dragged out of the panel and dropped on
     /// the page; a modal sheet would isolate the drag source from its target.
@@ -334,6 +461,7 @@ private struct AlbumEditorScene: View {
                     .font(.headline)
                 Spacer()
                 Button("Fermer le panneau", systemImage: "xmark") {
+                    model.cancelPhotoChoice()
                     mobilePanel = nil
                 }
                 .labelStyle(.iconOnly)
@@ -426,6 +554,16 @@ private struct AlbumEditorScene: View {
                 }
                 .disabled(!model.canPaste || model.cropDraft != nil || model.isReadOnly)
                 .keyboardShortcut("v", modifiers: .command)
+
+                Button("Supprimer", systemImage: "trash", role: .destructive) {
+                    Task { await model.deleteSelectedElement() }
+                }
+                .disabled(
+                    model.selectedElement == nil
+                        || model.cropDraft != nil
+                        || model.isReadOnly
+                )
+                .keyboardShortcut(.delete, modifiers: [])
             } else {
                 Button("Aide", systemImage: "questionmark.circle") {
                     openContextHelp()
@@ -476,6 +614,15 @@ private struct AlbumEditorScene: View {
             }
             .disabled(!model.canPaste || model.cropDraft != nil || model.isReadOnly)
             .keyboardShortcut("v", modifiers: .command)
+
+            Button("Supprimer", systemImage: "trash", role: .destructive) {
+                Task { await model.deleteSelectedElement() }
+            }
+            .disabled(
+                model.selectedElement == nil
+                    || model.cropDraft != nil
+                    || model.isReadOnly
+            )
         }
     }
 
@@ -514,7 +661,7 @@ private struct AlbumEditorScene: View {
 
     private var editorBottomBar: some View {
         VStack(spacing: 0) {
-            if model.selectedElement != nil {
+            if model.selectedElement != nil, horizontalSizeClass != .regular {
                 selectedElementCommands
                 Divider()
             }
@@ -561,6 +708,7 @@ private struct AlbumEditorScene: View {
                         systemImage: frame.content == nil
                             ? "photo.badge.plus" : "arrow.triangle.2.circlepath"
                     ) {
+                        model.beginSelectedPhotoFrameChoice()
                         openPhotosPanel()
                     }
 
@@ -605,11 +753,7 @@ private struct AlbumEditorScene: View {
                 }
 
                 Button("Rotation…", systemImage: "rotate.right") {
-                    guard let element = model.selectedElement else { return }
-                    rotationRequest = RotationEditorRequest(
-                        elementID: element.id,
-                        initialRadians: element.geometry.rotationRadians
-                    )
+                    presentRotationEditor()
                 }
 
                 Button("Dupliquer", systemImage: "plus.square.on.square") {
@@ -635,12 +779,12 @@ private struct AlbumEditorScene: View {
     @ViewBuilder
     private var qualityBadge: some View {
         if let quality = selectedPhotoQuality {
-            Label(qualityLabel(quality), systemImage: qualitySymbol(quality))
+            Label(
+                "Qualité : \(qualityLabel(quality))",
+                systemImage: qualitySymbol(quality)
+            )
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(qualityColor(quality))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
-                .background(.thinMaterial, in: Capsule())
                 .accessibilityLabel("Qualité photo : \(qualityLabel(quality))")
         }
     }
@@ -735,31 +879,13 @@ private struct AlbumEditorScene: View {
         Menu("Sélectionner un élément", systemImage: "cursorarrow.click.2") {
             if let page = model.activePage {
                 ForEach(Array(page.orderedElements.reversed())) { element in
-                    Button(elementLabel(element)) {
+                    Button(model.elementSelectionLabel(element)) {
                         model.select(elementID: element.id)
                     }
                 }
             }
         }
         .accessibilityHint("Permet notamment de sélectionner un élément masqué")
-    }
-
-    private func elementLabel(_ element: PageElement) -> String {
-        switch element {
-        case let .photo(frame):
-            if let description = frame.content?.accessibilityDescription,
-               !description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                return "Photo — \(description)"
-            }
-            return frame.content == nil ? "Cadre photo vide" : "Photo"
-        case let .text(text):
-            let excerpt = text.content.plainText.trimmingCharacters(
-                in: .whitespacesAndNewlines
-            )
-            return excerpt.isEmpty ? "Zone de texte vide" : "Texte — \(excerpt.prefix(32))"
-        case .sticker:
-            return "Sticker"
-        }
     }
 
     private var cropCommands: some View {
@@ -902,6 +1028,15 @@ private struct AlbumEditorScene: View {
         }
     }
 
+    private func presentRotationEditor() {
+        guard let element = model.selectedElement else { return }
+        model.beginElementRotationPreview(elementID: element.id)
+        rotationRequest = RotationEditorRequest(
+            elementID: element.id,
+            initialRadians: element.geometry.rotationRadians
+        )
+    }
+
     private func openContextHelp() {
         if model.cropDraft != nil {
             model.helpContext = .crop
@@ -976,6 +1111,7 @@ private struct PreviewPageView: View {
                         purpose: .preview,
                         pageNumber: model.activePageIndex + 1
                     )
+                    .id(page.id)
                     .accessibilityLabel(previewPageAccessibilityLabel(page))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(24)
@@ -1010,6 +1146,9 @@ private struct PreviewPageView: View {
                             .background(.regularMaterial, in: Capsule())
                             .padding()
                         }
+                    }
+                    .onChange(of: model.activePageID) { _, _ in
+                        swipeEligible = false
                     }
                 }
             }
@@ -1152,10 +1291,20 @@ private struct EditorRenameSheet: View {
 private struct ElementRotationSheet: View {
     @Environment(\.dismiss) private var dismiss
 
+    let onPreview: (Double) -> Void
+    let onCancel: () -> Void
     let onConfirm: (Double) -> Void
     @State private var degrees: Double
+    @State private var didResolve = false
 
-    init(initialRadians: Double, onConfirm: @escaping (Double) -> Void) {
+    init(
+        initialRadians: Double,
+        onPreview: @escaping (Double) -> Void,
+        onCancel: @escaping () -> Void,
+        onConfirm: @escaping (Double) -> Void
+    ) {
+        self.onPreview = onPreview
+        self.onCancel = onCancel
         self.onConfirm = onConfirm
         _degrees = State(initialValue: Self.normalizedDegrees(
             initialRadians * 180 / .pi
@@ -1185,14 +1334,18 @@ private struct ElementRotationSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
+                    Button("Annuler", action: cancel)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Valider") { onConfirm(degrees) }
+                    Button("Valider", action: confirm)
                 }
             }
         }
         .presentationDetents([.medium])
+        .onChange(of: degrees) { _, value in onPreview(value) }
+        .onDisappear {
+            if !didResolve { onCancel() }
+        }
     }
 
     private static func normalizedDegrees(_ value: Double) -> Double {
@@ -1200,5 +1353,19 @@ private struct ElementRotationSheet: View {
         if normalized >= 180 { normalized -= 360 }
         if normalized < -180 { normalized += 360 }
         return normalized.rounded()
+    }
+
+    private func cancel() {
+        guard !didResolve else { return }
+        didResolve = true
+        onCancel()
+        dismiss()
+    }
+
+    private func confirm() {
+        guard !didResolve else { return }
+        didResolve = true
+        onConfirm(degrees)
+        dismiss()
     }
 }

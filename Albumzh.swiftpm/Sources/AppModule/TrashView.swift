@@ -39,7 +39,13 @@ struct TrashView: View {
                                     Text(album.name)
                                         .font(.headline)
                                     if let trashedAt = album.trashedAt {
-                                        Text(expirationText(for: trashedAt))
+                                        Text("Mise à la corbeille : \(calendarDate(trashedAt))")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        Text(
+                                            "Suppression définitive prévue : "
+                                                + calendarDate(expirationDate(for: trashedAt))
+                                        )
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     }
@@ -100,9 +106,11 @@ struct TrashView: View {
         }
     }
 
-    private func expirationText(for trashedAt: Date) -> String {
-        let expiration = trashedAt.addingTimeInterval(30 * 24 * 60 * 60)
-        if expiration <= Date() { return "Suppression automatique imminente" }
-        return "Suppression automatique \(expiration.formatted(.relative(presentation: .named)))"
+    private func expirationDate(for trashedAt: Date) -> Date {
+        trashedAt.addingTimeInterval(30 * 24 * 60 * 60)
+    }
+
+    private func calendarDate(_ date: Date) -> String {
+        date.formatted(date: .long, time: .omitted)
     }
 }

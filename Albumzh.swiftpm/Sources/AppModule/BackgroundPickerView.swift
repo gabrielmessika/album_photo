@@ -114,7 +114,8 @@ struct BackgroundPickerView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         AlbumPageBackground(
                             selection: value.1,
-                            imageCache: model.imageCache
+                            imageCache: model.imageCache,
+                            maximumPixelSize: 320
                         )
                             .aspectRatio(4.0 / 5.0, contentMode: .fit)
                             .clipShape(RoundedRectangle(cornerRadius: 8))

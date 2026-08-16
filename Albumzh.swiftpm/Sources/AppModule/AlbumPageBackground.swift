@@ -6,6 +6,7 @@ import SwiftUI
 struct AlbumPageBackground: View {
     let selection: BackgroundSelection
     var imageCache: PhotoImageCache?
+    var maximumPixelSize = 2_048
 
     var body: some View {
         Group {
@@ -18,7 +19,8 @@ struct AlbumPageBackground: View {
                 BundledBackgroundImage(
                     dataAssetName: Self.dataAssetName(for: reference.catalogID),
                     fallbackContentHash: reference.fallbackContentHash,
-                    cache: imageCache
+                    cache: imageCache,
+                    maximumPixelSize: maximumPixelSize
                 )
                     .aspectRatio(4.0 / 5.0, contentMode: .fill)
             }

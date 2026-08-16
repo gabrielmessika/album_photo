@@ -514,6 +514,28 @@ public enum CanvasZoomEngine {
         )
     }
 
+    /// Composes the cumulative scale and translation reported by one unified
+    /// two-finger gesture from a single immutable starting viewport.
+    public static func transformed(
+        _ state: CanvasViewportState,
+        magnification: Double,
+        translationPoints: GeometryPoint,
+        anchorNormalized: GeometryPoint,
+        fittedPageSizePoints: GeometrySize,
+        viewportSizePoints: GeometrySize
+    ) -> CanvasViewportState {
+        panned(
+            pinched(
+                state,
+                magnification: magnification,
+                anchorNormalized: anchorNormalized
+            ),
+            translationPoints: translationPoints,
+            fittedPageSizePoints: fittedPageSizePoints,
+            viewportSizePoints: viewportSizePoints
+        )
+    }
+
     private static func constrainedCenter(
         _ proposed: Double,
         displayedPageLength: Double,

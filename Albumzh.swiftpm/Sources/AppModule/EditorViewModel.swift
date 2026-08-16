@@ -116,6 +116,22 @@ enum EditorInteractionState: Equatable {
     }
 }
 
+enum PhotoChoiceMode: Equatable {
+    case newFrame(pageID: UUID)
+    case fillFrame(pageID: UUID, elementID: UUID, replacesContent: Bool)
+
+    var title: String {
+        switch self {
+        case .newFrame:
+            return "Choisir une photo pour un nouveau cadre"
+        case let .fillFrame(_, _, replacesContent):
+            return replacesContent
+                ? "Choisir la photo de remplacement"
+                : "Choisir une photo pour remplir ce cadre"
+        }
+    }
+}
+
 struct CropDraft: Equatable {
     let elementID: UUID
     let entry: PhotoPlacement
@@ -189,6 +205,12 @@ final class EditorViewModel: ObservableObject {
     private let appModel: AppModel
     private var cropGestureStart: PhotoPlacement?
     private var geometryGestureStart: ElementGeometry?
+    private var suppressGeometryUpdatesUntilGestureEnds = false
+    private var rotationPreviewEntry: (
+        pageID: UUID,
+        elementID: UUID,
+        geometry: ElementGeometry
+    )?
     private var rotationGestureOffset: Double?
     private var renderedPageSizes: [UUID: CGSize] = [:]
     private var canvasWorkspaceSizes: [UUID: CGSize] = [:]
@@ -207,7 +229,11 @@ final class EditorViewModel: ObservableObject {
     @Published private(set) var photos: [PhotoAssetMetadata] = []
     @Published var activePageID: UUID?
     @Published var selectedElementID: UUID?
-    @Published var activePanel: EditorPanel = .photos
+    @Published var activePanel: EditorPanel = .photos {
+        didSet {
+            if activePanel != .photos { cancelPhotoChoice() }
+        }
+    }
     @Published var presentationMode: EditorPresentationMode = .page
     @Published var interaction: EditorInteractionState = .idle
     @Published var cropDraft: CropDraft?
@@ -229,6 +255,7 @@ final class EditorViewModel: ObservableObject {
     @Published var sortsAscending = true
     @Published var hidesUsedPhotos = false
     @Published var helpContext: HelpContext?
+    @Published private(set) var photoChoiceMode: PhotoChoiceMode?
 
     init(albumID: UUID, appModel: AppModel) {
         self.albumID = albumID
@@ -492,14 +519,77 @@ final class EditorViewModel: ObservableObject {
             ?? appModel.librarySnapshot.photoAsset(id: assetID)
     }
 
+    func elementSelectionLabel(_ element: PageElement) -> String {
+        let ordered = activePage?.orderedElements ?? []
+        let depthIndex = ordered.firstIndex(where: { $0.id == element.id })
+        let depth = depthIndex.map { "plan \($0 + 1) sur \(ordered.count)" }
+            ?? "profondeur inconnue"
+        let position = approximatePosition(of: element.geometry)
+        switch element {
+        case let .photo(frame):
+            guard let placement = frame.content else {
+                return "Cadre photo vide — \(position) — \(depth)"
+            }
+            let description = placement.accessibilityDescription?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let filename = metadata(for: placement.assetID)?.originalFilename?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let detail = [description, filename]
+                .compactMap { value in
+                    guard let value, !value.isEmpty else { return nil }
+                    return value
+                }
+                .first ?? "photo \(placement.assetID.uuidString.prefix(6))"
+            return "Photo — \(detail) — \(position) — \(depth)"
+        case let .text(text):
+            let excerpt = text.content.plainText.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            )
+            return "Texte — \(excerpt.isEmpty ? "vide" : String(excerpt.prefix(32))) — \(position) — \(depth)"
+        case let .sticker(sticker):
+            return "Sticker — \(sticker.resource.catalogID) — \(position) — \(depth)"
+        }
+    }
+
+    private func approximatePosition(of geometry: ElementGeometry) -> String {
+        let horizontal = geometry.centerX < 1.0 / 3.0
+            ? "gauche" : geometry.centerX > 2.0 / 3.0 ? "droite" : "centre"
+        let vertical = geometry.centerY < 1.0 / 3.0
+            ? "haut" : geometry.centerY > 2.0 / 3.0 ? "bas" : "milieu"
+        return "\(vertical) \(horizontal)"
+    }
+
     func select(elementID: UUID?) {
         guard cropDraft == nil else { return }
         selectedElementID = elementID
     }
 
+    func beginNewPhotoFrameChoice() {
+        guard !isReadOnly, cropDraft == nil, let pageID = activePageID else { return }
+        selectedElementID = nil
+        activePanel = .photos
+        photoChoiceMode = .newFrame(pageID: pageID)
+    }
+
+    func beginSelectedPhotoFrameChoice() {
+        guard !isReadOnly, cropDraft == nil, let pageID = activePageID,
+              let frame = selectedPhotoFrame else { return }
+        activePanel = .photos
+        photoChoiceMode = .fillFrame(
+            pageID: pageID,
+            elementID: frame.id,
+            replacesContent: frame.content != nil
+        )
+    }
+
+    func cancelPhotoChoice() {
+        photoChoiceMode = nil
+    }
+
     func showPage(_ pageID: UUID) {
         guard !interaction.blocksPageNavigation,
               album?.pages.contains(where: { $0.id == pageID }) == true else { return }
+        if activePageID != pageID { cancelPhotoChoice() }
         activePageID = pageID
         selectedElementID = nil
     }
@@ -618,6 +708,10 @@ final class EditorViewModel: ObservableObject {
 
     func setBackground(_ background: BackgroundSelection, allPages: Bool) async {
         guard let pageID = activePageID else { return }
+        if case .catalog = background {
+            saveState = .saving
+            await appModel.waitForCatalogBootstrap()
+        }
         if allPages {
             await mutate("Impossible d’appliquer le fond à toutes les pages.") {
                 try await self.service.applyBackgroundToAllPages(
@@ -794,11 +888,12 @@ final class EditorViewModel: ObservableObject {
         if Task.isCancelled { wasCancelled = true }
         if !registrations.isEmpty {
             do {
+                let previousAssetIDs = album?.photoAssetIDs ?? []
                 album = try await service.registerPhotos(
                     registrations.map(\.1),
                     in: albumID
                 )
-                didRegisterPhotos = true
+                didRegisterPhotos = album?.photoAssetIDs != previousAssetIDs
             } catch {
                 registrationFailed = true
                 for (url, _) in registrations {
@@ -944,18 +1039,38 @@ final class EditorViewModel: ObservableObject {
 
     func placePhoto(_ assetID: UUID, center: GeometryPoint = GeometryPoint(x: 0.5, y: 0.5)) async {
         guard let pageID = activePageID else { return }
-        if let frame = selectedPhotoFrame {
-            await mutate("Impossible de remplir le cadre.") {
+        let choice = photoChoiceMode
+        let targetFrameID: UUID?
+        switch choice {
+        case let .fillFrame(choicePageID, elementID, _)
+            where choicePageID == pageID
+                && activePage?.element(id: elementID)?.photoFrame != nil:
+            targetFrameID = elementID
+        case .newFrame(let choicePageID) where choicePageID == pageID:
+            targetFrameID = nil
+        case .some:
+            cancelPhotoChoice()
+            return
+        case .none:
+            targetFrameID = selectedPhotoFrame?.id
+        }
+
+        if let targetFrameID {
+            let succeeded = await mutate("Impossible de remplir le cadre.") {
                 try await self.service.fillPhotoFrame(
-                    frame.id,
+                    targetFrameID,
                     with: assetID,
                     on: pageID,
                     in: self.albumID
                 )
             }
+            if succeeded {
+                selectedElementID = targetFrameID
+                cancelPhotoChoice()
+            }
         } else {
             let newID = UUID()
-            await mutate("Impossible d’ajouter le cadre photo.") {
+            let succeeded = await mutate("Impossible d’ajouter le cadre photo.") {
                 try await self.service.addPhotoFrame(
                     to: pageID,
                     in: self.albumID,
@@ -964,7 +1079,10 @@ final class EditorViewModel: ObservableObject {
                     elementID: newID
                 )
             }
-            if activePage?.element(id: newID) != nil { selectedElementID = newID }
+            if succeeded, activePage?.element(id: newID) != nil {
+                selectedElementID = newID
+                cancelPhotoChoice()
+            }
         }
     }
 
@@ -1056,6 +1174,7 @@ final class EditorViewModel: ObservableObject {
 
     func beginGeometryGesture(elementID: UUID, kind: EditorInteractionState) {
         guard !isReadOnly, cropDraft == nil,
+              !suppressGeometryUpdatesUntilGestureEnds,
               let element = activePage?.element(id: elementID) else { return }
         selectedElementID = elementID
         geometryGestureStart = element.geometry
@@ -1067,6 +1186,7 @@ final class EditorViewModel: ObservableObject {
 
     func beginTwoFingerTransform(elementID: UUID) {
         guard !isReadOnly, cropDraft == nil,
+              !suppressGeometryUpdatesUntilGestureEnds,
               let element = activePage?.element(id: elementID) else { return }
         switch interaction {
         case .idle:
@@ -1189,6 +1309,15 @@ final class EditorViewModel: ObservableObject {
         await finishGeometryGesture()
     }
 
+    /// SAV-001 — si Sauvegarder a déjà finalisé le brouillon pendant que le
+    /// doigt reste posé, tous les événements cumulatifs suivants appartiennent
+    /// encore à l’ancien flux et doivent être ignorés jusqu’au relâchement.
+    func endGeometryGestureStreamIfSuppressed() -> Bool {
+        let wasSuppressed = suppressGeometryUpdatesUntilGestureEnds
+        suppressGeometryUpdatesUntilGestureEnds = false
+        return wasSuppressed
+    }
+
     private func finishGeometryGesture() async {
         guard let geometryDraft, let pageID = activePageID,
               let elementID = selectedElementID else { return }
@@ -1279,20 +1408,46 @@ final class EditorViewModel: ObservableObject {
         }
     }
 
-    func setElementRotation(elementID: UUID, degrees: Double) async {
-        guard let pageID = activePageID,
-              var geometry = activePage?.element(id: elementID)?.geometry,
-              degrees.isFinite else { return }
+    func beginElementRotationPreview(elementID: UUID) {
+        guard !isReadOnly, cropDraft == nil, let pageID = activePageID,
+              let geometry = activePage?.element(id: elementID)?.geometry else { return }
+        selectedElementID = elementID
+        rotationPreviewEntry = (pageID, elementID, geometry)
+        geometryDraft = geometry
+    }
+
+    func previewElementRotation(elementID: UUID, degrees: Double) {
+        guard degrees.isFinite,
+              let entry = rotationPreviewEntry,
+              entry.elementID == elementID else { return }
+        var geometry = entry.geometry
         geometry.rotationRadians = degrees * .pi / 180
-        await mutate("Impossible d’enregistrer la rotation.") {
+        geometryDraft = geometry
+    }
+
+    func cancelElementRotationPreview(elementID: UUID) {
+        guard rotationPreviewEntry?.elementID == elementID else { return }
+        rotationPreviewEntry = nil
+        geometryDraft = nil
+    }
+
+    func commitElementRotationPreview(elementID: UUID, degrees: Double) async {
+        guard degrees.isFinite,
+              let entry = rotationPreviewEntry,
+              entry.elementID == elementID else { return }
+        var geometry = entry.geometry
+        geometry.rotationRadians = degrees * .pi / 180
+        let succeeded = await mutate("Impossible d’enregistrer la rotation.") {
             try await self.service.updateElementGeometry(
                 geometry,
                 elementID: elementID,
-                on: pageID,
+                on: entry.pageID,
                 in: self.albumID
             )
         }
-        if activePage?.element(id: elementID) != nil {
+        rotationPreviewEntry = nil
+        geometryDraft = nil
+        if succeeded, activePage?.element(id: elementID) != nil {
             selectedElementID = elementID
         }
     }
@@ -1517,6 +1672,34 @@ final class EditorViewModel: ObservableObject {
         )
     }
 
+    func transformCanvas(
+        from start: CanvasViewportState,
+        magnification: Double,
+        translation: CGSize,
+        anchor: GeometryPoint,
+        fittedPageSize: CGSize,
+        viewportSize: CGSize
+    ) {
+        guard cropDraft == nil else { return }
+        viewport = CanvasZoomEngine.transformed(
+            start,
+            magnification: magnification,
+            translationPoints: GeometryPoint(
+                x: Double(translation.width),
+                y: Double(translation.height)
+            ),
+            anchorNormalized: anchor,
+            fittedPageSizePoints: GeometrySize(
+                width: Double(fittedPageSize.width),
+                height: Double(fittedPageSize.height)
+            ),
+            viewportSizePoints: GeometrySize(
+                width: Double(viewportSize.width),
+                height: Double(viewportSize.height)
+            )
+        )
+    }
+
     func copySelected() async {
         guard let pageID = activePageID, let elementID = selectedElementID else { return }
         guard await beginBusinessOperation() else { return }
@@ -1560,8 +1743,18 @@ final class EditorViewModel: ObservableObject {
     }
 
     func redo() async {
-        await mutate("Impossible de rétablir cette action.") {
+        let previousPageIDs = Set(album?.pages.map(\.id) ?? [])
+        let succeeded = await mutate("Impossible de rétablir cette action.") {
             try await self.service.redo(albumID: self.albumID)
+        }
+        if succeeded {
+            let recreated = (album?.pages ?? []).filter {
+                !previousPageIDs.contains($0.id)
+            }
+            if recreated.count == 1 {
+                activePageID = recreated[0].id
+                selectedElementID = nil
+            }
         }
         keepValidSelection()
     }
@@ -1580,9 +1773,13 @@ final class EditorViewModel: ObservableObject {
         defer { endOperationBlock(operationBlockToken) }
         await waitForBusinessOperationsToFinish()
 
+        if let rotationPreviewEntry {
+            cancelElementRotationPreview(elementID: rotationPreviewEntry.elementID)
+        }
         if geometryDraft != nil {
             // La sauvegarde possède déjà la barrière : réenregistrer cette
             // mutation créerait une attente sur elle-même.
+            suppressGeometryUpdatesUntilGestureEnds = true
             await finishGeometryGesture()
             guard saveState != .failed else { return false }
         }

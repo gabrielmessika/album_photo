@@ -268,9 +268,8 @@ private struct EmptyPhotoFrameView: View {
 struct EditablePageCanvas: View {
     @ObservedObject var model: EditorViewModel
 
-    @State private var canvasPinchStart: CanvasViewportState?
-    @State private var canvasPinchEligible = false
-    @State private var canvasPanStart: CanvasViewportState?
+    @State private var canvasTransformStart: CanvasViewportState?
+    @State private var canvasTransformAnchor = GeometryPoint(x: 0.5, y: 0.5)
     @State private var swipeEligible = false
 
     var body: some View {
@@ -290,17 +289,17 @@ struct EditablePageCanvas: View {
 
                     interactivePage(
                         page,
-                        pageSize: pageSize,
-                        fittedPageSize: fitted,
-                        viewportSize: workspace.size
+                        pageSize: pageSize
                     )
+                    .id(page.id)
                     .offset(pageOffset)
 
                     if model.cropDraft == nil {
-                        TwoFingerPanGestureBridge(
-                            isEnabled: model.interaction == .idle || canvasPanStart != nil,
+                        TwoFingerCanvasGestureBridge(
+                            isEnabled: model.interaction == .idle
+                                || canvasTransformStart != nil,
                             shouldBegin: { location in
-                                canPanCanvas(
+                                canTransformCanvas(
                                     from: location,
                                     page: page,
                                     pageSize: pageSize,
@@ -308,21 +307,30 @@ struct EditablePageCanvas: View {
                                     workspaceSize: workspace.size
                                 )
                             },
-                            onBegan: {
-                                canvasPanStart = model.viewport
+                            onBegan: { location in
+                                swipeEligible = false
+                                canvasTransformStart = model.viewport
+                                canvasTransformAnchor = normalizedCanvasPoint(
+                                    location,
+                                    pageSize: pageSize,
+                                    pageOffset: pageOffset,
+                                    workspaceSize: workspace.size
+                                )
                                 model.interaction = .zoomingCanvas
                             },
-                            onChanged: { translation in
-                                guard let start = canvasPanStart else { return }
-                                model.panCanvas(
+                            onChanged: { translation, magnification, _ in
+                                guard let start = canvasTransformStart else { return }
+                                model.transformCanvas(
                                     from: start,
+                                    magnification: magnification,
                                     translation: translation,
+                                    anchor: canvasTransformAnchor,
                                     fittedPageSize: fitted,
                                     viewportSize: workspace.size
                                 )
                             },
                             onEnded: {
-                                canvasPanStart = nil
+                                canvasTransformStart = nil
                                 if model.interaction == .zoomingCanvas {
                                     model.interaction = .idle
                                 }
@@ -350,6 +358,10 @@ struct EditablePageCanvas: View {
                         pageID: page.id
                     )
                 }
+                .onChange(of: model.activePageID) { _, _ in
+                    swipeEligible = false
+                    canvasTransformStart = nil
+                }
             } else {
                 ProgressView("Chargement de la page…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -373,23 +385,16 @@ struct EditablePageCanvas: View {
     @ViewBuilder
     private func interactivePage(
         _ page: PageSnapshot,
-        pageSize: CGSize,
-        fittedPageSize: CGSize,
-        viewportSize: CGSize
+        pageSize: CGSize
     ) -> some View {
         if model.cropDraft == nil {
             pageSurface(page, pageSize: pageSize)
                 .gesture(selectionTapGesture(page: page, pageSize: pageSize))
                 .simultaneousGesture(pageSwipeGesture(page: page, pageSize: pageSize))
-                .simultaneousGesture(canvasMagnificationGesture(
-                    page: page,
-                    fittedPageSize: fittedPageSize,
-                    viewportSize: viewportSize
-                ))
                 .contextMenu {
                     Menu("Sélectionner un élément", systemImage: "cursorarrow.click.2") {
                         ForEach(Array(page.orderedElements.reversed())) { element in
-                            Button(contextElementLabel(element)) {
+                            Button(model.elementSelectionLabel(element)) {
                                 model.select(elementID: element.id)
                             }
                         }
@@ -507,7 +512,7 @@ struct EditablePageCanvas: View {
         )
     }
 
-    private func canPanCanvas(
+    private func canTransformCanvas(
         from location: CGPoint,
         page: PageSnapshot,
         pageSize: CGSize,
@@ -515,7 +520,7 @@ struct EditablePageCanvas: View {
         workspaceSize: CGSize
     ) -> Bool {
         guard model.cropDraft == nil,
-              model.interaction == .idle else {
+              model.interaction == .idle || canvasTransformStart != nil else {
             return false
         }
         let pageOrigin = CGPoint(
@@ -536,18 +541,20 @@ struct EditablePageCanvas: View {
         ) == nil
     }
 
-    private func contextElementLabel(_ element: PageElement) -> String {
-        switch element {
-        case let .photo(frame):
-            return frame.content == nil ? "Cadre photo vide" : "Photo"
-        case let .text(text):
-            let excerpt = text.content.plainText.trimmingCharacters(
-                in: .whitespacesAndNewlines
-            )
-            return excerpt.isEmpty ? "Zone de texte vide" : "Texte — \(excerpt.prefix(32))"
-        case .sticker:
-            return "Sticker"
-        }
+    private func normalizedCanvasPoint(
+        _ location: CGPoint,
+        pageSize: CGSize,
+        pageOffset: CGSize,
+        workspaceSize: CGSize
+    ) -> GeometryPoint {
+        let origin = CGPoint(
+            x: (workspaceSize.width - pageSize.width) / 2 + pageOffset.width,
+            y: (workspaceSize.height - pageSize.height) / 2 + pageOffset.height
+        )
+        return normalizedPoint(
+            CGPoint(x: location.x - origin.x, y: location.y - origin.y),
+            pageSize: pageSize
+        )
     }
 
     private func selectionTapGesture(
@@ -587,48 +594,6 @@ struct EditablePageCanvas: View {
                     translation: value.translation,
                     pageWidth: pageSize.width
                 )
-            }
-    }
-
-    private func canvasMagnificationGesture(
-        page: PageSnapshot,
-        fittedPageSize: CGSize,
-        viewportSize: CGSize
-    ) -> some Gesture {
-        MagnifyGesture(minimumScaleDelta: 0.01)
-            .onChanged { value in
-                guard model.cropDraft == nil else { return }
-                if canvasPinchStart == nil {
-                    canvasPinchStart = model.viewport
-                    let point = GeometryPoint(
-                        x: value.startAnchor.x,
-                        y: value.startAnchor.y
-                    )
-                    canvasPinchEligible = CanvasHitTesting.topmostElement(
-                        at: point,
-                        in: page
-                    ) == nil && model.interaction == .idle
-                    if canvasPinchEligible { model.interaction = .zoomingCanvas }
-                }
-                guard canvasPinchEligible, let start = canvasPinchStart else { return }
-                model.pinchCanvas(
-                    from: start,
-                    magnification: value.magnification,
-                    anchor: GeometryPoint(
-                        x: value.startAnchor.x,
-                        y: value.startAnchor.y
-                    ),
-                    fittedPageSize: fittedPageSize,
-                    viewportSize: viewportSize
-                )
-            }
-            .onEnded { _ in
-                let ownedInteraction = canvasPinchEligible
-                canvasPinchStart = nil
-                canvasPinchEligible = false
-                if ownedInteraction, model.interaction == .zoomingCanvas {
-                    model.interaction = .idle
-                }
             }
     }
 
@@ -728,20 +693,36 @@ private struct SelectionOverlay: View {
                     .fill(Color.white)
                     .overlay(Circle().stroke(Color.accentColor, lineWidth: 2))
                     .frame(width: 22, height: 22)
+                    .offset(desiredHandleOffset(handle))
+                    .allowsHitTesting(false)
+
+                Circle()
+                    .fill(handleUsesFallback(handle) ? Color.white : Color.clear)
+                    .overlay {
+                        if handleUsesFallback(handle) {
+                            Circle().stroke(
+                                Color.accentColor,
+                                style: StrokeStyle(lineWidth: 2, dash: [3, 2])
+                            )
+                        }
+                    }
+                    .frame(width: 22, height: 22)
                     .contentShape(Rectangle().inset(by: -11))
                     .gesture(resizeGesture(for: handle))
                     .offset(handleOffset(handle))
                     .accessibilityLabel(handle.accessibilityLabel)
-                    .accessibilityHint("Faites glisser pour redimensionner le cadre")
+                    .accessibilityHint(
+                        handleUsesFallback(handle)
+                            ? "Cible de secours visible ; la bordure réelle sort de la fenêtre"
+                            : "Faites glisser pour redimensionner le cadre"
+                    )
             }
 
-            if !rotationHandleIsInset {
-                Rectangle()
-                    .fill(Color.accentColor)
-                    .frame(width: 2, height: 18)
-                    .offset(y: -overlaySize.height / 2 - 9)
-                    .allowsHitTesting(false)
-            }
+            Rectangle()
+                .fill(Color.accentColor)
+                .frame(width: 2, height: 18)
+                .offset(y: -overlaySize.height / 2 - 9)
+                .allowsHitTesting(false)
 
             Circle()
                 .fill(Color.white)
@@ -750,6 +731,22 @@ private struct SelectionOverlay: View {
                         .font(.caption.bold())
                 }
                 .overlay(Circle().stroke(Color.accentColor, lineWidth: 2))
+                .frame(width: 34, height: 34)
+                .offset(desiredRotationHandleOffset)
+                .allowsHitTesting(false)
+
+            Circle()
+                .fill(rotationHandleIsInset ? Color.white : Color.clear)
+                .overlay {
+                    if rotationHandleIsInset {
+                        Image(systemName: "rotate.right")
+                            .font(.caption.bold())
+                        Circle().stroke(
+                            Color.accentColor,
+                            style: StrokeStyle(lineWidth: 2, dash: [3, 2])
+                        )
+                    }
+                }
                 .frame(width: 34, height: 34)
                 .contentShape(Rectangle().inset(by: -8))
                 .gesture(rotationGesture)
@@ -845,15 +842,26 @@ private struct SelectionOverlay: View {
     }
 
     private func handleOffset(_ handle: ResizeHandle) -> CGSize {
-        let local = handle.position(in: overlaySize)
         return clampedControlOffset(
-            CGSize(
-                width: local.x - overlaySize.width / 2,
-                height: local.y - overlaySize.height / 2
-            ),
+            desiredHandleOffset(handle),
             // A 44pt square needs 31.2pt at a 45° rotation.
             safeInset: 32
         )
+    }
+
+    private func desiredHandleOffset(_ handle: ResizeHandle) -> CGSize {
+        let local = handle.position(in: overlaySize)
+        return CGSize(
+            width: local.x - overlaySize.width / 2,
+            height: local.y - overlaySize.height / 2
+        )
+    }
+
+    private func handleUsesFallback(_ handle: ResizeHandle) -> Bool {
+        let desired = desiredHandleOffset(handle)
+        let resolved = handleOffset(handle)
+        return abs(resolved.width - desired.width) > 0.5
+            || abs(resolved.height - desired.height) > 0.5
     }
 
     private var desiredRotationHandleOffset: CGSize {
@@ -920,6 +928,7 @@ private struct SelectionOverlay: View {
                 model.updateMove(translation: value.translation, pageSize: pageSize)
             }
             .onEnded { _ in
+                if model.endGeometryGestureStreamIfSuppressed() { return }
                 guard model.interaction == .movingElement(element.id) else { return }
                 Task { await model.commitGeometryGesture() }
             }
@@ -943,6 +952,7 @@ private struct SelectionOverlay: View {
                 )
             }
             .onEnded { _ in
+                if model.endGeometryGestureStreamIfSuppressed() { return }
                 guard model.interaction == .resizingElement(element.id) else { return }
                 Task { await model.commitGeometryGesture() }
             }
@@ -961,6 +971,7 @@ private struct SelectionOverlay: View {
                 model.updateRotation(location: value.location, pageSize: pageSize)
             }
             .onEnded { _ in
+                if model.endGeometryGestureStreamIfSuppressed() { return }
                 guard model.interaction == .rotatingElement(element.id) else { return }
                 Task { await model.commitGeometryGesture() }
             }
@@ -979,6 +990,7 @@ private struct SelectionOverlay: View {
                 )
             }
             .onEnded { _ in
+                if model.endGeometryGestureStreamIfSuppressed() { return }
                 guard model.interaction == .resizingElement(element.id) else { return }
                 Task { await model.commitGeometryGesture() }
             }
