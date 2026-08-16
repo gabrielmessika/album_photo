@@ -37,20 +37,25 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   l’inspecteur hors écran en portrait. Le nouveau candidat
   `101e2948252f51991933b8d61f767f52aa6b629d` rend ce groupe adaptatif jusqu’à
   deux rangées ; `143…144` réussissent sur l’iPad 8. Le jalon Lot 1 est donc
-  viable sur cet appareil et le premier incrément interne du Lot 2 peut
-  commencer conformément à `LOT-003`. Le candidat et le canevas
+  viable sur cet appareil. Le premier incrément interne du Lot 2 est désormais
+  figé dans `d427d4e747dd2de56235341bd661d537a9a31c8e` conformément à
+  `LOT-003` : panneau Mise en page, modèles sans texte, dé et Auto. Le candidat
+  et le canevas
   multiélément restent reconstruits from
   scratch, en conservant
   uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
-  migration. Les panneaux publics de ce candidat sont strictement `Photos`
-  et `Fonds` ; les cinq panneaux complets, modèles, texte, stickers, cadres
-  décoratifs et presse-papiers multi-types relèvent du Lot 2 ; lecture,
-  diaporama, package et PDF relèvent du Lot 3.
-- Validation actuelle : 124 tests du noyau multiplateforme et la syntaxe
-  AppModule sont validés sous WSL. Les campagnes iPad `063…093`, puis `102`,
+  migration. Les panneaux publics sont maintenant `Photos`, `Mise en page` et
+  `Fonds`. Les variantes avec texte restent visibles mais désactivées jusqu’à
+  l’éditeur de texte ; Remplir l’album, stickers, cadres décoratifs et
+  presse-papiers multi-types restent à livrer au Lot 2. Lecture, diaporama,
+  package et PDF relèvent du Lot 3.
+- Validation actuelle : 131 tests du noyau multiplateforme, les contrats et la
+  syntaxe AppModule sont validés sous WSL. La nouvelle campagne
+  `IPAD-L2-001…008` est préparée et reste entièrement `NON TESTÉE`. Les
+  campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur
   `7a0f2a4…` compte 6 réussites et l’échec `135`. Sur le candidat exact
@@ -60,6 +65,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   Apple restent différées ; elles empêchent de déclarer le Lot 1 terminé au
   sens strict, sans bloquer le développement du Lot 2 selon
   [`suivi_tests.md`](suivi_tests.md).
+- Traçabilité : la matrice du premier incrément est dans
+  [`docs/traceability/lot2.md`](docs/traceability/lot2.md) ; elle sépare les
+  preuves Core des contrôles Apple à exécuter.
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application : App Playground Swift existant
   [`Albumzh.swiftpm`](Albumzh.swiftpm), dont le manifeste généré par Swift

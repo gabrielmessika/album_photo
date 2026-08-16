@@ -1,4 +1,4 @@
-# Registre 3.0 des tests manuels — Lot 1
+# Registre 3.0 des tests manuels — Lots 1 et 2
 
 Ce registre est la campagne neuve de validation du candidat 3.0 sur iPad. La
 source normative reste [`spec.md`](spec.md) et l’état général du projet reste
@@ -21,6 +21,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif compilé et testé lors de la troisième campagne | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — 6 réussites, 1 échec |
 | Candidat testé lors de la quatrième campagne ciblée | `48e9fef9c317835f605df430c4112320d8cb66c3` — `141` réussi implicitement, `142` échoué en portrait |
 | Candidat d’adaptation validé lors de la cinquième campagne ciblée | `101e2948252f51991933b8d61f767f52aa6b629d` — `143…144` réussis |
+| Premier candidat Lot 2 à tester | `d427d4e747dd2de56235341bd661d537a9a31c8e` — modèles sans texte, dé et Auto |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -64,6 +65,9 @@ suivantes :
 IPAD-L1-063 OK
 IPAD-L1-063 BLOQUÉ : raison
 IPAD-L1-063 BUG : résultat observé, étapes et capture éventuelle
+IPAD-L2-001 OK
+IPAD-L2-001 BLOQUÉ : raison
+IPAD-L2-001 BUG : résultat observé, étapes et capture éventuelle
 ```
 
 Codex enregistrera ensuite le résultat observé, la preuve, l’environnement et
@@ -80,14 +84,15 @@ implicitement plusieurs fiches.
 
 ## Périmètre et allocation normative
 
-Cette campagne teste uniquement les fonctions publiques du Lot 1 :
+La campagne historique `IPAD-L1` teste uniquement les fonctions publiques du Lot 1 :
 bibliothèque, albums et corbeille, éditeur à une page, pages et vue globale,
 fonds, couverture, photos et cadres photo, cadrage, zoom du canevas,
 sauvegarde, presse-papiers de cadres photo, navigation et annulation.
 
-Elle ne teste pas les fonctions publiques des Lots 2 et 3 : modèles, dé,
-automatisme, zones de texte, stickers, formes et cadres décoratifs, lecture,
-diaporama, animation de page finalisée, export/import `.photoalbum` et PDF.
+La nouvelle campagne `IPAD-L2-001…008` vise uniquement le premier incrément du
+Lot 2 : panneau Mise en page, modèles sans texte, dé et Auto. Elle ne valide
+pas encore les zones de texte éditables, Remplir l’album, stickers, formes,
+cadres décoratifs, lecture, diaporama, export/import `.photoalbum` ni PDF.
 Les types ou prototypes internes correspondants ne doivent pas devenir des
 commandes visibles pour cette campagne, conformément à `3:ARC-014`.
 
@@ -178,6 +183,9 @@ indirecte de lancement et `142` échoue en portrait. Sur
 `101e2948252f51991933b8d61f767f52aa6b629d`, `143` et `144` sont réussis :
 la compilation, le rail Photos/Fonds, l’inspecteur, les trois colonnes et les
 commandes adaptatives sont confirmés par le retour « tout est ok maintenant ».
+Le candidat Lot 2 `d427d4e747dd2de56235341bd661d537a9a31c8e`
+ajoute huit fiches neuves, toutes initialisées à ⚪ `NON TESTÉ` ; aucune preuve
+Lot 1 n’est extrapolée à ces nouvelles surfaces.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -263,6 +271,14 @@ commandes adaptatives sont confirmés par le retour « tout est ok maintenant »
 | `IPAD-L1-142` | Trois colonnes contraintes et action locale adaptative | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — portrait toujours débordant, accès Photos/Fonds absent |
 | `IPAD-L1-143` | Compilation du correctif de largeur globale | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | 🟢 `RÉUSSI` — preuve indirecte par l’exécution fonctionnelle de `144` |
 | `IPAD-L1-144` | Rail, inspecteur et commandes du canevas entièrement adaptatifs | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | 🟢 `RÉUSSI` |
+| `IPAD-L2-001` | Compilation, ouverture du store Lot 1 et nouvelle interface | `3:ENV-001` à `3:ENV-005`, `3:LOT-003`, `3:DAT-042`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-002` | Panneau Mise en page adaptatif, groupes et miniatures | `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:TPL-001` à `3:TPL-003`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-003` | Modèle plus grand, conservation et Annuler/Rétablir | `3:TPL-004` à `3:TPL-006`, `3:TPL-009`, `3:TPL-010`, `3:TPL-014` à `3:TPL-017`, `3:DAT-042` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-004` | Modèle plus petit, confirmation exacte et atomicité | `3:TPL-005` à `3:TPL-010`, `3:TPL-016`, `3:ERR-022` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-005` | Dé compatible, sac sans répétition et persistance | `3:RND-001` à `3:RND-006`, `3:TPL-018`, `3:DAT-042` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-006` | Activation Auto, ajouts/retraits et désactivation manuelle | `3:AUT-001` à `3:AUT-008`, `3:AUT-012` à `3:AUT-019`, `3:PHO-014` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-007` | Densité, portée par page, relance et Annuler/Rétablir | `3:AUT-001`, `3:AUT-003` à `3:AUT-005`, `3:AUT-012`, `3:AUT-015` à `3:AUT-018`, `3:DAT-037` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-008` | Commandes incompatibles, aide et non-exposition du reste du Lot 2 | `3:AUT-019`, `3:EDT-003`, `3:EDT-004`, `3:EDT-019`, `3:ARC-014`, `3:CAT-009` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -2432,6 +2448,188 @@ repousser hors écran le rail et l’inspecteur fixe. Le candidat exact est
   au correctif ciblé ; aucune capture supplémentaire n’a été jointe.
 - Environnement : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ;
   16 août 2026 ; Paris, France ; français (France).
+
+## Première campagne du Lot 2 — modèles, dé et Auto
+
+Ces fiches visent exactement le candidat
+`d427d4e747dd2de56235341bd661d537a9a31c8e`. Elles forment une campagne
+interne autorisée par `LOT-003` et ne constituent pas la sortie complète du
+Lot 2. Les variantes avec texte, Remplir l’album, stickers et cadres restent
+explicitement hors de ce candidat.
+
+### `IPAD-L2-001` — Compilation, store Lot 1 et nouvelle interface
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Spécification : 3.0, `3:TPL`, `3:RND`, `3:AUT` et `3:DAT-042` inchangés.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:LOT-003`, `3:DAT-042`,
+  `3:DONE-005`.
+- Préconditions : conserver une copie du package et du store validés sous
+  `IPAD-L1-143…144`, puis transférer exactement le candidat ci-dessus sans
+  modifier son `Package.swift` généré.
+- Étapes : effacer les anciens diagnostics, compiler et lancer ; ouvrir un
+  album Lot 1 existant contenant plusieurs pages, photos, cadrages et fonds ;
+  parcourir Bibliothèque, éditeur et Vue globale puis revenir à la page active.
+- Résultat attendu : aucune erreur ni avertissement bloquant ; les données Lot
+  1 restent lisibles et inchangées ; le rail ou la barre expose désormais
+  Photos, Mise en page et Fonds dans cet ordre ; aucune commande Lot 3
+  n’apparaît.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — diagnostic de compilation et capture de l’éditeur.
+- Environnement : à renseigner — appareil, iPadOS, Swift Playgrounds, date,
+  lieu, langue et région.
+
+### `IPAD-L2-002` — Panneau Mise en page adaptatif et catalogue
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Exigences : `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:TPL-001` à
+  `3:TPL-003`, `3:TPL-019`, `3:TPL-020`, `3:ACC-021`.
+- Préconditions : page active quelconque ; commencer en portrait avec le
+  panneau Photos ouvert et un élément sélectionné.
+- Étapes : ouvrir Mise en page et vérifier que la sélection du canevas reste
+  inchangée ; parcourir `1`, `2`, …, `7+` sous Sans texte puis Avec texte ;
+  vérifier deux miniatures distinctes par nombre exact de 1 à 8 photos pour
+  chaque filtre ; constater que les variantes Avec texte sont visibles mais
+  désactivées avec leur explication ; faire défiler jusqu’aux bords ; tourner
+  en paysage et recommencer l’ouverture/fermeture de Photos, Mise en page et
+  Fonds ; ouvrir l’aide du panneau hors ligne.
+- Résultat attendu : aucun rail, panneau, filtre, miniature ni commande du
+  canevas n’est coupé ; les miniatures 4:5 reflètent leurs slots et ne sont pas
+  des duplicatas trompeurs ; l’ordre des trois panneaux reste stable ; Avec
+  texte annonce clairement son report ; l’aide explique modèle, dé et Auto
+  sans réseau.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — captures portrait/paysage et liste des groupes
+  parcourus.
+- Environnement : à renseigner.
+
+### `IPAD-L2-003` — Modèle plus grand, conservation et commande unique
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Exigences : `3:TPL-004` à `3:TPL-006`, `3:TPL-009`, `3:TPL-010`,
+  `3:TPL-014` à `3:TPL-017`, `3:DAT-042`.
+- Préconditions : page libre avec exactement deux cadres remplis par deux
+  photos reconnaissables, cadrages différents, un fond non par défaut et un
+  ordre de profondeur connu.
+- Étapes : dans Sans texte > `4`, appliquer Grille A ; inspecter les quatre
+  emplacements ; noter les deux cadres vides ; vérifier les deux contenus et
+  leurs cadrages internes ; toucher Annuler une fois puis Rétablir une fois ;
+  fermer l’album, le rouvrir et revenir à la page.
+- Résultat attendu : deux cadres existants sont réaffectés de façon stable et
+  deux cadres vides sont créés au-dessus, sans changer le fond ni les cadrages ;
+  Annuler restaure exactement les deux cadres initiaux en une action ; Rétablir
+  restaure les quatre ; après relance, Grille A reste sélectionnée et les
+  géométries ne sont pas recalculées aléatoirement.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — captures avant/après/Annuler/Rétablir et après
+  relance.
+- Environnement : à renseigner.
+
+### `IPAD-L2-004` — Modèle plus petit et confirmation exacte
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Exigences : `3:TPL-005` à `3:TPL-010`, `3:TPL-016`, `3:ERR-022`.
+- Préconditions : nouvelle page libre avec exactement quatre cadres remplis ;
+  relever leur ordre et vérifier les quatre photos dans le panneau Photos.
+- Étapes : choisir Sans texte > `2` puis Grille A ; vérifier le nombre annoncé
+  et toucher Annuler ; confirmer que rien n’a changé ; recommencer et toucher
+  Appliquer ; vérifier les survivants ; toucher Annuler dans la barre
+  principale.
+- Résultat attendu : le premier dialogue annonce exactement deux occurrences
+  retirées ; son Annuler ne publie aucune modification ; Appliquer conserve les
+  deux premières occurrences selon l’ordre accessible, retire les deux autres
+  cadres sans supprimer leurs assets de Photos et désactive Auto s’il était
+  actif ; un seul Annuler restaure les quatre cadres avec leurs cadrages.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — texte du dialogue, ordre des photos et captures des
+  trois états.
+- Environnement : à renseigner.
+
+### `IPAD-L2-005` — Dé compatible, cycle et persistance
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Exigences : `3:RND-001` à `3:RND-006`, `3:TPL-018`, `3:DAT-042`.
+- Préconditions : page libre contenant exactement quatre cadres photo et
+  aucune zone de texte ; mémoriser l’ordre et les cadrages des quatre contenus.
+- Étapes : vérifier que le bouton dé est actif et annoncé « Changer
+  aléatoirement la mise en page » ; le toucher trois fois en notant le modèle
+  sélectionné après chaque pression ; vérifier les éléments après chaque
+  tirage ; toucher Annuler puis Rétablir ; fermer et rouvrir l’album.
+- Résultat attendu : seuls les deux modèles Sans texte à quatre photos sont
+  choisis ; aucun tirage ne répète immédiatement le modèle courant et l’autre
+  variante est visitée avant répétition ; nombre, ordre des contenus, cadrages,
+  fond et assets ne changent pas ; chaque pression est une commande ; le
+  dernier résultat, et non un nouveau tirage, persiste après relance.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — séquence des noms sélectionnés et captures.
+- Environnement : à renseigner.
+
+### `IPAD-L2-006` — Auto, occurrences photo et sortie vers le mode libre
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Exigences : `3:AUT-001` à `3:AUT-008`, `3:AUT-012` à `3:AUT-019`,
+  `3:PHO-014`, `3:FRM-003`, `3:TPL-022`.
+- Préconditions : nouvelle page sans cadre et au moins trois photos dans
+  Photos.
+- Étapes : activer Mise en page auto et vérifier l’absence de confirmation sur
+  la page vide ; placer une photo, la dupliquer puis placer une deuxième photo ;
+  vérifier la recomposition après chaque action ; retirer la photo d’un cadre ;
+  vérifier que son cadre disparaît ; sélectionner un cadre restant et le
+  déplacer manuellement ; dans l’avertissement de désactivation, toucher
+  Annuler.
+- Résultat attendu : Auto est visible et persistant ; chaque ajout produit un
+  cadre rempli, sans cadre vide ; Dupliquer et Retirer recomposent dans la même
+  action sans changer les cadrages survivants ; Retirer supprime le cadre en
+  Auto ; le déplacement désactive Auto et affiche « Mise en page auto
+  désactivée pour cette page » ; son action Annuler restaure à la fois Auto et
+  la géométrie précédente.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — vidéo ou captures de chaque nombre d’occurrences et
+  de l’avertissement.
+- Environnement : à renseigner.
+
+### `IPAD-L2-007` — Densité, portée par page et relance
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Exigences : `3:AUT-001`, `3:AUT-003` à `3:AUT-005`, `3:AUT-012`,
+  `3:AUT-015` à `3:AUT-018`, `3:DAT-037`.
+- Préconditions : deux pages ; la première contient quatre cadres remplis et
+  la seconde est vide.
+- Étapes : sur la première page, activer Auto, vérifier l’avertissement puis
+  Annuler ; vérifier l’absence de changement ; activer à nouveau et confirmer ;
+  choisir successivement Aérée, Dense puis Équilibrée en observant la
+  composition ; désactiver Auto ; passer à la seconde page et vérifier son état,
+  puis activer Auto sans confirmation ; fermer et relancer.
+- Résultat attendu : l’annulation initiale ne change rien ; chaque densité
+  produit une composition déterministe et une commande annulable ; désactiver
+  Auto conserve exactement la dernière géométrie ; les états Auto et densité
+  sont indépendants par page et persistent ; la page vide reste sans cadre.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — captures des trois densités et des deux pages après
+  relance.
+- Environnement : à renseigner.
+
+### `IPAD-L2-008` — Commandes incompatibles et frontière de l’incrément
+
+- Candidat : `d427d4e747dd2de56235341bd661d537a9a31c8e`.
+- Exigences : `3:AUT-019`, `3:EDT-003`, `3:EDT-004`, `3:EDT-019`,
+  `3:ARC-014`, `3:CAT-009`.
+- Préconditions : page possédant un cadre vide ; le copier, puis activer Auto
+  et confirmer afin que ce cadre vide soit retiré.
+- Étapes : vérifier dans Photos que Ajouter un cadre vide est désactivé ;
+  vérifier que Coller est désactivé pour le cadre vide copié ; sur une autre
+  page Auto contenant un cadre rempli, vérifier que Dupliquer reste actif ;
+  contrôler l’interrupteur Auto et le menu Plus en portrait puis paysage ;
+  ouvrir l’aide ; rechercher enfin les commandes Texte éditable, Remplir
+  l’album, Stickers et Cadres et formes.
+- Résultat attendu : les deux créations de cadre vide sont désactivées avec une
+  explication, tandis qu’un cadre rempli peut être dupliqué et recomposé ; Auto
+  reste visible hors du menu Plus et toutes les commandes existantes restent
+  contenues ; l’aide est locale ; les fonctions Lot 2 non livrées ne sont pas
+  actives et aucun asset sticker/cadre n’est persisté.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — captures des états désactivés, des deux orientations
+  et de l’aide.
+- Environnement : à renseigner.
 
 ## Qualification différée Apple/macOS/Xcode
 

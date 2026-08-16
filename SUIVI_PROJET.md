@@ -25,7 +25,7 @@ résultats du prototype 2.1.
 | Candidat de troisième campagne compilé et testé | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — `134` et `136…140` réussis, `135` échoué |
 | Candidat de quatrième campagne ciblée | `48e9fef9c317835f605df430c4112320d8cb66c3` — `141` réussi indirectement, `142` échoué en portrait |
 | Candidat d’adaptation validé sur iPad | `101e2948252f51991933b8d61f767f52aa6b629d` ; `IPAD-L1-143…144` réussis |
-| Premier incrément Lot 2 | Branche `feature/lot2-composition` ; empreinte du candidat à figer avant la campagne iPad |
+| Premier incrément Lot 2 | Candidat `d427d4e747dd2de56235341bd661d537a9a31c8e` sur `feature/lot2-composition` ; campagne `IPAD-L2-001…008` préparée |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du candidat courant | `spec.md` inchangé depuis `101e2948252f51991933b8d61f767f52aa6b629d` ; incrément Lot 2 conforme à `TPL`, `RND`, `AUT` et `DAT-042` |
@@ -161,7 +161,7 @@ extrapolé.
 | Contrats de catalogue | 🟡 | Schéma extensible aux stickers/cadres futurs mais registre runtime limité à 3 fonds et 6 formes ; rendu Swift pur des formes, 6 masques golden 64 × 48, 32 modèles et 10 empreintes validés (`CAT-001` à `CAT-009`, `TPL-019`) | Reconfirmer chargement depuis le bundle Apple et repli hors ligne ; figer les payloads Lot 2 avant de les publier |
 | Package `.photoalbum` | 🟡 | Schéma v1, documentation, exemple minimal et exemples invalides présents (`PKG-001` à `PKG-022`, `IMP-001` à `IMP-025`) | 🟠 Déclaration UTType, ouverture Fichiers et partage non testées dans Swift Playgrounds |
 | CloudKit page par page | 🟠 | Planificateur pur et note de prototype présents (`SYN-001` à `SYN-003`) | Entitlements, zone et opérations CloudKit exigent un environnement Apple compatible |
-| Traçabilité | 🟡 | Matrice détaillée par familles, méthodes automatisées, 82 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` | Exécuter `143…144` sur le nouveau candidat et enregistrer leurs résultats |
+| Traçabilité | 🟡 | Matrices Lot 0/1 et Lot 2, méthodes automatisées, 90 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` | Exécuter `IPAD-L2-001…008` sur `d427d4e…` et enregistrer chaque résultat |
 
 ### Sortie du lot 0
 
@@ -274,6 +274,7 @@ Lot 3 n’est rendu public.
 | iPad 8, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-16 | `IPAD-L1-132` sur `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` | **ÉCHEC** : ligne 128 d’`AlbumCoverView`, appel `catalogImage(for:)` sans `maximumPixelSize` | Retour utilisateur ; remplacé par `IPAD-L1-133` |
 | WSL, contrats, 2026-08-16 | `perl tools/validate_contracts.pl` puis `sha256sum -c catalog-checksums-v1.sha256` dans `docs/` | **OK** : 32 modèles, 3 fonds, 6 formes, schémas/package ; **10/10 empreintes OK** | Contrats et intégrité du dépôt, pas chargement/cache sur iPad |
 | Dépôt, registre et diff, 2026-08-16 | Comptage des IDs synthétiques/détaillés, continuité, espaces invisibles et `git diff --check` | **OK** : 82 IDs synthétiques, 82 fiches détaillées, continuité `063…144`, aucun espace U+200B ; diff propre | Contrôle structurel ; ne transforme aucune régression iPad en réussite |
+| Dépôt, registre Lot 2, 2026-08-16 | Comptage des entrées `IPAD-L2`, hash candidat et champs obligatoires | **OK** : 8 IDs synthétiques, 8 fiches détaillées `001…008`, toutes ⚪ `NON TESTÉ` et liées à `d427d4e…` | Contrôle documentaire ; aucune compilation Apple ni réussite fonctionnelle |
 | WSL, Swift 6.3.3, 2026-08-10 | `timeout 240 /home/gmessika/.local/share/swiftly/toolchains/6.3.3/usr/bin/swift test` | **121 tests, 0 échec**, 6,696 s | Noyau `AlbumPhotoCore` uniquement ; ne valide pas SwiftUI/iOS |
 | WSL | `perl tools/validate_contracts.pl` | **OK** : 32 modèles, 3 fonds, 6 formes, schémas et package exemple | Contrats statiques uniquement |
 | WSL | `(cd docs && sha256sum -c catalog-checksums-v1.sha256)` | **10/10 OK** : modèles, catalogue, schéma, contrat du renderer et 6 masques | Intégrité des fichiers du dépôt, pas leur chargement Apple |
@@ -282,6 +283,7 @@ Lot 3 n’est rendu public.
 | WSL, C | `cc -Wall -Wextra -pedantic -fsyntax-only tools/generate_photo_fixture.c tools/normalize_png_4x5.c` | **OK** | Syntaxe des générateurs seulement |
 | Dépôt, registre manuel, 2026-08-10 | Contrôle de continuité, champs obligatoires, états et références normatives | **OK historique** : 46 fiches détaillées `063…108`, alors toutes ⚪, 13 validations Apple, 276 références résolues | État du registre avant la première campagne ; remplacé par le contrôle du 16 août ci-dessus |
 | Dépôt, traçabilité, 2026-08-16 | Contrôle des identifiants et liens de `docs/traceability/lot0-lot1.md` | **OK structurel** : 82 contrôles iPad jusqu’à `IPAD-L1-144`, 13 Apple et 24 `ACPT` | Ne transforme aucune couverture structurelle en réussite fonctionnelle |
+| Dépôt, traçabilité Lot 2, 2026-08-16 | Revue de `docs/traceability/lot2.md` contre les tests Core et `suivi_tests.md` | **OK structurel** : 5 repères automatisés et 8 contrôles iPad reliés | `AUT-009…011` et les incréments texte/stickers/cadres restent explicitement incomplets |
 | Dépôt, arbitrage des lots, 2026-08-10 | Vérification de `DEC-38`, des trois lots de validation, des sorties de la section 31 et du registre manuel | **OK** : Lot 1 = six sorties photo locales ; `ACPT-123`/`130` au Lot 2 ; `ACPT-127` au Lot 3 ; 276 références manuelles résolues | Documentation uniquement ; tests Core non relancés car aucune source ni ressource n’a changé |
 | Dépôt | `git diff --exit-code -- Albumzh.swiftpm/Package.swift Package.swift` | **OK** : les deux manifestes sont inchangés | Confirme la conservation de l’enveloppe, pas sa compilation Apple |
 | Dépôt | `git diff --check` | **OK** après écriture du code, des contrats et du registre manuel ; à rejouer après fixation des hashes | Contrôle des espaces et marqueurs de conflit, pas une preuve fonctionnelle |
@@ -290,6 +292,7 @@ Lot 3 n’est rendu public.
 
 | Validation | État | Motif |
 |---|---|---|
+| `IPAD-L2-001…008` sur `d427d4e…` | ⚪ Non testés | Nouveau candidat non encore transféré ni compilé dans Swift Playgrounds |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
 | Accessibilité et adaptation exhaustives iPhone/Xcode | ⚪ Non testées | `114`, `115`, `118…120` réussis sur l’iPad 8 ; matrice iPhone et Accessibility Inspector toujours absents |
@@ -322,9 +325,8 @@ Lot 3 n’est rendu public.
 
 ## Prochaines actions
 
-1. Figer le commit du premier incrément modèles/dé/Auto et préparer sa campagne
-   iPad regroupée : compilation, adaptation, modèles, confirmation, dé, Auto,
-   Annuler/Rétablir et relance.
+1. Exécuter `IPAD-L2-001…008` sur le candidat figé `d427d4e…` : compilation,
+   adaptation, modèles, confirmation, dé, Auto, Annuler/Rétablir et relance.
 2. Implémenter `AUT-009…011` Remplir l’album après cette qualification ciblée.
 3. Enchaîner ensuite zones de texte, puis catalogue de stickers/cadres et
    presse-papiers multi-types ; figer les assets et licences avant de les persister.
@@ -339,7 +341,8 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
-| 2026-08-16 | Codex | Complément pré-campagne Auto : avertissement explicite après transformation manuelle ou modèle appliqué avec action Annuler restaurant la commande atomique précédente | `EditorViewModel.swift`, `AlbumEditorView.swift`, `SUIVI_PROJET.md` ; `TPL-016`, `AUT-006`, `UND-001` | Parse AppModule à rejouer ; compilation et comportement Apple NON TESTÉS |
+| 2026-08-16 | Codex | Gel du premier candidat Lot 2 et préparation de la campagne iPad `IPAD-L2-001…008` avec matrice de traçabilité séparée | `README.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `docs/traceability/lot2.md` ; `TST-001…005`, `LOT-003`, `TPL`, `RND`, `AUT`, `DAT-042` | Candidat exact `d427d4e747dd2de56235341bd661d537a9a31c8e` ; 8/8 fiches à ⚪ NON TESTÉ ; aucune preuve Apple extrapolée |
+| 2026-08-16 | Codex | Complément pré-campagne Auto : avertissement explicite après transformation manuelle ou modèle appliqué avec action Annuler restaurant la commande atomique précédente | `EditorViewModel.swift`, `AlbumEditorView.swift`, `SUIVI_PROJET.md` ; `TPL-016`, `AUT-006`, `UND-001` | Parse AppModule OK ; compilation et comportement Apple NON TESTÉS |
 | 2026-08-16 | Codex | Premier incrément Lot 2 : manifeste de modèles embarqué, provenance stricte, application atomique, dé, Auto/densité, panneau Mise en page adaptatif, aide et commandes incompatibles désactivées | `BuiltInLayoutTemplateCatalog.generated.swift`, `PrototypeEngines.swift`, `DomainValidation.swift`, `AlbumApplicationService.swift`, `EditorViewModel.swift`, `LayoutPanelView.swift`, `AlbumEditorView.swift`, `PhotosPanelView.swift`, `HelpView.swift`, tests et générateur ; `TPL-001…023`, `RND-001…006`, `AUT-001…008`, `AUT-012…019`, `DAT-042`, `PHO-014`, `EDT-001…004`, `EDT-019` | WSL : 131 tests Core, 0 échec ; parse AppModule OK ; contrats OK ; 10/10 empreintes ; `git diff --check` OK ; compilation et rendu Apple NON TESTÉS |
 | 2026-08-16 | Codex | Enregistrement de la cinquième campagne ciblée : compilation et adaptation finale `143…144` réussies ; jalon Lot 1 viable sur iPad et transition vers le premier incrément du Lot 2 | `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot0-lot1.md` ; `EDT-002`, `EDT-020`, `PHO-002`, `ACC-021`, `LOT-003`, `DONE-001` à `DONE-005` | Retour utilisateur « tout est ok maintenant » sur `101e2948252f51991933b8d61f767f52aa6b629d` ; aucune qualification iPhone/Xcode extrapolée |
 | 2026-08-16 | Codex | Gel documentaire du correctif de largeur globale et injection de son empreinte dans `143…144` | `README.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `docs/traceability/lot0-lot1.md` ; `TST-001` à `TST-005`, `DONE-001` à `DONE-005` | Sources applicatives exactes : `101e2948252f51991933b8d61f767f52aa6b629d` ; `143…144` restent ⚪ NON TESTÉ ; aucune preuve Apple extrapolée |
