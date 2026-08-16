@@ -21,7 +21,7 @@ résultats du prototype 2.1.
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
 | Second candidat correctif rejeté | `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` — appel catalogue incomplet dans `AlbumCoverView` |
-| Nouveau correctif de compilation | arbre de travail basé sur `7b13cbd697bbde77c20b85245515874760991d3c` ; empreinte à figer après commit |
+| Nouveau correctif de compilation figé | `638c659925e1b036570484a98c0fc016602687c9`, basé sur `7b13cbd697bbde77c20b85245515874760991d3c` |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification du correctif | `spec.md` inclus dans `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` |
 | Enveloppe iPad conservée | `Albumzh.swiftpm` ; son `Package.swift` généré n’a pas été recréé |
@@ -29,8 +29,8 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Figer puis compiler le nouveau correctif minimal dans Swift Playgrounds sur iPad, puis rejouer les régressions et la qualification Apple différée |
-| État global | 🟡 **Dernier appel catalogue incomplet corrigé et validé sous WSL ; nouvelle compilation iPad requise** |
+| Validation indispensable restante | Compiler le nouveau correctif minimal figé dans Swift Playgrounds sur iPad, puis rejouer les régressions et la qualification Apple différée |
+| État global | 🟡 **Dernier appel catalogue incomplet corrigé, validé sous WSL et figé ; nouvelle compilation iPad requise** |
 
 ## Légende
 
@@ -71,7 +71,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 |---|---|---|---|
 | Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core et ses tests | Compiler sur iPad ; prouver les capacités Apple encore bloquées |
-| Lot 1 — Création locale | 🟡 | Nouvelle bibliothèque et nouvel éditeur une page implémentés ; première campagne `063…093` enregistrée ; deux candidats correctifs ont échoué à compiler et les appels signalés sont maintenant corrigés | Figer le correctif, exécuter d’abord `IPAD-L1-133`, puis `102` et les régressions `109…131` |
+| Lot 1 — Création locale | 🟡 | Nouvelle bibliothèque et nouvel éditeur une page implémentés ; première campagne `063…093` enregistrée ; deux candidats correctifs ont échoué à compiler et les appels signalés sont corrigés dans `638c659…` | Exécuter d’abord `IPAD-L1-133`, puis `102` et les régressions `109…131` |
 | Lot 2 — Parité de composition | ⏸️ | Moteurs purs ou schéma préparatoires seulement ; aucune commande publique Lot 2 | Démarrer après validation du Lot 1 ; sortie `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128`, `ACPT-130` |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
@@ -114,7 +114,7 @@ extrapolé.
 | Contrats de catalogue | 🟡 | Schéma extensible aux stickers/cadres futurs mais registre runtime limité à 3 fonds et 6 formes ; rendu Swift pur des formes, 6 masques golden 64 × 48, 32 modèles et 10 empreintes validés (`CAT-001` à `CAT-009`, `TPL-019`) | Reconfirmer chargement depuis le bundle Apple et repli hors ligne ; figer les payloads Lot 2 avant de les publier |
 | Package `.photoalbum` | 🟡 | Schéma v1, documentation, exemple minimal et exemples invalides présents (`PKG-001` à `PKG-022`, `IMP-001` à `IMP-025`) | 🟠 Déclaration UTType, ouverture Fichiers et partage non testées dans Swift Playgrounds |
 | CloudKit page par page | 🟠 | Planificateur pur et note de prototype présents (`SYN-001` à `SYN-003`) | Entitlements, zone et opérations CloudKit exigent un environnement Apple compatible |
-| Traçabilité | 🟡 | Matrice détaillée par familles, méthodes automatisées, 71 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` | Compléter avec `133`, puis `102` et `109…131` sur le prochain commit figé |
+| Traçabilité | 🟡 | Matrice détaillée par familles, méthodes automatisées, 71 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` | Compléter avec `133`, puis `102` et `109…131` sur `638c659…` |
 
 ### Sortie du lot 0
 
@@ -154,7 +154,8 @@ Le code candidat couvre le périmètre d’implémentation retenu, mais le lot r
 🟡. `06c30b9…` puis `84ec71e…` ont échoué à compiler avec le SDK Apple. Le
 second échec provenait de deux appels de préchargement encore incomplets dans
 `AlbumCoverView`; ils passent maintenant explicitement `maximumPixelSize: 480`.
-Il reste à figer ce correctif, réussir `IPAD-L1-133`, puis exécuter
+Le nouveau correctif est figé par `638c659925e1b036570484a98c0fc016602687c9` ;
+il reste à réussir `IPAD-L1-133`, puis exécuter
 `IPAD-L1-102` et `IPAD-L1-109…131`. Aucun comportement corrigé n’est déclaré
 durable ou tactilement valide sur la seule base des tests Linux.
 
@@ -217,8 +218,8 @@ campagne iPad.
 
 | Validation | État | Motif |
 |---|---|---|
-| Recompilation du nouveau correctif dans Swift Playgrounds | ⚪ Non testée | `IPAD-L1-132` a échoué sur `84ec71e…` ; `IPAD-L1-133` visera le prochain commit figé |
-| Régressions manuelles du correctif | ⚪ Non testées | `IPAD-L1-102` et `IPAD-L1-109…131` seront retargetés sur le nouveau correctif |
+| Recompilation du nouveau correctif dans Swift Playgrounds | ⚪ Non testée | `IPAD-L1-132` a échoué sur `84ec71e…` ; `IPAD-L1-133` cible `638c659925e1b036570484a98c0fc016602687c9` |
+| Régressions manuelles du correctif | ⚪ Non testées | `IPAD-L1-102` et `IPAD-L1-109…131` ciblent `638c659925e1b036570484a98c0fc016602687c9` |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
 | VoiceOver, Dynamic Type, clavier, pointeur et Réduire les animations | ⚪ Non testés | Comportements impossibles à conclure par analyse Linux |
@@ -249,9 +250,9 @@ campagne iPad.
 
 ## Prochaines actions
 
-1. Relire et commiter le nouveau correctif de compilation, puis injecter son
-   empreinte exacte dans `IPAD-L1-102`, `109…131` et `133`.
-2. Transférer ce commit sur l’iPad 8 et exécuter d’abord `IPAD-L1-133` ; après
+1. Transférer exactement `638c659925e1b036570484a98c0fc016602687c9` sur
+   l’iPad 8 et vérifier son empreinte avant toute exécution.
+2. Exécuter d’abord `IPAD-L1-133` ; après
    compilation réussie, exécuter
    `IPAD-L1-122` (lancement/Fonds), `123` (création/retour), `128`
    (gestes/navigation) et `129` (Sauvegarder pendant geste).
@@ -270,7 +271,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
-| 2026-08-16 | Codex | Correction des deux appels de préchargement de couverture restés sur l’ancienne signature de `catalogImage` ; `IPAD-L1-132` enregistré en échec et remplacement `133` créé | `AlbumCoverView.swift`, `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot0-lot1.md` ; `ENV-001` à `ENV-005`, `PERF-016`, `DONE-005` | WSL : 123 tests, 0 échec ; parse AppModule OK ; 4/4 appels catalogue avec taille explicite ; recompilation Apple requise par `IPAD-L1-133` |
+| 2026-08-16 | Codex | Correction des deux appels de préchargement de couverture restés sur l’ancienne signature de `catalogImage` ; `IPAD-L1-132` enregistré en échec et remplacement `133` créé | `AlbumCoverView.swift`, `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot0-lot1.md` ; `ENV-001` à `ENV-005`, `PERF-016`, `DONE-005` | Commit `638c659925e1b036570484a98c0fc016602687c9` ; WSL : 123 tests, 0 échec ; parse AppModule OK ; 4/4 appels catalogue avec taille explicite ; recompilation Apple requise par `IPAD-L1-133` |
 | 2026-08-16 | Codex | Correction des deux diagnostics de compilation Apple : initialiseur explicite de fond avec taille par défaut et ensembles de catalogue typés | `AlbumPageBackground.swift`, `AppModel.swift`, `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot0-lot1.md` ; `ENV-001` à `ENV-005`, `PERF-007`, `PERF-016`, `DONE-005` | Commit `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` ; WSL : 123 tests, 0 échec ; parse AppModule OK ; type-check Apple à rejouer par `IPAD-L1-132` |
 | 2026-08-16 | Codex | Gel documentaire du correctif et de sa spécification pour la seconde campagne iPad | `README.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `docs/traceability/lot0-lot1.md` ; `TST-001` à `TST-005`, `DONE-001` à `DONE-005` | Candidat exact `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` injecté dans `IPAD-L1-102` et `109…131` ; aucune preuve Apple extrapolée |
 | 2026-08-16 | Codex | Analyse de la première campagne iPad et correctif regroupé : lancement/catalogue asynchrone avec priorité sûre au fond par défaut, retour post-création, dates de corbeille, déduplication, grilles et compteurs photo, modes de choix, inspecteur droit et suppression rapide, insertion de page, sélection/poignées/rotation, gestes canevas/navigation, sauvegarde en cours de geste et registre de régression ; RAW différé | `spec.md`, `suivi_tests.md`, `SUIVI_PROJET.md`, `docs/traceability/lot0-lot1.md`, `AlbumApplicationService.swift`, `GeometryEngines.swift`, `AppModel.swift`, `LibraryView.swift`, `TrashView.swift`, `MediaAssetStore.swift`, `PhotosPanelView.swift`, `AlbumEditorView.swift`, `EditorViewModel.swift`, `PageCanvasView.swift`, `GlobalPagesView.swift`, tests ; `ALB-025`, `EDT-021`, `PAG-016`, `PHO-019`, `CLP-006`, `PERF-007`, `PERF-016` et exigences reliées | Commit `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` ; WSL : 123 tests Core, 0 échec ; parse AppModule OK ; contrats OK ; 10/10 empreintes OK ; compilation/gestes/performance Apple NON TESTÉS ; `094…101`, `103…108` obsolètes, `102` NON TESTÉ, régressions `109…131` préparées |

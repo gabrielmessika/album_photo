@@ -26,8 +26,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   lecture et documents au Lot 3 (`DEC-38`).
 - Implémentation : les correctifs `06c30b9…` puis `84ec71e…` ont révélé des
   erreurs de compilation Apple. Le dernier appel incomplet dans
-  `AlbumCoverView` est corrigé dans l’arbre de travail à figer. Le candidat et
-  le canevas multiélément restent reconstruits from scratch, en conservant
+  `AlbumCoverView` est corrigé dans
+  `638c659925e1b036570484a98c0fc016602687c9`. Le candidat et le canevas
+  multiélément restent reconstruits from scratch, en conservant
   uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
@@ -39,8 +40,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 - Validation actuelle : 123 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La première campagne iPad `063…093`
   est enregistrée ; les candidats `06c30b9…` et `84ec71e…` ne compilent pas
-  avec le SDK Apple. Après gel du correctif minimal, exécuter `133`, puis `102`
-  et `109…131` selon [`suivi_tests.md`](suivi_tests.md).
+  avec le SDK Apple. Exécuter `133`, puis `102` et `109…131` sur le correctif
+  minimal exact indiqué dans [`suivi_tests.md`](suivi_tests.md).
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application : App Playground Swift existant
   [`Albumzh.swiftpm`](Albumzh.swiftpm), dont le manifeste généré par Swift

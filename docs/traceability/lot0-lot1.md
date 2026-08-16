@@ -13,9 +13,9 @@ mais le candidat correctif rend les preuves concernées insuffisantes. Le commit
 `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` puis
 `84ec71e1a66df4676e3c388e9d4f87a5a7e06e4e` ont échoué à la compilation Apple ;
 `IPAD-L1-132` enregistre le second échec. Les régressions `109…131`, la fiche
-`102` et le nouveau contrôle `133` attendent le prochain commit figé et restent
-⚪ `NON TESTÉ`. Aucun scénario d'acceptation n'est donc déclaré réussi par ce
-document.
+`102` et le nouveau contrôle `133` ciblent le correctif figé
+`638c659925e1b036570484a98c0fc016602687c9` et restent ⚪ `NON TESTÉ`. Aucun
+scénario d'acceptation n'est donc déclaré réussi par ce document.
 
 ## Convention et frontière des lots
 
@@ -260,9 +260,9 @@ ou « contrat » ne signifie jamais que le scénario utilisateur complet passe.
 
 - Les résultats `IPAD-L1-063…093` visent l’ancienne copie ; les fiches
   `094…101` et `103…108` devenues obsolètes ne prouvent pas le correctif.
-  `IPAD-L1-102` reste non testé, les 23 régressions `109…131` attendent le
-  nouveau commit correctif et `IPAD-L1-133` doit d’abord en prouver la
-  compilation ; `IPAD-L1-132` conserve l’échec de `84ec71e…`.
+  `IPAD-L1-102` reste non testé, les 23 régressions `109…131` ciblent
+  `638c659925e1b036570484a98c0fc016602687c9` et `IPAD-L1-133` doit d’abord en
+  prouver la compilation ; `IPAD-L1-132` conserve l’échec de `84ec71e…`.
 - Les validations Apple listées ci-dessus sont différées et ne peuvent pas être
   remplacées par les tests Linux.
 - `L10N-002` n'a pas de test de catalogue de chaînes identifié.
