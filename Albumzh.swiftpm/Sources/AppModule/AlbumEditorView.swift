@@ -186,6 +186,19 @@ private struct AlbumEditorScene: View {
                 "Les cadres vides seront retirés et les cadres photo remplis seront réorganisés. Les photos originales, les textes, les stickers et le fond seront conservés."
             )
         }
+        .alert(
+            "Mise en page auto désactivée pour cette page",
+            isPresented: $model.showsAutomaticLayoutDisabledNotice
+        ) {
+            Button("Annuler") {
+                Task { await model.undo() }
+            }
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(
+                "La transformation manuelle ou le modèle choisi est conservé. Annuler restaure en une seule action la composition précédente et son état Auto."
+            )
+        }
     }
 
     @ViewBuilder

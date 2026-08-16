@@ -281,6 +281,7 @@ final class EditorViewModel: ObservableObject {
     @Published private(set) var photoChoiceMode: PhotoChoiceMode?
     @Published var layoutTemplateConfirmation: LayoutTemplateConfirmationRequest?
     @Published var showsAutomaticLayoutConfirmation = false
+    @Published var showsAutomaticLayoutDisabledNotice = false
 
     init(albumID: UUID, appModel: AppModel) {
         self.albumID = albumID
@@ -893,8 +894,9 @@ final class EditorViewModel: ObservableObject {
         confirmsPhotoRemoval: Bool
     ) async {
         guard let pageID = activePageID else { return }
+        let wasAutomatic = activePage?.layout.isAutoLayoutEnabled == true
         layoutShuffleBag.reset()
-        await mutate("Impossible d’appliquer cette mise en page.") {
+        let succeeded = await mutate("Impossible d’appliquer cette mise en page.") {
             try await self.service.applyLayoutTemplate(
                 id: template.id,
                 version: template.version,
@@ -902,6 +904,9 @@ final class EditorViewModel: ObservableObject {
                 in: self.albumID,
                 confirmsPhotoRemoval: confirmsPhotoRemoval
             )
+        }
+        if succeeded, wasAutomatic {
+            showsAutomaticLayoutDisabledNotice = true
         }
     }
 
@@ -1512,6 +1517,8 @@ final class EditorViewModel: ObservableObject {
     private func finishGeometryGesture() async {
         guard let geometryDraft, let pageID = activePageID,
               let elementID = selectedElementID else { return }
+        let disablesAutomaticLayout = activePage?.layout.isAutoLayoutEnabled == true
+            && activePage?.element(id: elementID)?.photoFrame != nil
 
         let operation: () async throws -> AlbumSnapshot = {
             try await self.service.updateElementGeometry(
@@ -1529,7 +1536,12 @@ final class EditorViewModel: ObservableObject {
         rotationGestureOffset = nil
         snapGuides = []
         interaction = .idle
-        if succeeded { self.geometryDraft = nil }
+        if succeeded {
+            self.geometryDraft = nil
+            if disablesAutomaticLayout {
+                showsAutomaticLayoutDisabledNotice = true
+            }
+        }
     }
 
     func adjustSelectedGeometry(
@@ -1542,12 +1554,14 @@ final class EditorViewModel: ObservableObject {
         guard var geometry = selectedElement?.geometry,
               let pageID = activePageID,
               let elementID = selectedElementID else { return }
+        let disablesAutomaticLayout = activePage?.layout.isAutoLayoutEnabled == true
+            && selectedPhotoFrame != nil
         geometry.centerX = min(1, max(0, geometry.centerX + deltaX))
         geometry.centerY = min(1, max(0, geometry.centerY + deltaY))
         geometry.width = max(0.05, geometry.width + deltaWidth)
         geometry.height = max(0.05, geometry.height + deltaHeight)
         geometry.rotationRadians += deltaDegrees * .pi / 180
-        await mutate("Impossible d’enregistrer la transformation.") {
+        let succeeded = await mutate("Impossible d’enregistrer la transformation.") {
             try await self.service.updateElementGeometry(
                 geometry,
                 elementID: elementID,
@@ -1555,12 +1569,17 @@ final class EditorViewModel: ObservableObject {
                 in: self.albumID
             )
         }
+        if succeeded, disablesAutomaticLayout {
+            showsAutomaticLayoutDisabledNotice = true
+        }
     }
 
     func makeSelectedElementFullPage() async {
         guard let pageID = activePageID,
               let elementID = selectedElementID,
               let selectedElement else { return }
+        let disablesAutomaticLayout = activePage?.layout.isAutoLayoutEnabled == true
+            && selectedElement.photoFrame != nil
         let geometry = ElementGeometry(
             centerX: 0.5,
             centerY: 0.5,
@@ -1569,13 +1588,16 @@ final class EditorViewModel: ObservableObject {
             rotationRadians: 0,
             order: selectedElement.geometry.order
         )
-        await mutate("Impossible d’adapter le cadre à la page.") {
+        let succeeded = await mutate("Impossible d’adapter le cadre à la page.") {
             try await self.service.updateElementGeometry(
                 geometry,
                 elementID: elementID,
                 on: pageID,
                 in: self.albumID
             )
+        }
+        if succeeded, disablesAutomaticLayout {
+            showsAutomaticLayoutDisabledNotice = true
         }
     }
 
@@ -1628,6 +1650,8 @@ final class EditorViewModel: ObservableObject {
               entry.elementID == elementID else { return }
         var geometry = entry.geometry
         geometry.rotationRadians = degrees * .pi / 180
+        let disablesAutomaticLayout = activePage?.layout.isAutoLayoutEnabled == true
+            && activePage?.element(id: elementID)?.photoFrame != nil
         let succeeded = await mutate("Impossible d’enregistrer la rotation.") {
             try await self.service.updateElementGeometry(
                 geometry,
@@ -1640,6 +1664,9 @@ final class EditorViewModel: ObservableObject {
         geometryDraft = nil
         if succeeded, activePage?.element(id: elementID) != nil {
             selectedElementID = elementID
+            if disablesAutomaticLayout {
+                showsAutomaticLayoutDisabledNotice = true
+            }
         }
     }
 
