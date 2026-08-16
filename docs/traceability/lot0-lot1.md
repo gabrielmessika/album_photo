@@ -9,10 +9,11 @@ Une référence à un test indique seulement où l'exigence est contrôlée. Ell
 constitue pas une preuve de réussite. Les résultats, l'environnement et le
 commit exact restent ceux enregistrés dans `suivi_tests.md` et
 `SUIVI_PROJET.md`. La première campagne iPad `063…093` possède des résultats,
-mais le candidat correctif rend les preuves concernées insuffisantes ; les
-régressions `109…131` et la fiche `102` ciblent désormais le commit figé
-`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` et restent ⚪ `NON TESTÉ`. Aucun
-scénario d'acceptation n'est donc déclaré réussi par ce document.
+mais le candidat correctif rend les preuves concernées insuffisantes. Le commit
+`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` a échoué à la compilation Apple ;
+les régressions `109…131`, la fiche `102` et le nouveau contrôle de compilation
+`132` attendent le prochain commit figé et restent ⚪ `NON TESTÉ`. Aucun scénario
+d'acceptation n'est donc déclaré réussi par ce document.
 
 ## Convention et frontière des lots
 
@@ -74,7 +75,7 @@ l'exigence ou du scénario complet.
 
 | Exigences | Contrôle automatisé | Contrôle Apple ou manuel | Limite de preuve |
 |---|---|---|---|
-| `ENV-001` à `ENV-005`, `LOT-001`, `LOT-003`, `DONE-005` | Manifeste Swift conservé, `A-MANIFEST` pour les contrats vérifiables | `IPAD-L1-063`, registre entier `IPAD-L1-063` à `IPAD-L1-131` | L'environnement et le statut ne sont prouvés qu'après exécution sur le commit candidat. |
+| `ENV-001` à `ENV-005`, `LOT-001`, `LOT-003`, `DONE-005` | Manifeste Swift conservé, `A-MANIFEST` pour les contrats vérifiables | `IPAD-L1-063`, `IPAD-L1-132`, registre entier `IPAD-L1-063` à `IPAD-L1-132` | L'environnement et le statut ne sont prouvés qu'après exécution sur le commit candidat. |
 | `ENV-006` à `ENV-009`, `LOT-002`, `LOT-004`, `DONE-001` à `DONE-004` | Aucun test Linux ne peut qualifier ces clauses de publication | `APPLE-L1-001`, `APPLE-L1-002`, `APPLE-L1-009` | Différé ; aucune version ou lot n'est déclaré terminé. |
 | Architecture locale, indépendance du domaine et absence de dépendance privée : `ARC-001` à `ARC-017` | `A-STORE`, `A-CONC`, `A-NAV-CLOUD`; inspection de `Package.swift` et des ADR dans `docs/architecture/` | `APPLE-L0-008`, `APPLE-L1-001`, `APPLE-L1-012` | Les clauses d'architecture sans comportement observable restent des revues statiques, pas des succès fonctionnels. |
 | Canevas multiélément et géométrie : `CAN-001` à `CAN-009`, `ELM-001` à `ELM-014`, `DAT-011` à `DAT-013`, `DAT-030`, `DAT-035` | `A-GEOM`, `A-DOM`, `A-CLIP` | `IPAD-L1-084` à `IPAD-L1-086`, `IPAD-L1-095`, `IPAD-L1-099`, `IPAD-L1-100`, `APPLE-L1-003`, `APPLE-L1-007` | Les gestes, poignées, haptique et rendu Apple restent manuels. |
@@ -89,8 +90,8 @@ l'exigence ou du scénario complet.
 | Contrat `.photoalbum` de sortie Lot 0 : `PKG-003`, `PKG-005` à `PKG-007`, `PKG-016` à `PKG-021`; invariants de génération applicables | `A-MANIFEST`, `A-CATALOG`, `validate_contracts.pl` | `APPLE-L1-001`, `APPLE-L1-004` | Schéma et exemples sont contrôlés ; export/import réel et sécurité exhaustive appartiennent au Lot 3. |
 | Registre public : `CAT-001` à `CAT-009`, `SHR-010` à `SHR-013` pour le contrat publié | `A-CATALOG`, `A-SHAPE`, `A-MANIFEST` | `APPLE-L1-010` | Les trois fonds et six formes sont figés. Les 40 stickers, six cadres et goldens neuf zones doivent être ajoutés avant leur build Lot 2. |
 | Prototype CloudKit page par page : `SYN-001` à `SYN-007` | `A-NAV-CLOUD` | `APPLE-L0-008` | Planificateur pur seulement ; entitlements, zone CloudKit et comportement réseau restent différés. |
-| Registre et discipline de test : `TST-001`, `TST-002`, `TST-005` à `TST-007`, `TST-011`, `TST-012`, `TST-016` | Cette matrice, suites `Tests/AlbumPhotoCoreTests`, `A-MANIFEST` | Corpus et `IPAD-L1-063` à `IPAD-L1-131`; `APPLE-L1-004` | La présence du lien satisfait la traçabilité structurelle, pas le résultat du test. |
-| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-131`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | Différé et explicitement non réussi sur le correctif. |
+| Registre et discipline de test : `TST-001`, `TST-002`, `TST-005` à `TST-007`, `TST-011`, `TST-012`, `TST-016` | Cette matrice, suites `Tests/AlbumPhotoCoreTests`, `A-MANIFEST` | Corpus et `IPAD-L1-063` à `IPAD-L1-132`; `APPLE-L1-004` | La présence du lien satisfait la traçabilité structurelle, pas le résultat du test. |
+| Procédures et qualification Apple : `TST-003`, `TST-004`, `TST-008` à `TST-010`, `TST-013` à `TST-015` | Les fiches détaillées satisfont la structure de `TST-004`; l'exécution Apple n'est pas réalisable sous Linux | `IPAD-L1-063` à `IPAD-L1-132`, `APPLE-L1-001` à `APPLE-L1-007`, `APPLE-L1-009` | Différé et explicitement non réussi sur le correctif. |
 
 ## Matrice des exigences fonctionnelles du lot 1
 
@@ -200,6 +201,7 @@ les étapes manuelles.
 | `IPAD-L1-129` | `ELM-007`, `SAV-001` à `SAV-003`, `UND-007` | `A-STORE`, `A-CONC` ; flux tactile manuel |
 | `IPAD-L1-130` | `CLP-001` à `CLP-006`, `UND-012` | `A-CLIP` |
 | `IPAD-L1-131` | `ALB-006`, `APP-002`, `APP-005`, `EDT-021`, `LOC-011` à `LOC-014`, `UND-011` | `A-ALB`, `A-CONC`, `A-STORE` ; transitions UI manuelles |
+| `IPAD-L1-132` | `ENV-001` à `ENV-005`, `LOT-001`, `DONE-005` | Parse AppModule et manifestes sous WSL ; compilation Swift Playgrounds manuelle indispensable |
 
 ## Index des validations Apple différées
 
@@ -255,8 +257,8 @@ ou « contrat » ne signifie jamais que le scénario utilisateur complet passe.
 
 - Les résultats `IPAD-L1-063…093` visent l’ancienne copie ; les fiches
   `094…101` et `103…108` devenues obsolètes ne prouvent pas le correctif.
-  `IPAD-L1-102` reste non testé et les 23 régressions `109…131` attendent le
-  commit correctif figé.
+  `IPAD-L1-102` reste non testé, les 23 régressions `109…131` attendent le
+  commit correctif figé et `IPAD-L1-132` doit d’abord en prouver la compilation.
 - Les validations Apple listées ci-dessus sont différées et ne peuvent pas être
   remplacées par les tests Linux.
 - `L10N-002` n'a pas de test de catalogue de chaînes identifié.

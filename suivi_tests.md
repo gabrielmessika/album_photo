@@ -15,10 +15,11 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 |---|---|
 | Commit d’implémentation de la première campagne | `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` |
 | Spécification de la première campagne | 3.0 (`031d2e46c70128c7e633db1f04663949e4531309`) |
-| Commit d’implémentation et de spécification du correctif | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` |
+| Correctif rejeté à la compilation Apple | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — argument `maximumPixelSize` manquant et inférence générique impossible dans `AppModel` |
+| Correctif de compilation | À figer après validation WSL et commit |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
-| Copie à tester pour le correctif | Doit porter exactement `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` |
+| Copie à tester après correction | Devra porter exactement le prochain commit figé |
 | Appareil | iPad 8e génération (déclaré « iPad 8 ») |
 | iPadOS | 26.5.2 |
 | Swift Playgrounds | 4.7 |
@@ -30,11 +31,13 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 Le code de la première campagne reste figé par l’empreinte Git exacte
 `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`. La spécification 3.0 et
 l’arbitrage normatif des lots sont figés par
-`031d2e46c70128c7e633db1f04663949e4531309`. Le correctif, ses exigences
-ajoutées et les procédures `IPAD-L1-102`, `IPAD-L1-109…131` sont figés par
-`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`. Toute modification ultérieure
-d’une exigence ou du code applicable impose un nouveau commit et, si la preuve
-devient insuffisante, un nouvel identifiant de régression.
+`031d2e46c70128c7e633db1f04663949e4531309`. Le correctif
+`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` n’a pas compilé avec le SDK Apple ;
+aucune fiche fonctionnelle ne peut donc le viser. Les procédures
+`IPAD-L1-102`, `IPAD-L1-109…132` seront figées sur le prochain commit. Toute
+modification ultérieure d’une exigence ou du code applicable impose un nouveau
+commit et, si la preuve devient insuffisante, un nouvel identifiant de
+régression.
 
 ## Mode de réponse
 
@@ -144,10 +147,11 @@ fichier effectivement utilisé dans la preuve de `IPAD-L1-076` ou
 
 Les fiches exécutées ou rendues obsolètes parmi `IPAD-L1-063…108` ciblent le
 candidat d’origine `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` (copie iPad
-`aeae5c…`). Les régressions `IPAD-L1-109…131` ciblent le correctif figé
-`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`. La fiche indépendante
-`IPAD-L1-102`, jamais exécutée, conserve son ID, son état ⚪ `NON TESTÉ` et
-cible désormais ce même correctif.
+`aeae5c…`). Le correctif
+`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` a échoué à la compilation Apple.
+Les fiches `IPAD-L1-102`, `IPAD-L1-109…131`, jamais exécutées, conservent leurs
+IDs et leur état ⚪ `NON TESTÉ` mais seront figées sur le correctif de
+compilation. `IPAD-L1-132` contrôle explicitement cette nouvelle compilation.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -220,6 +224,7 @@ cible désormais ce même correctif.
 | `IPAD-L1-129` | Sauvegarde au milieu d’un déplacement | `3:ELM-007`, `3:SAV-001` à `3:SAV-003`, `3:UND-007` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-130` | Presse-papiers strictement limité à la session | `3:CLP-001` à `3:CLP-006`, `3:UND-012` | ⚪ `NON TESTÉ` |
 | `IPAD-L1-131` | Commandes rapides après correction des transitions d’interface | `3:ALB-006`, `3:APP-002`, `3:APP-005`, `3:EDT-021`, `3:LOC-011` à `3:LOC-014`, `3:UND-011` | ⚪ `NON TESTÉ` |
+| `IPAD-L1-132` | Compilation du correctif dans Swift Playgrounds | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -1397,7 +1402,7 @@ cible désormais ce même correctif.
 - Environnement : sans objet ; fiche remplacée avant exécution.
 ### `IPAD-L1-102` — Ancien store 2.1 laissé intact et ignoré
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Spécification : 3.0, incluse dans `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
 - Exigences : `3:DEC-33`, `3:DAT-025`, `3:DAT-026`, `3:LOC-010`,
   `3:LOC-029` à `3:LOC-031`, `3:ERR-024`.
@@ -1662,13 +1667,14 @@ cible désormais ce même correctif.
 
 ## Campagne de régression après retours du 16 août 2026
 
-Les fiches ci-dessous ciblent le correctif
-`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`. Elles ne doivent être exécutées
-que sur une copie dont l’empreinte Git a été vérifiée identique.
+Les fiches ci-dessous seront toutes figées sur le correctif de compilation.
+Le candidat `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` est rejeté avant exécution
+fonctionnelle à cause de deux erreurs de compilation Apple. Vérifier d’abord
+`IPAD-L1-132`, puis seulement les autres fiches sur la même copie.
 
 ### `IPAD-L1-109` — Interruption et sauvegarde après correctifs gestuels
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:SAV-001`, `3:APP-009`, `3:LOC-011` à `3:LOC-014`,
   `3:LOC-026`.
 - Préconditions : album jetable avec deux pages et un cadre rempli.
@@ -1683,7 +1689,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-110` — Prévisualisation et fonds mis en cache
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:CAN-003`, `3:CAN-004`, `3:CAN-008`, `3:GLO-007`,
   `3:PERF-016`.
 - Préconditions : page avec motif intégré et trois cadres superposés ; canevas
@@ -1700,7 +1706,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-111` — Cadre vide et mode de choix explicite
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:FRM-001`, `3:FRM-008`, `3:GLO-006`, `3:PHO-011` à
   `3:PHO-013`.
 - Préconditions : page 1 avec cadre vide, page 2 vide, deux photos disponibles.
@@ -1716,7 +1722,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-112` — Qualité informative et format régional
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:QLT-001` à `3:QLT-006`, `3:EDT-021`, `3:L10N-005`.
 - Préconditions : grande fixture dans un cadre ; région France.
 - Étapes : valider successivement `1,00×`, `1,50×` et `3,00×`, puis refaire le
@@ -1731,7 +1737,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-113` — Inspecteur droit et adaptation compacte
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:EDT-002`, `3:EDT-006`, `3:EDT-011`, `3:EDT-016`,
   `3:EDT-021`, `3:ACC-021`.
 - Préconditions : iPad en largeur régulière puis compacte ; cadre rempli
@@ -1748,7 +1754,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-114` — Dynamic Type, choix non ambigu et VoiceOver
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ELM-014`, `3:ACC-001` à `3:ACC-005`, `3:ACC-007`,
   `3:ACC-008`, `3:ACC-011`, `3:ACC-012`, `3:ACC-017`, `3:ACC-020`.
 - Préconditions : trois cadres photo fortement superposés, avec noms ou
@@ -1765,7 +1771,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-115` — Pointeur, poignées hybrides et rotation directe
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ELM-002`, `3:ELM-011` à `3:ELM-013`, `3:ACC-005`,
   `3:ACC-013` à `3:ACC-015`.
 - Préconditions : clavier/pointeur si disponibles ; cadre partiellement hors
@@ -1782,7 +1788,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-116` — Relance locale et cache des fonds hors ligne
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:LOC-001`, `3:SEC-001`, `3:ERR-008`, `3:PERF-007`,
   `3:PERF-016`.
 - Préconditions : deux albums utilisant les trois motifs intégrés ; mode Avion.
@@ -1798,7 +1804,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-117` — Cent pages, compteurs et déplacement continu
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:PAG-012`, `3:PHO-002`, `3:PERF-008`, `3:PERF-015`,
   `3:PERF-017`.
 - Préconditions : album de 100 pages et une fixture locale.
@@ -1814,7 +1820,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-118` — Matrice des commandes dans le nouvel inspecteur
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:EDT-010` à `3:EDT-017`, `3:EDT-021`, `3:FRM-005`,
   `3:FRM-006`.
 - Préconditions : cadre vide, cadre rempli, seconde photo et presse-papiers
@@ -1832,7 +1838,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-119` — Réduire les animations avec inspecteur droit
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ACC-006`, `3:EDT-002`, sous-périmètre Lot 1 de `3:TST-010`.
 - Préconditions : album de trois pages ; vidéos de référence avec Réduire les
   animations désactivé puis activé.
@@ -1846,7 +1852,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-120` — Aide contextuelle depuis le nouvel inspecteur
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:EDT-019`, `3:EDT-021`, `3:ARC-014`, `3:DEC-38`.
 - Préconditions : mode Avion ; cadre vide, cadre rempli et alerte qualité.
 - Étapes : ouvrir Aide sans panneau, depuis Photos, depuis Fonds, pendant le
@@ -1859,7 +1865,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-121` — Import long, annulation et déduplication
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:APL-006`, `3:PHO-019`, `3:PERF-009`, `3:PERF-011`,
   `3:APP-006`, `3:SEC-008`.
 - Préconditions : deux JPEG distincts dont la copie dépasse 500 ms et une copie
@@ -1876,7 +1882,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-122` — Lancement et réouverture rapide des Fonds
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:PERF-004`, `3:PERF-007`, `3:PERF-016`, `3:BG-008`.
 - Préconditions : stockage 3.0 existant avec au moins un album et les trois
   fonds déjà utilisés une fois.
@@ -1891,7 +1897,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-123` — Retour après création et dates de corbeille
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ALB-006`, `3:ALB-017` à `3:ALB-025`.
 - Préconditions : bibliothèque ouverte ; date système connue.
 - Étapes : créer un album, attendre son ouverture automatique puis toucher
@@ -1905,7 +1911,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-124` — Compteur exact et grilles photo carrées
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:PHO-002`, `3:PHO-009`, `3:PHO-015`, `3:PHO-019`.
 - Préconditions : deux albums partageant les mêmes octets sous deux `assetID` ;
   cible avec exactement une occurrence et au moins huit photos sources.
@@ -1920,7 +1926,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-125` — Modes Ajouter, Remplir et Remplacer explicites
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:PHO-004`, `3:PHO-011` à `3:PHO-013`, `3:FRM-004`.
 - Préconditions : page vide, cadre vide, cadre rempli et deux photos disponibles.
 - Étapes : lancer successivement l’ajout local, l’ajout du cadre vide et
@@ -1935,7 +1941,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-126` — Insertion de page et activation après Rétablir
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:PAG-004`, `3:PAG-005`, `3:PAG-010`, `3:PAG-016`.
 - Préconditions : album de cinq pages reconnaissables.
 - Étapes : glisser la page 5 avant les pages 2 puis 4 et après la dernière en
@@ -1949,7 +1955,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-127` — Sélection non ambiguë, poignées hybrides et rotation
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ELM-002`, `3:ELM-013`, `3:ELM-014`, `3:EDT-021`.
 - Préconditions : trois cadres superposés nommés distinctement ; l’un déborde de
   la page.
@@ -1964,7 +1970,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-128` — Pincement, panoramique et balayage après retour
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ZOM-003` à `3:ZOM-006`, `3:NAV-001` à `3:NAV-007`.
 - Préconditions : album de trois pages ; page 1 ajustée puis zoomée à 200 %.
 - Étapes : pincer seul, déplacer deux doigts à distance constante, combiner
@@ -1979,7 +1985,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-129` — Sauvegarde au milieu d’un déplacement
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ELM-007`, `3:SAV-001` à `3:SAV-003`, `3:UND-007`.
 - Préconditions : cadre sélectionné et position initiale repérée.
 - Étapes : commencer un déplacement, toucher Sauvegarder d’un second doigt,
@@ -1994,7 +2000,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-130` — Presse-papiers strictement limité à la session
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:CLP-001` à `3:CLP-006`, `3:UND-012`.
 - Préconditions : album A avec cadre rempli et album B actif.
 - Étapes : copier dans A et coller sur une autre page de A ; copier de nouveau,
@@ -2009,7 +2015,7 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 
 ### `IPAD-L1-131` — Commandes rapides après correction des transitions d’interface
 
-- Candidat : `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Candidat : **À figer après correction de compilation**.
 - Exigences : `3:ALB-006`, `3:APP-002`, `3:APP-005`, `3:EDT-021`,
   `3:LOC-011` à `3:LOC-014`, `3:UND-011`.
 - Préconditions : album A de trois pages avec photos et fonds distincts ;
@@ -2026,6 +2032,27 @@ que sur une copie dont l’empreinte Git a été vérifiée identique.
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : vidéo continue, ordre des états activés, nom, fond et nombre final de
   pages avant/après relance.
+- Environnement : à renseigner intégralement.
+
+### `IPAD-L1-132` — Compilation du correctif dans Swift Playgrounds
+
+- Candidat : **À figer après correction de compilation**.
+- Spécification : 3.0, inchangée depuis
+  `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7`.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005`.
+- Préconditions : copier exactement le candidat figé dans Swift Playgrounds,
+  sans modification locale ; conserver le même appareil et relever la version
+  de l’OS et de Swift Playgrounds.
+- Étapes : ouvrir `Albumzh.swiftpm`, vider les anciens diagnostics si
+  nécessaire, lancer la compilation, puis démarrer l’app et attendre le premier
+  contenu de la bibliothèque.
+- Résultat attendu : compilation sans erreur, notamment aucun argument
+  `maximumPixelSize` manquant dans `AlbumCoverView` et aucune inférence
+  générique impossible dans `AppModel` ; l’app démarre sans fermeture
+  inattendue. Ce contrôle ne valide aucune autre régression fonctionnelle.
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : capture de la compilation réussie, premier écran et empreinte Git de
+  la copie.
 - Environnement : à renseigner intégralement.
 
 ## Qualification différée Apple/macOS/Xcode
@@ -2194,6 +2221,7 @@ identifiants lors du Lot 2.
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
 | `IPAD-L1-063…093` | 16 août 2026 | 31 fiches retranscrites individuellement ci-dessus : 18 réussies, 8 échouées, 4 bloquées et 1 non applicable | Réponses et observations consignées dans chaque fiche ; aucune réussite extrapolée | Correctif regroupé et régressions `109…131` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` |
+| Candidat `06c30b9…` | 16 août 2026 | Compilation impossible : `maximumPixelSize` manquant dans `AlbumCoverView` et paramètre générique non inféré dans `AppModel` | Retour utilisateur avec diagnostics du compilateur | Correctif minimal et contrôle `IPAD-L1-132` | Environnement de campagne déclaré : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 |
 
 ## Règle de clôture
 

@@ -257,16 +257,18 @@ final class AppModel: ObservableObject {
     /// après l’affichage de la bibliothèque et ne bloque jamais son ouverture.
     private func scheduleMissingCatalogBootstrapIfNeeded() {
         guard catalogBootstrapTask == nil else { return }
-        let indexedHashes = Set(
+        let indexedHashes: Set<String> = Set(
             librarySnapshot.blobIndex
                 .filter { $0.state == .available }
                 .map(\.contentHash)
         )
-        let missingCatalogIDs = Set(BackgroundCatalog.themes.compactMap { theme in
-            guard let hash = theme.fallbackContentHash,
-                  !indexedHashes.contains(hash) else { return nil }
-            return theme.id
-        })
+        let missingCatalogIDs: Set<String> = Set(
+            BackgroundCatalog.themes.compactMap { theme -> String? in
+                guard let hash = theme.fallbackContentHash,
+                      !indexedHashes.contains(hash) else { return nil }
+                return theme.id
+            }
+        )
         guard !missingCatalogIDs.isEmpty else { return }
 
         let defaultID = BackgroundCatalog.defaultTheme.catalogID

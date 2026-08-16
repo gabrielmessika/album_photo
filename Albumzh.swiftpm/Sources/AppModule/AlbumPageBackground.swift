@@ -6,7 +6,17 @@ import SwiftUI
 struct AlbumPageBackground: View {
     let selection: BackgroundSelection
     var imageCache: PhotoImageCache?
-    var maximumPixelSize = 2_048
+    var maximumPixelSize: Int
+
+    init(
+        selection: BackgroundSelection,
+        imageCache: PhotoImageCache?,
+        maximumPixelSize: Int = 2_048
+    ) {
+        self.selection = selection
+        self.imageCache = imageCache
+        self.maximumPixelSize = maximumPixelSize
+    }
 
     var body: some View {
         Group {
