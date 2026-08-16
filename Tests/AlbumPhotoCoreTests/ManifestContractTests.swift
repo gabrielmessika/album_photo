@@ -53,6 +53,8 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertEqual(SHA256.hexDigest(manifestData), expectedHash)
 
         let manifest = try JSONDecoder().decode(TemplateManifest.self, from: manifestData)
+        XCTAssertEqual(BuiltInLayoutTemplateCatalog.manifestData, manifestData)
+        XCTAssertEqual(BuiltInLayoutTemplateCatalog.manifest.templates, manifest.templates)
         XCTAssertEqual(manifest.manifestVersion, 1)
         XCTAssertEqual(manifest.modelGeneration, AlbumModelVersion.generation)
         XCTAssertEqual(manifest.canonicalPage.width, 2_400)

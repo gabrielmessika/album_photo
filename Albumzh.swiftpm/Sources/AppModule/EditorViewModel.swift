@@ -51,6 +51,7 @@ enum DefaultPhotoQualityPolicy {
 
 enum EditorPanel: String, CaseIterable, Identifiable {
     case photos
+    case layouts
     case backgrounds
 
     var id: String { rawValue }
@@ -58,6 +59,7 @@ enum EditorPanel: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .photos: "Photos"
+        case .layouts: "Mise en page"
         case .backgrounds: "Fonds"
         }
     }
@@ -65,9 +67,17 @@ enum EditorPanel: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .photos: "photo.on.rectangle"
+        case .layouts: "rectangle.3.group"
         case .backgrounds: "paintpalette"
         }
     }
+}
+
+struct LayoutTemplateConfirmationRequest: Identifiable, Equatable {
+    let template: LayoutTemplateDefinition
+    let removedPhotoCount: Int
+
+    var id: String { "\(template.id)#\(template.version)" }
 }
 
 enum EditorPresentationMode: String, CaseIterable, Identifiable {
@@ -235,6 +245,7 @@ final class EditorViewModel: ObservableObject {
     private var operationBlockTokens: Set<UUID> = []
     private var activeImportTask: Task<Void, Never>?
     private var activeImportTaskID: UUID?
+    private var layoutShuffleBag = LayoutShuffleBag()
 
     @Published private(set) var album: AlbumSnapshot?
     @Published private(set) var photos: [PhotoAssetMetadata] = []
@@ -254,7 +265,8 @@ final class EditorViewModel: ObservableObject {
     @Published var saveState: SavePresentationState = .saved(nil)
     @Published var canUndo = false
     @Published var canRedo = false
-    @Published var canPaste = false
+    @Published private(set) var hasCompatibleClipboard = false
+    @Published private(set) var clipboardContainsEmptyPhotoFrame = false
     @Published var isReadOnly = false
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -267,6 +279,8 @@ final class EditorViewModel: ObservableObject {
     @Published var hidesUsedPhotos = false
     @Published var helpContext: HelpContext?
     @Published private(set) var photoChoiceMode: PhotoChoiceMode?
+    @Published var layoutTemplateConfirmation: LayoutTemplateConfirmationRequest?
+    @Published var showsAutomaticLayoutConfirmation = false
 
     init(albumID: UUID, appModel: AppModel) {
         self.albumID = albumID
@@ -307,6 +321,52 @@ final class EditorViewModel: ObservableObject {
     var selectedPhotoMetadata: PhotoAssetMetadata? {
         guard let assetID = selectedPhotoFrame?.content?.assetID else { return nil }
         return photos.first { $0.id == assetID }
+    }
+
+    var layoutTemplates: [LayoutTemplateDefinition] {
+        BuiltInLayoutTemplateCatalog.active
+    }
+
+    var currentLayoutTemplateKey: LayoutTemplateKey? {
+        guard let page = activePage,
+              page.layout.photoMode == .template,
+              let id = page.layout.templateID,
+              let version = page.layout.templateVersion else { return nil }
+        return LayoutTemplateKey(id: id, version: version)
+    }
+
+    var compatibleDiceTemplates: [LayoutTemplateDefinition] {
+        guard let page = activePage else { return [] }
+        return layoutTemplates.filter {
+            LayoutTemplateEngine.compatibleWithDice($0, page: page)
+        }
+    }
+
+    var canShuffleLayout: Bool {
+        let current = currentLayoutTemplateKey
+        let alternatives = compatibleDiceTemplates.filter {
+            LayoutTemplateKey(id: $0.id, version: $0.version) != current
+        }
+        return !isReadOnly && !alternatives.isEmpty
+    }
+
+    var canPaste: Bool {
+        hasCompatibleClipboard
+            && !(activePage?.layout.isAutoLayoutEnabled == true
+                && clipboardContainsEmptyPhotoFrame)
+    }
+
+    var canAddEmptyPhotoFrame: Bool {
+        !isReadOnly && activePage?.layout.isAutoLayoutEnabled != true
+    }
+
+    var canDuplicateSelectedElement: Bool {
+        guard !isReadOnly, let selectedElement else { return false }
+        if activePage?.layout.isAutoLayoutEnabled == true,
+           let frame = selectedElement.photoFrame {
+            return frame.content != nil
+        }
+        return true
     }
 
     var visiblePhotos: [PhotoAssetMetadata] {
@@ -600,7 +660,10 @@ final class EditorViewModel: ObservableObject {
     func showPage(_ pageID: UUID) {
         guard !interaction.blocksPageNavigation,
               album?.pages.contains(where: { $0.id == pageID }) == true else { return }
-        if activePageID != pageID { cancelPhotoChoice() }
+        if activePageID != pageID {
+            cancelPhotoChoice()
+            layoutShuffleBag.reset()
+        }
         activePageID = pageID
         selectedElementID = nil
     }
@@ -738,6 +801,123 @@ final class EditorViewModel: ObservableObject {
                     in: self.albumID
                 )
             }
+        }
+    }
+
+    func requestLayoutTemplate(_ template: LayoutTemplateDefinition) async {
+        guard let page = activePage, template.isActive else { return }
+        guard template.textSlots.isEmpty else {
+            errorMessage = "Les modèles avec texte seront activés avec l’éditeur de texte du prochain incrément."
+            return
+        }
+        switch LayoutTemplateEngine.preview(applying: template, to: page).disposition {
+        case let .disabledBecauseTextWouldBeRemoved(count):
+            errorMessage = count == 1
+                ? "Ce modèle retirerait une zone de texte non vide."
+                : "Ce modèle retirerait \(count) zones de texte non vides."
+        case let .requiresPhotoRemovalConfirmation(count):
+            layoutTemplateConfirmation = LayoutTemplateConfirmationRequest(
+                template: template,
+                removedPhotoCount: count
+            )
+        case .ready:
+            await applyLayoutTemplate(template, confirmsPhotoRemoval: false)
+        }
+    }
+
+    func confirmLayoutTemplateApplication() async {
+        guard let request = layoutTemplateConfirmation else { return }
+        layoutTemplateConfirmation = nil
+        await applyLayoutTemplate(
+            request.template,
+            confirmsPhotoRemoval: true
+        )
+    }
+
+    func cancelLayoutTemplateApplication() {
+        layoutTemplateConfirmation = nil
+    }
+
+    func shuffleLayout() async {
+        guard let pageID = activePageID else { return }
+        var generator = SystemRandomNumberGenerator()
+        guard let selected = layoutShuffleBag.choose(
+            compatible: compatibleDiceTemplates,
+            current: currentLayoutTemplateKey,
+            using: &generator
+        ) else { return }
+        await mutate("Impossible de changer aléatoirement la mise en page.") {
+            try await self.service.applyLayoutTemplate(
+                id: selected.id,
+                version: selected.version,
+                to: pageID,
+                in: self.albumID
+            )
+        }
+    }
+
+    func requestAutomaticLayout(_ isEnabled: Bool) async {
+        guard let page = activePage else { return }
+        if isEnabled,
+           !page.layout.isAutoLayoutEnabled,
+           page.elements.contains(where: { $0.photoFrame != nil }) {
+            showsAutomaticLayoutConfirmation = true
+            return
+        }
+        await applyAutomaticLayout(isEnabled, confirmsReplacement: false)
+    }
+
+    func confirmAutomaticLayout() async {
+        showsAutomaticLayoutConfirmation = false
+        await applyAutomaticLayout(true, confirmsReplacement: true)
+    }
+
+    func cancelAutomaticLayout() {
+        showsAutomaticLayoutConfirmation = false
+    }
+
+    func setAutoLayoutDensity(_ density: AutoLayoutDensity) async {
+        guard let pageID = activePageID else { return }
+        layoutShuffleBag.reset()
+        await mutate("Impossible de changer la densité automatique.") {
+            try await self.service.setAutoLayoutDensity(
+                density,
+                on: pageID,
+                in: self.albumID
+            )
+        }
+    }
+
+    private func applyLayoutTemplate(
+        _ template: LayoutTemplateDefinition,
+        confirmsPhotoRemoval: Bool
+    ) async {
+        guard let pageID = activePageID else { return }
+        layoutShuffleBag.reset()
+        await mutate("Impossible d’appliquer cette mise en page.") {
+            try await self.service.applyLayoutTemplate(
+                id: template.id,
+                version: template.version,
+                to: pageID,
+                in: self.albumID,
+                confirmsPhotoRemoval: confirmsPhotoRemoval
+            )
+        }
+    }
+
+    private func applyAutomaticLayout(
+        _ isEnabled: Bool,
+        confirmsReplacement: Bool
+    ) async {
+        guard let pageID = activePageID else { return }
+        layoutShuffleBag.reset()
+        await mutate("Impossible de modifier la mise en page automatique.") {
+            try await self.service.setAutomaticLayoutEnabled(
+                isEnabled,
+                on: pageID,
+                in: self.albumID,
+                confirmsReplacement: confirmsReplacement
+            )
         }
     }
 
@@ -1747,6 +1927,7 @@ final class EditorViewModel: ObservableObject {
     }
 
     func undo() async {
+        layoutShuffleBag.reset()
         await mutate("Impossible d’annuler cette action.") {
             try await self.service.undo(albumID: self.albumID)
         }
@@ -1754,6 +1935,7 @@ final class EditorViewModel: ObservableObject {
     }
 
     func redo() async {
+        layoutShuffleBag.reset()
         let previousPageIDs = Set(album?.pages.map(\.id) ?? [])
         let succeeded = await mutate("Impossible de rétablir cette action.") {
             try await self.service.redo(albumID: self.albumID)
@@ -1946,9 +2128,12 @@ final class EditorViewModel: ObservableObject {
 
     private func refreshSessionState() async throws {
         let value = await service.sessionState(for: albumID)
+        let clipboard = await service.clipboardPayload()
         canUndo = value.canUndo
         canRedo = value.canRedo
-        canPaste = value.hasCompatibleClipboard
+        hasCompatibleClipboard = value.hasCompatibleClipboard
+        clipboardContainsEmptyPhotoFrame = clipboard?.element.photoFrame != nil
+            && clipboard?.element.photoFrame?.content == nil
     }
 
     private func markSaved() {

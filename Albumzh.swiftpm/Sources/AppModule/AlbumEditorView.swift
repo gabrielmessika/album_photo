@@ -155,6 +155,37 @@ private struct AlbumEditorScene: View {
         } message: {
             Text(model.capacityWarning ?? "")
         }
+        .alert(item: $model.layoutTemplateConfirmation) { request in
+            Alert(
+                title: Text("Appliquer cette mise en page ?"),
+                message: Text(
+                    request.removedPhotoCount == 1
+                        ? "Une occurrence photo sera retirée de la page. La photo originale restera disponible dans Photos."
+                        : "\(request.removedPhotoCount) occurrences photo seront retirées de la page. Les originaux resteront disponibles dans Photos."
+                ),
+                primaryButton: .default(Text("Appliquer")) {
+                    Task { await model.confirmLayoutTemplateApplication() }
+                },
+                secondaryButton: .cancel(Text("Annuler")) {
+                    model.cancelLayoutTemplateApplication()
+                }
+            )
+        }
+        .alert(
+            "Activer la mise en page auto ?",
+            isPresented: $model.showsAutomaticLayoutConfirmation
+        ) {
+            Button("Activer") {
+                Task { await model.confirmAutomaticLayout() }
+            }
+            Button("Annuler", role: .cancel) {
+                model.cancelAutomaticLayout()
+            }
+        } message: {
+            Text(
+                "Les cadres vides seront retirés et les cadres photo remplis seront réorganisés. Les photos originales, les textes, les stickers et le fond seront conservés."
+            )
+        }
     }
 
     @ViewBuilder
@@ -246,6 +277,7 @@ private struct AlbumEditorScene: View {
                 HStack(spacing: 14) {
                     if model.cropDraft == nil {
                         addPhotoButton(title: nil)
+                        shuffleLayoutButton
                     }
                     CanvasZoomControls(model: model)
                 }
@@ -260,6 +292,7 @@ private struct AlbumEditorScene: View {
         HStack(spacing: 14) {
             if model.cropDraft == nil {
                 addPhotoButton(title: addPhotoTitle)
+                shuffleLayoutButton
             }
             CanvasZoomControls(model: model)
             Divider().frame(height: 26)
@@ -283,6 +316,22 @@ private struct AlbumEditorScene: View {
         .controlSize(.large)
         .disabled(model.isReadOnly)
         .accessibilityLabel("Ajouter une photo")
+    }
+
+    private var shuffleLayoutButton: some View {
+        Button("Changer aléatoirement la mise en page", systemImage: "dice") {
+            Task { await model.shuffleLayout() }
+        }
+        .labelStyle(.iconOnly)
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .disabled(!model.canShuffleLayout || model.cropDraft != nil)
+        .accessibilityLabel("Changer aléatoirement la mise en page")
+        .accessibilityHint(
+            model.canShuffleLayout
+                ? "Choisit un autre modèle compatible sans ajouter ni retirer d’élément."
+                : "Aucun autre modèle n’est compatible avec les éléments de cette page."
+        )
     }
 
     private var pageNavigation: some View {
@@ -331,6 +380,9 @@ private struct AlbumEditorScene: View {
                             .font(.title3)
                         Text(panel.title)
                             .font(.caption2)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                            .minimumScaleFactor(0.8)
                     }
                     .frame(width: 66, height: 58)
                     .background(
@@ -377,6 +429,8 @@ private struct AlbumEditorScene: View {
         switch panel {
         case .photos:
             PhotosPanelView(model: model)
+        case .layouts:
+            LayoutPanelView(model: model)
         case .backgrounds:
             BackgroundPickerView(model: model)
         }
@@ -465,6 +519,7 @@ private struct AlbumEditorScene: View {
             inspectorButton("Dupliquer", systemImage: "plus.square.on.square") {
                 Task { await model.duplicateSelectedElement() }
             }
+            .disabled(!model.canDuplicateSelectedElement)
             depthMenu
                 .frame(maxWidth: .infinity, alignment: .leading)
             geometryMenu
@@ -556,6 +611,25 @@ private struct AlbumEditorScene: View {
         }
 
         ToolbarItemGroup(placement: .topBarTrailing) {
+            Toggle(
+                "Mise en page auto",
+                systemImage: "wand.and.stars",
+                isOn: Binding(
+                    get: { model.activePage?.layout.isAutoLayoutEnabled == true },
+                    set: { value in
+                        Task { await model.requestAutomaticLayout(value) }
+                    }
+                )
+            )
+            .toggleStyle(.button)
+            .labelStyle(.iconOnly)
+            .disabled(model.cropDraft != nil || model.isReadOnly)
+            .accessibilityLabel("Mise en page auto")
+            .accessibilityValue(
+                model.activePage?.layout.isAutoLayoutEnabled == true
+                    ? "Activée" : "Désactivée"
+            )
+
             if horizontalSizeClass == .regular {
                 Button("Sauvegarder", systemImage: "externaldrive.badge.checkmark") {
                     Task { await model.save() }
@@ -797,6 +871,7 @@ private struct AlbumEditorScene: View {
                 Button("Dupliquer", systemImage: "plus.square.on.square") {
                     Task { await model.duplicateSelectedElement() }
                 }
+                .disabled(!model.canDuplicateSelectedElement)
 
                 depthMenu
                 geometryMenu

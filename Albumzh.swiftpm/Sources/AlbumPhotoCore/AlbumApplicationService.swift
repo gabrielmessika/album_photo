@@ -1021,7 +1021,18 @@ public actor AlbumApplicationService {
             )
             album.pages[index].elements.append(.photo(frame))
             album.pages[index].accessibilityOrder.append(elementID)
-            setFreeLayout(&album.pages[index])
+            if album.pages[index].layout.isAutoLayoutEnabled {
+                guard assetID != nil else {
+                    throw DomainValidationError.invalidLayoutState
+                }
+                try recomposeAutomaticPage(
+                    &album.pages[index],
+                    albumID: albumID,
+                    state: state
+                )
+            } else {
+                setFreeLayout(&album.pages[index])
+            }
         }
     }
 
@@ -1046,6 +1057,13 @@ public actor AlbumApplicationService {
             }
             frame.content = PhotoPlacement(assetID: assetID)
             album.pages[page].elements[element] = .photo(frame)
+            if album.pages[page].layout.isAutoLayoutEnabled {
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            }
         }
     }
 
@@ -1058,15 +1076,128 @@ public actor AlbumApplicationService {
         commandID: UUID = UUID()
     ) async throws -> AlbumSnapshot {
         try await mutateAlbum(albumID, label: "Retirer la photo", now: now, commandID: commandID) {
-            album, _ in
+            album, state in
             let page = try pageIndex(pageID, in: album)
             let element = try elementIndex(elementID, in: album.pages[page])
             guard var frame = album.pages[page].elements[element].photoFrame else {
                 throw DomainValidationError.elementNotFound(elementID)
             }
-            frame.content = nil
-            album.pages[page].elements[element] = .photo(frame)
+            if album.pages[page].layout.isAutoLayoutEnabled {
+                album.pages[page].elements.remove(at: element)
+                album.pages[page].accessibilityOrder.removeAll { $0 == elementID }
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            } else {
+                frame.content = nil
+                album.pages[page].elements[element] = .photo(frame)
+            }
             repairCover(in: &album)
+        }
+    }
+
+    // MARK: Layout templates and automatic composition
+
+    @discardableResult
+    public func applyLayoutTemplate(
+        id templateID: String,
+        version templateVersion: Int,
+        to pageID: UUID,
+        in albumID: UUID,
+        confirmsPhotoRemoval: Bool = false,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        guard let template = BuiltInLayoutTemplateCatalog.template(
+            id: templateID,
+            version: templateVersion
+        ), template.isActive else {
+            throw DomainValidationError.invalidTemplate(
+                "\(templateID)#\(templateVersion)"
+            )
+        }
+        return try await mutateAlbum(
+            albumID,
+            label: "Appliquer une mise en page",
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            album.pages[page] = try LayoutTemplateEngine.apply(
+                template,
+                to: album.pages[page],
+                confirmsPhotoRemoval: confirmsPhotoRemoval
+            )
+        }
+    }
+
+    @discardableResult
+    public func setAutomaticLayoutEnabled(
+        _ isEnabled: Bool,
+        on pageID: UUID,
+        in albumID: UUID,
+        confirmsReplacement: Bool = false,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try await mutateAlbum(
+            albumID,
+            label: isEnabled
+                ? "Activer la mise en page auto"
+                : "Désactiver la mise en page auto",
+            now: now,
+            commandID: commandID
+        ) { album, state in
+            let page = try pageIndex(pageID, in: album)
+            guard album.pages[page].layout.isAutoLayoutEnabled != isEnabled else {
+                return
+            }
+            if isEnabled {
+                let hasPhotoFrames = album.pages[page].elements.contains {
+                    $0.photoFrame != nil
+                }
+                guard !hasPhotoFrames || confirmsReplacement else {
+                    throw DomainValidationError.invalidTemplate(
+                        "confirmation Auto requise"
+                    )
+                }
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            } else {
+                album.pages[page].layout.isAutoLayoutEnabled = false
+            }
+        }
+    }
+
+    @discardableResult
+    public func setAutoLayoutDensity(
+        _ density: AutoLayoutDensity,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try await mutateAlbum(
+            albumID,
+            label: "Changer la densité automatique",
+            now: now,
+            commandID: commandID
+        ) { album, state in
+            let page = try pageIndex(pageID, in: album)
+            guard album.pages[page].layout.density != density else { return }
+            album.pages[page].layout.density = density
+            if album.pages[page].layout.isAutoLayoutEnabled {
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            }
         }
     }
 
@@ -1158,9 +1289,17 @@ public actor AlbumApplicationService {
             album, _ in
             let page = try pageIndex(pageID, in: album)
             let element = try elementIndex(elementID, in: album.pages[page])
-            let wasPhoto = album.pages[page].elements[element].photoFrame != nil
-            album.pages[page].elements[element].geometry = normalized
-            if wasPhoto { setFreeLayout(&album.pages[page]) }
+            switch album.pages[page].elements[element] {
+            case .photo:
+                album.pages[page].elements[element].geometry = normalized
+                setFreeLayout(&album.pages[page])
+            case var .text(text):
+                text.geometry = normalized
+                text.sourceTemplateSlotID = nil
+                album.pages[page].elements[element] = .text(text)
+            case .sticker:
+                album.pages[page].elements[element].geometry = normalized
+            }
         }
     }
 
@@ -1208,14 +1347,23 @@ public actor AlbumApplicationService {
         commandID: UUID = UUID()
     ) async throws -> AlbumSnapshot {
         try await mutateAlbum(albumID, label: "Supprimer l’élément", now: now, commandID: commandID) {
-            album, _ in
+            album, state in
             let page = try pageIndex(pageID, in: album)
             let element = try elementIndex(elementID, in: album.pages[page])
-            let wasStructural = album.pages[page].elements[element].photoFrame != nil
-                || album.pages[page].elements[element].textBox != nil
+            let removed = album.pages[page].elements[element]
             album.pages[page].elements.remove(at: element)
             album.pages[page].accessibilityOrder.removeAll { $0 == elementID }
-            if wasStructural { setFreeLayout(&album.pages[page]) }
+            if album.pages[page].layout.isAutoLayoutEnabled,
+               removed.photoFrame != nil {
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            } else if !album.pages[page].layout.isAutoLayoutEnabled,
+                      removed.photoFrame != nil || removed.textBox != nil {
+                setFreeLayout(&album.pages[page])
+            }
             repairCover(in: &album)
         }
     }
@@ -1234,10 +1382,15 @@ public actor AlbumApplicationService {
         commandID: UUID = UUID()
     ) async throws -> AlbumSnapshot {
         try await mutateAlbum(albumID, label: "Dupliquer l’élément", now: now, commandID: commandID) {
-            album, _ in
+            album, state in
             let page = try pageIndex(pageID, in: album)
             let element = try elementIndex(elementID, in: album.pages[page])
             var copy = album.pages[page].elements[element].replacingID(with: newElementID)
+            if album.pages[page].layout.isAutoLayoutEnabled,
+               let frame = copy.photoFrame,
+               frame.content == nil {
+                throw DomainValidationError.invalidLayoutState
+            }
             var geometry = copy.geometry
             geometry.centerX = min(1, max(0, geometry.centerX + offsetNormalized.x))
             geometry.centerY = min(1, max(0, geometry.centerY + offsetNormalized.y))
@@ -1247,7 +1400,17 @@ public actor AlbumApplicationService {
                 above: elementID,
                 in: &album.pages[page]
             )
-            if copy.photoFrame != nil || copy.textBox != nil { setFreeLayout(&album.pages[page]) }
+            if album.pages[page].layout.isAutoLayoutEnabled,
+               copy.photoFrame != nil {
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            } else if copy.photoFrame != nil || copy.textBox != nil,
+                      !album.pages[page].layout.isAutoLayoutEnabled {
+                setFreeLayout(&album.pages[page])
+            }
         }
     }
 
@@ -1297,8 +1460,6 @@ public actor AlbumApplicationService {
             let page = try pageIndex(pageID, in: album)
             let element = try elementIndex(elementID, in: album.pages[page])
             let removedElement = album.pages[page].elements[element]
-            let structural = album.pages[page].elements[element].photoFrame != nil
-                || album.pages[page].elements[element].textBox != nil
             committedPayload = ElementClipboardPayload(
                 sourceAlbumID: albumID,
                 sourcePageID: pageID,
@@ -1309,7 +1470,17 @@ public actor AlbumApplicationService {
             )
             album.pages[page].elements.remove(at: element)
             album.pages[page].accessibilityOrder.removeAll { $0 == elementID }
-            if structural { setFreeLayout(&album.pages[page]) }
+            if album.pages[page].layout.isAutoLayoutEnabled,
+               removedElement.photoFrame != nil {
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            } else if !album.pages[page].layout.isAutoLayoutEnabled,
+                      removedElement.photoFrame != nil || removedElement.textBox != nil {
+                setFreeLayout(&album.pages[page])
+            }
             repairCover(in: &album)
         }
         // `mutateAlbum` returns only after the transaction is durable. A
@@ -1348,6 +1519,11 @@ public actor AlbumApplicationService {
             }
             let page = try pageIndex(pageID, in: album)
             var copy = payload.element.replacingID(with: newElementID)
+            if album.pages[page].layout.isAutoLayoutEnabled,
+               let frame = copy.photoFrame,
+               frame.content == nil {
+                throw DomainValidationError.invalidLayoutState
+            }
             if var frame = copy.photoFrame, let sourcePlacement = frame.content {
                 guard let metadata = payload.photoMetadata else {
                     throw DomainValidationError.invalidClipboard
@@ -1380,7 +1556,17 @@ public actor AlbumApplicationService {
                 above: samePageSource ? payload.element.id : nil,
                 in: &album.pages[page]
             )
-            if copy.photoFrame != nil || copy.textBox != nil { setFreeLayout(&album.pages[page]) }
+            if album.pages[page].layout.isAutoLayoutEnabled,
+               copy.photoFrame != nil {
+                try recomposeAutomaticPage(
+                    &album.pages[page],
+                    albumID: albumID,
+                    state: state
+                )
+            } else if copy.photoFrame != nil || copy.textBox != nil,
+                      !album.pages[page].layout.isAutoLayoutEnabled {
+                setFreeLayout(&album.pages[page])
+            }
             recomputeBlobReferenceCounts(in: &state)
         }
     }
@@ -2003,6 +2189,21 @@ private func setFreeLayout(_ page: inout PageSnapshot) {
             break
         }
     }
+}
+
+private func recomposeAutomaticPage(
+    _ page: inout PageSnapshot,
+    albumID: UUID,
+    state: LocalLibrarySnapshot
+) throws {
+    let metadataByAssetID = Dictionary(uniqueKeysWithValues: state.photoAssets
+        .filter { $0.albumID == albumID }
+        .map { ($0.id, $0.metadata) })
+    page = try AutoLayoutEngine.recompose(
+        page: page,
+        metadataByAssetID: metadataByAssetID,
+        templates: BuiltInLayoutTemplateCatalog.active
+    )
 }
 
 private func insertElement(

@@ -134,6 +134,90 @@ final class PrototypeEngineTests: XCTestCase {
         )
     }
 
+    // 3:TPL-005, 3:TPL-014, 3:TPL-015
+    func testTemplateUsesBaseOrderAndAddsMixedSlotsInReadingOrderWithoutChangingDepth() throws {
+        let firstID = UUID(uuidString: "ffffffff-0000-0000-0000-000000000000")!
+        let secondID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+        let stickerID = UUID()
+        let original = PageSnapshot(
+            elements: [
+                .photo(PhotoFrameElement(
+                    id: secondID,
+                    geometry: ElementGeometry(centerX: 0.8, order: 3_072)
+                )),
+                .sticker(StickerElement(
+                    id: stickerID,
+                    geometry: ElementGeometry(order: 1_024),
+                    resource: CatalogResourceReference(
+                        catalogID: "sticker.star",
+                        catalogVersion: 1
+                    )
+                )),
+                .photo(PhotoFrameElement(
+                    id: firstID,
+                    geometry: ElementGeometry(centerX: 0.2, order: 2_048)
+                ))
+            ],
+            accessibilityOrder: [secondID, stickerID, firstID]
+        )
+        let twoPhotos = template(photos: 2)
+        let applied = try LayoutTemplateEngine.apply(
+            twoPhotos,
+            to: original,
+            confirmsPhotoRemoval: false
+        )
+
+        XCTAssertEqual(applied.element(id: secondID)?.geometry.centerX, 0.25)
+        XCTAssertEqual(applied.element(id: firstID)?.geometry.centerX, 0.75)
+        XCTAssertEqual(applied.element(id: stickerID)?.geometry.order, 1_024)
+        XCTAssertEqual(applied.element(id: firstID)?.geometry.order, 2_048)
+        XCTAssertEqual(applied.element(id: secondID)?.geometry.order, 3_072)
+
+        let textID = UUID(uuidString: "10000000-0000-0000-0000-000000000000")!
+        let photoID = UUID(uuidString: "20000000-0000-0000-0000-000000000000")!
+        var generatedIDs = [textID, photoID].makeIterator()
+        let mixed = LayoutTemplateDefinition(
+            id: "layout.mixed",
+            version: 1,
+            localizedNameKey: "layout.mixed.name",
+            slots: [
+                LayoutSlotDefinition(
+                    id: "text-1",
+                    kind: .text,
+                    geometry: LayoutSlotGeometry(
+                        centerX: 0.5,
+                        centerY: 0.2,
+                        width: 0.6,
+                        height: 0.1
+                    ),
+                    readingOrder: 0
+                ),
+                LayoutSlotDefinition(
+                    id: "photo-1",
+                    kind: .photo,
+                    geometry: LayoutSlotGeometry(
+                        centerX: 0.5,
+                        centerY: 0.6,
+                        width: 0.6,
+                        height: 0.6
+                    ),
+                    readingOrder: 1
+                )
+            ]
+        )
+        let created = try LayoutTemplateEngine.apply(
+            mixed,
+            to: PageSnapshot(),
+            confirmsPhotoRemoval: false,
+            makeID: { generatedIDs.next()! }
+        )
+        XCTAssertEqual(created.accessibilityOrder, [textID, photoID])
+        XCTAssertLessThan(
+            try XCTUnwrap(created.element(id: textID)).geometry.order,
+            try XCTUnwrap(created.element(id: photoID)).geometry.order
+        )
+    }
+
     // 3:RND-001...3:RND-006
     func testShuffleBagUsesOnlyExactCompatibleSetWithoutImmediateRepeat() {
         let frameID = UUID()

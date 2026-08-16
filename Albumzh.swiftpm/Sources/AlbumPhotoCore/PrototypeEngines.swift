@@ -71,7 +71,7 @@ public enum LayoutTemplateEngine {
         _ template: LayoutTemplateDefinition,
         to original: PageSnapshot,
         confirmsPhotoRemoval: Bool,
-        makeID: @Sendable () -> UUID = { UUID() }
+        makeID: () -> UUID = { UUID() }
     ) throws -> PageSnapshot {
         try DomainValidator.validate(template)
         let preview = preview(applying: template, to: original)
@@ -92,19 +92,25 @@ public enum LayoutTemplateEngine {
             let lhsFilled = $0.content != nil
             let rhsFilled = $1.content != nil
             if lhsFilled != rhsFilled { return lhsFilled && !rhsFilled }
-            let lhsOrder = orderedIDs[$0.id] ?? Int.max
-            let rhsOrder = orderedIDs[$1.id] ?? Int.max
-            if lhsOrder != rhsOrder { return lhsOrder < rhsOrder }
-            return $0.id.uuidString < $1.id.uuidString
+            return baseOrder(
+                lhsID: $0.id,
+                lhsGeometry: $0.geometry,
+                rhsID: $1.id,
+                rhsGeometry: $1.geometry,
+                accessibilityIndex: orderedIDs
+            )
         }
         let texts = page.elements.compactMap(\.textBox).sorted {
             let lhsFilled = !$0.content.plainText.isEmpty
             let rhsFilled = !$1.content.plainText.isEmpty
             if lhsFilled != rhsFilled { return lhsFilled && !rhsFilled }
-            let lhsOrder = orderedIDs[$0.id] ?? Int.max
-            let rhsOrder = orderedIDs[$1.id] ?? Int.max
-            if lhsOrder != rhsOrder { return lhsOrder < rhsOrder }
-            return $0.id.uuidString < $1.id.uuidString
+            return baseOrder(
+                lhsID: $0.id,
+                lhsGeometry: $0.geometry,
+                rhsID: $1.id,
+                rhsGeometry: $1.geometry,
+                accessibilityIndex: orderedIDs
+            )
         }
         let stickers = page.elements.filter { $0.sticker != nil }
 
@@ -112,64 +118,84 @@ public enum LayoutTemplateEngine {
             + AlbumPhotoConstants.elementOrderStep
         var resultingElements = stickers
         var addedIDs: [UUID] = []
+        let photoSlots = template.photoSlots
+        let textSlots = template.textSlots
+        let photoIndices = Dictionary(uniqueKeysWithValues: photoSlots.enumerated().map {
+            ($0.element.id, $0.offset)
+        })
+        let textIndices = Dictionary(uniqueKeysWithValues: textSlots.enumerated().map {
+            ($0.element.id, $0.offset)
+        })
+        let orderedSlots = template.slots.sorted(by: LayoutTemplateEngine.slotOrder)
 
-        for (index, slot) in template.photoSlots.enumerated() {
-            if index < photos.count {
-                var frame = photos[index]
-                frame.geometry.centerX = slot.geometry.centerX
-                frame.geometry.centerY = slot.geometry.centerY
-                frame.geometry.width = slot.geometry.width
-                frame.geometry.height = slot.geometry.height
-                frame.geometry.rotationRadians = slot.geometry.rotationRadians
-                frame.sourceTemplateSlotID = slot.id
-                resultingElements.append(.photo(frame))
-            } else {
-                let id = makeID()
-                let defaults = slot.defaultPhotoStyle ?? PhotoFrameStyleDefaults()
-                let frame = PhotoFrameElement(
-                    id: id,
-                    geometry: slot.geometry.elementGeometry(order: nextOrder),
-                    sourceTemplateSlotID: slot.id,
-                    content: nil,
-                    mask: PhotoMask(shape: defaults.mask),
-                    border: defaults.border,
-                    decorativeFrame: defaults.decorativeFrame
-                )
-                nextOrder += AlbumPhotoConstants.elementOrderStep
-                resultingElements.append(.photo(frame))
-                addedIDs.append(id)
-            }
-        }
-
-        for (index, slot) in template.textSlots.enumerated() {
-            if index < texts.count {
-                var text = texts[index]
-                text.geometry.centerX = slot.geometry.centerX
-                text.geometry.centerY = slot.geometry.centerY
-                text.geometry.width = slot.geometry.width
-                text.geometry.height = slot.geometry.height
-                text.geometry.rotationRadians = slot.geometry.rotationRadians
-                text.sourceTemplateSlotID = slot.id
-                resultingElements.append(.text(text))
-            } else {
-                let id = makeID()
-                let defaults = slot.defaultTextStyle ?? TextStyleDefaults()
-                let text = TextBoxElement(
-                    id: id,
-                    geometry: slot.geometry.elementGeometry(order: nextOrder),
-                    sourceTemplateSlotID: slot.id,
-                    typingDefaults: defaults
-                )
-                nextOrder += AlbumPhotoConstants.elementOrderStep
-                resultingElements.append(.text(text))
-                addedIDs.append(id)
+        for slot in orderedSlots {
+            switch slot.kind {
+            case .photo:
+                let index = photoIndices[slot.id]!
+                if index < photos.count {
+                    var frame = photos[index]
+                    frame.geometry.centerX = slot.geometry.centerX
+                    frame.geometry.centerY = slot.geometry.centerY
+                    frame.geometry.width = slot.geometry.width
+                    frame.geometry.height = slot.geometry.height
+                    frame.geometry.rotationRadians = slot.geometry.rotationRadians
+                    frame.sourceTemplateSlotID = slot.id
+                    resultingElements.append(.photo(frame))
+                } else {
+                    let id = makeID()
+                    let defaults = slot.defaultPhotoStyle ?? PhotoFrameStyleDefaults()
+                    let frame = PhotoFrameElement(
+                        id: id,
+                        geometry: slot.geometry.elementGeometry(order: nextOrder),
+                        sourceTemplateSlotID: slot.id,
+                        content: nil,
+                        mask: PhotoMask(shape: defaults.mask),
+                        border: defaults.border,
+                        decorativeFrame: defaults.decorativeFrame
+                    )
+                    nextOrder += AlbumPhotoConstants.elementOrderStep
+                    resultingElements.append(.photo(frame))
+                    addedIDs.append(id)
+                }
+            case .text:
+                let index = textIndices[slot.id]!
+                if index < texts.count {
+                    var text = texts[index]
+                    text.geometry.centerX = slot.geometry.centerX
+                    text.geometry.centerY = slot.geometry.centerY
+                    text.geometry.width = slot.geometry.width
+                    text.geometry.height = slot.geometry.height
+                    text.geometry.rotationRadians = slot.geometry.rotationRadians
+                    text.sourceTemplateSlotID = slot.id
+                    resultingElements.append(.text(text))
+                } else {
+                    let id = makeID()
+                    let defaults = slot.defaultTextStyle ?? TextStyleDefaults()
+                    let text = TextBoxElement(
+                        id: id,
+                        geometry: slot.geometry.elementGeometry(order: nextOrder),
+                        sourceTemplateSlotID: slot.id,
+                        typingDefaults: defaults
+                    )
+                    nextOrder += AlbumPhotoConstants.elementOrderStep
+                    resultingElements.append(.text(text))
+                    addedIDs.append(id)
+                }
             }
         }
 
         let survivors = Set(resultingElements.map(\.id))
-        page.elements = renumbered(resultingElements)
+        let addedIDSet = Set(addedIDs)
+        let existingAccessibilityIDs = Set(original.accessibilityOrder)
+        let recoveredExistingIDs = resultingElements
+            .filter {
+                !addedIDSet.contains($0.id) && !existingAccessibilityIDs.contains($0.id)
+            }
+            .sorted(by: PageElement.visualOrder)
+            .map(\.id)
+        page.elements = addedIDs.isEmpty ? resultingElements : renumbered(resultingElements)
         page.accessibilityOrder = original.accessibilityOrder.filter { survivors.contains($0) }
-            + addedIDs
+            + recoveredExistingIDs + addedIDs
         page.layout = PageLayoutState(
             isAutoLayoutEnabled: false,
             photoMode: .template,
@@ -197,6 +223,43 @@ public enum LayoutTemplateEngine {
             element.geometry = geometry
             return element
         }
+    }
+
+    private static func slotOrder(
+        _ lhs: LayoutSlotDefinition,
+        _ rhs: LayoutSlotDefinition
+    ) -> Bool {
+        if lhs.readingOrder != rhs.readingOrder {
+            return lhs.readingOrder < rhs.readingOrder
+        }
+        return lhs.id.utf8.lexicographicallyPrecedes(rhs.id.utf8)
+    }
+
+    private static func baseOrder(
+        lhsID: UUID,
+        lhsGeometry: ElementGeometry,
+        rhsID: UUID,
+        rhsGeometry: ElementGeometry,
+        accessibilityIndex: [UUID: Int]
+    ) -> Bool {
+        switch (accessibilityIndex[lhsID], accessibilityIndex[rhsID]) {
+        case let (.some(lhs), .some(rhs)) where lhs != rhs:
+            return lhs < rhs
+        case (.some, .none):
+            return true
+        case (.none, .some):
+            return false
+        default:
+            if lhsGeometry.order != rhsGeometry.order {
+                return lhsGeometry.order < rhsGeometry.order
+            }
+            return uuidBytes(lhsID).lexicographicallyPrecedes(uuidBytes(rhsID))
+        }
+    }
+
+    private static func uuidBytes(_ value: UUID) -> [UInt8] {
+        var bytes = value.uuid
+        return withUnsafeBytes(of: &bytes) { Array($0) }
     }
 }
 
@@ -401,7 +464,10 @@ public enum AutoLayoutEngine {
                 let lhs = accessibilityIndex[$0.id] ?? Int.max
                 let rhs = accessibilityIndex[$1.id] ?? Int.max
                 if lhs != rhs { return lhs < rhs }
-                return $0.id.uuidString < $1.id.uuidString
+                if $0.geometry.order != $1.geometry.order {
+                    return $0.geometry.order < $1.geometry.order
+                }
+                return uuidBytes($0.id).lexicographicallyPrecedes(uuidBytes($1.id))
             }
         let aspects = try frames.map { frame -> Double in
             guard let placement = frame.content,
@@ -430,7 +496,17 @@ public enum AutoLayoutEngine {
             frames[index].geometry.rotationRadians = 0
             frames[index].sourceTemplateSlotID = nil
         }
-        let nonphotos = page.elements.filter { $0.photoFrame == nil }
+        let nonphotos = page.elements.compactMap { element -> PageElement? in
+            switch element {
+            case .photo:
+                return nil
+            case var .text(text):
+                text.sourceTemplateSlotID = nil
+                return .text(text)
+            case .sticker:
+                return element
+            }
+        }
         page.elements = nonphotos + frames.map(PageElement.photo)
         let survivors = Set(page.elements.map(\.id))
         page.accessibilityOrder = page.accessibilityOrder.filter { survivors.contains($0) }
@@ -443,6 +519,11 @@ public enum AutoLayoutEngine {
 
     private static func quantized(_ value: Double) -> Double {
         floor(value * 1_000_000 + 0.5) / 1_000_000
+    }
+
+    private static func uuidBytes(_ value: UUID) -> [UInt8] {
+        var bytes = value.uuid
+        return withUnsafeBytes(of: &bytes) { Array($0) }
     }
 
 }

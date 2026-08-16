@@ -187,6 +187,41 @@ final class DomainValidationTests: XCTestCase {
         )))
     }
 
+    // 3:TPL-020, 3:TPL-022, 3:DAT-042
+    func testTemplateProvenanceResolvesManifestAndRequiresExactPhotoSlotBijection() throws {
+        let template = try XCTUnwrap(BuiltInLayoutTemplateCatalog.active.first {
+            $0.photoSlots.count == 1 && $0.textSlots.isEmpty
+        })
+        let frameID = UUID()
+        let frame = PhotoFrameElement(
+            id: frameID,
+            sourceTemplateSlotID: try XCTUnwrap(template.photoSlots.first?.id)
+        )
+        var page = PageSnapshot(
+            layout: PageLayoutState(
+                photoMode: .template,
+                templateID: template.id,
+                templateVersion: template.version
+            ),
+            elements: [.photo(frame)],
+            accessibilityOrder: [frameID]
+        )
+        XCTAssertNoThrow(try DomainValidator.validate(page, validAssetIDs: []))
+
+        page.layout.templateID = "layout.unknown"
+        XCTAssertThrowsError(try DomainValidator.validate(page, validAssetIDs: []))
+        page.layout.templateID = template.id
+
+        var missingProvenance = frame
+        missingProvenance.sourceTemplateSlotID = nil
+        page.elements = [.photo(missingProvenance)]
+        XCTAssertThrowsError(try DomainValidator.validate(page, validAssetIDs: []))
+
+        page.layout = .initial
+        page.elements = [.photo(frame)]
+        XCTAssertThrowsError(try DomainValidator.validate(page, validAssetIDs: []))
+    }
+
     // 3:BG-015, 3:DAT-039
     func testBackgroundCasesRemainDistinctAndSolidMustBeOpaque() throws {
         XCTAssertNotEqual(BackgroundSelection.none, .solid(.white))

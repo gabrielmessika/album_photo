@@ -443,6 +443,232 @@ final class AlbumApplicationServiceTests: XCTestCase {
         XCTAssertFalse(removed.photoAssetIDs.contains(metadata.id))
     }
 
+    // 3:TPL-004...3:TPL-010, 3:TPL-016, 3:DAT-042
+    func testApplyingBuiltInTemplateIsOneValidatedUndoableCommand() async throws {
+        let service = TestFixtures.service()
+        let (initial, metadata) = try await TestFixtures.albumWithRegisteredPhoto(
+            service: service
+        )
+        let pageID = initial.pages[0].id
+        var album = try await service.addPhotoFrame(
+            to: pageID,
+            in: initial.id,
+            assetID: metadata.id,
+            elementID: TestFixtures.elementID
+        )
+        let template = try XCTUnwrap(BuiltInLayoutTemplateCatalog.active.first {
+            $0.photoSlots.count == 2 && $0.textSlots.isEmpty
+        })
+
+        album = try await service.applyLayoutTemplate(
+            id: template.id,
+            version: template.version,
+            to: pageID,
+            in: initial.id
+        )
+        XCTAssertEqual(album.pages[0].layout.photoMode, .template)
+        XCTAssertEqual(album.pages[0].layout.templateID, template.id)
+        XCTAssertEqual(album.pages[0].elements.compactMap(\.photoFrame).count, 2)
+        XCTAssertEqual(
+            Set(album.pages[0].elements.compactMap(\.photoFrame)
+                .compactMap(\.sourceTemplateSlotID)),
+            Set(template.photoSlots.map(\.id))
+        )
+        XCTAssertNoThrow(try DomainValidator.validate(
+            album.pages[0],
+            validAssetIDs: [metadata.id]
+        ))
+
+        let undone = try await service.undo(albumID: initial.id)
+        XCTAssertEqual(undone.pages[0].layout.photoMode, .free)
+        XCTAssertEqual(undone.pages[0].elements.map(\.id), [TestFixtures.elementID])
+        XCTAssertEqual(
+            undone.pages[0].elements[0].photoFrame?.content?.assetID,
+            metadata.id
+        )
+    }
+
+    // 3:TPL-007, 3:TPL-010
+    func testSmallerBuiltInTemplateRequiresConfirmationWithoutPartialCommit() async throws {
+        let service = TestFixtures.service()
+        let (initial, metadata) = try await TestFixtures.albumWithRegisteredPhoto(
+            service: service
+        )
+        let pageID = initial.pages[0].id
+        var album = initial
+        for _ in 0..<2 {
+            album = try await service.addPhotoFrame(
+                to: pageID,
+                in: initial.id,
+                assetID: metadata.id
+            )
+        }
+        let template = try XCTUnwrap(BuiltInLayoutTemplateCatalog.active.first {
+            $0.photoSlots.count == 1 && $0.textSlots.isEmpty
+        })
+        let revisionBefore = try await service.snapshot().revision
+
+        await XCTAssertThrowsDomainError({
+            try await service.applyLayoutTemplate(
+                id: template.id,
+                version: template.version,
+                to: pageID,
+                in: initial.id
+            )
+        }, matching: {
+            if case .invalidTemplate("confirmation requise") = $0 { return true }
+            return false
+        })
+        let revisionAfterCancellation = try await service.snapshot().revision
+        XCTAssertEqual(revisionAfterCancellation, revisionBefore)
+
+        album = try await service.applyLayoutTemplate(
+            id: template.id,
+            version: template.version,
+            to: pageID,
+            in: initial.id,
+            confirmsPhotoRemoval: true
+        )
+        XCTAssertEqual(album.pages[0].elements.compactMap(\.photoFrame).count, 1)
+        XCTAssertTrue(album.photoAssetIDs.contains(metadata.id))
+    }
+
+    // 3:TPL-011, 3:TPL-012, 3:DAT-042
+    func testMovingTemplateTextOnlyFreesThatTextProvenance() async throws {
+        let service = TestFixtures.service()
+        let album = try await service.createAlbum(named: "Texte de modèle")
+        let pageID = album.pages[0].id
+        let template = try XCTUnwrap(BuiltInLayoutTemplateCatalog.active.first {
+            $0.photoSlots.count == 1 && $0.textSlots.count == 1
+        })
+        let applied = try await service.applyLayoutTemplate(
+            id: template.id,
+            version: template.version,
+            to: pageID,
+            in: album.id
+        )
+        let text = try XCTUnwrap(applied.pages[0].elements.compactMap(\.textBox).first)
+        var geometry = text.geometry
+        geometry.centerX = 0.4
+
+        let moved = try await service.updateElementGeometry(
+            geometry,
+            elementID: text.id,
+            on: pageID,
+            in: album.id
+        )
+        XCTAssertEqual(moved.pages[0].layout.photoMode, .template)
+        XCTAssertNil(moved.pages[0].element(id: text.id)?.textBox?.sourceTemplateSlotID)
+        XCTAssertNotNil(
+            moved.pages[0].elements.compactMap(\.photoFrame).first?.sourceTemplateSlotID
+        )
+    }
+
+    // 3:AUT-001...3:AUT-008, 3:AUT-018, 3:AUT-019
+    func testAutomaticLayoutRecomposesStructuralPhotoCommandsAndIsUndoable() async throws {
+        let service = TestFixtures.service()
+        let (initial, metadata) = try await TestFixtures.albumWithRegisteredPhoto(
+            service: service
+        )
+        let pageID = initial.pages[0].id
+        var album = try await service.setAutomaticLayoutEnabled(
+            true,
+            on: pageID,
+            in: initial.id
+        )
+        XCTAssertTrue(album.pages[0].layout.isAutoLayoutEnabled)
+        XCTAssertEqual(album.pages[0].layout.photoMode, .automatic)
+
+        await XCTAssertThrowsDomainError({
+            try await service.addPhotoFrame(to: pageID, in: initial.id)
+        }, matching: { $0 == .invalidLayoutState })
+
+        album = try await service.addPhotoFrame(
+            to: pageID,
+            in: initial.id,
+            assetID: metadata.id,
+            elementID: TestFixtures.elementID
+        )
+        album = try await service.duplicateElement(
+            TestFixtures.elementID,
+            on: pageID,
+            in: initial.id,
+            newElementID: UUID()
+        )
+        XCTAssertEqual(album.pages[0].elements.compactMap(\.photoFrame).count, 2)
+        XCTAssertTrue(album.pages[0].layout.isAutoLayoutEnabled)
+        XCTAssertTrue(album.pages[0].elements.compactMap(\.photoFrame).allSatisfy {
+            $0.content != nil && $0.sourceTemplateSlotID == nil
+        })
+
+        album = try await service.removePhotoFromFrame(
+            TestFixtures.elementID,
+            on: pageID,
+            in: initial.id
+        )
+        XCTAssertNil(album.pages[0].element(id: TestFixtures.elementID))
+        XCTAssertEqual(album.pages[0].elements.compactMap(\.photoFrame).count, 1)
+        let undoneRemoval = try await service.undo(albumID: initial.id)
+        XCTAssertEqual(undoneRemoval.pages[0].elements.compactMap(\.photoFrame).count, 2)
+
+        let disabled = try await service.setAutomaticLayoutEnabled(
+            false,
+            on: pageID,
+            in: initial.id
+        )
+        XCTAssertFalse(disabled.pages[0].layout.isAutoLayoutEnabled)
+        XCTAssertEqual(disabled.pages[0].layout.photoMode, .automatic)
+    }
+
+    // 3:AUT-008, 3:TPL-022
+    func testEnablingAutoOnExistingTemplateRequiresConfirmationAndClearsSlots() async throws {
+        let service = TestFixtures.service()
+        let album = try await service.createAlbum(named: "Passage en Auto")
+        let pageID = album.pages[0].id
+        let template = try XCTUnwrap(BuiltInLayoutTemplateCatalog.active.first {
+            $0.photoSlots.count == 1 && $0.textSlots.count == 1
+        })
+        _ = try await service.applyLayoutTemplate(
+            id: template.id,
+            version: template.version,
+            to: pageID,
+            in: album.id
+        )
+
+        await XCTAssertThrowsDomainError({
+            try await service.setAutomaticLayoutEnabled(
+                true,
+                on: pageID,
+                in: album.id
+            )
+        }, matching: {
+            if case .invalidTemplate("confirmation Auto requise") = $0 { return true }
+            return false
+        })
+        let automatic = try await service.setAutomaticLayoutEnabled(
+            true,
+            on: pageID,
+            in: album.id,
+            confirmsReplacement: true
+        )
+        XCTAssertTrue(automatic.pages[0].elements.compactMap(\.photoFrame).isEmpty)
+        XCTAssertTrue(automatic.pages[0].elements.compactMap(\.textBox).allSatisfy {
+            $0.sourceTemplateSlotID == nil
+        })
+        XCTAssertEqual(automatic.pages[0].layout.photoMode, .automatic)
+
+        let textID = try XCTUnwrap(
+            automatic.pages[0].elements.compactMap(\.textBox).first?.id
+        )
+        let withoutText = try await service.deleteElement(
+            textID,
+            on: pageID,
+            in: album.id
+        )
+        XCTAssertTrue(withoutText.pages[0].layout.isAutoLayoutEnabled)
+        XCTAssertEqual(withoutText.pages[0].layout.photoMode, .automatic)
+    }
+
     // 3:DAT-017, 3:LOC-008, 3:UND-010
     func testBlobLedgerRetainsUndoAndClipboardReferencesAfterLogicalRemoval() async throws {
         let service = TestFixtures.service()

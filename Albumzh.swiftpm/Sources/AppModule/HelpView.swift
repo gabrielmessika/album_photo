@@ -3,6 +3,7 @@ import SwiftUI
 enum HelpContext: String, Identifiable {
     case editor
     case photos
+    case layouts
     case backgrounds
     case crop
     case globalPages
@@ -36,6 +37,11 @@ struct HelpView: View {
                 title: "Cadrer la photo",
                 symbol: "crop",
                 text: "En mode Recadrer, glissez la photo, pincez pour modifier son échelle ou utilisez le réglage Zoom photo. À 1×, la taille native est conservée ; le fond peut rester visible. Annuler abandonne le brouillon et Terminé crée une seule action annulable."
+            ),
+            HelpSection(
+                title: "Modèles, dé et Auto",
+                symbol: "rectangle.3.group",
+                text: "Le panneau Mise en page applique un modèle à la page active. Le dé parcourt les autres modèles compatibles sans changer le nombre d’éléments. Auto réorganise les cadres photo remplis après chaque ajout ou retrait ; une transformation manuelle d’un cadre photo le désactive pour cette page."
             ),
             HelpSection(
                 title: "Fonds",
@@ -101,6 +107,12 @@ private struct HelpSection: Identifiable {
                 title: "Panneau Photos",
                 symbol: "photo.on.rectangle",
                 text: "Importez d’abord les originaux dans la photothèque interne de l’album, puis placez chaque occurrence librement dans la page."
+            )
+        case .layouts:
+            return HelpSection(
+                title: "Panneau Mise en page",
+                symbol: "rectangle.3.group",
+                text: "Filtrez les modèles par nombre de photos. Les variantes avec texte sont visibles mais seront activées avec l’éditeur de texte du prochain incrément."
             )
         case .backgrounds:
             return HelpSection(

@@ -196,7 +196,12 @@ struct PhotosPanelView: View {
                 Task { await model.addEmptyPhotoFrame() }
             }
             .buttonStyle(.bordered)
-            .disabled(model.isReadOnly)
+            .disabled(!model.canAddEmptyPhotoFrame)
+            .accessibilityHint(
+                model.activePage?.layout.isAutoLayoutEnabled == true
+                    ? "Désactivez Mise en page auto pour créer un cadre vide."
+                    : "Ajoute un cadre photo sans contenu à la page active."
+            )
         }
         .padding(12)
         .sheet(isPresented: $showsSources) {

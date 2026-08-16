@@ -543,15 +543,38 @@ public enum DomainValidator {
     }
 
     private static func validateTemplateProvenance(_ page: PageSnapshot) throws {
-        let slotIDs = page.elements.compactMap { element -> String? in
-            switch element {
-            case let .photo(frame): frame.sourceTemplateSlotID
-            case let .text(text): text.sourceTemplateSlotID
-            case .sticker: nil
+        let photoSlotIDs = page.elements.compactMap(\.photoFrame)
+            .compactMap(\.sourceTemplateSlotID)
+        let textSlotIDs = page.elements.compactMap(\.textBox)
+            .compactMap(\.sourceTemplateSlotID)
+        let allSlotIDs = photoSlotIDs + textSlotIDs
+        try unique(allSlotIDs, label: "provenance slot")
+
+        guard page.layout.photoMode == .template else {
+            guard allSlotIDs.isEmpty else {
+                throw DomainValidationError.invalidLayoutState
             }
+            return
         }
-        try unique(slotIDs, label: "provenance slot")
-        if page.layout.photoMode != .template && !slotIDs.isEmpty {
+
+        guard let templateID = page.layout.templateID,
+              let templateVersion = page.layout.templateVersion,
+              let template = BuiltInLayoutTemplateCatalog.template(
+                id: templateID,
+                version: templateVersion
+              ) else {
+            throw DomainValidationError.invalidLayoutState
+        }
+
+        let frames = page.elements.compactMap(\.photoFrame)
+        guard frames.allSatisfy({ $0.sourceTemplateSlotID != nil }),
+              Set(photoSlotIDs) == Set(template.photoSlots.map(\.id)),
+              frames.count == template.photoSlots.count else {
+            throw DomainValidationError.invalidLayoutState
+        }
+
+        let textSlots = Set(template.textSlots.map(\.id))
+        guard textSlotIDs.allSatisfy({ textSlots.contains($0) }) else {
             throw DomainValidationError.invalidLayoutState
         }
     }
