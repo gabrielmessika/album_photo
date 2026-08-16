@@ -10,8 +10,9 @@ constitue pas une preuve de réussite. Les résultats, l'environnement et le
 commit exact restent ceux enregistrés dans `suivi_tests.md` et
 `SUIVI_PROJET.md`. La première campagne iPad `063…093` possède des résultats,
 mais le candidat correctif rend les preuves concernées insuffisantes ; les
-régressions `109…131` restent ⚪ `NON TESTÉ`. Aucun scénario d'acceptation n'est
-donc déclaré réussi par ce document.
+régressions `109…131` et la fiche `102` ciblent désormais le commit figé
+`06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` et restent ⚪ `NON TESTÉ`. Aucun
+scénario d'acceptation n'est donc déclaré réussi par ce document.
 
 ## Convention et frontière des lots
 
