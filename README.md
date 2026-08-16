@@ -24,11 +24,14 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   dynamique sont confirmés. La frontière des lots est également figée :
   création photo locale au Lot 1, composition Photoweb complète au Lot 2,
   lecture et documents au Lot 3 (`DEC-38`).
-- Implémentation : les correctifs `06c30b9…` puis `84ec71e…` ont révélé des
-  erreurs de compilation Apple. Le dernier appel incomplet dans
-  `AlbumCoverView` est corrigé dans
-  `638c659925e1b036570484a98c0fc016602687c9`. Le candidat et le canevas
-  multiélément restent reconstruits from scratch, en conservant
+- Implémentation : après les échecs de compilation de `06c30b9…` et
+  `84ec71e…`, le candidat
+  `638c659925e1b036570484a98c0fc016602687c9` a compilé et sa campagne iPad a
+  confirmé 19 parcours. Le prochain correctif traite les quatre écarts observés
+  sur l’adaptation de l’inspecteur, les dates de corbeille, les signaux de Vue
+  globale et les gestes du canevas ; il clarifie aussi les procédures régionale
+  et interalbum. Le candidat et le canevas multiélément restent reconstruits
+  from scratch, en conservant
   uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
@@ -37,11 +40,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   et `Fonds` ; les cinq panneaux complets, modèles, texte, stickers, cadres
   décoratifs et presse-papiers multi-types relèvent du Lot 2 ; lecture,
   diaporama, package et PDF relèvent du Lot 3.
-- Validation actuelle : 123 tests du noyau multiplateforme, les contrats et la
-  syntaxe AppModule sont validés sous WSL. La première campagne iPad `063…093`
-  est enregistrée ; les candidats `06c30b9…` et `84ec71e…` ne compilent pas
-  avec le SDK Apple. Exécuter `133`, puis `102` et `109…131` sur le correctif
-  minimal exact indiqué dans [`suivi_tests.md`](suivi_tests.md).
+- Validation actuelle : 124 tests du noyau multiplateforme et la syntaxe
+  AppModule sont validés sous WSL. Les campagnes iPad `063…093`, puis `102`,
+  `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
+  4 échecs et 2 blocages de procédure sur `638c659…`. Après gel du prochain
+  candidat, exécuter `134`, puis `135…140` selon
+  [`suivi_tests.md`](suivi_tests.md).
 - Cible minimale : iOS 26 et iPadOS 26.
 - Projet d’application : App Playground Swift existant
   [`Albumzh.swiftpm`](Albumzh.swiftpm), dont le manifeste généré par Swift

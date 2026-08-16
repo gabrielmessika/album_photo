@@ -110,9 +110,10 @@ struct GlobalPagesView: View {
             .overlay(alignment: .top) {
                 if isTerminalDropTargeted {
                     Capsule()
-                        .fill(Color.accentColor)
-                        .frame(height: 4)
+                        .fill(Color.orange)
+                        .frame(height: 6)
                         .padding(.horizontal, 8)
+                        .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
                         .modifier(InsertionPulse())
                 }
             }
@@ -165,9 +166,20 @@ struct GlobalPagesView: View {
                 .overlay {
                     RoundedRectangle(cornerRadius: 6)
                         .stroke(
-                            isActive ? Color.accentColor : .secondary.opacity(0.35),
-                            lineWidth: isActive ? 3 : 1
+                            isActive ? Color.orange : .secondary.opacity(0.35),
+                            lineWidth: isActive ? 5 : 1
                         )
+                }
+                .overlay(alignment: .topLeading) {
+                    if isActive {
+                        Label("Page active", systemImage: "checkmark.circle.fill")
+                            .font(.caption2.bold())
+                            .foregroundStyle(.black)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 4)
+                            .background(Color.orange, in: Capsule())
+                            .padding(7)
+                    }
                 }
                 .shadow(color: .black.opacity(0.12), radius: 4, y: 2)
 
@@ -203,9 +215,11 @@ struct GlobalPagesView: View {
         .overlay(alignment: .leading) {
             if insertionTargetPageID == page.id {
                 Capsule()
-                    .fill(Color.accentColor)
-                    .frame(width: 5)
+                    .fill(Color.orange)
+                    .frame(width: 7)
                     .padding(.vertical, 4)
+                    .offset(x: -10)
+                    .shadow(color: .black.opacity(0.25), radius: 2, x: 1)
                     .modifier(InsertionPulse())
             }
         }

@@ -14,7 +14,7 @@ struct PhotosPanelView: View {
     @State private var deletionRequest: PhotoDeletionRequest?
 
     private let columns = [
-        GridItem(.adaptive(minimum: 92), spacing: 10)
+        GridItem(.adaptive(minimum: 112, maximum: 160), spacing: 10)
     ]
 
     var body: some View {
@@ -68,7 +68,7 @@ struct PhotosPanelView: View {
 
             if let choice = model.photoChoiceMode {
                 HStack(alignment: .top, spacing: 8) {
-                    Label(choice.title, systemImage: "scope")
+                    Label(choice.title, systemImage: choice.symbol)
                         .font(.subheadline.weight(.semibold))
                     Spacer(minLength: 4)
                     Button("Annuler le choix", systemImage: "xmark") {
@@ -76,8 +76,13 @@ struct PhotosPanelView: View {
                     }
                     .labelStyle(.iconOnly)
                 }
-                .padding(9)
-                .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 9))
+                .padding(11)
+                .background(Color.orange.opacity(0.28), in: RoundedRectangle(cornerRadius: 10))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.orange, lineWidth: 2)
+                }
+                .accessibilityLabel("Mode de choix actif : \(choice.title)")
                 .accessibilityElement(children: .contain)
             }
 

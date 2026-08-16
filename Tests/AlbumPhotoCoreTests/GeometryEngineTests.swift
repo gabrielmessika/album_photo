@@ -157,6 +157,29 @@ final class GeometryEngineTests: XCTestCase {
         ))
     }
 
+    // 3:ZOM-005 — an unselected element belongs to the viewport gesture zone.
+    func testCanvasGestureArbitrationOnlyProtectsTheSelectedElement() {
+        let selectedID = UUID(uuidString: "00000000-0000-0000-0000-000000000010")!
+        let otherID = UUID(uuidString: "00000000-0000-0000-0000-000000000011")!
+
+        XCTAssertTrue(CanvasGestureArbitration.shouldTransformViewport(
+            hitElementID: nil,
+            selectedElementID: selectedID
+        ))
+        XCTAssertTrue(CanvasGestureArbitration.shouldTransformViewport(
+            hitElementID: otherID,
+            selectedElementID: selectedID
+        ))
+        XCTAssertTrue(CanvasGestureArbitration.shouldTransformViewport(
+            hitElementID: otherID,
+            selectedElementID: nil
+        ))
+        XCTAssertFalse(CanvasGestureArbitration.shouldTransformViewport(
+            hitElementID: selectedID,
+            selectedElementID: selectedID
+        ))
+    }
+
     // 3:ELM-005, 3:ELM-006
     func testSnapThresholdUsesSixScreenPointsAndSignalsGuideOncePerResult() {
         let moving = ElementGeometry(centerX: 0.506, width: 0.2)

@@ -535,10 +535,14 @@ struct EditablePageCanvas: View {
               local.x <= pageSize.width, local.y <= pageSize.height else {
             return false
         }
-        return CanvasHitTesting.topmostElement(
+        let hitElementID = CanvasHitTesting.topmostElement(
             at: normalizedPoint(local, pageSize: pageSize),
             in: page
-        ) == nil
+        )?.id
+        return CanvasGestureArbitration.shouldTransformViewport(
+            hitElementID: hitElementID,
+            selectedElementID: model.selectedElementID
+        )
     }
 
     private func normalizedCanvasPoint(

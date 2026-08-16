@@ -540,8 +540,8 @@ struct TwoFingerCanvasGestureBridge: UIViewRepresentable {
         func requestAttachment() {
             guard window != nil else { return }
             DispatchQueue.main.async { [weak self] in
-                guard let self, let host = self.superview else { return }
-                self.coordinator?.attach(to: host)
+                guard let self, let window = self.window else { return }
+                self.coordinator?.attach(to: window, coordinateView: self)
             }
         }
     }
@@ -553,6 +553,7 @@ struct TwoFingerCanvasGestureBridge: UIViewRepresentable {
         var onChanged: (CGSize, Double, CGPoint) -> Void
         var onEnded: () -> Void
         weak var hostView: UIView?
+        weak var coordinateView: UIView?
         private var isTransforming = false
         private var anchor = CGPoint.zero
         private var lastTranslation = CGSize.zero
@@ -598,24 +599,28 @@ struct TwoFingerCanvasGestureBridge: UIViewRepresentable {
             self.onEnded = onEnded
         }
 
-        func attach(to host: UIView) {
-            guard hostView !== host else { return }
+        func attach(to host: UIView, coordinateView: UIView) {
+            guard hostView !== host || self.coordinateView !== coordinateView else { return }
             detach()
             host.addGestureRecognizer(panGesture)
             host.addGestureRecognizer(pinchGesture)
             hostView = host
+            self.coordinateView = coordinateView
         }
 
         func detach() {
             hostView?.removeGestureRecognizer(panGesture)
             hostView?.removeGestureRecognizer(pinchGesture)
             hostView = nil
+            coordinateView = nil
         }
 
         func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-            guard isEnabled, let hostView else { return false }
+            guard isEnabled, let location = gestureLocation(gestureRecognizer) else {
+                return false
+            }
             if isTransforming { return true }
-            return shouldBegin(gestureRecognizer.location(in: hostView))
+            return shouldBegin(location)
         }
 
         func gestureRecognizer(
@@ -627,12 +632,12 @@ struct TwoFingerCanvasGestureBridge: UIViewRepresentable {
         }
 
         @objc private func handlePan(_ sender: UIPanGestureRecognizer) {
-            guard let hostView else { return }
+            guard let coordinateView, let location = gestureLocation(sender) else { return }
             switch sender.state {
             case .began:
-                beginIfNeeded(at: sender.location(in: hostView))
+                beginIfNeeded(at: location)
             case .changed:
-                let value = sender.translation(in: hostView)
+                let value = sender.translation(in: coordinateView)
                 lastTranslation = CGSize(width: value.x, height: value.y)
                 emitChange()
             case .ended, .cancelled, .failed:
@@ -643,10 +648,10 @@ struct TwoFingerCanvasGestureBridge: UIViewRepresentable {
         }
 
         @objc private func handlePinch(_ sender: UIPinchGestureRecognizer) {
-            guard let hostView else { return }
+            guard let location = gestureLocation(sender) else { return }
             switch sender.state {
             case .began:
-                beginIfNeeded(at: sender.location(in: hostView))
+                beginIfNeeded(at: location)
             case .changed:
                 lastMagnification = Double(sender.scale)
                 emitChange()
@@ -655,6 +660,14 @@ struct TwoFingerCanvasGestureBridge: UIViewRepresentable {
             default:
                 break
             }
+        }
+
+        private func gestureLocation(_ gestureRecognizer: UIGestureRecognizer) -> CGPoint? {
+            guard let hostView, let coordinateView else { return nil }
+            return coordinateView.convert(
+                gestureRecognizer.location(in: hostView),
+                from: hostView
+            )
         }
 
         private func beginIfNeeded(at location: CGPoint) {

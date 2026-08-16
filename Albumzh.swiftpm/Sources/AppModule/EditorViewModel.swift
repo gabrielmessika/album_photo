@@ -130,6 +130,17 @@ enum PhotoChoiceMode: Equatable {
                 : "Choisir une photo pour remplir ce cadre"
         }
     }
+
+    var symbol: String {
+        switch self {
+        case .newFrame:
+            return "photo.badge.plus"
+        case let .fillFrame(_, _, replacesContent):
+            return replacesContent
+                ? "arrow.triangle.2.circlepath"
+                : "rectangle.dashed"
+        }
+    }
 }
 
 struct CropDraft: Equatable {

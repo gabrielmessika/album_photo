@@ -229,13 +229,17 @@ private struct AlbumEditorScene: View {
 
             HStack(spacing: 14) {
                 if model.cropDraft == nil {
-                    Button("Ajouter une photo", systemImage: "photo.badge.plus") {
+                    Button {
                         model.beginNewPhotoFrameChoice()
                         openPhotosPanel()
+                    } label: {
+                        Label("Ajouter une photo", systemImage: "photo.badge.plus")
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                     .disabled(model.isReadOnly)
-
                 }
                 CanvasZoomControls(model: model)
                 Divider().frame(height: 26)

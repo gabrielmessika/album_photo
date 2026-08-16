@@ -1,4 +1,5 @@
 import AlbumPhotoCore
+import Foundation
 import SwiftUI
 
 private struct PermanentAlbumDeletionRequest: Identifiable {
@@ -111,6 +112,9 @@ struct TrashView: View {
     }
 
     private func calendarDate(_ date: Date) -> String {
-        date.formatted(date: .long, time: .omitted)
+        date.formatted(
+            Date.FormatStyle(date: .long, time: .omitted)
+                .locale(Locale(identifier: "fr_FR"))
+        )
     }
 }

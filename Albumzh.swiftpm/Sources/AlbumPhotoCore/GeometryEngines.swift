@@ -312,6 +312,18 @@ public enum CanvasHitTesting {
     }
 }
 
+/// Resolves two-finger viewport gestures without requiring the view layer to
+/// duplicate the selected/unselected element rule (3:ZOM-005).
+public enum CanvasGestureArbitration {
+    public static func shouldTransformViewport(
+        hitElementID: UUID?,
+        selectedElementID: UUID?
+    ) -> Bool {
+        guard let hitElementID else { return true }
+        return hitElementID != selectedElementID
+    }
+}
+
 public enum SnapAxis: String, Codable, Sendable, Equatable, Hashable {
     case horizontal
     case vertical
