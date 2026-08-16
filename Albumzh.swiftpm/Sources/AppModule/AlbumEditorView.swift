@@ -229,17 +229,7 @@ private struct AlbumEditorScene: View {
 
             HStack(spacing: 14) {
                 if model.cropDraft == nil {
-                    Button {
-                        model.beginNewPhotoFrameChoice()
-                        openPhotosPanel()
-                    } label: {
-                        Label("Ajouter une photo", systemImage: "photo.badge.plus")
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(model.isReadOnly)
+                    adaptiveAddPhotoButton
                 }
                 CanvasZoomControls(model: model)
                 Divider().frame(height: 26)
@@ -249,6 +239,34 @@ private struct AlbumEditorScene: View {
             .padding(.vertical, 8)
             .background(.bar)
         }
+    }
+
+    private var adaptiveAddPhotoButton: some View {
+        ViewThatFits(in: .horizontal) {
+            addPhotoButton(title: "Ajouter une photo")
+                .fixedSize(horizontal: true, vertical: false)
+            addPhotoButton(title: "Ajouter")
+                .fixedSize(horizontal: true, vertical: false)
+            addPhotoButton(title: nil)
+        }
+    }
+
+    private func addPhotoButton(title: String?) -> some View {
+        Button {
+            model.beginNewPhotoFrameChoice()
+            openPhotosPanel()
+        } label: {
+            if let title {
+                Label(title, systemImage: "photo.badge.plus")
+                    .lineLimit(1)
+            } else {
+                Image(systemName: "photo.badge.plus")
+            }
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .disabled(model.isReadOnly)
+        .accessibilityLabel("Ajouter une photo")
     }
 
     private var pageNavigation: some View {

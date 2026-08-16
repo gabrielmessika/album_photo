@@ -7,15 +7,32 @@ private struct PhotoDeletionRequest: Identifiable {
 }
 
 struct PhotosPanelView: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ObservedObject var model: EditorViewModel
 
     @State private var showsSources = false
     @State private var showsOtherAlbums = false
     @State private var deletionRequest: PhotoDeletionRequest?
 
-    private let columns = [
-        GridItem(.adaptive(minimum: 112, maximum: 160), spacing: 10)
-    ]
+    private var columns: [GridItem] {
+        if horizontalSizeClass == .regular {
+            return Array(
+                repeating: GridItem(
+                    .flexible(minimum: 0),
+                    spacing: 8,
+                    alignment: .top
+                ),
+                count: 3
+            )
+        }
+        return [
+            GridItem(
+                .adaptive(minimum: 88, maximum: 112),
+                spacing: 8,
+                alignment: .top
+            )
+        ]
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -170,6 +187,7 @@ struct PhotosPanelView: View {
                             .disabled(model.isReadOnly)
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 2)
                 }
             }
@@ -358,11 +376,17 @@ private struct PhotoPanelTile: View {
                 Text(asset.originalFilename ?? "Photo")
                     .font(.caption2)
                     .lineLimit(1)
+                    .truncationMode(.middle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 Label("Disponible", systemImage: "checkmark.circle")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .buttonStyle(.plain)
         .draggable(PhotoAssetDragPayload(assetID: asset.id)) {
             StoredPhotoImage(
