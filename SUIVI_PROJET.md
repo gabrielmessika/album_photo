@@ -16,7 +16,7 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-17 |
-| Phase courante | Lot 2 — `IPAD-L2-021` échoué ; correctif panneau/rendu texte à figer pour `IPAD-L2-022` |
+| Phase courante | Lot 2 — `IPAD-L2-021` échoué ; correctif panneau/rendu texte figé pour `IPAD-L2-022` |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
@@ -36,7 +36,7 @@ résultats du prototype 2.1.
 | Candidat compact et cadrage Lot 2 testé | `3944fae199b2eb37c7b1f0a1aae5558197455b87` : bouton compact, dialogue interne Densité/compteur/Annuler/Valider et cadrage initial couvrant après géométrie finale ; `IPAD-L2-019` réussi selon le retour global « tout est ok » |
 | Candidat zones de texte Lot 2 rejeté | `d882183d31de7ed6078c70f9e79a80d6ba994dd6` : `IPAD-L2-020` échoue dès la compilation d’`AlbumTextEditorView`; captures `IMG_4188.HEIC`/`IMG_4189.HEIC`, aucune étape fonctionnelle exécutée |
 | Correctif de compilation texte Lot 2 testé | `0f4b16c6c6435c29ca44da4e2726fac210add520` : compilation et lancement Apple réussis indirectement, mais `IPAD-L2-021` échoue sur l’ajout superposé, le fond noir de l’éditeur, les pastilles blanches, l’échelle et l’opacité ; `IMG_4191.jpg` conservée hors Git |
-| Correctif panneau et rendu texte Lot 2 | `À FIGER` : panneau Texte entre Mise en page et Fonds, formats dans l’inspecteur, ajout hors canevas, fond réel, palette colorée, aperçu à l’échelle et opacité immédiate ; 146 tests, contrats, empreintes et parse AppModule réussis ; `IPAD-L2-022` à exécuter |
+| Correctif panneau et rendu texte Lot 2 | `7bc495ec623e5b12301569d0108fbccadb978630` : panneau Texte entre Mise en page et Fonds, formats dans l’inspecteur, ajout hors canevas, fond réel, palette colorée, aperçu à l’échelle et opacité immédiate ; 146 tests, contrats, empreintes et parse AppModule réussis ; `IPAD-L2-022` à exécuter |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du correctif Lot 2 | `spec.md` dans `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` précise `EDT-002`, `ELM-014` et `RND-001` conformément aux retours utilisateur du 17 août 2026 |
@@ -45,7 +45,7 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Figer puis exécuter `IPAD-L2-022` ; couvrir `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode ; compléter justifié, frappe groupée, stickers, cadres et presse-papiers commun |
+| Validation indispensable restante | Transférer puis exécuter `IPAD-L2-022` sur `7bc495ec623e5b12301569d0108fbccadb978630` ; couvrir `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode ; compléter justifié, frappe groupée, stickers, cadres et presse-papiers commun |
 | État global | 🟡 **Lot 1 viable sur l’iPad 8 ; l’action compacte et le cadrage couvrant sont validés par `IPAD-L2-019` ; `IPAD-L2-021` compile mais échoue sur cinq défauts de texte, corrigés sous WSL et à requalifier sur Apple avec `IPAD-L2-022`** |
 
 ## Légende
@@ -94,7 +94,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 | Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core ; intégration App Playground compilée | Prouver les capacités Apple encore bloquées et corriger les écarts fonctionnels du premier incrément Lot 2 |
 | Lot 1 — Création locale | 🟡 | Parcours métier validés et adaptation finale confirmée par `143…144` sur `101e294…` | Conserver le jalon iPad ; qualifications iPhone/Xcode et Apple différées empêchent encore l’état 🟢 |
-| Lot 2 — Parité de composition | 🟡 | Le dialogue interne, Remplir l’album, l’action compacte et le cadrage couvrant sont validés jusqu’à `IPAD-L2-019`. `0f4b16c…` compile mais échoue sous `IPAD-L2-021`; le correctif panneau/rendu passe le contrat ciblé et parse SwiftUI | Figer et exécuter `IPAD-L2-022`, couvrir la largeur compacte, puis compléter texte, stickers, cadres et presse-papiers commun avant `ACPT-123`, `125`, `126`, `128`, `130` |
+| Lot 2 — Parité de composition | 🟡 | Le dialogue interne, Remplir l’album, l’action compacte et le cadrage couvrant sont validés jusqu’à `IPAD-L2-019`. `0f4b16c…` compile mais échoue sous `IPAD-L2-021`; `7bc495e…` passe 146 tests, les contrats et le parse SwiftUI | Exécuter `IPAD-L2-022`, couvrir la largeur compacte, puis compléter texte, stickers, cadres et presse-papiers commun avant `ACPT-123`, `125`, `126`, `128`, `130` |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
 
@@ -311,7 +311,7 @@ qualifications différées exigées par `DONE-001` à `DONE-005`.
 | Dé | 🟡 | Compatibilité, sac sans répétition, Annuler/Rétablir et persistance réussis sous `IPAD-L2-005` ; nouvel emplacement, libellé visible, icône `die.face.5.fill` et absence dans la barre locale validés par `IPAD-L2-012` (`RND-001…006`) | Qualification compacte iPhone/Xcode encore différée |
 | Mise en page auto | 🟡 | Interrupteur, densités et recomposition réussis sous `IPAD-L2-006…007` ; `IPAD-L2-018` valide les capacités 2/4/8, le tri stable, les groupes, les pages et la commande unique. `IPAD-L2-019` valide le dialogue compact et le cadrage couvrant de `3944fae…` (`AUT-001…019`, `PHO-014`, `FRM-009`, `TPL-005`, `UND-001`) | Sortie complète du Lot 2 et largeur compacte encore restantes |
 | Navigation locale et pages | 🟡 | Après les échecs de présentation `IPAD-L2-014…016`, le dialogue interne de `57afa71…` bloque l’éditeur sous-jacent et réussit `IPAD-L2-017` (`EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013` à `PAG-017`) | Retour global sans capture ni détail ; largeur compacte iPhone/Xcode restante |
-| Zones de texte | 🟡 | Éditeur riche, styles, limite 1 000, hauteur, débordement, persistance et rendu commun. `0f4b16c…` compile mais `021` relève cinq défauts ; le correctif déplace l’ajout dans Texte, reprend fond/échelle, colore la palette et rend l’opacité immédiate (`TBX-001…025`, `TXA-001…005`) | Figer et exécuter `IPAD-L2-022` ; justifié, délai 750 ms, export et finition du collage pris en charge restent ouverts |
+| Zones de texte | 🟡 | Éditeur riche, styles, limite 1 000, hauteur, débordement, persistance et rendu commun. `0f4b16c…` compile mais `021` relève cinq défauts ; `7bc495e…` déplace l’ajout dans Texte, reprend fond/échelle, colore la palette et rend l’opacité immédiate (`TBX-001…025`, `TXA-001…005`) | Exécuter `IPAD-L2-022` ; justifié, délai 750 ms, export et finition du collage pris en charge restent ouverts |
 | Stickers et cadres décoratifs | ⬜ | Aucun sticker ni cadre décoratif Lot 2 persisté | Figer assets/licences `CAT-009` avant implémentation |
 
 Ce premier incrément reste 🟡 : le candidat initial compte cinq réussites, deux
@@ -466,7 +466,7 @@ Lot 3 n’est rendu public.
 | `IPAD-L2-019`, action compacte et cadrage sur `3944fae…` | 🟢 Réussi sur l’iPad déclaré | Retour global « tout est ok » sans capture ni détail par étape ; limité à cette fiche et à ce candidat |
 | `IPAD-L2-020`, zones de texte sur `d882183…` | 🔴 Échec de compilation Apple | Étape 1 échouée ; aucune étape fonctionnelle exécutée, preuve limitée aux diagnostics visibles dans les deux captures reçues |
 | `IPAD-L2-021`, correctif texte `0f4b16c…` | 🔴 Échec fonctionnel sur Apple | Compilation et lancement réussis, puis cinq défauts signalés ; aucune réussite extrapolée aux étapes non commentées |
-| `IPAD-L2-022`, panneau et rendu texte `À FIGER` | ⚪ Non testé sur Apple | Compiler puis vérifier panneau, deux raccourcis `+`, fond, palette, échelle, opacité et reprendre la qualification fonctionnelle complète du texte |
+| `IPAD-L2-022`, panneau et rendu texte `7bc495e…` | ⚪ Non testé sur Apple | Compiler puis vérifier panneau, deux raccourcis `+`, fond, palette, échelle, opacité et reprendre la qualification fonctionnelle complète du texte |
 | `APPLE-L2-001`, largeur compacte de `57afa71…` | 🟠 Bloqué sur cet iPad | Swift Playgrounds ne permet pas de réduire suffisamment la fenêtre ; reprendre le dialogue, la barre, Gérer les pages et le menu Plus sur iPhone ou environnement Xcode réellement compact |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
@@ -512,8 +512,8 @@ Lot 3 n’est rendu public.
 
 ## Prochaines actions
 
-1. Figer le correctif panneau/rendu, le transférer et exécuter `IPAD-L2-022`
-   sur l’iPad déclaré, en commençant par sa compilation Apple.
+1. Transférer `7bc495ec623e5b12301569d0108fbccadb978630` et exécuter
+   `IPAD-L2-022` sur l’iPad déclaré, en commençant par sa compilation Apple.
 2. Vérifier en priorité le fond clair/sombre, les six pastilles, 18/96 points et
    25/50/100 % d’opacité avant de reprendre le reste des étapes texte.
 3. Compléter ensuite `TBX-007`, `TBX-011`, `TBX-021` et `TBX-022` sans moteur
@@ -533,6 +533,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-17 | Codex | Gel du correctif panneau/rendu texte `7bc495ec623e5b12301569d0108fbccadb978630` et injection du candidat exact dans `IPAD-L2-022` | `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `TST-001…005`, `TST-013`, `EDT-001`, `EDT-008`, `EDT-021`, `TBX-002`, `TBX-009`, `TBX-012`, `TBX-014`, `TBX-016`, `TBX-025` | WSL : 146 tests Core, contrat ciblé, parse AppModule, contrats et 10/10 empreintes réussis ; 22/22 IDs Lot 2 ; `IPAD-L2-022` reste ⚪ sur Apple |
 | 2026-08-17 | Codex | Enregistrement de l’échec fonctionnel `IPAD-L2-021`, ajout du panneau Texte, retrait du bouton superposé, formats de zone dans l’inspecteur, fond réel, palette colorée, aperçu à l’échelle du canevas et opacité immédiate ; préparation de `IPAD-L2-022` | `spec.md`, `AlbumTextEditorView.swift`, `TextPanelView.swift`, `EditorViewModel.swift`, `AlbumEditorView.swift`, `HelpView.swift`, `ManifestContractTests.swift`, `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `EDT-001`, `EDT-002`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002`, `TBX-009`, `TBX-012`, `TBX-014`, `TBX-016`, `TBX-025`, `ACC-002`, `ACC-006`, `ACC-021` | Retour iPad et `IMG_4191.jpg` hors Git ; WSL : 146 tests Core, contrat ciblé, parse AppModule, contrats et 10/10 empreintes réussis ; 22/22 IDs Lot 2 ; compilation/rendu Apple du correctif NON TESTÉS |
 | 2026-08-17 | Codex | Enregistrement de l’échec de compilation `IPAD-L2-020`, correction d’`AlbumTextEditorView` et gel de `0f4b16c6c6435c29ca44da4e2726fac210add520` : portée métier imbriquée et une contrainte par clé native modifiable ; préparation de `IPAD-L2-021` | `AlbumTextEditorView.swift`, `ManifestContractTests.swift`, `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `TBX-001…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | WSL : 146 tests Core, contrat ciblé et parse AppModule réussis ; 21/21 IDs Lot 2 ; captures `IMG_4188.HEIC`/`IMG_4189.HEIC` conservées hors Git ; compilation Apple du correctif NON TESTÉE |
 | 2026-08-17 | Codex | Gel du candidat zones de texte `d882183d31de7ed6078c70f9e79a80d6ba994dd6` et injection de son empreinte dans `IPAD-L2-020` | `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot2.md` ; `TST-001…005`, `TST-013`, `TBX-001…025`, `TXA-001…005`, `TPL-012`, `TPL-013`, `TPL-017` | Registre : 20/20 IDs Lot 2 synthétiques et détaillés ; `IPAD-L2-020` à ⚪ ; 16 étapes au format `ID`/`Description`/`Résultat attendu` ; aucune preuve Apple du texte extrapolée |

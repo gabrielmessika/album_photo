@@ -30,8 +30,9 @@ passe 146 tests Core, mais `IPAD-L2-020` échoue dès la compilation Apple. Le
 correctif `0f4b16c6c6435c29ca44da4e2726fac210add520` adopte une portée métier
 imbriquée et une contrainte par attribut modifiable. Il compile et lance l’app,
 mais `IPAD-L2-021` échoue sur l’ajout superposé, le fond de l’éditeur, la
-palette, l’échelle et l’opacité. Le correctif `À FIGER` introduit le panneau
-Texte et les formats dans l’inspecteur ; `IPAD-L2-022` reprend la qualification
+palette, l’échelle et l’opacité. Le correctif
+`7bc495ec623e5b12301569d0108fbccadb978630` introduit le panneau Texte et les
+formats dans l’inspecteur ; `IPAD-L2-022` reprend la qualification
 complète. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -89,7 +90,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage couvrant | `DEC-07`, section 3.1, `AUT-002`, `AUT-004`, `AUT-009…011`, `PHO-005`, `PHO-006`, `PHO-014`, `FRM-004`, `FRM-009`, `CRP-001`, `CRP-004…007`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `3944fae…`, retour global sans capture ni détail par étape |
 | `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation d’`AlbumTextEditorView` impossible sur `d882183…` |
 | `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation réussie, cinq défauts d’interface/rendu sur `0f4b16c…` |
-| `IPAD-L2-022` | Panneau Texte, palette, échelle et opacité | `EDT-001`, `EDT-002`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-001…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — correctif `À FIGER` |
+| `IPAD-L2-022` | Panneau Texte, palette, échelle et opacité | `EDT-001`, `EDT-002`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-001…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — correctif `7bc495e…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne

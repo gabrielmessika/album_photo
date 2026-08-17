@@ -32,7 +32,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat compact et cadrage testé | `3944fae199b2eb37c7b1f0a1aae5558197455b87` — bouton compact, dialogue Densité/compteur/Annuler/Valider et cadrage initial couvrant ; `IPAD-L2-019` réussi selon le retour global « tout est ok » |
 | Candidat zones de texte rejeté à la compilation | `d882183d31de7ed6078c70f9e79a80d6ba994dd6` — `IPAD-L2-020` échoue à l’étape 1 : les contraintes de formatage tentaient d’écrire des attributs autres que leur `AttributeKey` |
 | Correctif de compilation texte testé | `0f4b16c6c6435c29ca44da4e2726fac210add520` — compilation réussie indirectement, mais `IPAD-L2-021` échoue sur l’emplacement de l’ajout, le fond de l’éditeur, les pastilles couleur, l’échelle et l’opacité |
-| Correctif ergonomie et rendu texte à tester | `À FIGER` — panneau Texte, canevas dégagé, fond réel, palette colorée, aperçu à l’échelle et opacité immédiate ; `IPAD-L2-022` à exécuter |
+| Correctif ergonomie et rendu texte à tester | `7bc495ec623e5b12301569d0108fbccadb978630` — panneau Texte, canevas dégagé, fond réel, palette colorée, aperçu à l’échelle et opacité immédiate ; `IPAD-L2-022` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -3237,7 +3237,7 @@ leur candidat.
 
 ### `IPAD-L2-022` — Panneau Texte et rendu cohérent
 
-- Candidat : `À FIGER`.
+- Candidat : `7bc495ec623e5b12301569d0108fbccadb978630`.
 - Spécification : 3.0 modifiée conformément au retour utilisateur : nouveau
   panneau Texte entre Mise en page et Fonds, ajout hors canevas, contenu et
   formats dans l’inspecteur, palette colorée, fond réel et échelle du canevas

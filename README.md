@@ -101,7 +101,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   sépare police, couleur, alignement et interligne. Il compile et lance l’app,
   mais `IPAD-L2-021` relève cinq défauts : ajout superposé à la page, fond noir
   de l’éditeur, pastilles blanches, échelle différente et opacité non visible.
-  Le correctif suivant `À FIGER` ajoute un panneau Texte et les formats dans
+  Le correctif suivant `7bc495ec623e5b12301569d0108fbccadb978630` ajoute un panneau Texte et les formats dans
   l’inspecteur, reprend le fond et l’échelle du canevas et fournit une palette réellement colorée ;
   `IPAD-L2-022` doit le qualifier.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
