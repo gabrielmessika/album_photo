@@ -29,6 +29,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Second correctif de fenêtre testé | `7d8772c6d87a769a239b4f9eafabe74c8c126681` — `IPAD-L2-016` échoué : le bouton fige l’app sans afficher la confirmation |
 | Correctif de gel testé | `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` — dialogue interne centré, sur fond assombri et sans négociation de taille de feuille ; `IPAD-L2-017` réussi selon le retour global « c’est ok » |
 | Candidat Remplir l’album testé | `781539603d6b98523fe48326ee49e24288dfa09b` — trois densités, plan déterministe, confirmation chiffrée et commande unique ; `IPAD-L2-018` réussi selon le retour global « les tests sont ok » |
+| Candidat compact et cadrage à tester | `3944fae199b2eb37c7b1f0a1aae5558197455b87` — bouton compact, dialogue Densité/compteur/Annuler/Valider et cadrage initial couvrant ; `IPAD-L2-019` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -96,6 +97,11 @@ l’album et réussit selon le retour global « les tests sont ok » reçu aprè
 remise de cette seule fiche. Cette preuve ne contient ni capture ni observation
 par étape, ne couvre aucun contrôle `APPLE-*` et ne qualifie pas les changements
 de présentation et de cadrage demandés avec ce retour.
+La régression `IPAD-L2-019` vise exactement le candidat
+`3944fae199b2eb37c7b1f0a1aae5558197455b87`. Elle qualifie uniquement le
+bouton compact, son dialogue interne, le cadrage couvrant des nouvelles
+affectations et la conservation des cadrages déjà persistés ; elle ne modifie
+aucun verdict historique.
 
 ## Mode de réponse
 
@@ -337,6 +343,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-016` | Cadre lisible de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — le bouton fige l’app et aucune confirmation n’apparaît |
 | `IPAD-L2-017` | Dialogue interne sans gel pour l’ajout de page | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `3:AUT-009` à `3:AUT-012`, `3:FRM-009`, `3:TPL-005`, `3:UND-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage initial couvrant | `3:DEC-07`, section 3.1, `3:AUT-002`, `3:AUT-004`, `3:AUT-009` à `3:AUT-011`, `3:PHO-005`, `3:PHO-006`, `3:PHO-014`, `3:FRM-004`, `3:FRM-009`, `3:CRP-001`, `3:CRP-004` à `3:CRP-007`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -3051,6 +3058,52 @@ leur candidat.
   de texte standard ; portrait initial, paysage et VoiceOver à l’étape 10 ;
   Paris, France ; français (France). Aucun résultat iPhone, Xcode ou
   `APPLE-*` n’est extrapolé.
+
+## Régression de l’action compacte et du cadrage initial
+
+### `IPAD-L2-019` — Dialogue de densité et couverture des nouveaux placements
+
+- Candidat : `3944fae199b2eb37c7b1f0a1aae5558197455b87`.
+- Spécification : 3.0 incluse dans le candidat exact ; `DEC-07`, la section 3.1,
+  `AUT-009…011`, `FRM-004`, `FRM-009`, `CRP-001` et `CRP-005` portent la
+  nouvelle règle.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:DEC-07`, section 3.1,
+  `3:AUT-002`, `3:AUT-004`, `3:AUT-009` à `3:AUT-012`, `3:PHO-005`,
+  `3:PHO-006`, `3:PHO-012`, `3:PHO-014`, `3:FRM-004`, `3:FRM-009`,
+  `3:CRP-001`, `3:CRP-004` à `3:CRP-007`, `3:UND-001`, `3:SAV-001`,
+  `3:ACC-002`, `3:ACC-006`, `3:ACC-021` et `3:DONE-005`.
+- Préconditions : avant le transfert, conserver sous `7815396…` un album
+  « Test Cadrage » avec une occurrence `O` manuellement cadrée à `1×`, centrée
+  ou décentrée de manière reconnaissable, puis importer sans les placer les
+  fixtures `small-landscape-600x400.png` (`S`) et
+  `large-portrait-4800x6000.png` (`L`). Préparer aussi un album distinct
+  « Test Remplir compact » comme pour `018` : deux pages, `U` seule occurrence
+  sur la page 1, deux cadres vides et fond noir sur la page 2, puis dix photos
+  inutilisées `A…J` aux dates croissantes. Fermer proprement les deux albums,
+  transférer exactement le candidat et ne supprimer aucune donnée locale.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et ouvrir « Test Cadrage » en portrait. | La compilation et le lancement réussissent ; l’occurrence historique `O` conserve exactement son échelle, son point focal et le fond éventuellement visible : aucune migration de cadrage n’est appliquée à l’ouverture. |
+| 2 | Ouvrir « Test Remplir compact », afficher Photos et examiner la zone sous Ajouter des photos sans presser Remplir l’album. | Un seul bouton compact Remplir l’album apparaît directement sous Ajouter des photos ; aucun grand bloc permanent, sélecteur de densité ni compteur permanent ne réduit la grille. Le bouton est actif et identifiable avec `wand.and.stars`. |
+| 3 | Presser Remplir l’album et lire la fenêtre sans valider. | Un dialogue interne centré apparaît sans gel ; il affiche « 10 photos inutilisées », Densité avec Aérée (1–2), Équilibrée (3–4) et Dense (5–8), l’impact exact pour Équilibrée — 2 cadres vides retirés, 1 page réutilisée et 2 pages créées — puis Annuler et Valider entièrement visibles sans défilement. |
+| 4 | Dans la même fenêtre, choisir Aérée, puis Dense, puis revenir à Équilibrée et presser Annuler. | Chaque choix actualise immédiatement le plan sans fermer ni figer la fenêtre : Aérée annonce 4 pages créées et Dense 1 page créée, toujours avec 10 photos, 2 cadres retirés et 1 page réutilisée. Annuler ferme le dialogue sans modifier l’album. |
+| 5 | Rouvrir le dialogue en Équilibrée, presser Valider et parcourir les quatre pages. | La page 1 et `U` restent inchangés ; la page 2 garde son fond noir, remplace ses cadres vides par `A…D`, puis deux pages finales reçoivent `E…H` et `I…J`. Chaque nouvelle photo est centrée, non tournée et couvre entièrement son cadre final sans bande de fond dans le rectangle. |
+| 6 | Presser Annuler une fois, rouvrir le dialogue ; en portrait puis paysage, activer VoiceOver et parcourir titre, compteur, densité, impact et actions ; presser Annuler, puis Rétablir une fois. | Un Annuler restaure les deux pages et les dix photos inutilisées. Le dialogue reste lisible, centré, réactif et dans un ordre vocal cohérent dans les deux orientations. Annuler le dialogue ne change rien ; un seul Rétablir restaure les quatre pages remplies. |
+| 7 | Revenir dans « Test Cadrage », contrôler `O`, puis presser la miniature `S` sans cadre sélectionné. | `O` garde encore son cadrage historique. Un nouveau cadre libre est créé pour `S` et la photo 600 × 400 est agrandie, centrée et sans déformation pour couvrir entièrement le cadre ; son zoom initial est supérieur à `1×`. |
+| 8 | Recadrer `S`, descendre manuellement à `1×`, puis presser Réinitialiser et Terminé. | À `1×`, le fond devient visible autour de la petite photo sans correction automatique. Réinitialiser restaure le cadrage centré couvrant et un zoom supérieur à `1×` ; Terminé enregistre une seule commande annulable. |
+| 9 | Sans cadre sélectionné, presser la miniature `L`, puis ouvrir Recadrer et presser Réinitialiser. | Un nouveau cadre libre est créé ; la grande photo 4 800 × 6 000 est réduite à une valeur inférieure à `1×`, centrée et couvre le cadre sans déformation. Réinitialiser conserve ce facteur couvrant inférieur à `1×`, sans revenir arbitrairement à `1×`. |
+| 10 | Ajouter un cadre photo vide, le remplir avec `S`, puis choisir Remplacer et sélectionner `L`; presser ensuite Annuler une fois. | Remplir conserve le cadre et ses styles et cadre `S` pour le couvrir. Remplacer conserve la même géométrie et les mêmes styles et recalcule pour `L` une couverture centrée. Un Annuler restaure `S` avec son cadrage précédent en une seule action. |
+| 11 | Ajouter une page vide en confirmant si demandé, activer Auto, ajouter une occurrence de `S`, noter son cadrage, puis ajouter `L`. | La première occurrence couvre sa géométrie Auto finale. Après le second ajout, `L` couvre son propre cadre final ; `S` conserve exactement son échelle et son point focal malgré la recomposition, conformément à `CRP-007`, sans état intermédiaire visible ni cadre vide. |
+| 12 | Fermer proprement les deux albums, les rouvrir et revoir `O`, `S`, `L`, la page Auto et le résultat Équilibrée. | Les cadrages historiques et nouveaux, la page Auto, les quatre pages remplies, leurs fonds et leur ordre persistent. L’app reste réactive ; aucune photo importée n’a été supprimée et les anciens placements n’ont pas été réécrits. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner après retour utilisateur, en associant toute anomalie au
+  numéro de l’étape et, si possible, une capture du panneau compact, du dialogue
+  et des cadres `S`/`L` avant et après Réinitialiser.
+- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
+  Playgrounds 4.7 ; taille de texte standard ; portrait initial, paysage et
+  VoiceOver à l’étape 6 ; Paris, France ; français (France).
 
 ## Qualification différée Apple/macOS/Xcode
 

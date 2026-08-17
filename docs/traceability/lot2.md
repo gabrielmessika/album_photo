@@ -22,15 +22,16 @@ maintenant implémenté dans le Core, le service et le panneau Photos au commit
 l’iPad déclaré selon le retour global « les tests sont ok », sans capture ni
 détail par étape. Le retour demande ensuite une action compacte ouvrant le
 choix de densité et le compteur dans un dialogue, ainsi qu’un cadrage initial
-couvrant pour toute nouvelle affectation ; ces surfaces nécessitent une nouvelle
-régression. La source normative reste
+couvrant pour toute nouvelle affectation. L’adaptation est figée dans
+`3944fae199b2eb37c7b1f0a1aae5558197455b87`, passe 139 tests Core et doit être
+qualifiée par `IPAD-L2-019`. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
 Elle ne déclare pas `ACPT-125` réussi : Remplir l’album est qualifié sur l’iPad
-déclaré dans sa version `7815396…`, mais la nouvelle présentation et les autres
-sorties du lot restent à valider ; `IPAD-L2-008` reste bloqué pour la seule
+déclaré dans sa version `7815396…`, mais `IPAD-L2-019` et les autres sorties du
+lot restent à valider ; `IPAD-L2-008` reste bloqué pour la seule
 largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`. Les zones de texte éditables, stickers, cadres décoratifs et
@@ -75,6 +76,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-016` | Cadre lisible de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — app figée, aucune confirmation affichée |
 | `IPAD-L2-017` | Dialogue interne sans gel | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `AUT-009…012`, `FRM-009`, `TPL-005`, `UND-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `7815396…`, retour global sans capture ni détail par étape |
+| `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage couvrant | `DEC-07`, section 3.1, `AUT-002`, `AUT-004`, `AUT-009…011`, `PHO-005`, `PHO-006`, `PHO-014`, `FRM-004`, `FRM-009`, `CRP-001`, `CRP-004…007`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `3944fae…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -108,9 +110,9 @@ suppression du formulaire défilant et de la hauteur fixe.
 - Les variantes avec un slot texte sont listées pour vérifier le catalogue,
   mais désactivées jusqu’à l’intégration de `TBX-004` et `TPL-012`.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
-  `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant
-  restent à qualifier, et `ACPT-125` demeure incomplet jusqu’aux autres sorties
-  et qualifications Apple applicables.
+  `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
+  `3944fae…` restent à qualifier sous `IPAD-L2-019`, et `ACPT-125` demeure
+  incomplet jusqu’aux autres sorties et qualifications Apple applicables.
 - Aucun sticker ni cadre décoratif n’est persisté avant le gel des assets,
   licences et goldens exigé par `CAT-009`.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste

@@ -87,7 +87,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   et les actions Annuler/Valider passent dans un dialogue interne. Il change
   aussi la règle de placement initial : une nouvelle photo est centrée au plus
   petit zoom uniforme couvrant le cadre, qu’il faille l’agrandir ou la réduire ;
-  les cadrages déjà persistés ne sont pas migrés.
+  les cadrages déjà persistés ne sont pas migrés. Cette adaptation est figée
+  dans `3944fae199b2eb37c7b1f0a1aae5558197455b87` et doit être qualifiée sous
+  `IPAD-L2-019`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -116,8 +118,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   l’analyse syntaxique WSL ; `IPAD-L2-018` est 🟢 `RÉUSSI` sur `7815396…`
   d’après le retour global « les tests sont ok ». La nouvelle présentation
   compacte et la nouvelle règle de cadrage disposent de tests Core/contrat UI
-  mis à jour, mais leur compilation, rendu et comportement Apple doivent être
-  qualifiés sous une nouvelle fiche.
+  mis à jour sur `3944fae…`, mais leur compilation, rendu et comportement Apple
+  restent ⚪ `NON TESTÉ` sous `IPAD-L2-019`.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
