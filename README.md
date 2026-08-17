@@ -71,11 +71,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   la présentation native en largeur compacte. Elle est figée dans
   `7d8772c6d87a769a239b4f9eafabe74c8c126681`, mais `IPAD-L2-016` échoue :
   presser le bouton fige l’app sans afficher la confirmation. Le correctif
-  courant retire donc cette feuille système et affiche un dialogue interne
+  suivant retire donc cette feuille système et affiche un dialogue interne
   centré, de 400 points maximum avec 16 points de marge latérale, au-dessus de
   l’éditeur assombri et bloqué. Ce correctif est figé dans
-  `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et doit être testé sous
-  `IPAD-L2-017`.
+  `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et `IPAD-L2-017` est réussi sur
+  l’iPad déclaré. L’incrément courant expose désormais Remplir l’album dans
+  Photos : choix Aérée, Équilibrée ou Dense, plan déterministe des photos
+  inutilisées, confirmation chiffrée, réutilisation des premières pages sans
+  photo, création du complément en fin d’album et commande atomique
+  Annuler/Rétablir. Il reste à figer puis à qualifier sur iPad.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -83,10 +87,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   locales restent intactes mais sont ignorées, sans lecture, import ni
   migration. Les panneaux publics sont maintenant `Photos`, `Mise en page` et
   `Fonds`. Les variantes avec texte restent visibles mais désactivées jusqu’à
-  l’éditeur de texte ; Remplir l’album, stickers, cadres décoratifs et
-  presse-papiers multi-types restent à livrer au Lot 2. Lecture, diaporama,
+  l’éditeur de texte ; stickers, cadres décoratifs et presse-papiers
+  multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
-- Validation actuelle : 134 tests du noyau multiplateforme, les contrats et la
+- Validation actuelle : 137 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
@@ -98,8 +102,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   🔴 `ÉCHOUÉ` sur `8aa7f56…`. `IPAD-L2-016` est également 🔴 `ÉCHOUÉ` sur
   `7d8772c…`, car l’app se fige avant d’afficher la fenêtre. Le dialogue
   interne qui supprime ce chemin de présentation passe 134 tests et l’analyse
-  syntaxique sous WSL ; son rendu Apple reste ⚪ `NON TESTÉ` sous
-  `IPAD-L2-017` sur `57afa71…`.
+  syntaxique sous WSL ; `IPAD-L2-017` est désormais 🟢 `RÉUSSI` sur
+  `57afa71…`, d’après le retour global « c’est ok » sans capture ni détail par
+  étape. Remplir l’album porte la suite à 137 tests Core et passe l’analyse
+  syntaxique WSL ; sa compilation, son rendu et son comportement Apple restent
+  à qualifier après gel du candidat.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,

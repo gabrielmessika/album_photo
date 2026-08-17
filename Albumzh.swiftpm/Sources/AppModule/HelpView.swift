@@ -26,7 +26,7 @@ struct HelpView: View {
             HelpSection(
                 title: "Ajouter des photos",
                 symbol: "photo.badge.plus",
-                text: "Le panneau Photos importe plusieurs images depuis Photothèque ou Fichiers. Vous pouvez aussi réutiliser les photos d’un autre album. Touchez une miniature pour remplir le cadre sélectionné ou créer un nouveau cadre."
+                text: "Le panneau Photos importe plusieurs images depuis Photothèque ou Fichiers. Vous pouvez aussi réutiliser les photos d’un autre album. Touchez une miniature pour remplir le cadre sélectionné ou créer un nouveau cadre. Remplir l’album répartit toutes les photos encore inutilisées selon la densité choisie après une confirmation détaillée."
             ),
             HelpSection(
                 title: "Cadre vide",
@@ -106,7 +106,7 @@ private struct HelpSection: Identifiable {
             return HelpSection(
                 title: "Panneau Photos",
                 symbol: "photo.on.rectangle",
-                text: "Importez d’abord les originaux dans la photothèque interne de l’album, puis placez chaque occurrence librement dans la page."
+                text: "Importez d’abord les originaux dans la photothèque interne de l’album, puis placez chaque occurrence librement ou utilisez Remplir l’album pour les répartir automatiquement sans supprimer les originaux."
             )
         case .layouts:
             return HelpSection(

@@ -256,6 +256,18 @@ private struct AlbumEditorScene: View {
                 }
             )
         }
+        .alert(item: $model.albumFillConfirmation) { plan in
+            Alert(
+                title: Text("Remplir l’album ?"),
+                message: Text(model.albumFillConfirmationMessage(plan)),
+                primaryButton: .default(Text("Remplir")) {
+                    Task { await model.confirmAlbumFill(plan) }
+                },
+                secondaryButton: .cancel(Text("Annuler")) {
+                    model.cancelAlbumFill()
+                }
+            )
+        }
         .alert(
             "Activer la mise en page auto ?",
             isPresented: $model.showsAutomaticLayoutConfirmation

@@ -667,6 +667,80 @@ final class AlbumApplicationServiceTests: XCTestCase {
         XCTAssertEqual(withoutText.pages[0].layout.photoMode, .automatic)
     }
 
+    // 3:AUT-009...3:AUT-012, 3:FRM-009, 3:TPL-005, 3:UND-001
+    func testFillAlbumIsOneConfirmedUndoableCommandWithoutRemovingAssets() async throws {
+        let service = TestFixtures.service()
+        var album = try await service.createAlbum(named: "Remplissage")
+        let assetIDs = (1...6).map { _ in UUID() }
+        let metadata = assetIDs.enumerated().map { index, assetID in
+            let data = TestFixtures.data("album-fill-\(index)")
+            return (
+                TestFixtures.metadata(
+                    id: assetID,
+                    data: data,
+                    importedAt: TestFixtures.date.addingTimeInterval(Double(index)),
+                    capturedAt: nil
+                ),
+                data
+            )
+        }
+        album = try await service.registerPhotos(metadata.map {
+            PhotoRegistration(metadata: $0.0, blob: TestFixtures.blob(data: $0.1))
+        }, in: album.id)
+        album = try await service.addPhotoFrame(
+            to: album.pages[0].id,
+            in: album.id,
+            assetID: assetIDs[0]
+        )
+        let reusablePageID = UUID()
+        album = try await service.addPage(to: album.id, pageID: reusablePageID)
+        album = try await service.setBackground(.solid(.black), on: reusablePageID, in: album.id)
+        album = try await service.addPhotoFrame(
+            to: reusablePageID,
+            in: album.id,
+            elementID: UUID()
+        )
+        album = try await service.addPhotoFrame(
+            to: reusablePageID,
+            in: album.id,
+            elementID: UUID()
+        )
+        let beforeFill = album
+
+        let requestedPlan = try await service.planAlbumFill(
+            in: album.id,
+            density: .balanced
+        )
+        let plan = try XCTUnwrap(requestedPlan)
+        XCTAssertEqual(plan.photoCount, 5)
+        XCTAssertEqual(plan.photoGroups.map(\.count), [4, 1])
+        XCTAssertEqual(plan.emptyPhotoFrameCount, 2)
+        XCTAssertEqual(plan.reusedPageCount, 1)
+        XCTAssertEqual(plan.createdPageCount, 1)
+
+        let filled = try await service.fillAlbum(using: plan)
+        XCTAssertEqual(filled.pages.count, 3)
+        XCTAssertEqual(filled.pages[0], beforeFill.pages[0])
+        XCTAssertEqual(filled.pages[1].background, .solid(.black))
+        XCTAssertEqual(
+            filled.pages[1].elements.compactMap { $0.photoFrame?.content?.assetID },
+            Array(assetIDs[1...4])
+        )
+        XCTAssertEqual(
+            filled.pages[2].elements.compactMap { $0.photoFrame?.content?.assetID },
+            [assetIDs[5]]
+        )
+        XCTAssertEqual(filled.photoAssetIDs, beforeFill.photoAssetIDs)
+        let remainingPlan = try await service.planAlbumFill(in: album.id, density: .dense)
+        XCTAssertNil(remainingPlan)
+
+        let undone = try await service.undo(albumID: album.id)
+        XCTAssertEqual(undone.pages, beforeFill.pages)
+        XCTAssertEqual(undone.photoAssetIDs, beforeFill.photoAssetIDs)
+        let redone = try await service.redo(albumID: album.id)
+        XCTAssertEqual(redone.pages, filled.pages)
+    }
+
     // 3:DAT-017, 3:LOC-008, 3:UND-010
     func testBlobLedgerRetainsUndoAndClipboardReferencesAfterLogicalRemoval() async throws {
         let service = TestFixtures.service()

@@ -151,6 +151,46 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertFalse(service.contains("after activePageID"))
     }
 
+    // 3:AUT-009...3:AUT-011, 3:EDT-001, 3:EDT-020
+    func testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity() throws {
+        let appModule = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
+        let core = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AlbumPhotoCore", isDirectory: true)
+        let photosPanel = try String(
+            contentsOf: appModule.appendingPathComponent("PhotosPanelView.swift"),
+            encoding: .utf8
+        )
+        let editor = try String(
+            contentsOf: appModule.appendingPathComponent("AlbumEditorView.swift"),
+            encoding: .utf8
+        )
+        let viewModel = try String(
+            contentsOf: appModule.appendingPathComponent("EditorViewModel.swift"),
+            encoding: .utf8
+        )
+        let service = try String(
+            contentsOf: core.appendingPathComponent("AlbumApplicationService.swift"),
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(photosPanel.contains("Button(\"Remplir l’album\", systemImage: \"wand.and.stars\")"))
+        XCTAssertTrue(photosPanel.contains("Text(\"Aérée (1–2)\")"))
+        XCTAssertTrue(photosPanel.contains("Text(\"Équilibrée (3–4)\")"))
+        XCTAssertTrue(photosPanel.contains("Text(\"Dense (5–8)\")"))
+        XCTAssertTrue(photosPanel.contains("Task { await model.requestAlbumFill(albumFillDensity) }"))
+        XCTAssertTrue(photosPanel.contains(".disabled(!model.canFillAlbum)"))
+        XCTAssertTrue(editor.contains(".alert(item: $model.albumFillConfirmation)"))
+        XCTAssertTrue(editor.contains("Task { await model.confirmAlbumFill(plan) }"))
+        XCTAssertTrue(viewModel.contains("albumFillConfirmationMessage"))
+        XCTAssertTrue(viewModel.contains("plan.emptyPhotoFrameCount"))
+        XCTAssertTrue(viewModel.contains("plan.reusedPageCount"))
+        XCTAssertTrue(viewModel.contains("plan.createdPageCount"))
+        XCTAssertTrue(service.contains("public func planAlbumFill("))
+        XCTAssertTrue(service.contains("public func fillAlbum("))
+        XCTAssertTrue(service.contains("label: \"Remplir l’album\""))
+    }
+
     // Lot 0, 3:PKG-003, 3:PKG-005...3:PKG-007
     func testPhotoAlbumSchemaAndExamplesAreValidJSONAndChecksumsAreLowercaseSHA256() throws {
         let docs = repositoryRoot.appendingPathComponent("docs", isDirectory: true)

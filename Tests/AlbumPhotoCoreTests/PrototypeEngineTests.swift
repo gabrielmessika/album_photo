@@ -326,6 +326,133 @@ final class PrototypeEngineTests: XCTestCase {
         XCTAssertNil(recomposed.layout.templateID)
     }
 
+    // 3:AUT-009, 3:AUT-010, 3:AUT-012, 3:FRM-009, 3:TPL-005
+    func testAlbumFillPlansStableGroupsReusesEmptyPagesAndCreatesTheRemainder() throws {
+        let usedID = UUID(uuidString: "00000000-0000-4000-8000-000000000001")!
+        let tieHighID = UUID(uuidString: "F0000000-0000-4000-8000-000000000002")!
+        let tieLowID = UUID(uuidString: "10000000-0000-4000-8000-000000000003")!
+        let earlyID = UUID(uuidString: "20000000-0000-4000-8000-000000000004")!
+        let laterID = UUID(uuidString: "30000000-0000-4000-8000-000000000005")!
+        let lastID = UUID(uuidString: "40000000-0000-4000-8000-000000000006")!
+        let occupiedPageID = UUID(), reusablePageID = UUID()
+        let occupiedFrameID = UUID(), firstEmptyID = UUID(), secondEmptyID = UUID()
+        let baseDate = Date(timeIntervalSince1970: 10_000)
+
+        let metadata = [
+            TestFixtures.metadata(id: usedID, importedAt: baseDate),
+            TestFixtures.metadata(
+                id: tieHighID,
+                importedAt: baseDate.addingTimeInterval(20),
+                capturedAt: baseDate.addingTimeInterval(2)
+            ),
+            TestFixtures.metadata(
+                id: tieLowID,
+                importedAt: baseDate.addingTimeInterval(30),
+                capturedAt: baseDate.addingTimeInterval(2)
+            ),
+            TestFixtures.metadata(
+                id: earlyID,
+                importedAt: baseDate.addingTimeInterval(1),
+                capturedAt: nil
+            ),
+            TestFixtures.metadata(
+                id: laterID,
+                importedAt: baseDate.addingTimeInterval(40),
+                capturedAt: baseDate.addingTimeInterval(3)
+            ),
+            TestFixtures.metadata(
+                id: lastID,
+                importedAt: baseDate.addingTimeInterval(50),
+                capturedAt: baseDate.addingTimeInterval(4)
+            )
+        ]
+        let metadataByID = Dictionary(uniqueKeysWithValues: metadata.map { ($0.id, $0) })
+        var album = AlbumSnapshot(id: UUID(), name: "Remplissage", firstPageID: occupiedPageID)
+        album.photoAssetIDs = [usedID, tieHighID, tieLowID, earlyID, laterID, lastID]
+        album.pages[0] = PageSnapshot(
+            id: occupiedPageID,
+            elements: [.photo(PhotoFrameElement(
+                id: occupiedFrameID,
+                content: PhotoPlacement(assetID: usedID)
+            ))],
+            accessibilityOrder: [occupiedFrameID]
+        )
+        album.pages.append(PageSnapshot(
+            id: reusablePageID,
+            background: .solid(.black),
+            elements: [
+                .photo(PhotoFrameElement(
+                    id: firstEmptyID,
+                    geometry: ElementGeometry(order: 2_048)
+                )),
+                .photo(PhotoFrameElement(
+                    id: secondEmptyID,
+                    geometry: ElementGeometry(order: 1_024)
+                ))
+            ],
+            accessibilityOrder: [firstEmptyID, secondEmptyID]
+        ))
+
+        let plan = try XCTUnwrap(AlbumFillEngine.plan(
+            album: album,
+            metadataByAssetID: metadataByID,
+            density: .balanced
+        ))
+        XCTAssertEqual(plan.photoGroups, [
+            [earlyID, tieHighID, tieLowID, laterID],
+            [lastID]
+        ])
+        XCTAssertEqual(plan.reusablePageIDs, [reusablePageID])
+        XCTAssertEqual(plan.emptyPhotoFrameCount, 2)
+        XCTAssertEqual(plan.createdPageCount, 1)
+        XCTAssertEqual(try AlbumFillEngine.plan(
+            album: album,
+            metadataByAssetID: metadataByID,
+            density: .airy
+        )?.photoGroups.map(\.count), [2, 2, 1])
+        XCTAssertEqual(try AlbumFillEngine.plan(
+            album: album,
+            metadataByAssetID: metadataByID,
+            density: .dense
+        )?.photoGroups.map(\.count), [5])
+
+        let createdPageID = UUID()
+        var createdElementIDs = (0..<5).map { _ in UUID() }
+        let filled = try AlbumFillEngine.apply(
+            plan,
+            to: album,
+            metadataByAssetID: metadataByID,
+            templates: BuiltInLayoutTemplateCatalog.active,
+            makePageID: { createdPageID },
+            makeElementID: { createdElementIDs.removeFirst() }
+        )
+        XCTAssertEqual(filled.pages.count, 3)
+        XCTAssertEqual(filled.pages[0], album.pages[0])
+        XCTAssertEqual(filled.pages[1].background, .solid(.black))
+        XCTAssertEqual(filled.pages[2].id, createdPageID)
+        XCTAssertEqual(filled.pages[2].background, .classicSpiral)
+        XCTAssertEqual(
+            filled.pages[1].elements.compactMap { $0.photoFrame?.content?.assetID },
+            plan.photoGroups[0]
+        )
+        XCTAssertEqual(
+            filled.pages[2].elements.compactMap { $0.photoFrame?.content?.assetID },
+            plan.photoGroups[1]
+        )
+        for page in filled.pages.dropFirst() {
+            XCTAssertTrue(page.layout.isAutoLayoutEnabled)
+            XCTAssertEqual(page.layout.photoMode, .automatic)
+            XCTAssertEqual(page.layout.density, .balanced)
+            XCTAssertNil(page.layout.templateID)
+            XCTAssertTrue(page.elements.compactMap(\.photoFrame).allSatisfy {
+                $0.content?.nativeScale == 1
+                    && $0.content?.focalX == 0.5
+                    && $0.content?.focalY == 0.5
+                    && $0.sourceTemplateSlotID == nil
+            })
+        }
+    }
+
     // 3:NAV-004...3:NAV-007, 3:ANI-002...3:ANI-008
     func testPageTurnThresholdVelocityDirectionBoundsAndSingleTransition() {
         var state = PageTurnStateMachine()

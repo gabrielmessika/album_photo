@@ -33,6 +33,8 @@ enum TestFixtures {
         width: Int = 2_400,
         height: Int = 1_800,
         source: PhotoSource = .files,
+        importedAt: Date = date,
+        capturedAt: Date? = date.addingTimeInterval(-100),
         displayDerivative: PhotoDisplayDerivative? = nil
     ) -> PhotoAssetMetadata {
         PhotoAssetMetadata(
@@ -45,8 +47,8 @@ enum TestFixtures {
             byteCount: Int64(data.count),
             colorSpaceName: "sRGB",
             source: source,
-            importedAt: date,
-            capturedAt: date.addingTimeInterval(-100),
+            importedAt: importedAt,
+            capturedAt: capturedAt,
             displayDerivative: displayDerivative
         )
     }

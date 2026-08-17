@@ -528,6 +528,201 @@ public enum AutoLayoutEngine {
 
 }
 
+public struct AlbumFillPlan: Sendable, Equatable, Identifiable {
+    public let albumID: UUID
+    public let density: AutoLayoutDensity
+    public let photoGroups: [[UUID]]
+    public let reusablePageIDs: [UUID]
+    public let emptyPhotoFrameCount: Int
+
+    public var id: UUID { albumID }
+    public var photoCount: Int { photoGroups.reduce(0) { $0 + $1.count } }
+    public var reusedPageCount: Int { reusablePageIDs.count }
+    public var createdPageCount: Int { photoGroups.count - reusablePageIDs.count }
+
+    public init(
+        albumID: UUID,
+        density: AutoLayoutDensity,
+        photoGroups: [[UUID]],
+        reusablePageIDs: [UUID],
+        emptyPhotoFrameCount: Int
+    ) {
+        self.albumID = albumID
+        self.density = density
+        self.photoGroups = photoGroups
+        self.reusablePageIDs = reusablePageIDs
+        self.emptyPhotoFrameCount = emptyPhotoFrameCount
+    }
+}
+
+public enum AlbumFillEngine {
+    public static func plan(
+        album: AlbumSnapshot,
+        metadataByAssetID: [UUID: PhotoAssetMetadata],
+        density: AutoLayoutDensity
+    ) throws -> AlbumFillPlan? {
+        let albumIndexByAssetID = Dictionary(uniqueKeysWithValues:
+            album.photoAssetIDs.enumerated().map { ($0.element, $0.offset) }
+        )
+        let usedAssetIDs = Set(album.pages.flatMap { page in
+            page.elements.compactMap { $0.photoFrame?.content?.assetID }
+        })
+        let unusedPhotoIDs = try album.photoAssetIDs
+            .filter { !usedAssetIDs.contains($0) }
+            .map { assetID -> (id: UUID, metadata: PhotoAssetMetadata, index: Int) in
+                guard let metadata = metadataByAssetID[assetID],
+                      let index = albumIndexByAssetID[assetID] else {
+                    throw DomainValidationError.assetNotFound(assetID)
+                }
+                return (assetID, metadata, index)
+            }
+            .sorted { lhs, rhs in
+                let lhsDate = lhs.metadata.capturedAt ?? lhs.metadata.importedAt
+                let rhsDate = rhs.metadata.capturedAt ?? rhs.metadata.importedAt
+                if lhsDate != rhsDate { return lhsDate < rhsDate }
+                if lhs.index != rhs.index { return lhs.index < rhs.index }
+                return uuidBytes(lhs.id).lexicographicallyPrecedes(uuidBytes(rhs.id))
+            }
+            .map(\.id)
+        guard !unusedPhotoIDs.isEmpty else { return nil }
+
+        let capacity = albumFillCapacity(for: density)
+        let groups = stride(from: 0, to: unusedPhotoIDs.count, by: capacity).map {
+            Array(unusedPhotoIDs[$0..<min($0 + capacity, unusedPhotoIDs.count)])
+        }
+        let reusablePages = album.pages.filter { page in
+            page.elements.compactMap(\.photoFrame).allSatisfy { $0.content == nil }
+        }.prefix(groups.count)
+        let reusablePageIDs = reusablePages.map(\.id)
+        let emptyPhotoFrameCount = reusablePages.reduce(0) { count, page in
+            count + page.elements.compactMap(\.photoFrame).filter { $0.content == nil }.count
+        }
+        return AlbumFillPlan(
+            albumID: album.id,
+            density: density,
+            photoGroups: groups,
+            reusablePageIDs: reusablePageIDs,
+            emptyPhotoFrameCount: emptyPhotoFrameCount
+        )
+    }
+
+    public static func apply(
+        _ plan: AlbumFillPlan,
+        to original: AlbumSnapshot,
+        metadataByAssetID: [UUID: PhotoAssetMetadata],
+        templates: [LayoutTemplateDefinition] = [],
+        makePageID: () -> UUID = UUID.init,
+        makeElementID: () -> UUID = UUID.init
+    ) throws -> AlbumSnapshot {
+        guard plan.albumID == original.id,
+              let current = try self.plan(
+                album: original,
+                metadataByAssetID: metadataByAssetID,
+                density: plan.density
+              ),
+              current == plan else {
+            throw DomainValidationError.invalidLayoutState
+        }
+
+        var album = original
+        for (groupIndex, photoIDs) in plan.photoGroups.enumerated() {
+            let pageIndex: Int
+            if groupIndex < plan.reusablePageIDs.count {
+                guard let existingIndex = album.pages.firstIndex(where: {
+                    $0.id == plan.reusablePageIDs[groupIndex]
+                }) else {
+                    throw DomainValidationError.invalidLayoutState
+                }
+                pageIndex = existingIndex
+            } else {
+                album.pages.append(PageSnapshot(id: makePageID()))
+                pageIndex = album.pages.count - 1
+            }
+
+            var page = album.pages[pageIndex]
+            let emptyFrameIDs = baseOrderedEmptyPhotoFrameIDs(in: page).reversed()
+            for frameID in emptyFrameIDs {
+                page.elements.removeAll { $0.id == frameID }
+                page.accessibilityOrder.removeAll { $0 == frameID }
+            }
+            for elementIndex in page.elements.indices {
+                guard var text = page.elements[elementIndex].textBox else { continue }
+                text.sourceTemplateSlotID = nil
+                page.elements[elementIndex] = .text(text)
+            }
+
+            page.layout = PageLayoutState(
+                isAutoLayoutEnabled: true,
+                photoMode: .automatic,
+                density: plan.density
+            )
+            var order = (page.elements.map { $0.geometry.order }.max() ?? 0)
+                + AlbumPhotoConstants.elementOrderStep
+            for assetID in photoIDs {
+                guard metadataByAssetID[assetID] != nil else {
+                    throw DomainValidationError.assetNotFound(assetID)
+                }
+                let elementID = makeElementID()
+                page.elements.append(.photo(PhotoFrameElement(
+                    id: elementID,
+                    geometry: ElementGeometry(order: order),
+                    content: PhotoPlacement(assetID: assetID)
+                )))
+                page.accessibilityOrder.append(elementID)
+                order += AlbumPhotoConstants.elementOrderStep
+            }
+            album.pages[pageIndex] = try AutoLayoutEngine.recompose(
+                page: page,
+                metadataByAssetID: metadataByAssetID,
+                templates: templates
+            )
+        }
+
+        let validAssetIDs = Set(album.photoAssetIDs)
+        for page in album.pages {
+            try DomainValidator.validate(page, validAssetIDs: validAssetIDs)
+        }
+        return album
+    }
+
+    private static func albumFillCapacity(for density: AutoLayoutDensity) -> Int {
+        switch density {
+        case .airy: 2
+        case .balanced: 4
+        case .dense: 8
+        }
+    }
+
+    private static func baseOrderedEmptyPhotoFrameIDs(in page: PageSnapshot) -> [UUID] {
+        let accessibilityIndex = Dictionary(uniqueKeysWithValues:
+            page.accessibilityOrder.enumerated().map { ($0.element, $0.offset) }
+        )
+        return page.elements.compactMap(\.photoFrame)
+            .filter { $0.content == nil }
+            .sorted { lhs, rhs in
+                switch (accessibilityIndex[lhs.id], accessibilityIndex[rhs.id]) {
+                case let (.some(lhsIndex), .some(rhsIndex)) where lhsIndex != rhsIndex:
+                    return lhsIndex < rhsIndex
+                case (.some, .none):
+                    return true
+                case (.none, .some):
+                    return false
+                default:
+                    if lhs.geometry.order != rhs.geometry.order {
+                        return lhs.geometry.order < rhs.geometry.order
+                    }
+                    return uuidBytes(lhs.id).lexicographicallyPrecedes(uuidBytes(rhs.id))
+                }
+            }
+            .map(\.id)
+    }
+
+    private static func uuidBytes(_ value: UUID) -> [UInt8] {
+        var bytes = value.uuid
+        return withUnsafeBytes(of: &bytes) { Array($0) }
+    }
+}
+
 public enum TextPrototypeEngine {
     public static func appending(
         _ text: String,

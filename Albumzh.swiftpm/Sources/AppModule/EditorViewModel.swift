@@ -276,6 +276,7 @@ final class EditorViewModel: ObservableObject {
     @Published var helpContext: HelpContext?
     @Published private(set) var photoChoiceMode: PhotoChoiceMode?
     @Published var layoutTemplateConfirmation: LayoutTemplateConfirmationRequest?
+    @Published var albumFillConfirmation: AlbumFillPlan?
     @Published var showsAutomaticLayoutConfirmation = false
     @Published var showsAutomaticLayoutDisabledNotice = false
     @Published var skipsPageAdditionConfirmation = false
@@ -372,6 +373,18 @@ final class EditorViewModel: ObservableObject {
     var visiblePhotos: [PhotoAssetMetadata] {
         guard hidesUsedPhotos else { return photos }
         return photos.filter { occurrenceCount(of: $0.id) == 0 }
+    }
+
+    var unusedPhotoCount: Int {
+        photos.filter { occurrenceCount(of: $0.id) == 0 }.count
+    }
+
+    var canFillAlbum: Bool {
+        !isReadOnly
+            && saveState != .saving
+            && !isImportTaskRunning
+            && importProgress == nil
+            && unusedPhotoCount > 0
     }
 
     var otherActiveAlbums: [AlbumSnapshot] {
@@ -942,6 +955,58 @@ final class EditorViewModel: ObservableObject {
         showsAutomaticLayoutConfirmation = false
     }
 
+    func requestAlbumFill(_ density: AutoLayoutDensity) async {
+        guard canFillAlbum, await beginBusinessOperation() else { return }
+        defer { endBusinessOperation() }
+        do {
+            albumFillConfirmation = try await service.planAlbumFill(
+                in: albumID,
+                density: density
+            )
+        } catch {
+            present(error, fallback: "Impossible de préparer le remplissage de l’album.")
+        }
+    }
+
+    func cancelAlbumFill() {
+        albumFillConfirmation = nil
+    }
+
+    func confirmAlbumFill(_ plan: AlbumFillPlan) async {
+        albumFillConfirmation = nil
+        let previousPageCount = album?.pages.count ?? 0
+        layoutShuffleBag.reset()
+        let succeeded = await mutate("Impossible de remplir l’album.") {
+            try await self.service.fillAlbum(using: plan)
+        }
+        guard succeeded, let album else { return }
+        if let reusedPageID = plan.reusablePageIDs.first {
+            showPage(reusedPageID)
+        } else if album.pages.indices.contains(previousPageCount) {
+            showPage(album.pages[previousPageCount].id)
+        }
+    }
+
+    func albumFillConfirmationMessage(_ plan: AlbumFillPlan) -> String {
+        let photos = countedLabel(plan.photoCount, singular: "photo", plural: "photos")
+        let frames = countedLabel(
+            plan.emptyPhotoFrameCount,
+            singular: "cadre vide retiré",
+            plural: "cadres vides retirés"
+        )
+        let reused = countedLabel(
+            plan.reusedPageCount,
+            singular: "page existante réutilisée",
+            plural: "pages existantes réutilisées"
+        )
+        let created = countedLabel(
+            plan.createdPageCount,
+            singular: "page créée",
+            plural: "pages créées"
+        )
+        return "\(photos) seront réparties.\n\(frames), \(reused), \(created). Les photos importées seront conservées."
+    }
+
     func setAutoLayoutDensity(_ density: AutoLayoutDensity) async {
         guard let pageID = activePageID else { return }
         layoutShuffleBag.reset()
@@ -990,6 +1055,10 @@ final class EditorViewModel: ObservableObject {
                 confirmsReplacement: confirmsReplacement
             )
         }
+    }
+
+    private func countedLabel(_ count: Int, singular: String, plural: String) -> String {
+        "\(count) \(count == 1 ? singular : plural)"
     }
 
     func renameAlbum(to name: String) async {

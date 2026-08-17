@@ -13,16 +13,19 @@ dans `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640`, mais `IPAD-L2-015` échoue :
 la fenêtre est minuscule et illisible. La seconde correction, à cadre iPad
 explicite et présentation compacte native, est figée dans
 `7d8772c6d87a769a239b4f9eafabe74c8c126681`, mais `IPAD-L2-016` échoue :
-l’app se fige et la confirmation ne s’affiche pas. Le correctif courant retire
+l’app se fige et la confirmation ne s’affiche pas. Le correctif suivant retire
 la feuille système au profit d’un dialogue interne centré et bloquant. Il est
-figé dans `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et sera vérifié par
-`IPAD-L2-017`. La source normative reste
+figé dans `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et `IPAD-L2-017` réussit
+selon le retour global « c’est ok ». Remplir l’album (`AUT-009…011`) est
+maintenant implémenté dans le Core, le service et le panneau Photos ; son
+candidat exact et sa preuve iPad restent à figer. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
-Elle ne déclare pas `ACPT-125` réussi : Remplir l’album (`AUT-009…011`) manque,
-et `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
+Elle ne déclare pas `ACPT-125` réussi : Remplir l’album est couvert sous WSL
+mais pas encore qualifié sur Apple, et `IPAD-L2-008` reste bloqué pour la seule
+largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`. Les zones de texte éditables, stickers, cadres décoratifs et
 presse-papiers multi-types appartiennent aux incréments suivants.
@@ -34,13 +37,12 @@ presse-papiers multi-types appartiennent aux incréments suivants.
 | `A-L2-MANIFEST` | `BuiltInLayoutTemplateCatalog.generated.swift`, `ManifestContractTests.testPublishedTemplateManifestHashAndFourVariantsForOneThroughEightPhotos`, `tools/generate_layout_template_catalog.pl` | `TPL-002`, `TPL-003`, `TPL-019`, `TPL-020` | Identité byte à byte et décodage Core ; pas chargement dans Swift Playgrounds |
 | `A-L2-PROVENANCE` | `DomainValidator.validateTemplateProvenance`, `DomainValidationTests.testTemplateProvenanceResolvesManifestAndRequiresExactPhotoSlotBijection` | `TPL-022`, `TPL-023`, `DAT-040`, `DAT-042` | Validation de snapshot uniquement ; pas rendu Apple |
 | `A-L2-TEMPLATE` | `LayoutTemplateEngine`, cinq tests de `PrototypeEngineTests`, `AlbumApplicationServiceTests.testApplyingBuiltInTemplateIsOneValidatedUndoableCommand`, `testSmallerBuiltInTemplateRequiresConfirmationWithoutPartialCommit`, `testMovingTemplateTextOnlyFreesThatTextProvenance` | `TPL-004…018`, `TPL-021…023`, `RND-002…006` | Transition pure et transaction mémoire ; dialogue, miniatures et toucher restent manuels |
-| `A-L2-AUTO` | `AutoLayoutEngine`, `AlbumApplicationService.setAutomaticLayoutEnabled`, commandes structurelles Auto et tests `testAutomaticLayoutRecomposesStructuralPhotoCommandsAndIsUndoable`, `testEnablingAutoOnExistingTemplateRequiresConfirmationAndClearsSlots` | `AUT-001…008`, `AUT-012…019`, `PHO-014`, `DAT-037`, `DAT-043` | `AUT-009…011` non implémentés ; UI et persistance Apple non prouvées |
+| `A-L2-AUTO` | `AutoLayoutEngine`, `AlbumFillEngine`, `AlbumApplicationService.setAutomaticLayoutEnabled`/`fillAlbum`, commandes structurelles Auto et tests `testAutomaticLayoutRecomposesStructuralPhotoCommandsAndIsUndoable`, `testAlbumFillPlansStableGroupsReusesEmptyPagesAndCreatesTheRemainder`, `testFillAlbumIsOneConfirmedUndoableCommandWithoutRemovingAssets` | `AUT-001…019`, `PHO-014`, `FRM-009`, `TPL-005`, `UND-001`, `DAT-037`, `DAT-043` | Tri, groupes, pages, assets et transaction prouvés dans le Core ; UI et persistance Apple non prouvées |
 | `A-L2-UI-PARSE` | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` | structure de `EDT-001…004`, `EDT-019`, `RND-001`, `AUT-001` | Syntaxe seulement, sans type-check SwiftUI ni disponibilité des SF Symbols |
-| `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel` | `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017` | Vérifie les deux raccords à la confirmation, le réglage temporaire, l’ajout Core en fin, le dialogue interne bloquant, sa largeur maximale et ses marges, ainsi que l’absence de la feuille fautive ; pas le rendu Apple |
+| `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel`, `testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity` | `EDT-001`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017`, `AUT-009…011` | Vérifie les raccords des confirmations, le réglage temporaire, le dialogue interne, les trois densités et le service de remplissage ; pas le rendu Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
 
-La suite WSL complète compte 134 tests sans échec après l’ajout en fin d’album
-et le nouveau parcours de confirmation. Les
+La suite WSL complète compte 137 tests sans échec après Remplir l’album. Les
 contrats publiés et leurs dix empreintes sont également valides. Ces résultats
 ne remplacent aucune fiche iPad.
 
@@ -64,7 +66,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `ENV-001…005`, `EDT-008`, `EDT-012`, `EDT-016`, `PAG-002`, `PAG-013…017`, `UND-001`, `UND-002`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre trop large et trop basse ; pied de texte après défilement |
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
 | `IPAD-L2-016` | Cadre lisible de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — app figée, aucune confirmation affichée |
-| `IPAD-L2-017` | Dialogue interne sans gel | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-017` | Dialogue interne sans gel | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -97,8 +99,8 @@ suppression du formulaire défilant et de la hauteur fixe.
 
 - Les variantes avec un slot texte sont listées pour vérifier le catalogue,
   mais désactivées jusqu’à l’intégration de `TBX-004` et `TPL-012`.
-- Remplir l’album (`AUT-009…011`) n’est pas exposé ; `ACPT-125` reste donc
-  incomplet même si `IPAD-L2-001…008` réussissent.
+- Remplir l’album (`AUT-009…011`) est exposé et couvert sous WSL ; `ACPT-125`
+  reste incomplet jusqu’à la qualification Apple de ce nouveau parcours.
 - Aucun sticker ni cadre décoratif n’est persisté avant le gel des assets,
   licences et goldens exigé par `CAT-009`.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
@@ -116,4 +118,5 @@ suppression du formulaire défilant et de la hauteur fixe.
   son pied de texte. `IPAD-L2-015` échoue ensuite car l’ajustement fitted
   comprime toute la fenêtre. `IPAD-L2-016` échoue enfin parce que l’ouverture
   de la feuille de `7d8772c…` fige l’app sans rien afficher ; le dialogue
-  interne de `57afa71…` est à requalifier par `IPAD-L2-017`.
+  interne de `57afa71…` est validé par `IPAD-L2-017`, d’après le retour global
+  « c’est ok » sans capture ni détail par étape.

@@ -1096,6 +1096,48 @@ public actor AlbumApplicationService {
 
     // MARK: Layout templates and automatic composition
 
+    public func planAlbumFill(
+        in albumID: UUID,
+        density: AutoLayoutDensity
+    ) async throws -> AlbumFillPlan? {
+        let state = try await repository.load()
+        guard let album = state.album(id: albumID) else {
+            throw DomainValidationError.albumNotFound(albumID)
+        }
+        let metadataByAssetID = Dictionary(uniqueKeysWithValues:
+            state.photoAssets(in: albumID).map { ($0.id, $0) }
+        )
+        return try AlbumFillEngine.plan(
+            album: album,
+            metadataByAssetID: metadataByAssetID,
+            density: density
+        )
+    }
+
+    @discardableResult
+    public func fillAlbum(
+        using plan: AlbumFillPlan,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try await mutateAlbum(
+            plan.albumID,
+            label: "Remplir l’album",
+            now: now,
+            commandID: commandID
+        ) { album, state in
+            let metadataByAssetID = Dictionary(uniqueKeysWithValues:
+                state.photoAssets(in: album.id).map { ($0.id, $0) }
+            )
+            album = try AlbumFillEngine.apply(
+                plan,
+                to: album,
+                metadataByAssetID: metadataByAssetID,
+                templates: BuiltInLayoutTemplateCatalog.active
+            )
+        }
+    }
+
     @discardableResult
     public func applyLayoutTemplate(
         id templateID: String,
