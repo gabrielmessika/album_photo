@@ -15,11 +15,26 @@ private struct PhotoDescriptionRequest: Identifiable {
 }
 
 private struct PageAdditionConfirmationSheet: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Binding var doNotAskAgain: Bool
     let onCancel: () -> Void
     let onConfirm: () -> Void
 
     var body: some View {
+        Group {
+            if horizontalSizeClass == .compact {
+                dialog
+                    .presentationSizing(.page)
+            } else {
+                dialog
+                    .frame(width: 400, height: 340)
+                    .presentationSizing(.fitted)
+            }
+        }
+        .interactiveDismissDisabled()
+    }
+
+    private var dialog: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 18) {
                 Text(
@@ -53,12 +68,7 @@ private struct PageAdditionConfirmationSheet: View {
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 20)
-            .frame(
-                minWidth: 320,
-                idealWidth: 400,
-                maxWidth: 420,
-                alignment: .leading
-            )
+            .frame(maxWidth: .infinity, alignment: .leading)
             .navigationTitle("Ajouter une page ?")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -70,8 +80,6 @@ private struct PageAdditionConfirmationSheet: View {
                 }
             }
         }
-        .presentationSizing(.fitted)
-        .interactiveDismissDisabled()
     }
 }
 

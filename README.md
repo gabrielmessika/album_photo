@@ -65,8 +65,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   la fenêtre : trop large, trop basse et pied de texte accessible seulement
   après défilement. La correction remplace le formulaire et la hauteur fixe par
   une présentation étroite ajustée à son contenu ; elle est figée dans
-  `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` et `IPAD-L2-015` reste à
-  exécuter.
+  `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640`, mais `IPAD-L2-015` échoue
+  immédiatement : la fenêtre est devenue minuscule et illisible. La seconde
+  correction fixe explicitement le cadre iPad à 400 × 340 points et conserve
+  la présentation native en largeur compacte ; son candidat reste à figer.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -85,8 +87,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   nouveau parcours de confirmation et d’ajout en fin est validé par 134 tests
   Core et l’analyse syntaxique WSL sur `02430b1…`, mais `IPAD-L2-014` est 🔴
   `ÉCHOUÉ` sur la seule adaptation de la fenêtre. Le correctif passe à nouveau
-  134 tests et l’analyse syntaxique sous WSL ; `IPAD-L2-015` reste ⚪ `NON
-  TESTÉ` sur `8aa7f56…`. Le menu Plus n’est attendu qu’en largeur compacte et
+  134 tests et l’analyse syntaxique sous WSL, mais `IPAD-L2-015` est lui aussi
+  🔴 `ÉCHOUÉ` sur `8aa7f56…`. La seconde correction passe sous WSL et reste à
+  figer puis requalifier. Le menu Plus n’est attendu qu’en largeur compacte et
   sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
