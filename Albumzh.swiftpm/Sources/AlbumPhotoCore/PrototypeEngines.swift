@@ -452,7 +452,8 @@ public enum AutoLayoutEngine {
     public static func recompose(
         page original: PageSnapshot,
         metadataByAssetID: [UUID: PhotoAssetMetadata],
-        templates: [LayoutTemplateDefinition] = []
+        templates: [LayoutTemplateDefinition] = [],
+        initialCoverElementIDs: Set<UUID> = []
     ) throws -> PageSnapshot {
         var page = original
         let accessibilityIndex = Dictionary(uniqueKeysWithValues: page.accessibilityOrder.enumerated().map {
@@ -495,6 +496,15 @@ public enum AutoLayoutEngine {
             frames[index].geometry.height = geometries[index].height
             frames[index].geometry.rotationRadians = 0
             frames[index].sourceTemplateSlotID = nil
+            if initialCoverElementIDs.contains(frames[index].id),
+               let assetID = frames[index].content?.assetID,
+               let metadata = metadataByAssetID[assetID] {
+                frames[index].content = try PhotoCropGeometry.initialPlacement(
+                    assetID: assetID,
+                    metadata: metadata,
+                    frameGeometry: frames[index].geometry
+                )
+            }
         }
         let nonphotos = page.elements.compactMap { element -> PageElement? in
             switch element {
@@ -658,6 +668,7 @@ public enum AlbumFillEngine {
             )
             var order = (page.elements.map { $0.geometry.order }.max() ?? 0)
                 + AlbumPhotoConstants.elementOrderStep
+            var insertedElementIDs: Set<UUID> = []
             for assetID in photoIDs {
                 guard metadataByAssetID[assetID] != nil else {
                     throw DomainValidationError.assetNotFound(assetID)
@@ -669,12 +680,14 @@ public enum AlbumFillEngine {
                     content: PhotoPlacement(assetID: assetID)
                 )))
                 page.accessibilityOrder.append(elementID)
+                insertedElementIDs.insert(elementID)
                 order += AlbumPhotoConstants.elementOrderStep
             }
             album.pages[pageIndex] = try AutoLayoutEngine.recompose(
                 page: page,
                 metadataByAssetID: metadataByAssetID,
-                templates: templates
+                templates: templates,
+                initialCoverElementIDs: insertedElementIDs
             )
         }
 

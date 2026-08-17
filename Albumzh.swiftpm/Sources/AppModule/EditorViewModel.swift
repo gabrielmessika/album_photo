@@ -955,12 +955,15 @@ final class EditorViewModel: ObservableObject {
         showsAutomaticLayoutConfirmation = false
     }
 
-    func requestAlbumFill(_ density: AutoLayoutDensity) async {
-        guard canFillAlbum, await beginBusinessOperation() else { return }
-        defer { endBusinessOperation() }
+    func requestAlbumFill(_ density: AutoLayoutDensity) {
+        guard canFillAlbum, let album else { return }
         do {
-            albumFillConfirmation = try await service.planAlbumFill(
-                in: albumID,
+            let metadataByAssetID = Dictionary(
+                uniqueKeysWithValues: photos.map { ($0.id, $0) }
+            )
+            albumFillConfirmation = try AlbumFillEngine.plan(
+                album: album,
+                metadataByAssetID: metadataByAssetID,
                 density: density
             )
         } catch {
@@ -1907,12 +1910,25 @@ final class EditorViewModel: ObservableObject {
     }
 
     func resetCrop() {
-        guard var draft = cropDraft else { return }
-        draft.placement.nativeScale = 1
+        guard var draft = cropDraft,
+              let frame = selectedPhotoFrame,
+              let metadata = metadata(for: draft.placement.assetID),
+              let initialScale = try? PhotoCropGeometry.initialCoverNativeScale(
+                  metadata: metadata,
+                  frameGeometry: frame.geometry
+              ),
+              let minimum = try? PhotoCropGeometry.sessionMinimumNativeScale(
+                  entryNativeScale: draft.entry.nativeScale,
+                  metadata: metadata,
+                  frameGeometry: frame.geometry,
+                  quarterTurns: 0
+              ) else { return }
+        draft.placement.nativeScale = initialScale
         draft.placement.focalX = 0.5
         draft.placement.focalY = 0.5
         draft.placement.quarterTurns = 0
         draft.placement.flippedHorizontally = false
+        draft.sessionMinimum = minimum
         cropDraft = draft
     }
 

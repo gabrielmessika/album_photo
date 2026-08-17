@@ -1013,7 +1013,16 @@ public actor AlbumApplicationService {
             let frame = PhotoFrameElement(
                 id: elementID,
                 geometry: geometry,
-                content: assetID.map { PhotoPlacement(assetID: $0) }
+                content: try assetID.map { assetID in
+                    guard let metadata else {
+                        throw DomainValidationError.assetNotFound(assetID)
+                    }
+                    return try PhotoCropGeometry.initialPlacement(
+                        assetID: assetID,
+                        metadata: metadata,
+                        frameGeometry: geometry
+                    )
+                }
             )
             album.pages[index].elements.append(.photo(frame))
             album.pages[index].accessibilityOrder.append(elementID)
@@ -1024,7 +1033,8 @@ public actor AlbumApplicationService {
                 try recomposeAutomaticPage(
                     &album.pages[index],
                     albumID: albumID,
-                    state: state
+                    state: state,
+                    initialCoverElementIDs: [elementID]
                 )
             } else {
                 setFreeLayout(&album.pages[index])
@@ -1043,7 +1053,8 @@ public actor AlbumApplicationService {
     ) async throws -> AlbumSnapshot {
         try await mutateAlbum(albumID, label: "Remplacer la photo", now: now, commandID: commandID) {
             album, state in
-            guard album.photoAssetIDs.contains(assetID), state.photoAsset(id: assetID) != nil else {
+            guard album.photoAssetIDs.contains(assetID),
+                  let metadata = state.photoAsset(id: assetID) else {
                 throw DomainValidationError.assetNotFound(assetID)
             }
             let page = try pageIndex(pageID, in: album)
@@ -1051,13 +1062,18 @@ public actor AlbumApplicationService {
             guard var frame = album.pages[page].elements[element].photoFrame else {
                 throw DomainValidationError.elementNotFound(elementID)
             }
-            frame.content = PhotoPlacement(assetID: assetID)
+            frame.content = try PhotoCropGeometry.initialPlacement(
+                assetID: assetID,
+                metadata: metadata,
+                frameGeometry: frame.geometry
+            )
             album.pages[page].elements[element] = .photo(frame)
             if album.pages[page].layout.isAutoLayoutEnabled {
                 try recomposeAutomaticPage(
                     &album.pages[page],
                     albumID: albumID,
-                    state: state
+                    state: state,
+                    initialCoverElementIDs: [elementID]
                 )
             }
         }
@@ -2232,7 +2248,8 @@ private func setFreeLayout(_ page: inout PageSnapshot) {
 private func recomposeAutomaticPage(
     _ page: inout PageSnapshot,
     albumID: UUID,
-    state: LocalLibrarySnapshot
+    state: LocalLibrarySnapshot,
+    initialCoverElementIDs: Set<UUID> = []
 ) throws {
     let metadataByAssetID = Dictionary(uniqueKeysWithValues: state.photoAssets
         .filter { $0.albumID == albumID }
@@ -2240,7 +2257,8 @@ private func recomposeAutomaticPage(
     page = try AutoLayoutEngine.recompose(
         page: page,
         metadataByAssetID: metadataByAssetID,
-        templates: BuiltInLayoutTemplateCatalog.active
+        templates: BuiltInLayoutTemplateCatalog.active,
+        initialCoverElementIDs: initialCoverElementIDs
     )
 }
 

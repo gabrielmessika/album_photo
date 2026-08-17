@@ -28,7 +28,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Premier correctif de fenêtre testé | `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` — `IPAD-L2-015` échoué : le dimensionnement ajusté comprime toute la fenêtre, devenue minuscule et illisible |
 | Second correctif de fenêtre testé | `7d8772c6d87a769a239b4f9eafabe74c8c126681` — `IPAD-L2-016` échoué : le bouton fige l’app sans afficher la confirmation |
 | Correctif de gel testé | `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` — dialogue interne centré, sur fond assombri et sans négociation de taille de feuille ; `IPAD-L2-017` réussi selon le retour global « c’est ok » |
-| Candidat Remplir l’album à tester | `781539603d6b98523fe48326ee49e24288dfa09b` — trois densités, plan déterministe, confirmation chiffrée et commande unique ; `IPAD-L2-018` à exécuter |
+| Candidat Remplir l’album testé | `781539603d6b98523fe48326ee49e24288dfa09b` — trois densités, plan déterministe, confirmation chiffrée et commande unique ; `IPAD-L2-018` réussi selon le retour global « les tests sont ok » |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -92,7 +92,10 @@ contient ni capture ni observation par étape et ne couvre aucun contrôle
 `APPLE-*`.
 La régression `IPAD-L2-018` vise exactement le candidat
 `781539603d6b98523fe48326ee49e24288dfa09b`. Elle qualifie séparément Remplir
-l’album et ne modifie aucun verdict historique.
+l’album et réussit selon le retour global « les tests sont ok » reçu après
+remise de cette seule fiche. Cette preuve ne contient ni capture ni observation
+par étape, ne couvre aucun contrôle `APPLE-*` et ne qualifie pas les changements
+de présentation et de cadrage demandés avec ce retour.
 
 ## Mode de réponse
 
@@ -333,7 +336,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
 | `IPAD-L2-016` | Cadre lisible de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — le bouton fige l’app et aucune confirmation n’apparaît |
 | `IPAD-L2-017` | Dialogue interne sans gel pour l’ajout de page | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` |
-| `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `3:AUT-009` à `3:AUT-012`, `3:FRM-009`, `3:TPL-005`, `3:UND-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `3:AUT-009` à `3:AUT-012`, `3:FRM-009`, `3:TPL-005`, `3:UND-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 
 ## Fiches détaillées
 
@@ -3037,13 +3040,17 @@ leur candidat.
 | 9 | Fermer proprement l’album, le rouvrir et revoir les trois pages ainsi que Photos. | Le résultat Dense, le fond noir, l’ordre `A…H` puis `I…J`, les onze assets et l’absence de photo inutilisée persistent après relance. |
 | 10 | En portrait puis paysage, activer VoiceOver et parcourir le groupe, le sélecteur de densité, le compteur et le bouton désactivé. | Aucun contenu utile n’est rogné ; VoiceOver annonce le groupe, les densités, le compteur, le bouton et son état désactivé dans un ordre cohérent ; l’app reste réactive. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner après retour utilisateur, avec toute anomalie associée à
-  l’ID numérique de l’étape et, si possible, une capture des confirmations
-  Équilibrée et Dense.
-- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
-  Playgrounds 4.7 ; taille de texte standard ; portrait initial, paysage et
-  VoiceOver à l’étape 10 ; Paris, France ; français (France).
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : retour global « les tests sont ok » reçu après remise de cette seule
+  fiche. Les dix étapes sont déclarées conformes globalement ; aucune capture
+  ni observation distincte par étape n’a été jointe. Les deux changements
+  produit demandés dans le même retour rendent cette preuve insuffisante pour
+  leur nouvelle interface et leur nouvelle règle de cadrage.
+- Environnement : repris de la fiche, sans nouvelle déclaration dans le
+  retour : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; taille
+  de texte standard ; portrait initial, paysage et VoiceOver à l’étape 10 ;
+  Paris, France ; français (France). Aucun résultat iPhone, Xcode ou
+  `APPLE-*` n’est extrapolé.
 
 ## Qualification différée Apple/macOS/Xcode
 

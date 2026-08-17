@@ -102,6 +102,35 @@ public enum PhotoCropGeometry {
         return min(1, fit)
     }
 
+    /// 3:FRM-004 / 3:FRM-009 — initial centered scale that covers the frame.
+    public static func initialCoverNativeScale(
+        metadata: PhotoAssetMetadata,
+        frameGeometry: ElementGeometry,
+        quarterTurns: Int = 0
+    ) throws -> Double {
+        let frame = try canonicalFrameSize(for: frameGeometry)
+        let photo = try orientedPixelSize(metadata: metadata, quarterTurns: quarterTurns)
+        let cover = max(frame.width / photo.width, frame.height / photo.height)
+        guard cover.isFinite, cover > 0 else {
+            throw DomainValidationError.invalidPhotoPlacement
+        }
+        return min(AlbumPhotoConstants.maximumNativeScale, cover)
+    }
+
+    public static func initialPlacement(
+        assetID: UUID,
+        metadata: PhotoAssetMetadata,
+        frameGeometry: ElementGeometry
+    ) throws -> PhotoPlacement {
+        PhotoPlacement(
+            assetID: assetID,
+            nativeScale: try initialCoverNativeScale(
+                metadata: metadata,
+                frameGeometry: frameGeometry
+            )
+        )
+    }
+
     /// Keeps an already persisted smaller scale valid when a later frame change
     /// raises the freshly calculated minimum (3:CRP-007).
     public static func sessionMinimumNativeScale(

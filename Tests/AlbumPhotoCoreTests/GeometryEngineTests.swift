@@ -19,6 +19,29 @@ final class GeometryEngineTests: XCTestCase {
         XCTAssertEqual(render.photoRectInFrame.maxY, 650, accuracy: 0.000_001)
     }
 
+    // 3:FRM-004, 3:FRM-009 — the default placement covers the frame while
+    // preserving the photo ratio, whether that requires zooming in or out.
+    func testInitialPlacementCoversFrameForSmallAndLargePhotos() throws {
+        let frame = ElementGeometry(width: 0.5, height: 0.3)
+        let small = TestFixtures.metadata(width: 600, height: 400)
+        let smallPlacement = try PhotoCropGeometry.initialPlacement(
+            assetID: small.id,
+            metadata: small,
+            frameGeometry: frame
+        )
+        XCTAssertEqual(smallPlacement.nativeScale, 2.25, accuracy: 0.000_001)
+        try assertCoversFrame(smallPlacement, metadata: small, frame: frame)
+
+        let large = TestFixtures.metadata(width: 4_800, height: 6_000)
+        let largePlacement = try PhotoCropGeometry.initialPlacement(
+            assetID: large.id,
+            metadata: large,
+            frameGeometry: frame
+        )
+        XCTAssertEqual(largePlacement.nativeScale, 0.25, accuracy: 0.000_001)
+        try assertCoversFrame(largePlacement, metadata: large, frame: frame)
+    }
+
     // 3:CRP-001, 3:CRP-004, 3:TST-006, 3:TST-011 — normative
     // 2400×1800 fixture at 0.5× exactly fills a 1200×900 frame.
     func testMediumPhotoAtPointFiveExactlyFillsNormativeFrame() throws {
@@ -116,6 +139,34 @@ final class GeometryEngineTests: XCTestCase {
         XCTAssertEqual(canonicalRatio, 2, accuracy: 0.000_001)
         XCTAssertLessThanOrEqual(geometry.width, 0.45)
         XCTAssertLessThanOrEqual(geometry.height, 0.45)
+    }
+
+    private func assertCoversFrame(
+        _ placement: PhotoPlacement,
+        metadata: PhotoAssetMetadata,
+        frame: ElementGeometry,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        let render = try PhotoCropGeometry.renderGeometry(
+            placement: placement,
+            metadata: metadata,
+            frameGeometry: frame
+        )
+        XCTAssertLessThanOrEqual(render.photoRectInFrame.minX, 0.000_001, file: file, line: line)
+        XCTAssertLessThanOrEqual(render.photoRectInFrame.minY, 0.000_001, file: file, line: line)
+        XCTAssertGreaterThanOrEqual(
+            render.photoRectInFrame.maxX,
+            render.frameSize.width - 0.000_001,
+            file: file,
+            line: line
+        )
+        XCTAssertGreaterThanOrEqual(
+            render.photoRectInFrame.maxY,
+            render.frameSize.height - 0.000_001,
+            file: file,
+            line: line
+        )
     }
 
     // 3:ELM-001, 3:ELM-014

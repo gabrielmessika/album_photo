@@ -13,7 +13,6 @@ struct PhotosPanelView: View {
     @State private var showsSources = false
     @State private var showsOtherAlbums = false
     @State private var deletionRequest: PhotoDeletionRequest?
-    @State private var albumFillDensity: AutoLayoutDensity = .balanced
 
     private var columns: [GridItem] {
         if horizontalSizeClass == .regular {
@@ -54,6 +53,17 @@ struct PhotosPanelView: View {
                 .labelStyle(.iconOnly)
             }
 
+            Button("Remplir l’album", systemImage: "wand.and.stars") {
+                model.requestAlbumFill(.balanced)
+            }
+            .buttonStyle(.bordered)
+            .disabled(!model.canFillAlbum)
+            .accessibilityHint(
+                model.unusedPhotoCount == 0
+                    ? "Toutes les photos sont déjà utilisées dans l’album."
+                    : "Ouvre le choix de densité avant de répartir les photos inutilisées."
+            )
+
             HStack {
                 Toggle(isOn: $model.hidesUsedPhotos) {
                     Label(
@@ -83,41 +93,6 @@ struct PhotosPanelView: View {
                 .disabled(model.photos.count < 2)
             }
             .font(.caption)
-
-            GroupBox {
-                VStack(alignment: .leading, spacing: 9) {
-                    Picker("Densité", selection: $albumFillDensity) {
-                        Text("Aérée (1–2)").tag(AutoLayoutDensity.airy)
-                        Text("Équilibrée (3–4)").tag(AutoLayoutDensity.balanced)
-                        Text("Dense (5–8)").tag(AutoLayoutDensity.dense)
-                    }
-                    .pickerStyle(.menu)
-
-                    Button("Remplir l’album", systemImage: "wand.and.stars") {
-                        Task { await model.requestAlbumFill(albumFillDensity) }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(!model.canFillAlbum)
-                    .accessibilityHint(
-                        model.unusedPhotoCount == 0
-                            ? "Toutes les photos sont déjà utilisées dans l’album."
-                            : "Répartit les photos inutilisées après une confirmation détaillée."
-                    )
-
-                    Text(
-                        model.unusedPhotoCount == 0
-                            ? "Aucune photo inutilisée"
-                            : model.unusedPhotoCount == 1
-                                ? "1 photo inutilisée"
-                                : "\(model.unusedPhotoCount) photos inutilisées"
-                    )
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            } label: {
-                Label("Remplir l’album", systemImage: "wand.and.stars")
-            }
 
             if let choice = model.photoChoiceMode {
                 HStack(alignment: .top, spacing: 8) {

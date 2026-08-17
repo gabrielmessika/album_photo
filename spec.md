@@ -259,7 +259,7 @@ quotidienne.
 | `DEC-04` | Chaque page possède son propre fond. Une commande explicite permet d’appliquer le fond choisi à toutes les pages. |
 | `DEC-05` | L’éditeur et le mode lecture affichent toujours une seule page active. La vue globale affiche uniquement des miniatures destinées à l’organisation et n’est pas un mode de lecture à deux pages. |
 | `DEC-06` | La navigation fonctionne avec des boutons et avec un balayage horizontal. |
-| `DEC-07` | À `1×`, une photo conserve sa taille native de référence, sans agrandissement ou réduction automatique, et est centrée dans son cadre. Le fond de page reste visible dans toute partie du masque non couverte. Si la photo est plus grande que le cadre, l’utilisateur peut descendre sous `1×`, par exemple à `0,5×`, sans modifier l’original. La conversion technique des pixels source vers cette taille native utilise le repère canonique et la borne basse dynamique définis en section 3.1. |
+| `DEC-07` | `1×` reste la taille native de référence : un pixel source après orientation EXIF vaut une unité canonique. Par défaut, une photo nouvellement affectée est centrée et agrandie ou réduite avec le plus petit facteur uniforme qui couvre entièrement le rectangle du cadre, dans la limite normative de `8×`; ce facteur absolu peut être supérieur ou inférieur à `1×`. L’utilisateur peut ensuite dézoomer jusqu’à la borne basse dynamique, révéler le fond de page dans les parties non couvertes sans modifier l’original, et Réinitialiser restaure ce cadrage couvrant. Les formules sont définies en section 3.1. |
 | `DEC-08` | Le texte suit le modèle Photoweb : plusieurs zones indépendantes, police, taille, couleur et alignement. Les fonctions de traitement de texte avancé sont exclues. |
 | `DEC-09` | Le catalogue contient uniquement des stickers statiques intégrés et licenciés pour le projet. Leur manipulation suit celle des autres éléments du canevas. |
 | `DEC-10` | Google Photos utilise le sélecteur officiel et accepte une sélection multiple de photos à partir de la version 1.2. |
@@ -312,6 +312,21 @@ fitScale = min(Fw / Rw, Fh / Rh)
 minimumNativeScale = min(1, fitScale)
 ```
 
+Le cadrage initial d’une photo nouvellement affectée utilise, sans déformer son
+rapport, le plus petit facteur qui couvre le rectangle du cadre :
+
+```text
+coverScale = max(Fw / Rw, Fh / Rh)
+initialNativeScale = min(8, coverScale)
+```
+
+Le placement initial fixe le point focal à `(0,5 ; 0,5)`, l’orientation à zéro
+quart de tour et le retournement à faux. Une petite photo est donc agrandie et
+une grande photo réduite lorsque nécessaire. La limite `8×` reste prioritaire
+pour un fichier exceptionnellement trop petit pour couvrir le cadre à cette
+borne ; l’utilisateur conserve alors un placement valide et le fond peut rester
+visible.
+
 Les dimensions doivent être strictement positives et tous les résultats finis.
 La plage proposée pendant un nouveau cadrage est
 `minimumNativeScale...8`. Une petite photo qui tient déjà dans son cadre à
@@ -325,8 +340,8 @@ en page automatique conserve néanmoins exactement le cadrage existant selon
 `CRP-007`. Si son `nativeScale` est déjà inférieur au nouveau minimum calculé,
 le contrôle utilise temporairement `min(minimumNativeScale,
 nativeScaleÀLOuverture)` comme borne basse : ouvrir puis fermer le cadrage ne
-doit jamais provoquer de zoom automatique. Réinitialiser revient toujours à
-`1×` centré.
+doit jamais provoquer de zoom automatique. Réinitialiser revient toujours au
+`initialNativeScale` centré, recalculé pour la géométrie courante du cadre.
 
 Cette convention ignore les métadonnées DPI, `UIImage.scale`, le facteur
 Retina et la taille de la fenêtre. Elle ne fixe ni la résolution du PDF ni
@@ -686,9 +701,9 @@ raccourcis NE DOIVENT PAS s’exécuter lorsqu’un champ de texte les consomme.
 | `AUT-006` | Déplacer, redimensionner ou tourner manuellement un cadre photo DOIT fixer `isAutoLayoutEnabled = false`, `photoMode = free` et les identifiants de modèle à `nil` avant la transformation, puis afficher Mise en page auto désactivée pour cette page avec une action Annuler. La désactivation et la transformation forment une seule commande. |
 | `AUT-007` | Recadrer une photo, déplacer un texte ou sticker, ou modifier une forme, un contour ou un cadre décoratif NE DOIT PAS désactiver l’automatisme photo. |
 | `AUT-008` | Activer Auto sur une page qui contient au moins un cadre photo DOIT avertir que les cadres vides seront retirés et les géométries photo remplacées. Après confirmation, l’application fixe `isAutoLayoutEnabled = true`, recompose immédiatement les seules occurrences remplies selon `AUT-012`, fixe `photoMode = automatic` et efface les identifiants de modèle dans une commande annulable. Une page sans cadre suit directement cette transition sans confirmation. |
-| `AUT-009` | Le panneau Photos DOIT proposer Remplir l'album lorsque des photos inutilisées existent. L'utilisateur choisit Aérée (`1–2`), Équilibrée (`3–4`) ou Dense (`5–8` photos par page). La capacité cible `c` vaut respectivement `2`, `4` ou `8`; seule la dernière page produite PEUT contenir moins que le minimum affiché lorsque le reliquat l'impose. |
-| `AUT-010` | Soit `M > 0` photos inutilisées et la capacité `c` de `AUT-009`, Remplir l'album DOIT produire `p = ceil(M / c)` groupes : les `p - 1` premiers contiennent exactement `c` photos et le dernier `M - c × (p - 1)`. Les photos sont triées par `(capturedAt ?? importedAt)` UTC croissant, puis indice dans `photoAssetIDs`, puis octets UUID croissants. Les groupes sont affectés aux `p` premières pages sans occurrence photo dans l'ordre de l'album, puis aux pages manquantes créées après la dernière page; les autres pages restent inchangées. Sur chaque cible existante, tous les cadres photo vides sont retirés selon l'ordre inverse de `TPL-005` avant de créer exactement un cadre rempli par photo avec un `PhotoPlacement` initialisé selon `FRM-009`; fond, textes et stickers sont conservés. Chaque cible reçoit la densité choisie, `isAutoLayoutEnabled = true`, `photoMode = automatic`, des identifiants de modèle et de slot nuls et la géométrie finale de `AUT-012`. |
-| `AUT-011` | Le remplissage complet DOIT présenter le nombre de photos, de cadres vides retirés, de pages existantes réutilisées et de pages créées, demander confirmation et constituer une seule commande annulable sans jamais supprimer un asset importé. |
+| `AUT-009` | Le panneau Photos DOIT proposer un bouton compact Remplir l'album, directement à côté ou sous Ajouter des photos, lorsque des photos inutilisées existent ; il NE DOIT PAS réserver un groupe permanent au choix de densité ni au compteur. Ce bouton ouvre une fenêtre où l'utilisateur choisit Aérée (`1–2`), Équilibrée (`3–4`) ou Dense (`5–8` photos par page) et voit le nombre de photos inutilisées. La capacité cible `c` vaut respectivement `2`, `4` ou `8`; seule la dernière page produite PEUT contenir moins que le minimum affiché lorsque le reliquat l'impose. |
+| `AUT-010` | Soit `M > 0` photos inutilisées et la capacité `c` de `AUT-009`, Remplir l'album DOIT produire `p = ceil(M / c)` groupes : les `p - 1` premiers contiennent exactement `c` photos et le dernier `M - c × (p - 1)`. Les photos sont triées par `(capturedAt ?? importedAt)` UTC croissant, puis indice dans `photoAssetIDs`, puis octets UUID croissants. Les groupes sont affectés aux `p` premières pages sans occurrence photo dans l'ordre de l'album, puis aux pages manquantes créées après la dernière page; les autres pages restent inchangées. Sur chaque cible existante, tous les cadres photo vides sont retirés selon l'ordre inverse de `TPL-005` avant de créer exactement un cadre rempli par photo ; fond, textes et stickers sont conservés. Chaque cible reçoit la densité choisie, `isAutoLayoutEnabled = true`, `photoMode = automatic`, des identifiants de modèle et de slot nuls et la géométrie finale de `AUT-012`, puis chaque nouvelle occurrence reçoit sur cette géométrie le `PhotoPlacement` couvrant de `FRM-009`. |
+| `AUT-011` | La fenêtre de remplissage complet DOIT présenter la densité modifiable, le nombre de photos inutilisées, de cadres vides retirés, de pages existantes réutilisées et de pages créées, puis proposer Annuler et Valider. Annuler ne modifie rien ; Valider constitue une seule commande annulable sans jamais supprimer un asset importé. |
 | `AUT-012` | Pour zéro à vingt occurrences, le moteur DOIT toujours produire une géométrie valide : il utilise la projection des emplacements photo d’un modèle intégré ayant le compte exact lorsqu’elle existe, sinon un pavage généré de manière pure et déterministe respectant `CAN-005` à `CAN-007`, le rapport de page, l’orientation des photos et la densité. Pour zéro occurrence, ce pavage ne contient aucun cadre. |
 | `AUT-013` | Au-delà de vingt occurrences, le moteur PEUT prolonger le pavage déterministe si les invariants de géométrie et de performance restent satisfaits. Sinon il DOIT conserver la composition, désactiver Auto pour la page et expliquer qu’une mise en page manuelle est nécessaire, sans retirer de contenu. |
 | `AUT-014` | Lorsqu’un modèle intégré alimente Auto, seules ses géométries et son ordre d’emplacements photo sont utilisés. Ses emplacements texte et ses styles NE DOIVENT ni créer, ni déplacer, ni modifier une zone de texte ; `AUT-004` reste prioritaire. |
@@ -810,8 +825,8 @@ n’est rendue.
 | `PHO-002` | Chaque miniature DOIT indiquer son nombre exact d’occurrences de son `assetID` dans les cadres des pages de l’album, sous la forme compacte `×0`, `×1`, `×2`, etc. Ce compte NE DOIT PAS inclure les références d’un autre album, d’un autre `assetID` partageant le même `contentHash`, du presse-papiers ou de l’historique. Masquer les photos utilisées masque celles dont ce nombre est supérieur à zéro. |
 | `PHO-003` | Chaque photo ajoutée appartient logiquement à la photothèque interne de l’album courant indépendamment de son placement et reste disponible après retrait d’une occurrence, jusqu’à une suppression explicite conforme à `PHO-009` et `PHO-010`. |
 | `PHO-004` | Sur iPad, une photo DOIT pouvoir être glissée sur un cadre vide, un cadre rempli ou une zone vide de la page. Sur iPhone et iPad, une pression sur sa miniature remplit le cadre photo sélectionné, vide ou rempli, ou crée un cadre au centre si aucun cadre photo n’est sélectionné. |
-| `PHO-005` | Déposer sur un cadre vide le remplit ; déposer sur un cadre rempli remplace uniquement sa photo ; déposer sur la page crée un nouveau cadre centré sur le dépôt. Tout contenu nouvellement affecté commence centré à `1×`, sans rotation ni retournement, selon `FRM-004` et `FRM-009`. |
-| `PHO-006` | Lorsque Auto est désactivé, un cadre libre nouvellement créé DOIT utiliser la plus grande taille conservant le rapport de la photo dans une boîte de `0,45 × 0,45` de la page, respecter le minimum de `CAN-006`, être centré sur le dépôt ou sur la page et être placé au premier plan. La taille choisie pour le cadre NE DOIT PAS redimensionner automatiquement son contenu photo à l’intérieur. |
+| `PHO-005` | Déposer sur un cadre vide le remplit ; déposer sur un cadre rempli remplace uniquement sa photo ; déposer sur la page crée un nouveau cadre centré sur le dépôt. Tout contenu nouvellement affecté commence avec le cadrage couvrant centré de la section 3.1, sans rotation ni retournement, selon `FRM-004` et `FRM-009`. |
+| `PHO-006` | Lorsque Auto est désactivé, un cadre libre nouvellement créé DOIT utiliser la plus grande taille conservant le rapport de la photo dans une boîte de `0,45 × 0,45` de la page, respecter le minimum de `CAN-006`, être centré sur le dépôt ou sur la page et être placé au premier plan. Après détermination de cette géométrie, son contenu photo DOIT recevoir le cadrage couvrant de la section 3.1. |
 | `PHO-007` | Un import multiple DOIT conserver l’ordre de sélection. Un échec partiel NE DOIT PAS retirer les photos déjà importées et DOIT proposer Réessayer pour les seules erreurs. |
 | `PHO-008` | Les états d’un import DOIVENT être En attente, Import en cours avec progression, Disponible, Interrompu, Format non pris en charge ou Fichier inaccessible. |
 | `PHO-009` | Chaque miniature DOIT proposer Supprimer de cet album avec le symbole `trash`. La commande est activée si et seulement si le nombre d’occurrences de cet `assetID` dans les pages de l’album courant vaut zéro au moment de l’affichage ; sinon elle est désactivée et annonce « Utilisée N fois ». Retirer une occurrence ou supprimer son cadre ne supprime jamais automatiquement l’asset. |
@@ -819,7 +834,7 @@ n’est rendue.
 | `PHO-011` | Le panneau Photos DOIT suffire à ajouter une photo à la page : presser une miniature sans cadre sélectionné crée directement un cadre selon `PHO-004` et `PHO-006`. La barre sous le canevas NE DOIT PAS dupliquer cette action. Le mode Remplacer ou Remplir un cadre DOIT nommer sa cible, utiliser un fond jaune ou orange contrasté, une bordure renforcée et une icône propre à l’action, et rester distinct de la consultation normale du panneau ; il NE DOIT PAS utiliser le rouge réservé aux erreurs. |
 | `PHO-012` | Ajouter une photo dans un cadre vide DOIT ouvrir le même panneau en ciblant cet `elementID`. La prochaine miniature pressée remplit uniquement ce cadre avec les valeurs initiales de `FRM-009` ; Annuler le choix conserve le cadre vide. |
 | `PHO-013` | Si aucune photo n’est disponible, le panneau de `PHO-011` et le mode de choix de `PHO-012` DOIVENT proposer le sélecteur système. Un import multiple ajoute toutes les photos au panneau sans en placer arbitrairement une ; dans un mode Remplacer ou Remplir, ce mode reste actif, puis l’utilisateur presse la miniature voulue. Ce parcours constitue l’alternative accessible au glisser-déposer. |
-| `PHO-014` | Lorsque Auto est actif, toute création d'occurrence demandée par `PHO-004`, `PHO-005`, `PHO-011` ou par le remplissage d'un cadre vide dans `PHO-012` ajoute d'abord le `PhotoPlacement` logique initialisé selon `FRM-009`, puis laisse `AUT-002` déterminer, dans la même commande, la géométrie de tous les cadres. Le placement libre de `PHO-006` et l'ancienne géométrie d'un éventuel cadre vide NE DOIVENT PAS être publiés comme état intermédiaire. `PHO-012` ne crée jamais un deuxième cadre avant cette recomposition. |
+| `PHO-014` | Lorsque Auto est actif, toute création d'occurrence demandée par `PHO-004`, `PHO-005`, `PHO-011` ou par le remplissage d'un cadre vide dans `PHO-012` ajoute son contenu logique, laisse `AUT-002` déterminer la géométrie de tous les cadres, puis calcule sur la géométrie finale le `PhotoPlacement` couvrant de `FRM-009`, dans la même commande. Le placement libre de `PHO-006`, le placement provisoire et l'ancienne géométrie d'un éventuel cadre vide NE DOIVENT PAS être publiés comme état intermédiaire. `PHO-012` ne crée jamais un deuxième cadre avant cette recomposition. |
 | `PHO-015` | Depuis vos autres albums DOIT lister les albums actifs autres que l’album courant, en excluant la corbeille. Ils sont triés par `updatedAt` décroissant, puis nom localisé croissant, puis octets UUID croissants. Ouvrir un album source affiche toutes les photos de son `photoAssetIDs` dans leur ordre, y compris celles qui n’y sont pas placées. |
 | `PHO-016` | Dans un album source, une photo dont le `contentHash` appartient déjà à la photothèque cible DOIT porter l’état Déjà ajoutée et être désactivée. Une photo dont le binaire n’est pas localement disponible DOIT proposer son téléchargement ou Réessayer et ne peut être ajoutée avant vérification de l’empreinte. La source accepte une sélection multiple et annonce le nombre choisi. |
 | `PHO-017` | Valider Ajouter N photos depuis un autre album DOIT, dans l’ordre de sélection, créer pour chacune un nouvel `assetID` logique propre à l’album cible, l’ajouter à la fin de `photoAssetIDs` et copier ses métadonnées immuables. Le nouvel asset conserve `contentHash`, dimensions, type, nom d’origine, date de prise de vue et propriétés colorimétriques ; il fixe `source = .reusedAlbum` et `importedAt` à la date de validation. Aucun identifiant de l’album ou de l’asset source ne persiste dans le modèle cible. Le lot vérifie le quota logique `LOC-017`, journalise et valide métadonnées, index et appartenance dans la transaction de `LOC-016`, forme une seule commande annulable et ne modifie pas l’album source. |
@@ -886,22 +901,22 @@ n’est rendue.
 | `FRM-001` | Un cadre vide DOIT afficher une trame neutre, l’icône photo avec `+` et le libellé Ajouter une photo, tous exclus du rendu final. |
 | `FRM-002` | La géométrie, le masque, le contour, le cadre décoratif et l’ordre appartiennent au cadre ; la référence d’asset et le cadrage appartiennent à son contenu photo. |
 | `FRM-003` | Hors mise en page auto, Retirer la photo DOIT conserver le cadre vide et ses styles. Supprimer le cadre DOIT retirer le cadre et son contenu. Ces commandes DOIVENT être distinctes et annulables. En mode automatique, l’exception explicite de `AUT-002` s’applique. |
-| `FRM-004` | Remplacer DOIT conserver la géométrie et les styles du cadre, affecter la nouvelle photo et initialiser son contenu centré à `1×`, sans rotation ni retournement. La nouvelle photo NE DOIT PAS être agrandie ou réduite automatiquement pour remplir le masque. |
+| `FRM-004` | Remplacer DOIT conserver la géométrie et les styles du cadre, affecter la nouvelle photo et initialiser son contenu avec le cadrage couvrant centré de la section 3.1, sans rotation ni retournement. Le facteur uniforme absolu est calculé après la géométrie définitive du cadre. |
 | `FRM-005` | La barre photo DOIT présenter, dans cet ordre, Remplacer, Retirer la photo, Recadrer, Pivoter à gauche, Pivoter à droite, Retourner horizontalement, puis les commandes communes de `ELM-008`. |
 | `FRM-006` | Les commandes DOIVENT utiliser des SF Symbols ou icônes natives équivalentes, avec les libellés accessibles exacts de `FRM-005`; l’icône ne remplace jamais le libellé VoiceOver. |
 | `FRM-007` | Dupliquer un cadre rempli DOIT créer une nouvelle occurrence du même asset avec une copie indépendante du cadrage et des styles. |
 | `FRM-008` | Les cadres photo sans `PhotoPlacement` produisent un avertissement non bloquant en prévisualisation et NE DOIVENT PAS être rendus dans les exports. Un cadre possédant un `PhotoPlacement` reste rempli au sens métier même si son contenu à taille native ne couvre pas tout le masque ; cette transparence normale ne produit pas l’avertissement Cadre vide. |
-| `FRM-009` | Un nouveau cadre libre DOIT commencer avec le masque `shape.rectangle` version `1`, un contour d’épaisseur `0`, aucun cadre décoratif et, lorsqu’il est rempli, un cadrage centré à `1×`, sans rotation ni retournement du contenu. |
+| `FRM-009` | Un nouveau cadre libre DOIT commencer avec le masque `shape.rectangle` version `1`, un contour d’épaisseur `0`, aucun cadre décoratif et, lorsqu’il est rempli, le cadrage couvrant centré de la section 3.1, sans rotation ni retournement du contenu. |
 
 ## 11.7 Cadrage non destructif
 
 | ID | Exigence |
 |---|---|
-| `CRP-001` | Le canevas photo DOIT utiliser un repère canonique de `2 400 × 3 000` unités. À `1×`, un pixel source après orientation EXIF mesure exactement une unité canonique et la photo est centrée sans ajustement automatique au cadre. Toute partie du masque sans pixel photo reste transparente et révèle les éléments de profondeur inférieure puis le fond de page. |
+| `CRP-001` | Le canevas photo DOIT utiliser un repère canonique de `2 400 × 3 000` unités. À `1×`, un pixel source après orientation EXIF mesure exactement une unité canonique. Une affectation nouvelle applique le cadrage couvrant centré de la section 3.1 ; un cadrage ensuite dézoomé peut laisser des parties du masque sans pixel photo, qui restent transparentes et révèlent les éléments de profondeur inférieure puis le fond de page. |
 | `CRP-002` | Un double toucher sur la photo ou la commande Recadrer DOIT ouvrir le mode de cadrage en laissant le cadre fixe et en assombrissant ce qui se trouve hors du masque. |
 | `CRP-003` | Dans ce mode, glisser déplace la photo en modifiant le point focal dans les bornes de `DAT-007`, pincer la zoome et les commandes de rotation ou retournement transforment son contenu sans transformer le cadre. Le point focal transformé reste au centre du cadre afin que le contenu ne puisse pas devenir entièrement introuvable. |
 | `CRP-004` | Le zoom photo `nativeScale` DOIT varier continûment jusqu’à `8`, borne incluse. Sa borne basse de session DOIT être calculée par la formule dynamique de la section 3.1 à partir du cadre, des dimensions orientées et de l’état d’entrée conservé ; elle peut donc être inférieure à `1×`, notamment égale à `0,5×`, et n’utilise aucune constante minimale fixe. Le pincement et le contrôle accessible Zoom photo NE DOIVENT PAS confondre cette valeur avec le zoom de fenêtre `ZOM-001`. Révéler le fond autour de la photo est autorisé et NE DOIT PAS provoquer de zoom correctif. |
-| `CRP-005` | Réinitialiser DOIT restaurer l’orientation d’origine et le cadrage centré à `1×`; Annuler restaure l’état d’entrée et Terminé valide une seule commande annulable. |
+| `CRP-005` | Réinitialiser DOIT restaurer l’orientation d’origine et le cadrage couvrant centré calculé pour la géométrie courante selon la section 3.1 ; Annuler restaure l’état d’entrée et Terminé valide une seule commande annulable. |
 | `CRP-006` | Le fichier original NE DOIT JAMAIS être modifié. Le cadrage DOIT persister le `nativeScale` absolu par rapport à `1×` et un point focal normalisé ; il NE DOIT persister ni facteur d’écran, ni échelle relative à un remplissage du masque. |
 | `CRP-007` | Après changement du rapport, de la taille ou de la forme du cadre, application d’un modèle ou recomposition Auto, le moteur DOIT conserver exactement `nativeScale`, point focal, quarts de tour et retournement. Il NE DOIT ni recentrer ni ajuster la photo pour couvrir le nouveau masque. |
 
@@ -2510,8 +2525,8 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 
 **Couvre :** `PHO-001` à `PHO-018`, `APL-001` à `APL-008`, `FMT-001` à `FMT-008`, `QLT-001` à `QLT-006`, `FRM-001` à `FRM-009`, `CRP-001` à `CRP-007`, `DAT-006` à `DAT-010`, `DAT-036`, `DAT-043`, `LOC-007`, `LOC-008`, `LOC-015` à `LOC-017`<br>
 **Étant donné** une petite photo de `600 × 400` pixels, une grande photo de `4 800 × 6 000`, trois cadres dans l’album cible et une photo distincte dans un autre album actif<br>
-**Quand** la petite photo est placée à `1×`, la grande à `0,5×`, qu’une occurrence est remplacée et une autre dupliquée, que la suppression de son original utilisé est tentée puis sa dernière occurrence retirée, que Supprimer de cet album est confirmé puis annulé, et que la photo de l’autre album est ajoutée par Depuis vos autres albums avant relance<br>
-**Alors** la petite photo garde sa taille native centrée avec la composition inférieure et le fond visibles autour d’elle, la grande mesure `2 400 × 3 000` unités, les cadrages persistent, la suppression est désactivée tant qu’une occurrence existe puis restaure asset et indice en une action, la réutilisation crée un nouvel `assetID` cible avec le même `contentHash` sans modifier la source, les états de qualité sont cohérents et GIF ou vidéo sont refusés sans altérer la page.
+**Quand** la petite et la grande photo sont nouvellement placées, que la petite est ensuite dézoomée jusqu’à `1×`, qu’une occurrence est remplacée et une autre dupliquée, que la suppression de son original utilisé est tentée puis sa dernière occurrence retirée, que Supprimer de cet album est confirmé puis annulé, et que la photo de l’autre album est ajoutée par Depuis vos autres albums avant relance<br>
+**Alors** chaque placement initial couvre son cadre sans déformation, la petite photo peut ensuite garder sa taille native centrée avec la composition inférieure et le fond visibles autour d’elle, la grande peut atteindre `0,5×` et mesurer `2 400 × 3 000` unités, les cadrages persistent, la suppression est désactivée tant qu’une occurrence existe puis restaure asset et indice en une action, la réutilisation crée un nouvel `assetID` cible avec le même `contentHash` sans modifier la source, les états de qualité sont cohérents et GIF ou vidéo sont refusés sans altérer la page.
 
 ## 29.18 `ACPT-125` — Modèles, dé et automatisme — version 1.0
 
@@ -2581,7 +2596,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 - interdiction de supprimer la dernière page
 - calcul de la couverture automatique
 - repère canonique, dimensions à `1×`, échelles sous `1×`, point focal, transparence, ordre des transformations et conservation lors d’un changement de cadre, forme, modèle ou Auto
-- fixtures de cadrage : `600 × 400` dans un cadre canonique `1 200 × 900` à `1×` laisse `300` unités à gauche/droite et `250` en haut/bas ; `2 400 × 1 800` à `0,5×` remplit exactement ce cadre ; valeurs non finies ou hors bornes refusées
+- fixtures de cadrage : le placement initial couvrant d’une photo `600 × 400` dans un cadre canonique `1 200 × 900` vaut `2,25×` et celui d’une photo `4 800 × 6 000` vaut `0,25×` ; le même cadre à `1×` avec la petite photo laisse `300` unités à gauche/droite et `250` en haut/bas après dézoom manuel ; `2 400 × 1 800` à `0,5×` remplit exactement ce cadre ; valeurs non finies ou hors bornes refusées
 - géométrie, hit-testing, ordre unifié et sélection d’un élément entièrement masqué
 - zoom de fenêtre, centre visible par page, paliers et absence de mutation du document
 - validation du manifeste canonique des modèles, de son empreinte, de l'unique version active par ID et des quatre variantes exigées pour chaque compte de une à huit photos
@@ -2663,7 +2678,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 - sélection, poignées et barre contextuelle de chaque type d’élément
 - texte envoyé entièrement derrière une photo puis resélectionné sans changement de profondeur par le sélecteur de chevauchement et son action VoiceOver
 - zoom par commandes et pincement, déplacement de fenêtre, restauration par page et priorité face au cadrage, aux transformations et à la navigation
-- Zoom photo sous `1×`, valeur `0,5×`, réinitialisation à `1×` et distinction explicite avec le zoom du canevas
+- cadrage initial couvrant pour petite et grande photo, Zoom photo sous `1×`, valeur `0,5×`, Réinitialiser vers la couverture centrée et distinction explicite avec le zoom du canevas
 - symboles, libellés accessibles, ordre et états activés/désactivés des deux matrices de commandes
 - sources Photothèque, Fichiers et Depuis vos autres albums, commande Supprimer de cet album activée ou désactivée et compteur d’occurrences
 - modèles, confirmation Annuler/Appliquer d’un modèle plus petit, dé, mise en page automatique et remplissage
@@ -2696,7 +2711,7 @@ interne candidate :
 - compilation sans erreur et lancement en plein écran
 - ouverture de la bibliothèque et du dernier album
 - création d’un album et d’au moins une page
-- import d’une petite et d’une grande photo, placement de plusieurs occurrences, taille native centrée à `1×`, fond visible et dézoom à `0,5×`
+- import d’une petite et d’une grande photo, placement initial couvrant de plusieurs occurrences, dézoom manuel avec fond visible à `1×` et jusqu’à `0,5×`
 - remplacement, retrait de contenu et suppression de cadre distincts, puis Supprimer de cet album désactivé avec une occurrence et confirmé/annulé à zéro occurrence
 - réutilisation d’une photo depuis un autre album sans modifier l’album source
 - modification de plusieurs textes, dont un passage derrière une photo suivi d’une resélection, et d’un sticker statique
@@ -2718,7 +2733,8 @@ corpus non personnel avec HEIC, JPEG, PNG, RAW, Live Photo et HDR statique,
 ainsi qu’un GIF, une vidéo, un fichier invalide, une image dépassant la limite
 de pixels, une petite photo de `600 × 400`, une photo de `2 400 × 1 800` et
 une photo de `4 800 × 6 000`. Elle DOIT couvrir import multiple, occurrences
-multiples, remplacement, retrait de contenu, `1×` avec fond visible, `0,5×`,
+multiples, remplacement, retrait de contenu, cadrage initial couvrant, dézoom à
+`1×` avec fond visible et à `0,5×`,
 conservation de l’original dans Photos, suppression refusée lorsqu’il est
 utilisé puis confirmée et annulée à zéro occurrence, réutilisation entre deux
 albums avec identités logiques distinctes et blob commun, suppression de cadre,

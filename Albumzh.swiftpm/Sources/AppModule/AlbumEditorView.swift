@@ -76,6 +76,68 @@ private struct PageAdditionConfirmationDialog: View {
     }
 }
 
+private struct AlbumFillConfirmationDialog: View {
+    let plan: AlbumFillPlan
+    let impactMessage: String
+    let onDensityChange: (AutoLayoutDensity) -> Void
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Remplir l’album")
+                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
+
+            Text(
+                plan.photoCount == 1
+                    ? "1 photo inutilisée"
+                    : "\(plan.photoCount) photos inutilisées"
+            )
+            .font(.subheadline.weight(.semibold))
+
+            LabeledContent("Densité") {
+                Picker(
+                    "Densité",
+                    selection: Binding(
+                        get: { plan.density },
+                        set: onDensityChange
+                    )
+                ) {
+                    Text("Aérée (1–2)").tag(AutoLayoutDensity.airy)
+                    Text("Équilibrée (3–4)").tag(AutoLayoutDensity.balanced)
+                    Text("Dense (5–8)").tag(AutoLayoutDensity.dense)
+                }
+                .pickerStyle(.menu)
+            }
+
+            Text(impactMessage)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 12) {
+                Button("Annuler", action: onCancel)
+                    .buttonStyle(.bordered)
+
+                Spacer(minLength: 0)
+
+                Button("Valider", action: onConfirm)
+                    .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .overlay {
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(.secondary.opacity(0.25), lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.2), radius: 24, y: 8)
+        .accessibilityAddTraits(.isModal)
+    }
+}
+
 struct AlbumEditorView: View {
     @EnvironmentObject private var appModel: AppModel
     let albumID: UUID
@@ -172,6 +234,26 @@ private struct AlbumEditorScene: View {
                     }
                 }
                 .zIndex(100)
+            } else if let plan = model.albumFillConfirmation {
+                GeometryReader { geometry in
+                    ZStack {
+                        Color.black.opacity(0.35)
+                            .ignoresSafeArea()
+                            .contentShape(Rectangle())
+                            .onTapGesture {}
+
+                        AlbumFillConfirmationDialog(
+                            plan: plan,
+                            impactMessage: model.albumFillConfirmationMessage(plan),
+                            onDensityChange: { model.requestAlbumFill($0) },
+                            onCancel: { model.cancelAlbumFill() },
+                            onConfirm: { Task { await model.confirmAlbumFill(plan) } }
+                        )
+                        .frame(width: min(420, geometry.size.width - 32))
+                        .padding(.vertical, 16)
+                    }
+                }
+                .zIndex(100)
             }
         }
         .sheet(item: $rotationRequest) { request in
@@ -253,18 +335,6 @@ private struct AlbumEditorScene: View {
                 },
                 secondaryButton: .cancel(Text("Annuler")) {
                     model.cancelLayoutTemplateApplication()
-                }
-            )
-        }
-        .alert(item: $model.albumFillConfirmation) { plan in
-            Alert(
-                title: Text("Remplir l’album ?"),
-                message: Text(model.albumFillConfirmationMessage(plan)),
-                primaryButton: .default(Text("Remplir")) {
-                    Task { await model.confirmAlbumFill(plan) }
-                },
-                secondaryButton: .cancel(Text("Annuler")) {
-                    model.cancelAlbumFill()
                 }
             )
         }

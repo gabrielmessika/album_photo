@@ -444,12 +444,28 @@ final class PrototypeEngineTests: XCTestCase {
             XCTAssertEqual(page.layout.photoMode, .automatic)
             XCTAssertEqual(page.layout.density, .balanced)
             XCTAssertNil(page.layout.templateID)
-            XCTAssertTrue(page.elements.compactMap(\.photoFrame).allSatisfy {
-                $0.content?.nativeScale == 1
-                    && $0.content?.focalX == 0.5
-                    && $0.content?.focalY == 0.5
-                    && $0.sourceTemplateSlotID == nil
-            })
+            for frame in page.elements.compactMap(\.photoFrame) {
+                let placement = try XCTUnwrap(frame.content)
+                let metadata = try XCTUnwrap(metadataByID[placement.assetID])
+                let render = try PhotoCropGeometry.renderGeometry(
+                    placement: placement,
+                    metadata: metadata,
+                    frameGeometry: frame.geometry
+                )
+                XCTAssertEqual(placement.focalX, 0.5)
+                XCTAssertEqual(placement.focalY, 0.5)
+                XCTAssertNil(frame.sourceTemplateSlotID)
+                XCTAssertLessThanOrEqual(render.photoRectInFrame.minX, 0.000_001)
+                XCTAssertLessThanOrEqual(render.photoRectInFrame.minY, 0.000_001)
+                XCTAssertGreaterThanOrEqual(
+                    render.photoRectInFrame.maxX,
+                    render.frameSize.width - 0.000_001
+                )
+                XCTAssertGreaterThanOrEqual(
+                    render.photoRectInFrame.maxY,
+                    render.frameSize.height - 0.000_001
+                )
+            }
         }
     }
 

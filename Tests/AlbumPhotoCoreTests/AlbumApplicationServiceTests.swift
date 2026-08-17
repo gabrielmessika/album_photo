@@ -393,7 +393,7 @@ final class AlbumApplicationServiceTests: XCTestCase {
     }
 
     // 3:PHO-004...3:PHO-006, 3:FRM-009
-    func testAddMultipleFramesCreatesIndependentOccurrencesAtOneX() async throws {
+    func testAddMultipleFramesCreatesIndependentOccurrencesWithCoverCrop() async throws {
         let service = TestFixtures.service()
         let (initial, metadata) = try await TestFixtures.albumWithRegisteredPhoto(service: service)
         var album = try await service.addPhotoFrame(
@@ -409,9 +409,69 @@ final class AlbumApplicationServiceTests: XCTestCase {
         )
         let frames = album.pages[0].elements.compactMap(\.photoFrame)
         XCTAssertEqual(frames.count, 2)
-        XCTAssertEqual(frames.map { $0.content?.nativeScale }, [1, 1])
+        XCTAssertEqual(frames.map { $0.content?.nativeScale }, [0.45, 0.45])
+        for frame in frames {
+            let placement = try XCTUnwrap(frame.content)
+            let render = try PhotoCropGeometry.renderGeometry(
+                placement: placement,
+                metadata: metadata,
+                frameGeometry: frame.geometry
+            )
+            XCTAssertLessThanOrEqual(render.photoRectInFrame.minX, 0.000_001)
+            XCTAssertLessThanOrEqual(render.photoRectInFrame.minY, 0.000_001)
+            XCTAssertGreaterThanOrEqual(
+                render.photoRectInFrame.maxX,
+                render.frameSize.width - 0.000_001
+            )
+            XCTAssertGreaterThanOrEqual(
+                render.photoRectInFrame.maxY,
+                render.frameSize.height - 0.000_001
+            )
+        }
         let occurrenceCount = try await service.occurrenceCount(of: metadata.id, in: album.id)
         XCTAssertEqual(occurrenceCount, 2)
+    }
+
+    // 3:FRM-004, 3:FRM-009, 3:PHO-012
+    func testFillingEmptyFrameUsesCenteredCoverCrop() async throws {
+        let service = TestFixtures.service()
+        let (initial, metadata) = try await TestFixtures.albumWithRegisteredPhoto(
+            service: service
+        )
+        let withEmptyFrame = try await service.addPhotoFrame(
+            to: initial.pages[0].id,
+            in: initial.id,
+            elementID: TestFixtures.elementID
+        )
+        let filled = try await service.fillPhotoFrame(
+            TestFixtures.elementID,
+            with: metadata.id,
+            on: initial.pages[0].id,
+            in: initial.id
+        )
+        let frame = try XCTUnwrap(
+            filled.pages[0].element(id: TestFixtures.elementID)?.photoFrame
+        )
+        let placement = try XCTUnwrap(frame.content)
+        XCTAssertEqual(placement.nativeScale, 0.6, accuracy: 0.000_001)
+        XCTAssertEqual(placement.focalX, 0.5)
+        XCTAssertEqual(placement.focalY, 0.5)
+        let render = try PhotoCropGeometry.renderGeometry(
+            placement: placement,
+            metadata: metadata,
+            frameGeometry: frame.geometry
+        )
+        XCTAssertLessThanOrEqual(render.photoRectInFrame.minX, 0.000_001)
+        XCTAssertLessThanOrEqual(render.photoRectInFrame.minY, 0.000_001)
+        XCTAssertGreaterThanOrEqual(
+            render.photoRectInFrame.maxX,
+            render.frameSize.width - 0.000_001
+        )
+        XCTAssertGreaterThanOrEqual(
+            render.photoRectInFrame.maxY,
+            render.frameSize.height - 0.000_001
+        )
+        XCTAssertEqual(withEmptyFrame.pages[0].elements.count, filled.pages[0].elements.count)
     }
 
     // 3:FRM-003, 3:PHO-009, 3:PHO-010
@@ -586,6 +646,24 @@ final class AlbumApplicationServiceTests: XCTestCase {
             in: initial.id,
             assetID: metadata.id,
             elementID: TestFixtures.elementID
+        )
+        let initiallyPlaced = try XCTUnwrap(
+            album.pages[0].element(id: TestFixtures.elementID)?.photoFrame
+        )
+        let initialRender = try PhotoCropGeometry.renderGeometry(
+            placement: try XCTUnwrap(initiallyPlaced.content),
+            metadata: metadata,
+            frameGeometry: initiallyPlaced.geometry
+        )
+        XCTAssertLessThanOrEqual(initialRender.photoRectInFrame.minX, 0.000_001)
+        XCTAssertLessThanOrEqual(initialRender.photoRectInFrame.minY, 0.000_001)
+        XCTAssertGreaterThanOrEqual(
+            initialRender.photoRectInFrame.maxX,
+            initialRender.frameSize.width - 0.000_001
+        )
+        XCTAssertGreaterThanOrEqual(
+            initialRender.photoRectInFrame.maxY,
+            initialRender.frameSize.height - 0.000_001
         )
         album = try await service.duplicateElement(
             TestFixtures.elementID,
@@ -893,7 +971,10 @@ final class AlbumApplicationServiceTests: XCTestCase {
         )
         XCTAssertEqual(cropped.pages[0].element(id: TestFixtures.elementID)?.photoFrame?.content, changed)
         let undone = try await service.undo(albumID: initial.id)
-        XCTAssertEqual(undone.pages[0].element(id: TestFixtures.elementID)?.photoFrame?.content?.nativeScale, 1)
+        XCTAssertEqual(
+            undone.pages[0].element(id: TestFixtures.elementID)?.photoFrame?.content?.nativeScale,
+            0.45
+        )
         let redone = try await service.redo(albumID: initial.id)
         XCTAssertEqual(redone.pages[0].element(id: TestFixtures.elementID)?.photoFrame?.content, changed)
     }

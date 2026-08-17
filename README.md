@@ -20,8 +20,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 
 - Spécification : projet 3.0 mis à jour le 17 août 2026 après les retours de la
   première campagne iPad Lot 2 ; le repère canonique
-  `2 400 × 3 000`, la taille native centrée à `1×` et la borne basse de zoom
-  dynamique sont confirmés. La frontière des lots est également figée :
+  `2 400 × 3 000`, la taille native à `1×`, le cadrage initial couvrant centré
+  et la borne basse de zoom dynamique sont confirmés. La frontière des lots est également figée :
   création photo locale au Lot 1, composition Photoweb complète au Lot 2,
   lecture et documents au Lot 3 (`DEC-38`).
 - Implémentation : après les échecs de compilation de `06c30b9…` et
@@ -80,8 +80,14 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   inutilisées, confirmation chiffrée, réutilisation des premières pages sans
   photo, création du complément en fin d’album et commande atomique
   Annuler/Rétablir. Ce nouvel incrément est figé dans
-  `781539603d6b98523fe48326ee49e24288dfa09b` et doit être qualifié sous
-  `IPAD-L2-018`.
+  `781539603d6b98523fe48326ee49e24288dfa09b` et `IPAD-L2-018` est réussi selon
+  le retour global « les tests sont ok », sans capture ni détail par étape. Le
+  retour demande ensuite de remplacer son grand groupe permanent par un seul
+  bouton sous Ajouter des photos : la densité, le nombre de photos inutilisées
+  et les actions Annuler/Valider passent dans un dialogue interne. Il change
+  aussi la règle de placement initial : une nouvelle photo est centrée au plus
+  petit zoom uniforme couvrant le cadre, qu’il faille l’agrandir ou la réduire ;
+  les cadrages déjà persistés ne sont pas migrés.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -92,7 +98,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   l’éditeur de texte ; stickers, cadres décoratifs et presse-papiers
   multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
-- Validation actuelle : 137 tests du noyau multiplateforme, les contrats et la
+- Validation actuelle : 139 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
@@ -106,9 +112,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   interne qui supprime ce chemin de présentation passe 134 tests et l’analyse
   syntaxique sous WSL ; `IPAD-L2-017` est désormais 🟢 `RÉUSSI` sur
   `57afa71…`, d’après le retour global « c’est ok » sans capture ni détail par
-  étape. Remplir l’album porte la suite à 137 tests Core et passe l’analyse
-  syntaxique WSL ; sa compilation, son rendu et son comportement Apple restent
-  ⚪ `NON TESTÉ` sous `IPAD-L2-018` sur `7815396…`.
+  étape. Remplir l’album porte la suite historique à 137 tests Core et passe
+  l’analyse syntaxique WSL ; `IPAD-L2-018` est 🟢 `RÉUSSI` sur `7815396…`
+  d’après le retour global « les tests sont ok ». La nouvelle présentation
+  compacte et la nouvelle règle de cadrage disposent de tests Core/contrat UI
+  mis à jour, mais leur compilation, rendu et comportement Apple doivent être
+  qualifiés sous une nouvelle fiche.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
@@ -683,8 +692,9 @@ Dans Swift Playgrounds :
 11. vérifier l’annulation et au moins un cas d’erreur ou d’annulation
     utilisateur ;
 12. utiliser plusieurs photos non sensibles, dont une plus petite et une plus
-    grande que le repère canonique, vérifier la taille centrée à `1×`, le fond
-    visible et la borne basse dynamique — notamment `0,5×` pour une photo
+    grande que le repère canonique, vérifier que le placement initial centré
+    couvre le cadre, puis dézoomer pour rendre le fond visible et contrôler la
+    borne basse dynamique — notamment `1×` pour la petite et `0,5×` pour une photo
     `4 800 × 6 000` dans un cadre pleine page —, les trois états de qualité, la suppression
     confirmée seulement à zéro occurrence et la réutilisation depuis un autre
     album, puis essayer un GIF ou une vidéo à refuser ;
@@ -792,7 +802,7 @@ Exemples :
 - navigation et gestes ;
 - import PhotosUI ;
 - rendu SwiftUI ;
-- canevas multiélément, cadres, taille native `1×`, dézoom sous `1×`, fond visible, recadrage et guides ;
+- canevas multiélément, cadres, cadrage initial couvrant, taille native `1×`, dézoom sous `1×`, fond visible, recadrage et guides ;
 - conservation des originaux dans Photos après retrait d’une occurrence, suppression explicite uniquement à zéro occurrence, réutilisation interalbum et indicateur de qualité à trois états ;
 - modèles, dé, automatisme, fonds et vue globale ;
 - absence de commande ou rendu double page ;

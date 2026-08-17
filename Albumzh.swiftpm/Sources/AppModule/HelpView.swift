@@ -26,7 +26,7 @@ struct HelpView: View {
             HelpSection(
                 title: "Ajouter des photos",
                 symbol: "photo.badge.plus",
-                text: "Le panneau Photos importe plusieurs images depuis Photothèque ou Fichiers. Vous pouvez aussi réutiliser les photos d’un autre album. Touchez une miniature pour remplir le cadre sélectionné ou créer un nouveau cadre. Remplir l’album répartit toutes les photos encore inutilisées selon la densité choisie après une confirmation détaillée."
+                text: "Le panneau Photos importe plusieurs images depuis Photothèque ou Fichiers. Vous pouvez aussi réutiliser les photos d’un autre album. Touchez une miniature pour remplir le cadre sélectionné ou créer un nouveau cadre. Le bouton Remplir l’album ouvre le choix de densité, indique le nombre de photos inutilisées et les répartit seulement après validation."
             ),
             HelpSection(
                 title: "Cadre vide",
@@ -36,7 +36,7 @@ struct HelpView: View {
             HelpSection(
                 title: "Cadrer la photo",
                 symbol: "crop",
-                text: "En mode Recadrer, glissez la photo, pincez pour modifier son échelle ou utilisez le réglage Zoom photo. À 1×, la taille native est conservée ; le fond peut rester visible. Annuler abandonne le brouillon et Terminé crée une seule action annulable."
+                text: "Une nouvelle photo est centrée et agrandie ou réduite pour couvrir son cadre. En mode Recadrer, glissez-la, pincez pour modifier son échelle ou utilisez Zoom photo. Vous pouvez dézoomer pour révéler le fond ; Réinitialiser restaure la couverture centrée. Annuler abandonne le brouillon et Terminé crée une seule action annulable."
             ),
             HelpSection(
                 title: "Modèles, dé et Auto",
@@ -106,7 +106,7 @@ private struct HelpSection: Identifiable {
             return HelpSection(
                 title: "Panneau Photos",
                 symbol: "photo.on.rectangle",
-                text: "Importez d’abord les originaux dans la photothèque interne de l’album, puis placez chaque occurrence librement ou utilisez Remplir l’album pour les répartir automatiquement sans supprimer les originaux."
+                text: "Importez d’abord les originaux dans la photothèque interne de l’album, puis placez chaque occurrence librement ou utilisez le bouton Remplir l’album. Sa fenêtre permet de choisir la densité et de vérifier le nombre de photos inutilisées avant validation, sans supprimer les originaux."
             )
         case .layouts:
             return HelpSection(
