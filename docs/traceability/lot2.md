@@ -22,9 +22,11 @@ presse-papiers multi-types appartiennent aux incréments suivants.
 | `A-L2-TEMPLATE` | `LayoutTemplateEngine`, cinq tests de `PrototypeEngineTests`, `AlbumApplicationServiceTests.testApplyingBuiltInTemplateIsOneValidatedUndoableCommand`, `testSmallerBuiltInTemplateRequiresConfirmationWithoutPartialCommit`, `testMovingTemplateTextOnlyFreesThatTextProvenance` | `TPL-004…018`, `TPL-021…023`, `RND-002…006` | Transition pure et transaction mémoire ; dialogue, miniatures et toucher restent manuels |
 | `A-L2-AUTO` | `AutoLayoutEngine`, `AlbumApplicationService.setAutomaticLayoutEnabled`, commandes structurelles Auto et tests `testAutomaticLayoutRecomposesStructuralPhotoCommandsAndIsUndoable`, `testEnablingAutoOnExistingTemplateRequiresConfirmationAndClearsSlots` | `AUT-001…008`, `AUT-012…019`, `PHO-014`, `DAT-037`, `DAT-043` | `AUT-009…011` non implémentés ; UI et persistance Apple non prouvées |
 | `A-L2-UI-PARSE` | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` | structure de `EDT-001…004`, `EDT-019`, `RND-001`, `AUT-001` | Syntaxe seulement, sans type-check SwiftUI ni disponibilité des SF Symbols |
+| `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesQuickPageAdditionAndExplicitPageManagementLabel` | `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013` | Vérifie les libellés et le raccord statique à `addPage()` ; pas le rendu ni le toucher Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
 
-La suite WSL complète compte 133 tests sans échec avec le correctif figé. Les
+La suite WSL complète compte 134 tests sans échec après l’ajustement de la
+barre locale et du libellé de gestion des pages. Les
 contrats publiés et leurs dix empreintes sont également valides. Ces résultats
 ne remplacent aucune fiche iPad.
 
@@ -80,3 +82,6 @@ environnement Xcode réellement compact.
 - La troncature ciblée du nom et la nouvelle commande de dé dans Mise en page
   sont validées sur l’iPad par `IPAD-L2-012` ; la matrice iPhone/Xcode reste
   différée.
+- L’action rapide Ajouter une page et le libellé Gérer les pages sont couverts
+  statiquement sous WSL, mais leur rendu, leur effet tactile et leur adaptation
+  doivent être requalifiés sur iPad après gel du candidat.

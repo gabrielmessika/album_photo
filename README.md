@@ -52,6 +52,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   borné dans Sélectionner un élément et dé à libellé visible déplacé dans Mise
   en page. Les quatre régressions `IPAD-L2-009…012` sont réussies sur iPad ;
   le retour global ne couvre aucun contrôle Apple différé.
+  Un ajustement d’interface ultérieur remplace maintenant, sous le canevas,
+  Ajouter une photo par l’action rapide Ajouter une page et renomme le mode
+  Organiser en Gérer les pages. L’ajout de photo reste disponible depuis le
+  panneau Photos et les cadres ; cet ajustement attend sa régression iPad.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -62,7 +66,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   l’éditeur de texte ; Remplir l’album, stickers, cadres décoratifs et
   presse-papiers multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
-- Validation actuelle : 133 tests du noyau multiplateforme, les contrats et la
+- Validation actuelle : 134 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur

@@ -128,7 +128,7 @@ private struct HelpSection: Identifiable {
             )
         case .globalPages:
             return HelpSection(
-                title: "Organiser les pages",
+                title: "Gérer les pages",
                 symbol: "square.grid.2x2",
                 text: "Les miniatures représentent une seule page chacune. Il n’existe aucun affichage ni réglage en double page."
             )

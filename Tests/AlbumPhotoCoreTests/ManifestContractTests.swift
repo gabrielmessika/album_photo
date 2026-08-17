@@ -97,6 +97,31 @@ final class ManifestContractTests: XCTestCase {
         }
     }
 
+    // 3:EDT-003, 3:EDT-008, 3:EDT-016, 3:EDT-020, 3:PAG-002, 3:PAG-013
+    func testPageWorkspaceUsesQuickPageAdditionAndExplicitPageManagementLabel() throws {
+        let appModule = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
+        let editor = try String(
+            contentsOf: appModule.appendingPathComponent("AlbumEditorView.swift"),
+            encoding: .utf8
+        )
+        let viewModel = try String(
+            contentsOf: appModule.appendingPathComponent("EditorViewModel.swift"),
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(editor.contains("pageWorkspaceCommandRow(addPageTitle: \"Ajouter une page\")"))
+        XCTAssertTrue(editor.contains("Task { await model.addPage() }"))
+        XCTAssertTrue(editor.contains(".accessibilityLabel(\"Ajouter une page\")"))
+        XCTAssertFalse(editor.contains("pageWorkspaceCommandRow(addPhotoTitle:"))
+        XCTAssertFalse(editor.contains("func addPhotoButton(title:"))
+        XCTAssertTrue(editor.contains(".accessibilityLabel(mode.accessibilityLabel)"))
+        XCTAssertTrue(viewModel.contains("case .global: \"Gérer les pages\""))
+        XCTAssertTrue(viewModel.contains("case .global: \"Gérer les pages — Vue globale\""))
+        XCTAssertFalse(viewModel.contains("case .global: \"Organiser\""))
+        XCTAssertFalse(viewModel.contains("func beginNewPhotoFrameChoice()"))
+    }
+
     // Lot 0, 3:PKG-003, 3:PKG-005...3:PKG-007
     func testPhotoAlbumSchemaAndExamplesAreValidJSONAndChecksumsAreLowercaseSHA256() throws {
         let docs = repositoryRoot.appendingPathComponent("docs", isDirectory: true)

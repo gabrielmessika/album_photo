@@ -91,7 +91,7 @@ enum EditorPresentationMode: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .page: "Créer"
-        case .global: "Organiser"
+        case .global: "Gérer les pages"
         case .preview: "Prévisualiser"
         }
     }
@@ -99,7 +99,7 @@ enum EditorPresentationMode: String, CaseIterable, Identifiable {
     var accessibilityLabel: String {
         switch self {
         case .page: "Créer — Vue page"
-        case .global: "Organiser — Vue globale"
+        case .global: "Gérer les pages — Vue globale"
         case .preview: "Prévisualiser"
         }
     }
@@ -128,13 +128,10 @@ enum EditorInteractionState: Equatable {
 }
 
 enum PhotoChoiceMode: Equatable {
-    case newFrame(pageID: UUID)
     case fillFrame(pageID: UUID, elementID: UUID, replacesContent: Bool)
 
     var title: String {
         switch self {
-        case .newFrame:
-            return "Choisir une photo pour un nouveau cadre"
         case let .fillFrame(_, _, replacesContent):
             return replacesContent
                 ? "Choisir la photo de remplacement"
@@ -144,8 +141,6 @@ enum PhotoChoiceMode: Equatable {
 
     var symbol: String {
         switch self {
-        case .newFrame:
-            return "photo.badge.plus"
         case let .fillFrame(_, _, replacesContent):
             return replacesContent
                 ? "arrow.triangle.2.circlepath"
@@ -683,13 +678,6 @@ final class EditorViewModel: ObservableObject {
     func select(elementID: UUID?) {
         guard cropDraft == nil else { return }
         selectedElementID = elementID
-    }
-
-    func beginNewPhotoFrameChoice() {
-        guard !isReadOnly, cropDraft == nil, let pageID = activePageID else { return }
-        selectedElementID = nil
-        activePanel = .photos
-        photoChoiceMode = .newFrame(pageID: pageID)
     }
 
     func beginSelectedPhotoFrameChoice() {
@@ -1297,8 +1285,6 @@ final class EditorViewModel: ObservableObject {
             where choicePageID == pageID
                 && activePage?.element(id: elementID)?.photoFrame != nil:
             targetFrameID = elementID
-        case .newFrame(let choicePageID) where choicePageID == pageID:
-            targetFrameID = nil
         case .some:
             cancelPhotoChoice()
             return

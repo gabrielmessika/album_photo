@@ -283,16 +283,16 @@ private struct AlbumEditorScene: View {
 
     private var pageWorkspaceCommands: some View {
         ViewThatFits(in: .horizontal) {
-            pageWorkspaceCommandRow(addPhotoTitle: "Ajouter une photo")
+            pageWorkspaceCommandRow(addPageTitle: "Ajouter une page")
                 .fixedSize(horizontal: true, vertical: false)
-            pageWorkspaceCommandRow(addPhotoTitle: "Ajouter")
+            pageWorkspaceCommandRow(addPageTitle: "Ajouter")
                 .fixedSize(horizontal: true, vertical: false)
-            pageWorkspaceCommandRow(addPhotoTitle: nil)
+            pageWorkspaceCommandRow(addPageTitle: nil)
                 .fixedSize(horizontal: true, vertical: false)
             VStack(spacing: 6) {
                 HStack(spacing: 14) {
                     if model.cropDraft == nil {
-                        addPhotoButton(title: nil)
+                        addPageButton(title: nil)
                     }
                     CanvasZoomControls(model: model)
                 }
@@ -303,10 +303,10 @@ private struct AlbumEditorScene: View {
         .frame(maxWidth: .infinity)
     }
 
-    private func pageWorkspaceCommandRow(addPhotoTitle: String?) -> some View {
+    private func pageWorkspaceCommandRow(addPageTitle: String?) -> some View {
         HStack(spacing: 14) {
             if model.cropDraft == nil {
-                addPhotoButton(title: addPhotoTitle)
+                addPageButton(title: addPageTitle)
             }
             CanvasZoomControls(model: model)
             Divider().frame(height: 26)
@@ -314,22 +314,22 @@ private struct AlbumEditorScene: View {
         }
     }
 
-    private func addPhotoButton(title: String?) -> some View {
+    private func addPageButton(title: String?) -> some View {
         Button {
-            model.beginNewPhotoFrameChoice()
-            openPhotosPanel()
+            Task { await model.addPage() }
         } label: {
             if let title {
-                Label(title, systemImage: "photo.badge.plus")
+                Label(title, systemImage: "rectangle.stack.badge.plus")
                     .lineLimit(1)
             } else {
-                Image(systemName: "photo.badge.plus")
+                Image(systemName: "rectangle.stack.badge.plus")
             }
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .disabled(model.isReadOnly)
-        .accessibilityLabel("Ajouter une photo")
+        .accessibilityLabel("Ajouter une page")
+        .accessibilityHint("Crée une page vide après la page active.")
     }
 
     private var pageNavigation: some View {
@@ -833,6 +833,7 @@ private struct AlbumEditorScene: View {
             Picker("Mode d’affichage", selection: $model.presentationMode) {
                 ForEach(EditorPresentationMode.allCases) { mode in
                     Label(mode.title, systemImage: mode.symbol)
+                        .accessibilityLabel(mode.accessibilityLabel)
                         .tag(mode)
                 }
             }
@@ -877,6 +878,7 @@ private struct AlbumEditorScene: View {
                 Picker("Mode d’affichage", selection: $model.presentationMode) {
                     ForEach(EditorPresentationMode.allCases) { mode in
                         Label(mode.title, systemImage: mode.symbol)
+                            .accessibilityLabel(mode.accessibilityLabel)
                             .tag(mode)
                     }
                 }
