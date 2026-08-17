@@ -14,72 +14,65 @@ private struct PhotoDescriptionRequest: Identifiable {
     var id: UUID { elementID }
 }
 
-private struct PageAdditionConfirmationSheet: View {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+private struct PageAdditionConfirmationDialog: View {
     @Binding var doNotAskAgain: Bool
     let onCancel: () -> Void
     let onConfirm: () -> Void
 
     var body: some View {
-        Group {
-            if horizontalSizeClass == .compact {
-                dialog
-                    .presentationSizing(.page)
-            } else {
-                dialog
-                    .frame(width: 400, height: 340)
-                    .presentationSizing(.fitted)
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Ajouter une page ?")
+                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
+
+            Text(
+                "Une page vide sera ajoutée à la fin de l’album et deviendra la page active."
+            )
+            .fixedSize(horizontal: false, vertical: true)
+
+            Divider()
+
+            Button {
+                doNotAskAgain.toggle()
+            } label: {
+                Label(
+                    "Ne plus demander",
+                    systemImage: doNotAskAgain ? "checkmark.square.fill" : "square"
+                )
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .contentShape(Rectangle())
+            .accessibilityValue(doNotAskAgain ? "Coché" : "Non coché")
+
+            Divider()
+
+            Text(
+                "Ce choix reste modifiable dans Gérer les pages et sera réinitialisé à la fermeture de l’album."
+            )
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 12) {
+                Button("Annuler", action: onCancel)
+                    .buttonStyle(.bordered)
+
+                Spacer(minLength: 0)
+
+                Button("Ajouter la page", action: onConfirm)
+                    .buttonStyle(.borderedProminent)
             }
         }
-        .interactiveDismissDisabled()
-    }
-
-    private var dialog: some View {
-        NavigationStack {
-            VStack(alignment: .leading, spacing: 18) {
-                Text(
-                    "Une page vide sera ajoutée à la fin de l’album et deviendra la page active."
-                )
-                .fixedSize(horizontal: false, vertical: true)
-
-                Divider()
-
-                Button {
-                    doNotAskAgain.toggle()
-                } label: {
-                    Label(
-                        "Ne plus demander",
-                        systemImage: doNotAskAgain ? "checkmark.square.fill" : "square"
-                    )
-                }
-                .buttonStyle(.plain)
-                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                .contentShape(Rectangle())
-                .accessibilityValue(doNotAskAgain ? "Coché" : "Non coché")
-
-                Divider()
-
-                Text(
-                    "Ce choix reste modifiable dans Gérer les pages et sera réinitialisé à la fermeture de l’album."
-                )
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 20)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .navigationTitle("Ajouter une page ?")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler", action: onCancel)
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Ajouter la page", action: onConfirm)
-                }
-            }
+        .padding(24)
+        .frame(maxWidth: .infinity, minHeight: 340, alignment: .topLeading)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .overlay {
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(.secondary.opacity(0.25), lineWidth: 1)
         }
+        .shadow(color: .black.opacity(0.2), radius: 24, y: 8)
+        .accessibilityAddTraits(.isModal)
     }
 }
 
@@ -160,12 +153,26 @@ private struct AlbumEditorScene: View {
                 Task { await model.renameAlbum(to: name) }
             }
         }
-        .sheet(isPresented: $model.showsPageAdditionConfirmation) {
-            PageAdditionConfirmationSheet(
-                doNotAskAgain: $model.pageAdditionDoNotAskAgainDraft,
-                onCancel: { model.cancelPageAddition() },
-                onConfirm: { Task { await model.confirmPageAddition() } }
-            )
+        .overlay {
+            if model.showsPageAdditionConfirmation {
+                GeometryReader { geometry in
+                    ZStack {
+                        Color.black.opacity(0.35)
+                            .ignoresSafeArea()
+                            .contentShape(Rectangle())
+                            .onTapGesture {}
+
+                        PageAdditionConfirmationDialog(
+                            doNotAskAgain: $model.pageAdditionDoNotAskAgainDraft,
+                            onCancel: { model.cancelPageAddition() },
+                            onConfirm: { Task { await model.confirmPageAddition() } }
+                        )
+                        .frame(width: min(400, geometry.size.width - 32))
+                        .padding(.vertical, 16)
+                    }
+                }
+                .zIndex(100)
+            }
         }
         .sheet(item: $rotationRequest) { request in
             ElementRotationSheet(

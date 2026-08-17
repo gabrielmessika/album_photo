@@ -26,7 +26,8 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat de navigation Lot 2 testé | `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` — Ajouter une page sous le canevas et mode Gérer les pages ; `IPAD-L2-013` réussi sur iPad |
 | Candidat d’ajout de page Lot 2 testé | `02430b16f2853c01dbcafc88d48cd40c48373c4c` — ajout au dernier rang, confirmation commune et réglage temporaire fonctionnels ; `IPAD-L2-014` échoué car la fenêtre est trop large, trop basse et impose un défilement pour son pied de texte |
 | Premier correctif de fenêtre testé | `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` — `IPAD-L2-015` échoué : le dimensionnement ajusté comprime toute la fenêtre, devenue minuscule et illisible |
-| Second correctif de fenêtre à tester | `7d8772c6d87a769a239b4f9eafabe74c8c126681` — cadre iPad 400 × 340 explicite et présentation compacte native ; `IPAD-L2-016` à exécuter |
+| Second correctif de fenêtre testé | `7d8772c6d87a769a239b4f9eafabe74c8c126681` — `IPAD-L2-016` échoué : le bouton fige l’app sans afficher la confirmation |
+| Correctif de gel en préparation | Remplacement de la feuille système par un dialogue interne centré, sur fond assombri et sans négociation de taille ; candidat exact et nouvelle régression à figer |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -81,7 +82,9 @@ lisibilité : la présentation ajustée comprime le `NavigationStack`. Une secon
 correction à taille explicite recevra un nouvel ID.
 La régression `IPAD-L2-016` vise exactement le candidat
 `7d8772c6d87a769a239b4f9eafabe74c8c126681` et remplace `015` uniquement pour
-la lisibilité et l’adaptation de la fenêtre.
+la lisibilité et l’adaptation de la fenêtre. Elle échoue dès l’ouverture : le
+bouton fige l’app et aucune confirmation n’apparaît. Le correctif suivant
+retire ce parcours de feuille système ; il recevra un nouvel ID.
 
 ## Mode de réponse
 
@@ -320,7 +323,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-013` | Ajouter une page sous le canevas et mode Gérer les pages | `3:EDT-003`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:EDT-020`, `3:PAG-002`, `3:PAG-013` à `3:PAG-015`, `3:PHO-004`, `3:PHO-011`, `3:ACC-002`, `3:ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `3:ENV-001` à `3:ENV-005`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:PAG-002`, `3:PAG-013` à `3:PAG-017`, `3:UND-001`, `3:UND-002`, `3:SAV-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre trop large et trop basse ; pied de texte visible seulement après défilement |
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
-| `IPAD-L2-016` | Cadre lisible de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-016` | Cadre lisible de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — le bouton fige l’app et aucune confirmation n’apparaît |
 
 ## Fiches détaillées
 
@@ -2951,12 +2954,14 @@ leur candidat.
 | 5 | Fermer la fenêtre, tourner l’iPad en paysage, revenir dans Créer et la rouvrir. | La taille reste identique, centrée et lisible ; aucun texte ni bouton n’est rogné et aucun défilement n’est nécessaire. |
 | 6 | Revenir en portrait, activer VoiceOver et parcourir le texte, la case et les deux actions. | L’ordre de lecture est cohérent, la case annonce son état et chaque action est accessible sans contenu masqué. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner après retour utilisateur, avec toute anomalie associée à
-  l’ID numérique de l’étape.
-- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
-  Playgrounds 4.7 ; taille de texte standard ; portrait initial, paysage à
-  l’étape 5 ; VoiceOver à l’étape 6 ; Paris, France ; français (France).
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : retour utilisateur explicite « le bouton fait figer l’app sans popup
+  affichée ». L’étape 2 échoue immédiatement ; les étapes 3 à 6 ne sont pas
+  considérées comme exécutées et aucune capture n’est jointe.
+- Environnement : repris de la fiche, sans nouvelle déclaration dans le
+  retour : iPad 8e génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; taille
+  de texte standard ; portrait ; Paris, France ; français (France). Aucun
+  résultat iPhone, Xcode ou `APPLE-*` n’est extrapolé.
 
 ## Qualification différée Apple/macOS/Xcode
 
