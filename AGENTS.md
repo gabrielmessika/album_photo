@@ -100,6 +100,11 @@ Pour chaque remise nécessitant une validation manuelle :
 2. attribuer à chacun un identifiant unique, stable et jamais réutilisé ;
 3. indiquer le commit exact, les préconditions, les étapes, le résultat
    attendu et les exigences de `spec.md` couvertes ;
+   dans chaque fiche détaillée, présenter les étapes dans un tableau Markdown
+   avec exactement les colonnes `ID`, `Description` et `Résultat attendu` ;
+   numéroter simplement les lignes à partir de `1`, placer une action ou un
+   contrôle observable par ligne et associer son résultat attendu sur la même
+   ligne ;
 4. afficher le repère coloré défini dans `suivi_tests.md` devant chaque état et
    initialiser les nouveaux contrôles à ⚪ `NON TESTÉ` ;
 5. permettre à l’utilisateur de répondre avec l’identifiant suivi de `OK`,

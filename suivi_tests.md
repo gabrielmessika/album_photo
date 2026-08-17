@@ -77,7 +77,9 @@ IPAD-L2-001 BUG : résultat observé, étapes et capture éventuelle
 
 Codex enregistrera ensuite le résultat observé, la preuve, l’environnement et
 l’effet éventuel dans `SUIVI_PROJET.md`. Un retour global ne valide jamais
-implicitement plusieurs fiches.
+implicitement plusieurs fiches. Pour signaler un écart dans une fiche en
+tableau, préciser aussi l’ID numérique de la ligne, par exemple
+`IPAD-L2-010 BUG étape 3 : …`.
 
 | Repère | État enregistré | Usage |
 |---|---|---|
@@ -2680,14 +2682,15 @@ historiques `IPAD-L2-002`, `004`, `005` et `008`.
 - Exigences : `3:ENV-001` à `3:ENV-005`, `3:LOT-003`, `3:DAT-042`,
   `3:DONE-005`.
 - Préconditions : conserver une copie du package et du store utilisés pour
-  `IPAD-L2-001…008`, puis transférer exactement le candidat ci-dessus sans
-  recréer ni modifier le `Package.swift` généré.
-- Étapes : effacer les anciens diagnostics, compiler et lancer ; ouvrir
-  l’album Lot 2 déjà utilisé ; parcourir Bibliothèque, Vue globale et éditeur,
-  puis revenir à la page active.
-- Résultat attendu : aucune erreur ni avertissement bloquant ; albums, pages,
-  photos, cadrages, fonds, modèles et états Auto existants restent lisibles et
-  inchangés ; Photos, Mise en page et Fonds restent accessibles.
+  `IPAD-L2-001…008`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Transférer exactement le candidat indiqué dans la fiche. | Le package reçu correspond au candidat ; le `Package.swift` généré n’est ni recréé ni modifié. |
+| 2 | Effacer les anciens diagnostics, puis compiler et lancer l’application. | La compilation et le lancement se terminent sans erreur ni avertissement bloquant. |
+| 3 | Ouvrir l’album Lot 2 déjà utilisé pour `IPAD-L2-001…008`. | Les albums, pages, photos, cadrages, fonds, modèles et états Auto existants sont lisibles et inchangés. |
+| 4 | Parcourir Bibliothèque, Vue globale et éditeur, puis revenir à la page active. | La navigation aboutit à la même page active ; Photos, Mise en page et Fonds restent accessibles. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner après retour utilisateur.
 - Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
@@ -2700,20 +2703,19 @@ historiques `IPAD-L2-002`, `004`, `005` et `008`.
   `3:ACC-021`.
 - Préconditions : `IPAD-L2-009` réussi ; page contenant au moins une photo
   sélectionnée ; commencer en portrait avec Photos ouvert.
-- Étapes : vérifier les marges du rail gauche et du panneau droit ; ouvrir
-  successivement Photos, Mise en page et Fonds sans perdre la sélection ; dans
-  le panneau droit, replier puis développer séparément « Inspecteur de
-  l’élément » et la section du panneau actif, et vérifier les quatre
-  combinaisons ; masquer le panneau droit avec sa propre commande, puis le
-  restaurer avec le bouton « Panneau » du rail ; tourner en paysage et répéter
-  l’ouverture des sections ; activer Réduire les animations et refaire un
-  cycle de repli.
-- Résultat attendu : aucun bord, titre, contenu ou bouton n’est rogné en
-  portrait ni en paysage ; chaque section peut être réduite à son titre sans
-  agir sur l’autre ; le contenu inférieur devient lisible quand l’inspecteur
-  est replié ; masquer/restaurer concerne explicitement le panneau droit ; la
-  sélection et le panneau actif sont conservés ; aucune animation forcée
-  n’apparaît avec Réduire les animations.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | En portrait, examiner le bord gauche du rail et le bord droit du panneau. | Le rail et le panneau droit disposent d’une marge visible ; aucun bord, titre, contenu ou bouton n’est rogné. |
+| 2 | Ouvrir successivement Photos, Mise en page et Fonds. | Chaque panneau s’ouvre sans perdre la photo sélectionnée et son contenu reste entièrement lisible. |
+| 3 | Replier uniquement « Inspecteur de l’élément ». | Seul son contenu disparaît ; son titre et le panneau actif restent visibles, et le contenu inférieur gagne de la place. |
+| 4 | Redévelopper l’inspecteur, puis replier uniquement la section du panneau actif. | Seul le contenu de la section active disparaît ; son titre et l’inspecteur restent visibles. |
+| 5 | Vérifier successivement les quatre combinaisons développé/replié des deux sections. | Chaque section se replie indépendamment sans agir sur l’autre ; les deux titres restent toujours accessibles. |
+| 6 | Utiliser « Masquer le panneau droit ». | Le panneau droit entier est masqué ; la sélection et le panneau actif sont conservés. |
+| 7 | Utiliser « Panneau » dans le rail pour restaurer le panneau droit. | Le panneau droit réapparaît avec la même sélection et le même panneau actif. |
+| 8 | Tourner l’iPad en paysage et répéter l’ouverture et le repli des deux sections. | Aucun bord, titre, contenu ou bouton n’est rogné en paysage ; les replis restent indépendants. |
+| 9 | Activer Réduire les animations, puis effectuer un nouveau cycle de repli et de développement. | Le changement d’état reste immédiat et aucune animation forcée n’apparaît. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner après retour utilisateur.
 - Environnement attendu : identique à `IPAD-L2-009`.
@@ -2724,17 +2726,19 @@ historiques `IPAD-L2-002`, `004`, `005` et `008`.
 - Exigences : `3:TPL-005` à `3:TPL-010`, `3:TPL-016`, `3:ERR-022`.
 - Préconditions : `IPAD-L2-009` réussi ; nouvelle page libre contenant
   exactement quatre cadres remplis par des photos reconnaissables ; relever
-  leur ordre et vérifier les quatre assets dans Photos.
-- Étapes : choisir Sans texte > `2` puis Grille A ; vérifier le nombre annoncé
-  et toucher Annuler ; constater l’absence de changement ; recommencer et
-  toucher Appliquer ; vérifier les survivants et le panneau Photos ; toucher
-  Annuler dans la barre principale, puis Rétablir ; fermer et rouvrir l’album.
-- Résultat attendu : le dialogue annonce exactement deux occurrences retirées
-  et son Annuler ne modifie rien ; Appliquer conserve les deux premières selon
-  l’ordre accessible, retire exactement les deux autres cadres sans supprimer
-  leurs assets et désactive Auto s’il était actif ; un seul Annuler restaure
-  les quatre cadres avec leurs cadrages, Rétablir remet le modèle à deux et ce
-  dernier état persiste après relance.
+  leur ordre et leurs cadrages, puis vérifier les quatre assets dans Photos.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Dans Mise en page, choisir Sans texte > `2`, puis Grille A. | Un dialogue s’affiche avant toute modification et annonce exactement deux occurrences photo retirées. |
+| 2 | Dans ce premier dialogue, toucher Annuler. | La page conserve ses quatre cadres, leur ordre et leurs cadrages sans changement visible. |
+| 3 | Choisir de nouveau Sans texte > `2`, puis Grille A, et toucher Appliquer. | L’application du modèle produit immédiatement une page à deux cadres. |
+| 4 | Examiner les deux cadres survivants et le panneau Photos. | Les deux premières occurrences selon l’ordre accessible sont conservées avec leurs cadrages ; les deux autres cadres sont retirés, mais les quatre assets restent disponibles dans Photos. |
+| 5 | Si Auto était actif avant l’application, contrôler son état après Appliquer. | Auto est désactivé dans la même commande et aucun état intermédiaire incohérent n’est visible. |
+| 6 | Toucher une seule fois Annuler dans la barre principale. | Les quatre cadres, leur ordre et leurs cadrages sont restaurés en une seule action. |
+| 7 | Toucher une seule fois Rétablir. | Le modèle à deux cadres est restauré exactement. |
+| 8 | Fermer puis rouvrir l’album et revenir à la page. | L’état rétabli à deux cadres persiste après la relance. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner après retour utilisateur.
 - Environnement attendu : identique à `IPAD-L2-009`.
@@ -2747,19 +2751,17 @@ historiques `IPAD-L2-002`, `004`, `005` et `008`.
 - Préconditions : `IPAD-L2-009` réussi ; page libre contenant quatre cadres
   photo, dont une photo au nom ou à la description nettement supérieur à
   45 caractères ; au moins deux modèles Sans texte compatibles.
-- Étapes : ouvrir « Sélectionner un élément » et examiner chaque ligne ; pour
-  la photo au nom long, vérifier type, nom abrégé, position et
-  `plan X sur Y` ;
-  activer VoiceOver et faire annoncer cette ligne ; ouvrir Mise en page et
-  trouver « Changer aléatoirement la mise en page » ; vérifier que la commande
-  n’existe plus dans la barre locale du canevas, puis l’actionner deux fois et
-  utiliser Annuler une fois.
-- Résultat attendu : seul le nom ou l’extrait est tronqué visuellement ; type,
-  position et profondeur restent toujours visibles ; VoiceOver annonce le nom
-  complet, la position et « plan X sur Y » ; la commande aléatoire est visible
-  avec un libellé complet et une icône de dé dans Mise en page, absente de la
-  barre du canevas ; elle reste fonctionnelle, évite la répétition immédiate et
-  son dernier tirage est annulable en une action.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Ouvrir « Sélectionner un élément » et examiner toutes les lignes. | Chaque ligne conserve son type, sa position et `plan X sur Y`, y compris pour les éléments situés en fin de liste. |
+| 2 | Examiner la ligne de la photo dont le nom ou la description dépasse 45 caractères. | Seul le nom ou l’extrait est abrégé avec une ellipse ; la fin contenant la position et `plan X sur Y` reste visible. |
+| 3 | Activer VoiceOver et faire annoncer cette même ligne. | VoiceOver annonce le nom ou la description complète, sans troncature, puis la position et « plan X sur Y ». |
+| 4 | Ouvrir Mise en page et repérer « Changer aléatoirement la mise en page ». | La commande est visible avec ce libellé complet, une icône de dé explicite et un libellé accessible identique. |
+| 5 | Examiner la barre locale d’ajout, de zoom et de navigation du canevas. | La commande de disposition aléatoire n’apparaît plus dans cette barre. |
+| 6 | Noter le modèle courant, puis actionner deux fois la commande aléatoire. | Chaque action choisit un autre modèle Sans texte compatible sans répétition immédiate ; nombre, ordre, contenus, cadrages, fond et assets ne changent pas. |
+| 7 | Toucher une seule fois Annuler. | Le modèle obtenu par le dernier tirage est annulé en une seule action et la disposition précédente est restaurée. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner après retour utilisateur.
 - Environnement attendu : identique à `IPAD-L2-009` ; VoiceOver activé pour
@@ -2799,14 +2801,15 @@ explicitement enregistré.
 - Exigences : `3:EDT-003`, `3:EDT-004`, `3:ACC-002`, `3:ACC-021`.
 - Préconditions : page contenant un élément sélectionné, une commande Annuler
   disponible et un élément copié ; Auto successivement désactivé puis activé.
-- Étapes : en portrait compact, vérifier qu’Auto reste directement visible ;
-  ouvrir Plus ; contrôler la présence, l’ordre, les libellés et les états de
-  Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller et Supprimer ; tourner
-  en paysage et répéter ; activer VoiceOver et parcourir la barre et le menu.
-- Résultat attendu : aucune commande n’est coupée ou inaccessible ; Auto reste
-  hors de Plus ; les commandes secondaires sont regroupées dans Plus, gardent
-  leurs états activé/désactivé et possèdent un libellé accessible non ambigu ;
-  le changement d’orientation ne perd ni la sélection ni la page active.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Ouvrir l’éditeur en portrait sur un iPhone réel ou un simulateur Xcode produisant une largeur compacte. | La barre compacte est entièrement visible ; aucune commande n’est coupée ou inaccessible. |
+| 2 | Repérer Mise en page auto dans la barre, d’abord désactivée puis activée. | Auto reste directement visible hors du menu Plus et son état affiché suit la page. |
+| 3 | Ouvrir Plus et parcourir Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller et Supprimer. | Toutes les commandes secondaires sont présentes dans leur ordre relatif, avec leur libellé complet et leur état activé ou désactivé correct. |
+| 4 | Tourner l’appareil ou le simulateur en paysage, puis rouvrir Plus. | La barre et le menu restent entièrement accessibles ; la sélection et la page active sont conservées. |
+| 5 | Activer VoiceOver et parcourir la barre compacte puis le menu Plus. | Chaque commande possède un libellé accessible non ambigu et annonce correctement son état indisponible lorsqu’elle est désactivée. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner avec appareil/simulateur, version système, version
   Xcode ou outil, orientation et capture éventuelle.
@@ -2823,24 +2826,15 @@ explicitement enregistré.
   validée et enregistrée. Mémoriser l’identifiant/version d’origine et le hash
   du rendu de référence ; désactiver ou vider le cache de rendu avant chaque
   sous-cas.
-- Étapes :
-  1. injecter un catalogue courant où la ressource d’origine est absente mais
-     conserver sa copie de secours valide ; relancer et rendre la page dans
-     éditeur, Vue globale et Prévisualiser ;
-  2. vérifier que les trois sorties utilisent la copie de secours et produisent
-     le hash de rendu attendu sans remplacer l’identifiant enregistré ;
-  3. dans une nouvelle copie du bac à sable initial, rendre également absente
-     ou invalide la copie de secours ; relancer ;
-  4. vérifier le fond par défaut provisoire dans les trois sorties, la
-     conservation de l’identifiant/version d’origine dans le diagnostic et
-     l’état interne bloquant une sortie documentaire future ;
-  5. rétablir catalogue et secours, relancer et vérifier que le fond d’origine
-     réapparaît sans migration destructive du document.
-- Résultat attendu : ressource bundle absente = secours validé fidèle ; bundle
-  et secours invalides = fond par défaut seulement provisoire, diagnostic
-  conservé et aucune réécriture silencieuse de la référence. La commande
-  Exporter reste non publique au Lot 1 ; son blocage est vérifié par l’état
-  instrumenté, puis sera rejoué par l’UI au Lot 3.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Injecter un catalogue courant où la ressource d’origine est absente, conserver sa copie de secours valide, relancer, puis rendre la page dans l’éditeur, Vue globale et Prévisualiser. | Les trois sorties utilisent la copie de secours validée et restent visuellement fidèles. |
+| 2 | Comparer les trois sorties au hash de rendu attendu et relire la référence persistée. | Le hash attendu est obtenu et l’identifiant/version d’origine n’est pas remplacé. |
+| 3 | Repartir d’une copie neuve du bac à sable initial, rendre également la copie de secours absente ou invalide, puis relancer. | L’application démarre sans réécriture silencieuse de la référence et utilise un fond par défaut uniquement provisoire. |
+| 4 | Examiner les trois sorties, le diagnostic et l’état interne autorisant une future sortie documentaire. | Les trois sorties affichent le fond provisoire ; le diagnostic conserve l’identifiant/version d’origine et l’état interne bloque la sortie documentaire future. La commande Exporter reste non publique au Lot 1. |
+| 5 | Rétablir le catalogue et la copie de secours, puis relancer. | Le fond d’origine réapparaît dans les trois sorties sans migration destructive du document. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner — logs structurés, hashes des rendus, référence
   persistée avant/après et capture des trois vues.
@@ -2856,23 +2850,16 @@ explicitement enregistré.
 - Préconditions : album possédant un snapshot durable A et un hash canonique
   connu ; le double de test peut faire échouer précisément journal, consolidation
   ou flush puis rétablir les écritures sans simuler un disque réellement plein.
-- Étapes :
-  1. modifier le document vers B, injecter l’échec au prochain flush et toucher
-     Sauvegarder ;
-  2. vérifier l’état visible « Échec de sauvegarde », l’action Réessayer et la
-     conservation de la commande B dans le journal récupérable ;
-  3. toucher Réessayer pendant que l’échec persiste et vérifier qu’A n’est ni
-     remplacé ni corrompu et que l’erreur reste actionnable ;
-  4. tenter de revenir à la bibliothèque ; vérifier un avertissement explicite
-     de fermeture pendant échec, puis choisir de rester dans l’éditeur ;
-  5. rétablir les écritures et toucher Réessayer ; attendre « Enregistré » avec
-     l’heure, fermer normalement et relancer ;
-  6. vérifier que le document B et son hash canonique sont durables, sans état
-     partiel ni disparition du dernier snapshot valide.
-- Résultat attendu : l’échec est visible, le journal récupérable est conservé,
-  Réessayer ne duplique aucune commande, fermer avertit tant que l’échec dure,
-  A reste intact jusqu’au succès et B devient le nouveau snapshot seulement
-  après flush réussi.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Modifier le document vers B, injecter l’échec au prochain flush, puis toucher Sauvegarder. | L’interface affiche « Échec de sauvegarde » et propose Réessayer ; A reste le dernier snapshot durable. |
+| 2 | Inspecter le journal récupérable après l’échec. | La commande produisant B est conservée sans état partiel. |
+| 3 | Toucher Réessayer pendant que l’échec persiste. | A n’est ni remplacé ni corrompu ; aucune commande n’est dupliquée et l’erreur reste actionnable. |
+| 4 | Tenter de revenir à la bibliothèque, puis choisir de rester dans l’éditeur. | Un avertissement explicite empêche une fermeture silencieuse pendant l’échec et l’éditeur reste ouvert. |
+| 5 | Rétablir les écritures, toucher Réessayer, attendre « Enregistré » avec l’heure, puis fermer normalement et relancer. | Le flush réussit, l’état visible devient « Enregistré » et la fermeture ne produit plus d’avertissement d’échec. |
+| 6 | Relire le document et calculer son hash canonique après la relance. | B est durable avec le hash attendu ; aucun état partiel n’existe et le dernier snapshot valide n’a jamais disparu avant le succès. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner — vidéo UI, chronologie des points d’injection, hashes
   A/B, contenu du journal et assertions du double de dépôt.
@@ -2888,23 +2875,15 @@ explicitement enregistré.
 - Préconditions : utiliser les fixtures non personnelles, réseau actif, capture
   capable d’attribuer les connexions au processus de l’app ; séparer le trafic
   système éventuel du sélecteur Photos du trafic émis par l’application.
-- Étapes :
-  1. démarrer la capture avant lancement, puis importer depuis Fichiers les
-     fixtures petite, moyenne et grande ;
-  2. placer, recadrer, dupliquer, générer miniatures/couvertures, sauvegarder,
-     fermer et relancer ;
-  3. répéter avec une photo déjà téléchargée choisie via PhotosPicker, en
-     distinguant l’activité du service système ;
-  4. inspecter domaines, adresses, méthodes, tailles et corps attribués au
-     processus ; rechercher les signatures binaires et hashes des fixtures dans
-     toute requête sortante ;
-  5. inspecter le binaire, les dépendances et la configuration pour tout SDK
-     d’analyse ou endpoint propriétaire non décidé.
-- Résultat attendu : aucune donnée photo, dérivé, miniature ni extrait d’album
-  n’est envoyé par l’app vers un serveur propriétaire ; aucun SDK d’analyse
-  comportementale ni endpoint implicite n’est présent. Un trafic Apple du
-  sélecteur système doit être isolé et ne constitue pas une preuve d’envoi par
-  le processus.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Démarrer la capture avant le lancement, puis importer depuis Fichiers les fixtures petite, moyenne et grande. | La capture attribue séparément les connexions au processus de l’app et ne contient aucun envoi des fichiers importés vers un serveur propriétaire. |
+| 2 | Placer, recadrer et dupliquer les photos, générer miniatures et couvertures, sauvegarder, fermer, puis relancer. | Aucune donnée photo, dérivé, miniature ou extrait d’album n’est émis par l’app pendant ces opérations. |
+| 3 | Répéter le parcours avec une photo déjà téléchargée choisie via PhotosPicker. | L’activité éventuelle du service système Apple est isolée du trafic du processus et aucune émission photo n’est attribuée à l’app. |
+| 4 | Inspecter domaines, adresses, méthodes, tailles et corps attribués au processus ; rechercher les signatures binaires et hashes des fixtures dans les requêtes sortantes. | Aucun endpoint propriétaire ni contenu correspondant aux fixtures n’est trouvé dans le trafic de l’app. |
+| 5 | Inspecter le binaire, ses dépendances et sa configuration. | Aucun SDK d’analyse comportementale ni endpoint propriétaire implicite non décidé n’est présent. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner — fichier de capture, filtre par processus, inventaire
   des destinations, recherche de signatures et rapport d’inspection statique.
@@ -2920,24 +2899,16 @@ explicitement enregistré.
 - Préconditions : album à quatre pages conforme à `IPAD-L1-074` ; couverture
   manuelle sur une occurrence laissant voir le fond, avec cadrage et rotation
   reconnaissables ; taille de miniature et échelle fixées.
-- Étapes :
-  1. demander la miniature une première fois et vérifier un miss suivi d’une
-     seule composition par le moteur commun de page ;
-  2. comparer son image au rendu de page de référence recadré au centre à la
-     taille demandée ;
-  3. redemander plusieurs fois la même clé logique, taille et échelle ; vérifier
-     des hits sans nouvelle composition ;
-  4. modifier successivement le cadrage de l’occurrence cible, puis le fond de
-     sa page et enfin choisir une autre occurrence ; après chaque mutation,
-     vérifier l’invalidation concernée, une seule recomposition et un nouveau
-     rendu fidèle ;
-  5. redemander chaque nouvel état inchangé et vérifier de nouveaux hits ;
-  6. modifier un autre album et vérifier que l’entrée de couverture test n’est
-     pas invalidée globalement.
-- Résultat attendu : miniature produite par le moteur commun, recadrage centré
-  exact, réutilisation du composite inchangé, invalidation sur chaque donnée
-  visuelle de la couverture et absence d’invalidation par une mutation sans
-  rapport.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Demander la miniature une première fois et observer les compteurs. | Un miss est suivi d’une seule composition par le moteur commun de page. |
+| 2 | Comparer la miniature au rendu de page de référence recadré au centre à la taille demandée. | L’image et le recadrage centré correspondent exactement à la référence. |
+| 3 | Redemander plusieurs fois la même clé logique, la même taille et la même échelle. | Chaque demande produit un hit sans nouvelle composition. |
+| 4 | Modifier successivement le cadrage de l’occurrence cible, le fond de sa page, puis choisir une autre occurrence ; demander la miniature après chaque mutation. | Chaque mutation invalide uniquement l’entrée concernée, provoque une seule recomposition et produit un nouveau rendu fidèle. |
+| 5 | Redemander chaque nouvel état sans autre modification. | Chaque état inchangé produit de nouveaux hits sans recomposition. |
+| 6 | Modifier un autre album, puis redemander la couverture test. | L’entrée de couverture test reste valide ; aucune invalidation globale sans rapport n’a lieu. |
+
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner — images de référence, hashes, clés anonymisées et
   compteurs hit/miss/composition/invalidation.
