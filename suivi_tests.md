@@ -24,6 +24,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Premier candidat Lot 2 testé | `d427d4e747dd2de56235341bd661d537a9a31c8e` — modèles sans texte, dé et Auto ; 5 réussites, 2 échecs, 1 blocage |
 | Candidat de correction Lot 2 testé | `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` — `IPAD-L2-009…012` réussis ; confirmation Appliquer, adaptation des panneaux, sélection à nom borné et dé déplacé validés sur iPad |
 | Candidat de navigation Lot 2 testé | `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` — Ajouter une page sous le canevas et mode Gérer les pages ; `IPAD-L2-013` réussi sur iPad |
+| Candidat d’ajout de page Lot 2 à tester | `02430b16f2853c01dbcafc88d48cd40c48373c4c` — ajout au dernier rang, confirmation commune et réglage temporaire dans Gérer les pages ; `IPAD-L2-014` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -68,6 +69,9 @@ La régression `IPAD-L2-013` vise ensuite exactement le candidat
 `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` et est réussie. Elle reste
 indépendante des contrôles Apple différés et ne prouve pas le nouveau parcours
 d’ajout en fin d’album avec confirmation, demandé après son exécution.
+La régression `IPAD-L2-014` vise exactement le candidat
+`02430b16f2853c01dbcafc88d48cd40c48373c4c` et remplace `013` uniquement pour
+ce parcours modifié.
 
 ## Mode de réponse
 
@@ -304,6 +308,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-011` | Régression de la confirmation Appliquer pour un modèle plus petit | `3:TPL-005` à `3:TPL-010`, `3:TPL-016`, `3:ERR-022` | 🟢 `RÉUSSI` |
 | `IPAD-L2-012` | Nom long dans la sélection et nouvelle commande de disposition aléatoire | `3:ELM-014`, `3:ACC-002`, `3:RND-001` à `3:RND-005`, `3:TPL-018`, `3:EDT-020` | 🟢 `RÉUSSI` |
 | `IPAD-L2-013` | Ajouter une page sous le canevas et mode Gérer les pages | `3:EDT-003`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:EDT-020`, `3:PAG-002`, `3:PAG-013` à `3:PAG-015`, `3:PHO-004`, `3:PHO-011`, `3:ACC-002`, `3:ACC-021` | 🟢 `RÉUSSI` |
+| `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `3:ENV-001` à `3:ENV-005`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:PAG-002`, `3:PAG-013` à `3:PAG-017`, `3:UND-001`, `3:UND-002`, `3:SAV-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -2833,6 +2838,50 @@ sélecteur de mode modifiés.
   portrait initial puis paysage ; VoiceOver prévu à l’étape 8 ; Paris, France ;
   français (France). Aucun contrôle `APPLE-*` n’est extrapolé.
 
+## Régression de l’ajout de page en fin d’album
+
+Cette fiche vise exactement le candidat
+`02430b16f2853c01dbcafc88d48cd40c48373c4c`. Elle remplace la preuve de
+`IPAD-L2-013` uniquement pour le parcours Ajouter une page modifié ; la barre
+et le libellé Gérer les pages déjà validés restent historiquement attribués à
+leur candidat.
+
+### `IPAD-L2-014` — Ajout en fin, confirmation et réglage temporaire
+
+- Candidat : `02430b16f2853c01dbcafc88d48cd40c48373c4c`.
+- Spécification : 3.0 incluse dans le candidat exact, avec `PAG-002`,
+  `PAG-014` et `PAG-017` modifiés le 17 août 2026.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:EDT-008`, `3:EDT-012`,
+  `3:EDT-016`, `3:PAG-002`, `3:PAG-013` à `3:PAG-017`, `3:UND-001`,
+  `3:UND-002`, `3:SAV-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` et
+  `3:DONE-005`.
+- Préconditions : transférer exactement le candidat ; conserver le store
+  validé ; ouvrir en portrait un album modifiable d’au moins trois pages ;
+  relever leur ordre et leur contenu ; activer une page qui n’est ni la
+  première ni la dernière et relever le compteur `Page N sur M`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et ouvrir l’album préparé. | La compilation et le lancement réussissent ; l’album, ses pages, leur ordre et leur contenu existants sont lisibles et inchangés. |
+| 2 | Depuis la page intermédiaire, presser Ajouter une page sous le canevas, sans encore agir dans la fenêtre. | Une fenêtre « Ajouter une page ? » apparaît avant toute mutation ; elle annonce l’ajout en fin et propose Annuler, Ajouter la page et la case « Ne plus demander », initialement non cochée ; le compteur et l’ordre restent inchangés. |
+| 3 | Presser Annuler, puis examiner le compteur et Gérer les pages. | La fenêtre se ferme ; aucune page n’est créée, la page active et l’ordre restent identiques, et le réglage « Ne plus demander avant d’ajouter une page » reste désactivé. |
+| 4 | Revenir à la page intermédiaire, rouvrir Ajouter une page, cocher « Ne plus demander », puis presser Ajouter la page. | Une seule page vide est ajoutée après l’ancienne dernière page, jamais après la page intermédiaire ; elle devient active, le compteur passe à `Page M+1 sur M+1`, elle utilise le fond par défaut, ne copie aucun élément ni état Auto et l’état atteint Enregistré. |
+| 5 | Revenir sur la première page et presser Ajouter une page sous le canevas. | Aucune confirmation ne réapparaît ; exactement une seconde page vide est ajoutée au nouveau dernier rang et devient active. |
+| 6 | Ouvrir Gérer les pages, vérifier le réglage, le désactiver, puis presser son bouton Ajouter une page. | Le réglage apparaît activé puis accepte la désactivation ; le bouton de cette page ouvre la même fenêtre de confirmation et ne modifie pas encore l’album. |
+| 7 | Dans cette fenêtre, laisser « Ne plus demander » décoché et confirmer l’ajout. | Une seule nouvelle page vide est ajoutée au dernier rang et devient la page active dans la grille ; le réglage reste désactivé et un ajout ultérieur redemanderait confirmation. |
+| 8 | Presser Annuler une fois, puis Rétablir une fois. | Annuler retire uniquement la dernière page ajoutée ; Rétablir la recrée une seule fois au dernier rang, la rend active et conserve l’ordre de toutes les autres pages. |
+| 9 | Dans Gérer les pages, activer de nouveau « Ne plus demander », fermer complètement l’album, le rouvrir et revenir dans Gérer les pages. | Les pages ajoutées et leur ordre persistent, mais le réglage est revenu désactivé : il n’a pas été enregistré dans l’album. |
+| 10 | Revenir sur une page non terminale, presser Ajouter une page, puis annuler la fenêtre. | La confirmation réapparaît après la réouverture ; Annuler ne crée aucune page et ne change pas le réglage, ce qui confirme la remise à zéro de session. |
+| 11 | Tourner l’iPad en paysage puis revenir en portrait, en examinant la fenêtre et la zone supérieure de Gérer les pages. | Le titre, le texte, la case, les deux actions, le réglage et le bouton restent entièrement visibles, lisibles et utilisables dans les deux orientations ; aucune grille ni commande n’est rognée. |
+| 12 | Activer VoiceOver et parcourir Ajouter une page, la fenêtre, sa case, Annuler, Ajouter la page et le réglage de Gérer les pages. | Chaque commande possède un libellé et un état non ambigus ; la case annonce cochée ou non cochée, l’effet d’ajout en fin est compréhensible et la remise à zéro à la fermeture est annoncée pour le réglage. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner après retour utilisateur, avec toute anomalie associée à
+  l’ID numérique de l’étape.
+- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
+  Playgrounds 4.7 ; portrait initial, paysage à l’étape 11 ; VoiceOver à
+  l’étape 12 ; Paris, France ; français (France).
+
 ## Qualification différée Apple/macOS/Xcode
 
 Ces contrôles complètent les preuves que Swift Playgrounds ou un seul iPad ne
@@ -2856,23 +2905,23 @@ explicitement enregistré.
 | `APPLE-L1-011` | Échec durable de sauvegarde, Réessayer et tentative de fermeture | `3:SAV-003`, `3:SAV-004`, `3:ERR-014` | ⚪ `NON TESTÉ` | Nécessite une erreur de dépôt déterministe sans remplir dangereusement le disque |
 | `APPLE-L1-012` | Preuve réseau qu’aucune photo ne quitte l’app vers un serveur propriétaire | `3:SEC-001`, `3:SEC-010` | ⚪ `NON TESTÉ` | Nécessite capture réseau attribuée au processus et inspection statique |
 | `APPLE-L1-013` | Rendu composite et cache de miniature de couverture | `3:COV-007` | ⚪ `NON TESTÉ` | Hits, misses et invalidations du cache ne sont pas observables dans l’interface publique |
-| `APPLE-L2-001` | Barre compacte, Gérer les pages et menu Plus sur iPhone ou environnement Xcode réellement compact | `3:EDT-003`, `3:EDT-004`, `3:EDT-008`, `3:EDT-016`, `3:EDT-020`, `3:PAG-013`, `3:ACC-002`, `3:ACC-021` | ⚪ `NON TESTÉ` | Swift Playgrounds sur l’iPad testé ne permet pas d’obtenir cette classe de largeur |
+| `APPLE-L2-001` | Barre compacte, Gérer les pages, confirmation d’ajout et menu Plus sur iPhone ou environnement Xcode réellement compact | `3:EDT-003`, `3:EDT-004`, `3:EDT-008`, `3:EDT-016`, `3:EDT-020`, `3:PAG-013`, `3:PAG-017`, `3:ACC-002`, `3:ACC-021` | ⚪ `NON TESTÉ` | Swift Playgrounds sur l’iPad testé ne permet pas d’obtenir cette classe de largeur |
 
-### `APPLE-L2-001` — Barre compacte et menu Plus
+### `APPLE-L2-001` — Barre compacte, confirmation et menu Plus
 
-- Candidat : `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4`.
+- Candidat : `02430b16f2853c01dbcafc88d48cd40c48373c4c`.
 - Spécification : 3.0, incluse dans le candidat exact ci-dessus.
 - Type : test manuel sur iPhone réel ou simulateur Xcode produisant réellement
   une largeur compacte ; le plein écran iPad n’est pas un substitut.
 - Exigences : `3:EDT-003`, `3:EDT-004`, `3:EDT-008`, `3:EDT-016`,
-  `3:EDT-020`, `3:PAG-013`, `3:ACC-002`, `3:ACC-021`.
+  `3:EDT-020`, `3:PAG-013`, `3:PAG-017`, `3:ACC-002`, `3:ACC-021`.
 - Préconditions : page contenant un élément sélectionné, une commande Annuler
   disponible et un élément copié ; Auto successivement désactivé puis activé.
 
 | ID | Description | Résultat attendu |
 |---:|---|---|
 | 1 | Ouvrir l’éditeur en portrait sur un iPhone réel ou un simulateur Xcode produisant une largeur compacte. | La barre principale et la barre sous le canevas sont entièrement visibles ; aucune commande n’est coupée ou inaccessible. |
-| 2 | Examiner la barre sous le canevas, puis presser Ajouter une page une fois. | Ajouter une page reste accessible avec son libellé complet ou son icône annoncée ; l’ancien ajout photo n’est pas dupliqué dans cette barre et une seule page vide est insérée après la page active. |
+| 2 | Examiner la barre sous le canevas, puis presser Ajouter une page une fois. | Ajouter une page reste accessible avec son libellé complet ou son icône annoncée ; l’ancien ajout photo n’est pas dupliqué ; la confirmation, sa case et ses actions tiennent dans la largeur compacte et une confirmation positive ajoute une seule page vide en fin d’album. |
 | 3 | Parcourir le sélecteur de mode. | Créer, Gérer les pages et Prévisualiser restent directement accessibles dans cet ordre et ne sont pas enfouis dans Plus. |
 | 4 | Repérer Mise en page auto dans la barre, d’abord désactivée puis activée. | Auto reste directement visible hors du menu Plus et son état affiché suit la page. |
 | 5 | Ouvrir Plus et parcourir Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller et Supprimer. | Toutes les commandes secondaires sont présentes dans leur ordre relatif, avec leur libellé complet et leur état activé ou désactivé correct. |

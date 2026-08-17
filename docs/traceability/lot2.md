@@ -5,8 +5,9 @@ commit `d427d4e747dd2de56235341bd661d537a9a31c8e`, puis corrigé dans le candida
 `024a60bcd7b7a837497a5d6a00e8e42cacfd9366`. L’ajustement de navigation est
 figé dans `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` et réussi sous
 `IPAD-L2-013`. L’évolution suivante ajoute en fin d’album avec une confirmation
-désactivable pour la seule session ; son candidat et sa régression iPad restent
-à figer. La source normative reste
+désactivable pour la seule session ; elle est figée dans
+`02430b16f2853c01dbcafc88d48cd40c48373c4c` et sa régression
+`IPAD-L2-014` reste à exécuter. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -51,6 +52,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-011` | Confirmation Appliquer pour un modèle plus petit | `TPL-005…010`, `TPL-016`, `ERR-022` | 🟢 `RÉUSSI` |
 | `IPAD-L2-012` | Sélection à nom long et commande aléatoire explicite | `ELM-014`, `ACC-002`, `RND-001…005`, `TPL-018`, `EDT-020` | 🟢 `RÉUSSI` |
 | `IPAD-L2-013` | Ajouter une page sous le canevas et Gérer les pages | `EDT-003`, `EDT-008`, `EDT-012`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013…015`, `PHO-004`, `PHO-011`, `ACC-002`, `ACC-021` | 🟢 `RÉUSSI` |
+| `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `ENV-001…005`, `EDT-008`, `EDT-012`, `EDT-016`, `PAG-002`, `PAG-013…017`, `UND-001`, `UND-002`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -70,11 +72,12 @@ Le candidat `b86c4b3…` modifie ensuite la barre sous le canevas et le libellé
 du mode pages. `IPAD-L2-013` réussit cette surface modifiée sur le retour
 « tests ok » ; les réussites `009…012` restent limitées à leurs surfaces.
 L’évolution ultérieure vers l’ajout en fin avec confirmation rend cette preuve
-insuffisante pour le nouveau parcours, qui recevra un nouvel identifiant.
+insuffisante pour le nouveau parcours ; `IPAD-L2-014` vise exactement
+`02430b1…` sans modifier le verdict historique de `013`.
 
 | ID Apple différé | Objet | Exigences principales | État |
 |---|---|---|---|
-| `APPLE-L2-001` | Barre compacte, Gérer les pages et menu Plus sur iPhone/Xcode | `EDT-003`, `EDT-004`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-013`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` |
+| `APPLE-L2-001` | Barre compacte, Gérer les pages, confirmation et menu Plus sur iPhone/Xcode | `EDT-003`, `EDT-004`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-013`, `PAG-017`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Écarts connus de l’incrément
 
@@ -96,4 +99,4 @@ insuffisante pour le nouveau parcours, qui recevra un nouvel identifiant.
 - L’action rapide et le libellé Gérer les pages de `b86c4b3…` sont validés par
   `IPAD-L2-013`. L’ajout désormais placé en fin d’album, la nouvelle fenêtre,
   sa case et la réinitialisation à la fermeture restent à requalifier sur iPad
-  après gel du nouveau candidat.
+  par `IPAD-L2-014` sur `02430b1…`.
