@@ -30,7 +30,7 @@ résultats du prototype 2.1.
 | Ajustement de navigation Lot 2 testé | Candidat `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` : Ajouter une page remplace Ajouter une photo sous le canevas ; Organiser devient Gérer les pages ; `IPAD-L2-013` réussi |
 | Évolution de l’ajout de page Lot 2 testée | Candidat `02430b16f2853c01dbcafc88d48cd40c48373c4c` : parcours fonctionnel déclaré correct, mais `IPAD-L2-014` échoue car la fenêtre est trop large, trop basse et impose un défilement pour son pied de texte |
 | Premier correctif de fenêtre testé | Candidat `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` : `IPAD-L2-015` échoué immédiatement, la présentation fitted ayant comprimé la fenêtre jusqu’à la rendre minuscule et illisible |
-| Seconde correction à figer | Cadre iPad régulier explicite de 400 × 340 points ; présentation pleine largeur native en compact ; contenu toujours non défilant (`PAG-017`) |
+| Seconde correction de fenêtre Lot 2 | Candidat `7d8772c6d87a769a239b4f9eafabe74c8c126681` : cadre iPad régulier explicite de 400 × 340 points ; présentation pleine largeur native en compact ; contenu toujours non défilant ; `IPAD-L2-016` à exécuter (`PAG-017`) |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du correctif Lot 2 | `spec.md` dans `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` précise `EDT-002`, `ELM-014` et `RND-001` conformément aux retours utilisateur du 17 août 2026 |
@@ -39,8 +39,8 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Figer puis exécuter la régression de la seconde correction ; couvrir ensuite `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode ; poursuivre les fonctionnalités Lot 2 manquantes |
-| État global | 🟡 **Lot 1 viable sur l’iPad 8 ; `IPAD-L2-014` confirme le parcours d’ajout mais échoue sur une fenêtre trop large/basse, puis `IPAD-L2-015` échoue sur une fenêtre minuscule ; la seconde correction passe sous WSL et reste à requalifier sur Apple** |
+| Validation indispensable restante | Exécuter `IPAD-L2-016` sur `7d8772c…` ; couvrir ensuite `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode ; poursuivre les fonctionnalités Lot 2 manquantes |
+| État global | 🟡 **Lot 1 viable sur l’iPad 8 ; `IPAD-L2-014` confirme le parcours d’ajout mais échoue sur une fenêtre trop large/basse, puis `IPAD-L2-015` échoue sur une fenêtre minuscule ; la seconde correction `7d8772c…` passe sous WSL et reste à ⚪ sous `IPAD-L2-016`** |
 
 ## Légende
 
@@ -85,7 +85,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 | Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core ; intégration App Playground compilée | Prouver les capacités Apple encore bloquées et corriger les écarts fonctionnels du premier incrément Lot 2 |
 | Lot 1 — Création locale | 🟡 | Parcours métier validés et adaptation finale confirmée par `143…144` sur `101e294…` | Conserver le jalon iPad ; qualifications iPhone/Xcode et Apple différées empêchent encore l’état 🟢 |
-| Lot 2 — Parité de composition | 🟡 | Parcours d’ajout `02430b1…` fonctionnel mais fenêtre trop large/basse sous `IPAD-L2-014` ; premier correctif `8aa7f56…` minuscule sous `IPAD-L2-015` ; seconde correction couverte par 134 tests, contrat source et parse SwiftUI | Requalifier la seconde correction, couvrir la largeur compacte puis compléter Remplir l’album, texte, stickers, cadres et presse-papiers commun avant `ACPT-123`, `125`, `126`, `128`, `130` |
+| Lot 2 — Parité de composition | 🟡 | Parcours d’ajout `02430b1…` fonctionnel mais fenêtre trop large/basse sous `IPAD-L2-014` ; premier correctif `8aa7f56…` minuscule sous `IPAD-L2-015` ; seconde correction `7d8772c…` couverte par 134 tests, contrat source et parse SwiftUI | Exécuter `IPAD-L2-016`, couvrir la largeur compacte puis compléter Remplir l’album, texte, stickers, cadres et presse-papiers commun avant `ACPT-123`, `125`, `126`, `128`, `130` |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
 
@@ -204,7 +204,9 @@ Le parcours demandé ensuite est figé dans
 comportements corrects sauf la taille de la fenêtre : trop large, trop basse et
 nécessitant un défilement pour lire la fin du pied de texte. Le correctif exact
 `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` est isolé dans `IPAD-L2-015`,
-qui échoue à son tour sur une fenêtre minuscule et illisible.
+qui échoue à son tour sur une fenêtre minuscule et illisible. Le cadre
+explicite de `7d8772c6d87a769a239b4f9eafabe74c8c126681` sera vérifié par
+`IPAD-L2-016`.
 
 Le RAW synthétique `raw.dng` reste volontairement hors de ce correctif : son
 refus ne permet pas de distinguer une anomalie applicative d’une fixture non
@@ -244,7 +246,7 @@ chaîne Apple.
 | Renommage, corbeille et restauration | 🟡 | Cibles typées, confirmation, restauration, suppression définitive et dates françaises validées par `136` (`ALB-017` à `ALB-025`, `ACPT-102`) | Qualifications iPhone/Xcode et sortie de lot |
 | Bail d’édition | 🟡 | Un éditeur modifiable par album, seconde scène en lecture seule (`DEC-29`) | Test multi-fenêtre iPad |
 | Éditeur à une page | 🟡 | Une page active sur toutes les tailles ; ancien `AlbumSpreadView` supprimé (`DEC-05`, `GLO-001`, `GLO-002`) | Portrait, paysage, Split View et iPhone réel |
-| Pages et vue globale | 🟡 | Ordre, activation après Rétablir, contour/badge actif et insertion intercartes validés par `137` ; `IPAD-L2-014` confirme le parcours d’ajout en fin mais échoue sur la taille de la fenêtre ; `IPAD-L2-015` échoue sur la compression du premier correctif (`PAG-001` à `PAG-017`, `EDT-016`) | Requalifier le cadre iPad 400 × 340, puis qualifications iPhone/Xcode |
+| Pages et vue globale | 🟡 | Ordre, activation après Rétablir, contour/badge actif et insertion intercartes validés par `137` ; `IPAD-L2-014` confirme le parcours d’ajout en fin mais échoue sur la taille ; `IPAD-L2-015` échoue sur la compression ; `7d8772c…` fixe un cadre régulier explicite (`PAG-001` à `PAG-017`, `EDT-016`) | Exécuter `IPAD-L2-016`, puis qualifications iPhone/Xcode |
 | Fonds par page | 🟡 | Trois fonds, application ciblée/globale, miniatures asynchrones et caches mémoire/disque ; relance et réouvertures hors ligne validées (`IPAD-L1-110`, `116`, `122`) | Instruments et injections de ressource absente |
 | Couverture | 🟡 | Choix automatique de la première occurrence ou choix manuel par `pageID + elementID`, empreinte logique et cache de rendu préchargé (`ACPT-103`, `COV-001` à `COV-007`) | Transparence, cadrage, invalidation/suppression de l’occurrence et instrumentation du cache |
 | Assets et transactions | 🟡 | Copie locale adressée par SHA-256 en flux borné, index global, dérivé RAW immuable, reprise de journal, commandes atomiques sérialisées et contrôle d’espace (`LOC-001` à `LOC-031`, section 22.8) | Interruption forcée et volume réel sur iPad |
@@ -282,7 +284,7 @@ qualifications différées exigées par `DONE-001` à `DONE-005`.
 | Application des modèles | 🟡 | Modèle plus grand validé sous `IPAD-L2-003` ; requête capturée et `pageID` du modèle plus petit validés par `IPAD-L2-011`, Annuler/Rétablir et relance inclus (`TPL-004…023`) | Étendre avec les zones de texte dans leur incrément |
 | Dé | 🟡 | Compatibilité, sac sans répétition, Annuler/Rétablir et persistance réussis sous `IPAD-L2-005` ; nouvel emplacement, libellé visible, icône `die.face.5.fill` et absence dans la barre locale validés par `IPAD-L2-012` (`RND-001…006`) | Qualification compacte iPhone/Xcode encore différée |
 | Mise en page auto | 🟡 | Interrupteur, confirmation, densités, ajout/retrait/dupliquer, sortie vers libre, Annuler et persistance réussis sous `IPAD-L2-006…007` (`AUT-001…008`, `AUT-012…019`, `PHO-014`) | `AUT-009…011` Remplir l’album n’est pas encore exposé ; qualifications iPhone/Xcode restantes |
-| Navigation locale et pages | 🟡 | `IPAD-L2-014` confirme sur `02430b1…` l’ajout au dernier rang, la confirmation, la case et le réglage temporaire, mais sa fenêtre échoue en adaptation. `IPAD-L2-015` montre que fitted comprime `8aa7f56…`. La seconde correction fixe 400 × 340 en régulier et utilise `.page` en compact (`EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013` à `PAG-017`) | 134 tests, contrat source et parse WSL réussis ; figer et requalifier |
+| Navigation locale et pages | 🟡 | `IPAD-L2-014` confirme le parcours, mais sa fenêtre échoue en adaptation. `IPAD-L2-015` montre que fitted comprime `8aa7f56…`. `7d8772c…` fixe 400 × 340 en régulier et utilise `.page` en compact (`EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013` à `PAG-017`) | 134 tests, contrat source et parse WSL réussis ; exécuter `IPAD-L2-016` |
 | Texte, stickers et cadres | ⬜ | Modèles avec texte présentés comme prochaine étape sans création d’un contenu non éditable ; aucun sticker/cadre Lot 2 persisté | Implémenter l’éditeur texte, puis figer assets/licences `CAT-009` avant stickers et cadres |
 
 Ce premier incrément reste 🟡 : le candidat initial compte cinq réussites, deux
@@ -293,8 +295,8 @@ barre locale et le nom du mode pages ; `IPAD-L2-013` le valide sur iPad. La
 demande suivante ajoute la confirmation et déplace la création à la fin de
 l’album dans `02430b1…` ; `IPAD-L2-014` confirme ces comportements mais échoue
 sur la taille et le défilement de la fenêtre. `IPAD-L2-015` échoue ensuite sur
-la fenêtre minuscule de `8aa7f56…`. La seconde correction reste à figer et
-requalifier.
+la fenêtre minuscule de `8aa7f56…`. La seconde correction est figée et reste à
+requalifier par `IPAD-L2-016` sur `7d8772c…`.
 `IPAD-L2-008` reste
 bloqué uniquement pour la largeur compacte, reprise par `APPLE-L2-001`.
 L’incrément ne constitue pas la sortie `ACPT-125`, car Remplir l’album manque
@@ -337,6 +339,7 @@ Lot 3 n’est rendu public.
 
 | Environnement | Commande ou contrôle | Résultat connu | Portée et limite |
 |---|---|---|---|
+| Dépôt, registre du second correctif de fenêtre, 2026-08-17 | Contrôle du candidat, des IDs synthétiques/détaillés et du tableau de `IPAD-L2-016` | **OK** : 16/16 IDs Lot 2 ; 6 étapes pour `016` ; les 6 fiches détaillées encore à ⚪ utilisent `ID`/`Description`/`Résultat attendu` | Contrôle documentaire uniquement ; aucune preuve Apple du second correctif |
 | WSL, Swift 6.3.3, 2026-08-17 | `swift test --parallel` après seconde correction de fenêtre | **134 tests, 0 échec** | Contrat source sur cadre régulier 400 × 340 et présentation compacte `.page` ; aucun rendu Apple |
 | WSL, frontend Swift, 2026-08-17 | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` après seconde correction | **OK** | Syntaxe de la branche par classe de largeur ; sans type-check SwiftUI ni rendu Apple |
 | WSL, contrats, 2026-08-17 | `perl tools/validate_contracts.pl` et `sha256sum -c catalog-checksums-v1.sha256` après seconde correction | **OK** : contrats et **10/10 empreintes** | Ressources inchangées ; pas une preuve visuelle |
@@ -392,8 +395,8 @@ Lot 3 n’est rendu public.
 
 | Validation | État | Motif |
 |---|---|---|
-| Régression du cadre iPad explicite | ⚪ Non testée sur Apple | `IPAD-L2-015` reste en échec sur l’ancien candidat ; figer la seconde correction et vérifier 400 × 340, lisibilité, orientations et VoiceOver sous un nouvel ID |
-| `APPLE-L2-001`, largeur compacte du prochain candidat | 🟠 Bloqué sur cet iPad | Swift Playgrounds ne permet pas de réduire suffisamment la fenêtre ; reprendre la présentation `.page`, la barre, Gérer les pages et le menu Plus sur iPhone ou environnement Xcode réellement compact |
+| `IPAD-L2-016`, cadre iPad explicite sur `7d8772c…` | ⚪ Non testé sur Apple | Vérifier 400 × 340, lisibilité, orientations et VoiceOver après les échecs de `014…015` |
+| `APPLE-L2-001`, largeur compacte de `7d8772c…` | 🟠 Bloqué sur cet iPad | Swift Playgrounds ne permet pas de réduire suffisamment la fenêtre ; reprendre la présentation `.page`, la barre, Gérer les pages et le menu Plus sur iPhone ou environnement Xcode réellement compact |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
 | Accessibilité et adaptation exhaustives iPhone/Xcode | ⚪ Non testées | `114`, `115`, `118…120` réussis sur l’iPad 8 ; matrice iPhone et Accessibility Inspector toujours absents |
@@ -428,12 +431,12 @@ Lot 3 n’est rendu public.
 | `RSK-3.0-020` | Levé sur l’iPad déclaré | Un nom long masquait position et plan dans Sélectionner un élément. `024a60b…` borne le libellé visible à 45 caractères en tronquant le seul détail et conserve le libellé accessible complet. | 2 tests Core et `IPAD-L2-012` avec VoiceOver réussissent ; compléter sur iPhone reste différé. |
 | `RSK-3.0-021` | Levé sur l’iPad déclaré | Le dé était fonctionnel mais peu explicite. `024a60b…` applique `RND-001` : bouton `die.face.5.fill` à libellé visible dans Mise en page, absent de la barre du canevas. | `IPAD-L2-012` valide l’icône, le libellé et la séquence fonctionnelle. |
 | `RSK-3.0-022` | Levé sur l’iPad déclaré | Le remplacement d’une commande dans la barre sous le canevas rendait la preuve d’adaptation `IPAD-L1-144` insuffisante, et le nouveau libellé du sélecteur pouvait se comprimer. | `IPAD-L2-013` réussit sur `b86c4b3…` en suivant la fiche portrait, paysage et VoiceOver ; la preuve reste sans capture ni détail par étape. |
-| `RSK-3.0-023` | 🔴 Matérialisé sur iPad | `IPAD-L2-014` montre une fenêtre trop large/basse ; `IPAD-L2-015` montre que fitted la comprime jusqu’à devenir illisible. | La seconde correction fixe le cadre régulier à 400 × 340 et utilise `.page` en compact ; figer et requalifier avant de lever le risque. |
+| `RSK-3.0-023` | 🔴 Matérialisé sur iPad | `IPAD-L2-014` montre une fenêtre trop large/basse ; `IPAD-L2-015` montre que fitted la comprime jusqu’à devenir illisible. | `7d8772c…` fixe le cadre régulier à 400 × 340 et utilise `.page` en compact ; exécuter `IPAD-L2-016` avant de lever le risque. |
 
 ## Prochaines actions
 
-1. Figer la seconde correction, préparer un nouvel ID et la tester en portrait,
-   paysage et VoiceOver.
+1. Transférer `7d8772c6d87a769a239b4f9eafabe74c8c126681` et exécuter
+   `IPAD-L2-016` en portrait, paysage et VoiceOver.
 2. Implémenter `AUT-009…011` Remplir l’album après cette requalification.
 3. Reprendre séparément `APPLE-L2-001` sur un iPhone ou un environnement Xcode
    réellement compact ; ne pas demander le menu Plus au plein écran iPad.
@@ -450,6 +453,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-17 | Codex | Gel de la seconde correction de fenêtre `7d8772c6d87a769a239b4f9eafabe74c8c126681` et préparation de `IPAD-L2-016` en 6 étapes tabulaires ; la qualification compacte vise ce candidat | `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot2.md` ; `TST-001…005`, `TST-013`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | Registre : 16/16 IDs Lot 2 synthétiques et détaillés ; `IPAD-L2-016` à ⚪ ; les 6 fiches détaillées non testées respectent le tableau requis ; aucune preuve Apple extrapolée |
 | 2026-08-17 | Codex | Enregistrement de l’échec immédiat `IPAD-L2-015` puis seconde correction : cadre iPad régulier explicite de 400 × 340 points et présentation page native en compact | `AlbumEditorView.swift`, `ManifestContractTests.swift`, `spec.md`, `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `PAG-017`, `ACC-006`, `ACC-021`, `TST-013` | Retour iPad : fenêtre minuscule et illisible ; correction WSL : 134 tests, parse AppModule, contrats et 10/10 empreintes OK ; rendu corrigé Apple NON TESTÉ, candidat et nouvel ID à figer |
 | 2026-08-17 | Codex | Gel du correctif de fenêtre `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` et préparation de `IPAD-L2-015` en 6 étapes tabulaires ; la qualification compacte vise désormais ce candidat | `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot2.md` ; `TST-001…005`, `TST-013`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | Registre : 15/15 IDs Lot 2 synthétiques et détaillés ; `IPAD-L2-015` à ⚪ ; les 6 fiches détaillées non testées respectent le tableau requis ; aucune preuve Apple extrapolée |
 | 2026-08-17 | Codex | Enregistrement de l’échec ciblé `IPAD-L2-014` puis correction : suppression du formulaire défilant et du detent fixe, pile à hauteur intrinsèque, largeur idéale 400 et plafond 420 points | `AlbumEditorView.swift`, `ManifestContractTests.swift`, `spec.md`, `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `PAG-017`, `ACC-006`, `ACC-021`, `TST-013` | Retour iPad : parcours correct mais fenêtre trop large/basse et texte après défilement ; correction WSL : 134 tests, parse AppModule, contrats et 10/10 empreintes OK ; rendu corrigé Apple NON TESTÉ, candidat et nouvel ID à figer |

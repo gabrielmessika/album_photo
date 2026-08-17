@@ -11,7 +11,9 @@ désactivable pour la seule session ; elle est figée dans
 autres comportements déclarés corrects. La correction d’adaptation est figée
 dans `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640`, mais `IPAD-L2-015` échoue :
 la fenêtre est minuscule et illisible. La seconde correction, à cadre iPad
-explicite et présentation compacte native, reste à figer. La source normative reste
+explicite et présentation compacte native, est figée dans
+`7d8772c6d87a769a239b4f9eafabe74c8c126681` et sera vérifiée par
+`IPAD-L2-016`. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -58,6 +60,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-013` | Ajouter une page sous le canevas et Gérer les pages | `EDT-003`, `EDT-008`, `EDT-012`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013…015`, `PHO-004`, `PHO-011`, `ACC-002`, `ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `ENV-001…005`, `EDT-008`, `EDT-012`, `EDT-016`, `PAG-002`, `PAG-013…017`, `UND-001`, `UND-002`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre trop large et trop basse ; pied de texte après défilement |
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
+| `IPAD-L2-016` | Cadre lisible de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -107,5 +110,5 @@ suppression du formulaire défilant et de la hauteur fixe.
   `IPAD-L2-013`. `IPAD-L2-014` confirme ensuite l’ajout en fin, la case et la
   réinitialisation, mais échoue sur la taille de la fenêtre et le défilement de
   son pied de texte. `IPAD-L2-015` échoue ensuite car l’ajustement fitted
-  comprime toute la fenêtre. La seconde correction doit être requalifiée sous
-  un nouvel ID.
+  comprime toute la fenêtre. `IPAD-L2-016` requalifiera le cadre explicite de
+  `7d8772c…`.
