@@ -61,7 +61,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   réglage équivalent dans Gérer les pages. Ce choix reste propre à la session
   d’édition et se réinitialise à la fermeture de l’album. Cette évolution est
   figée dans `02430b16f2853c01dbcafc88d48cd40c48373c4c` et sa régression
-  `IPAD-L2-014` reste à exécuter sur iPad.
+  `IPAD-L2-014` confirme tous les comportements mais échoue sur l’adaptation de
+  la fenêtre : trop large, trop basse et pied de texte accessible seulement
+  après défilement. La correction remplace le formulaire et la hauteur fixe par
+  une présentation étroite ajustée à son contenu ; son candidat reste à figer.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -78,9 +81,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
   `024a60b…`. `IPAD-L2-013` est également 🟢 `RÉUSSI` sur `b86c4b3…`. Le
   nouveau parcours de confirmation et d’ajout en fin est validé par 134 tests
-  Core et l’analyse syntaxique WSL sur `02430b1…`, mais `IPAD-L2-014` reste ⚪
-  `NON TESTÉ` sur Apple. Le menu Plus n’est attendu qu’en largeur compacte et
-  sera repris
+  Core et l’analyse syntaxique WSL sur `02430b1…`, mais `IPAD-L2-014` est 🔴
+  `ÉCHOUÉ` sur la seule adaptation de la fenêtre. Le correctif passe à nouveau
+  134 tests et l’analyse syntaxique sous WSL ; sa régression iPad reste à
+  figer. Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,

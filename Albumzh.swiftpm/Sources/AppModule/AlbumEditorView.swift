@@ -21,30 +21,44 @@ private struct PageAdditionConfirmationSheet: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    Text(
-                        "Une page vide sera ajoutée à la fin de l’album et deviendra la page active."
-                    )
-                }
+            VStack(alignment: .leading, spacing: 18) {
+                Text(
+                    "Une page vide sera ajoutée à la fin de l’album et deviendra la page active."
+                )
+                .fixedSize(horizontal: false, vertical: true)
 
-                Section {
-                    Button {
-                        doNotAskAgain.toggle()
-                    } label: {
-                        Label(
-                            "Ne plus demander",
-                            systemImage: doNotAskAgain ? "checkmark.square.fill" : "square"
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityValue(doNotAskAgain ? "Coché" : "Non coché")
-                } footer: {
-                    Text(
-                        "Ce choix reste modifiable dans Gérer les pages et sera réinitialisé à la fermeture de l’album."
+                Divider()
+
+                Button {
+                    doNotAskAgain.toggle()
+                } label: {
+                    Label(
+                        "Ne plus demander",
+                        systemImage: doNotAskAgain ? "checkmark.square.fill" : "square"
                     )
                 }
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+                .accessibilityValue(doNotAskAgain ? "Coché" : "Non coché")
+
+                Divider()
+
+                Text(
+                    "Ce choix reste modifiable dans Gérer les pages et sera réinitialisé à la fermeture de l’album."
+                )
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
             }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 20)
+            .frame(
+                minWidth: 320,
+                idealWidth: 400,
+                maxWidth: 420,
+                alignment: .leading
+            )
             .navigationTitle("Ajouter une page ?")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -56,7 +70,7 @@ private struct PageAdditionConfirmationSheet: View {
                 }
             }
         }
-        .presentationDetents([.height(280)])
+        .presentationSizing(.fitted)
         .interactiveDismissDisabled()
     }
 }
