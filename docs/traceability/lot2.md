@@ -8,8 +8,9 @@ figé dans `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` et réussi sous
 désactivable pour la seule session ; elle est figée dans
 `02430b16f2853c01dbcafc88d48cd40c48373c4c` et sa régression
 `IPAD-L2-014` échoue sur la taille et le défilement de la fenêtre, malgré les
-autres comportements déclarés corrects. La correction d’adaptation reste à
-figer. La source normative reste
+autres comportements déclarés corrects. La correction d’adaptation est figée
+dans `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` et sera vérifiée par
+`IPAD-L2-015`. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -55,6 +56,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-012` | Sélection à nom long et commande aléatoire explicite | `ELM-014`, `ACC-002`, `RND-001…005`, `TPL-018`, `EDT-020` | 🟢 `RÉUSSI` |
 | `IPAD-L2-013` | Ajouter une page sous le canevas et Gérer les pages | `EDT-003`, `EDT-008`, `EDT-012`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013…015`, `PHO-004`, `PHO-011`, `ACC-002`, `ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `ENV-001…005`, `EDT-008`, `EDT-012`, `EDT-016`, `PAG-002`, `PAG-013…017`, `UND-001`, `UND-002`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre trop large et trop basse ; pied de texte après défilement |
+| `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -103,4 +105,5 @@ suppression du formulaire défilant et de la hauteur fixe.
 - L’action rapide et le libellé Gérer les pages de `b86c4b3…` sont validés par
   `IPAD-L2-013`. `IPAD-L2-014` confirme ensuite l’ajout en fin, la case et la
   réinitialisation, mais échoue sur la taille de la fenêtre et le défilement de
-  son pied de texte. La correction d’adaptation reste à requalifier sur iPad.
+  son pied de texte. `IPAD-L2-015` requalifiera l’adaptation corrigée dans
+  `8aa7f56…`.

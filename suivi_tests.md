@@ -25,6 +25,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat de correction Lot 2 testé | `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` — `IPAD-L2-009…012` réussis ; confirmation Appliquer, adaptation des panneaux, sélection à nom borné et dé déplacé validés sur iPad |
 | Candidat de navigation Lot 2 testé | `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` — Ajouter une page sous le canevas et mode Gérer les pages ; `IPAD-L2-013` réussi sur iPad |
 | Candidat d’ajout de page Lot 2 testé | `02430b16f2853c01dbcafc88d48cd40c48373c4c` — ajout au dernier rang, confirmation commune et réglage temporaire fonctionnels ; `IPAD-L2-014` échoué car la fenêtre est trop large, trop basse et impose un défilement pour son pied de texte |
+| Correctif de la fenêtre d’ajout à tester | `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` — formulaire et hauteur fixe retirés, largeur ajustée et contenu entièrement déployé ; `IPAD-L2-015` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -73,6 +74,9 @@ La régression `IPAD-L2-014` vise exactement le candidat
 `02430b16f2853c01dbcafc88d48cd40c48373c4c` et échoue uniquement sur
 l’adaptation de sa fenêtre de confirmation. Les autres comportements ont été
 déclarés corrects, sans détail par étape ; la correction recevra un nouvel ID.
+La régression ciblée `IPAD-L2-015` vise exactement le candidat
+`8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` et ne rejoue que l’adaptation de
+la fenêtre corrigée ainsi qu’un contrôle de non-régression de ses commandes.
 
 ## Mode de réponse
 
@@ -310,6 +314,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-012` | Nom long dans la sélection et nouvelle commande de disposition aléatoire | `3:ELM-014`, `3:ACC-002`, `3:RND-001` à `3:RND-005`, `3:TPL-018`, `3:EDT-020` | 🟢 `RÉUSSI` |
 | `IPAD-L2-013` | Ajouter une page sous le canevas et mode Gérer les pages | `3:EDT-003`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:EDT-020`, `3:PAG-002`, `3:PAG-013` à `3:PAG-015`, `3:PHO-004`, `3:PHO-011`, `3:ACC-002`, `3:ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `3:ENV-001` à `3:ENV-005`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:PAG-002`, `3:PAG-013` à `3:PAG-017`, `3:UND-001`, `3:UND-002`, `3:SAV-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre trop large et trop basse ; pied de texte visible seulement après défilement |
+| `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -2887,6 +2892,35 @@ leur candidat.
   France ; français (France). Aucun résultat iPhone, Xcode ou `APPLE-*` n’est
   extrapolé.
 
+## Régression ciblée de la fenêtre d’ajout
+
+### `IPAD-L2-015` — Taille intrinsèque et lisibilité de la confirmation
+
+- Candidat : `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640`.
+- Spécification : 3.0 incluse dans le candidat exact ; `PAG-017` précise le
+  dimensionnement au contenu et l’absence de défilement à la taille standard.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`,
+  `3:ACC-006`, `3:ACC-021` et `3:DONE-005`.
+- Préconditions : transférer exactement le candidat ; ouvrir en portrait un
+  album modifiable ; vérifier que « Ne plus demander avant d’ajouter une page »
+  est désactivé dans Gérer les pages ; utiliser la taille de texte standard.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et ouvrir l’album préparé. | La compilation et le lancement réussissent ; l’album et ses pages précédemment validés sont lisibles et inchangés. |
+| 2 | En portrait, depuis Créer, presser Ajouter une page sans agir ensuite dans la fenêtre. | La fenêtre est visiblement ajustée à son contenu et ne conserve pas une grande largeur vide ; son titre, le texte principal, « Ne plus demander », le texte complet commençant par « Ce choix reste modifiable… », Annuler et Ajouter la page sont tous visibles sans défilement. |
+| 3 | Cocher puis décocher « Ne plus demander », presser Annuler et contrôler le nombre de pages. | La case change d’état sans modifier la taille ni masquer un texte ; Annuler ferme la fenêtre et ne crée aucune page. |
+| 4 | Ouvrir Gérer les pages, presser son bouton Ajouter une page et examiner la fenêtre. | Le même dialogue ajusté apparaît ; sa largeur, sa hauteur et l’absence de défilement sont identiques au dialogue ouvert depuis Créer. |
+| 5 | Fermer la fenêtre, tourner l’iPad en paysage, revenir dans Créer et la rouvrir. | La fenêtre reste compacte, centrée et entièrement lisible sans défilement ; aucun texte ni bouton n’est rogné dans cette orientation. |
+| 6 | Revenir en portrait, activer VoiceOver et parcourir le texte, la case et les deux actions. | L’ordre de lecture est cohérent ; la case annonce son état et tous les textes et actions restent accessibles sans zone vide ou contenu masqué. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner après retour utilisateur, avec toute anomalie associée à
+  l’ID numérique de l’étape.
+- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
+  Playgrounds 4.7 ; taille de texte standard ; portrait initial, paysage à
+  l’étape 5 ; VoiceOver à l’étape 6 ; Paris, France ; français (France).
+
 ## Qualification différée Apple/macOS/Xcode
 
 Ces contrôles complètent les preuves que Swift Playgrounds ou un seul iPad ne
@@ -2914,7 +2948,7 @@ explicitement enregistré.
 
 ### `APPLE-L2-001` — Barre compacte, confirmation et menu Plus
 
-- Candidat : `02430b16f2853c01dbcafc88d48cd40c48373c4c`.
+- Candidat : `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640`.
 - Spécification : 3.0, incluse dans le candidat exact ci-dessus.
 - Type : test manuel sur iPhone réel ou simulateur Xcode produisant réellement
   une largeur compacte ; le plein écran iPad n’est pas un substitut.
