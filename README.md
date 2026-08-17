@@ -50,8 +50,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   requête Appliquer capturée avec sa page, marges latérales et panneau droit
   plus étroit, deux sections droites repliables indépendamment, nom visible
   borné dans Sélectionner un élément et dé à libellé visible déplacé dans Mise
-  en page. Les régressions `IPAD-L2-009…012` sont prêtes et attendent leur
-  exécution sur iPad.
+  en page. Les quatre régressions `IPAD-L2-009…012` sont réussies sur iPad ;
+  le retour global ne couvre aucun contrôle Apple différé.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -65,7 +65,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 - Validation actuelle : 133 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
-  quatre contrôles correctifs `IPAD-L2-009…012` sont à ⚪ `NON TESTÉ` sur
+  quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
   `024a60b…`. Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,

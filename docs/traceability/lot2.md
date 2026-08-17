@@ -8,9 +8,10 @@ commit `d427d4e747dd2de56235341bd661d537a9a31c8e`, puis corrigé dans le candida
 [`suivi_tests.md`](../../suivi_tests.md).
 
 Elle ne déclare pas `ACPT-125` réussi : Remplir l’album (`AUT-009…011`) manque,
-`IPAD-L2-002` et `004` échouent et `008` reste bloqué. Les zones de texte
-éditables, stickers, cadres décoratifs et presse-papiers multi-types
-appartiennent aux incréments suivants.
+et `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
+historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
+`010` et `011`. Les zones de texte éditables, stickers, cadres décoratifs et
+presse-papiers multi-types appartiennent aux incréments suivants.
 
 ## Contrôles automatisés
 
@@ -39,10 +40,10 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-006` | Auto, occurrences et transformation manuelle | `AUT-001…008`, `AUT-012…019`, `PHO-014`, `FRM-003` | 🟢 `RÉUSSI` |
 | `IPAD-L2-007` | Densité, portée par page et relance | `AUT-001`, `AUT-003…005`, `AUT-012`, `AUT-015…018`, `DAT-037` | 🟢 `RÉUSSI` |
 | `IPAD-L2-008` | Commandes incompatibles et frontière | `AUT-019`, `EDT-003`, `EDT-004`, `EDT-019`, `ARC-014`, `CAT-009` | 🟠 `BLOQUÉ` — largeur compacte inaccessible sur cet iPad dans Swift Playgrounds |
-| `IPAD-L2-009` | Compilation du correctif et compatibilité du store | `ENV-001…005`, `LOT-003`, `DAT-042`, `DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-010` | Marges, panneau droit et replis indépendants | `EDT-002`, `EDT-006`, `EDT-021`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-011` | Confirmation Appliquer pour un modèle plus petit | `TPL-005…010`, `TPL-016`, `ERR-022` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-012` | Sélection à nom long et commande aléatoire explicite | `ELM-014`, `ACC-002`, `RND-001…005`, `TPL-018`, `EDT-020` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-009` | Compilation du correctif et compatibilité du store | `ENV-001…005`, `LOT-003`, `DAT-042`, `DONE-005` | 🟢 `RÉUSSI` |
+| `IPAD-L2-010` | Marges, panneau droit et replis indépendants | `EDT-002`, `EDT-006`, `EDT-021`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` |
+| `IPAD-L2-011` | Confirmation Appliquer pour un modèle plus petit | `TPL-005…010`, `TPL-016`, `ERR-022` | 🟢 `RÉUSSI` |
+| `IPAD-L2-012` | Sélection à nom long et commande aléatoire explicite | `ELM-014`, `ACC-002`, `RND-001…005`, `TPL-018`, `EDT-020` | 🟢 `RÉUSSI` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -52,9 +53,11 @@ Le correctif `024a60b…` ne change aucun verdict historique `001…008`. Il
 capture la requête et le `pageID` du dialogue Appliquer, ajoute les marges et
 les replis indépendants du panneau droit, borne uniquement le détail visible du
 sélecteur d’élément et déplace le dé dans Mise en page. Les contrôles
-`009…012` doivent maintenant le qualifier sur iPad. Le menu Plus n’est plus
-demandé au plein écran iPad : `APPLE-L2-001` vérifie `EDT-004` sur iPhone ou
-dans un environnement Xcode réellement compact.
+`009…012` le qualifient désormais sur iPad par le retour global « tous les
+tests sont ok », sans capture ni détail par étape. Cette preuve est limitée à
+ces quatre fiches. Le menu Plus n’est pas demandé au plein écran iPad :
+`APPLE-L2-001` reste ⚪ et vérifiera `EDT-004` sur iPhone ou dans un
+environnement Xcode réellement compact.
 
 | ID Apple différé | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -70,9 +73,10 @@ dans un environnement Xcode réellement compact.
   licences et goldens exigé par `CAT-009`.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
-- Le candidat initial testé garde un rail et un inspecteur légèrement rognés en
-  portrait ; le correctif figé doit encore prouver ses marges et replis.
-- La confirmation Appliquer du candidat testé ne publie aucun changement ; la
-  requête capturée du correctif attend une preuve tactile.
-- La troncature ciblée du nom et la nouvelle commande de dé dans Mise en page sont
-  couverts structurellement, mais pas encore par le rendu Apple.
+- Le candidat initial gardait un rail et un inspecteur légèrement rognés en
+  portrait ; `IPAD-L2-010` valide les marges et replis du correctif.
+- La confirmation Appliquer du candidat initial ne publiait aucun changement ;
+  `IPAD-L2-011` valide désormais la requête capturée du correctif.
+- La troncature ciblée du nom et la nouvelle commande de dé dans Mise en page
+  sont validées sur l’iPad par `IPAD-L2-012` ; la matrice iPhone/Xcode reste
+  différée.
