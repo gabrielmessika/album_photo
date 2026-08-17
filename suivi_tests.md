@@ -23,6 +23,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat d’adaptation validé lors de la cinquième campagne ciblée | `101e2948252f51991933b8d61f767f52aa6b629d` — `143…144` réussis |
 | Premier candidat Lot 2 testé | `d427d4e747dd2de56235341bd661d537a9a31c8e` — modèles sans texte, dé et Auto ; 5 réussites, 2 échecs, 1 blocage |
 | Candidat de correction Lot 2 testé | `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` — `IPAD-L2-009…012` réussis ; confirmation Appliquer, adaptation des panneaux, sélection à nom borné et dé déplacé validés sur iPad |
+| Candidat de navigation Lot 2 à tester | `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` — Ajouter une page sous le canevas et mode Gérer les pages ; `IPAD-L2-013` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -63,6 +64,9 @@ compacte est reporté séparément à `APPLE-L2-001`.
 Le retour global « tous les tests sont ok » reçu après remise de la campagne
 corrective valide `IPAD-L2-009…012` uniquement. Il ne s’étend à aucun contrôle
 `APPLE-*`, qui reste différé et non testé.
+La régression `IPAD-L2-013` vise ensuite exactement le candidat
+`b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4`. Les preuves antérieures ne
+valident pas cette nouvelle composition de la barre sous le canevas.
 
 ## Mode de réponse
 
@@ -298,6 +302,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-010` | Marges portrait, panneau droit et replis indépendants | `3:EDT-002`, `3:EDT-006`, `3:EDT-021`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-011` | Régression de la confirmation Appliquer pour un modèle plus petit | `3:TPL-005` à `3:TPL-010`, `3:TPL-016`, `3:ERR-022` | 🟢 `RÉUSSI` |
 | `IPAD-L2-012` | Nom long dans la sélection et nouvelle commande de disposition aléatoire | `3:ELM-014`, `3:ACC-002`, `3:RND-001` à `3:RND-005`, `3:TPL-018`, `3:EDT-020` | 🟢 `RÉUSSI` |
+| `IPAD-L2-013` | Ajouter une page sous le canevas et mode Gérer les pages | `3:EDT-003`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:EDT-020`, `3:PAG-002`, `3:PAG-013` à `3:PAG-015`, `3:PHO-004`, `3:PHO-011`, `3:ACC-002`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -2783,6 +2788,46 @@ historiques `IPAD-L2-002`, `004`, `005` et `008`.
   et non redéclaré dans le retour global ; VoiceOver faisait partie de la
   procédure validée.
 
+## Régression de la navigation locale et de la gestion des pages
+
+Cette fiche vise exactement le candidat
+`b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4`. Elle remplace la preuve
+d’adaptation antérieure uniquement pour la barre sous le canevas et le
+sélecteur de mode modifiés.
+
+### `IPAD-L2-013` — Ajouter une page et Gérer les pages
+
+- Candidat : `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4`.
+- Spécification : 3.0, avec l’arbitrage `EDT-003`, `EDT-008`, `EDT-016`,
+  `EDT-020`, `PAG-002`, `PAG-013`, `PHO-011` inclus dans le candidat exact.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:EDT-003`, `3:EDT-008`,
+  `3:EDT-012`, `3:EDT-016`, `3:EDT-020`, `3:PAG-002`, `3:PAG-013` à
+  `3:PAG-015`, `3:PHO-004`, `3:PHO-011`, `3:ACC-002`, `3:ACC-021`,
+  `3:DONE-005`.
+- Préconditions : transférer exactement le candidat ; conserver le store validé
+  par `IPAD-L2-009…012` ; ouvrir en portrait un album contenant au moins deux
+  pages et une photo disponible dans Photos ; activer la première page et
+  relever son contenu, son fond et le compteur `Page 1 sur N`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et ouvrir l’album préparé. | La compilation et le lancement réussissent ; les albums, pages, photos, fonds, modèles et états Auto existants sont lisibles et inchangés. |
+| 2 | Dans Créer, examiner en portrait toute la barre située sous le canevas. | Ajouter une page apparaît avant le zoom et la navigation avec l’icône de pile et un libellé entier ou sa variante adaptative ; l’ancien bouton Ajouter une photo est absent de cette barre ; zoom, `Page 1 sur N`, Précédent et Suivant restent entiers. |
+| 3 | Sans cadre sélectionné, ouvrir Photos et presser une miniature disponible, puis annuler cette création. | La photo crée toujours un nouveau cadre par le panneau Photos ; une seule action Annuler restaure la page initiale. Le retrait du raccourci sous le canevas n’a pas supprimé l’ajout de photo. |
+| 4 | Revenir à la première page, vérifier le compteur, puis presser une fois Ajouter une page dans la barre sous le canevas. | Une seule page vide est insérée immédiatement après la première et devient active ; le compteur passe à `Page 2 sur N+1`, le fond est celui par défaut, aucun élément ni état Auto n’est copié et l’état atteint Enregistré. |
+| 5 | Presser une fois Annuler, puis une fois Rétablir. | Annuler retire la nouvelle page et restaure la première page active avec le compteur initial ; Rétablir recrée exactement la page vide, la rend active et restaure le compteur augmenté. |
+| 6 | Dans le sélecteur de mode, choisir Gérer les pages, examiner la grille et ouvrir l’aide de cette vue. | Le sélecteur affiche Créer, Gérer les pages et Prévisualiser dans cet ordre, sans ancien libellé Organiser ; la grille montre la nouvelle page active au bon indice et l’aide s’intitule Gérer les pages. |
+| 7 | Revenir dans Créer, tourner l’iPad en paysage, puis répéter l’examen de la barre et du sélecteur. | Aucun bouton, libellé, compteur, rail ni panneau n’est rogné ; l’ordre des commandes et la page active sont conservés. |
+| 8 | Activer VoiceOver et parcourir Ajouter une page puis les trois modes du sélecteur. | VoiceOver annonce « Ajouter une page » avec l’indication qu’une page vide sera créée après l’actuelle, puis « Créer — Vue page », « Gérer les pages — Vue globale » et « Prévisualiser » sans ambiguïté. |
+| 9 | Fermer puis rouvrir l’album et revenir à la page créée. | La page ajoutée, son ordre, son état vide et son fond par défaut persistent ; aucun cadre photo supplémentaire n’a été créé par l’action rapide. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner après retour utilisateur, avec toute anomalie associée à
+  l’ID numérique de l’étape.
+- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
+  Playgrounds 4.7 ; portrait initial puis paysage ; VoiceOver à l’étape 8 ;
+  Paris, France ; français (France).
+
 ## Qualification différée Apple/macOS/Xcode
 
 Ces contrôles complètent les preuves que Swift Playgrounds ou un seul iPad ne
@@ -2806,25 +2851,28 @@ explicitement enregistré.
 | `APPLE-L1-011` | Échec durable de sauvegarde, Réessayer et tentative de fermeture | `3:SAV-003`, `3:SAV-004`, `3:ERR-014` | ⚪ `NON TESTÉ` | Nécessite une erreur de dépôt déterministe sans remplir dangereusement le disque |
 | `APPLE-L1-012` | Preuve réseau qu’aucune photo ne quitte l’app vers un serveur propriétaire | `3:SEC-001`, `3:SEC-010` | ⚪ `NON TESTÉ` | Nécessite capture réseau attribuée au processus et inspection statique |
 | `APPLE-L1-013` | Rendu composite et cache de miniature de couverture | `3:COV-007` | ⚪ `NON TESTÉ` | Hits, misses et invalidations du cache ne sont pas observables dans l’interface publique |
-| `APPLE-L2-001` | Barre compacte et menu Plus sur iPhone ou environnement Xcode réellement compact | `3:EDT-003`, `3:EDT-004`, `3:ACC-002`, `3:ACC-021` | ⚪ `NON TESTÉ` | Swift Playgrounds sur l’iPad testé ne permet pas d’obtenir cette classe de largeur |
+| `APPLE-L2-001` | Barre compacte, Gérer les pages et menu Plus sur iPhone ou environnement Xcode réellement compact | `3:EDT-003`, `3:EDT-004`, `3:EDT-008`, `3:EDT-016`, `3:EDT-020`, `3:PAG-013`, `3:ACC-002`, `3:ACC-021` | ⚪ `NON TESTÉ` | Swift Playgrounds sur l’iPad testé ne permet pas d’obtenir cette classe de largeur |
 
 ### `APPLE-L2-001` — Barre compacte et menu Plus
 
-- Candidat : `024a60bcd7b7a837497a5d6a00e8e42cacfd9366`.
+- Candidat : `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4`.
 - Spécification : 3.0, incluse dans le candidat exact ci-dessus.
 - Type : test manuel sur iPhone réel ou simulateur Xcode produisant réellement
   une largeur compacte ; le plein écran iPad n’est pas un substitut.
-- Exigences : `3:EDT-003`, `3:EDT-004`, `3:ACC-002`, `3:ACC-021`.
+- Exigences : `3:EDT-003`, `3:EDT-004`, `3:EDT-008`, `3:EDT-016`,
+  `3:EDT-020`, `3:PAG-013`, `3:ACC-002`, `3:ACC-021`.
 - Préconditions : page contenant un élément sélectionné, une commande Annuler
   disponible et un élément copié ; Auto successivement désactivé puis activé.
 
 | ID | Description | Résultat attendu |
 |---:|---|---|
-| 1 | Ouvrir l’éditeur en portrait sur un iPhone réel ou un simulateur Xcode produisant une largeur compacte. | La barre compacte est entièrement visible ; aucune commande n’est coupée ou inaccessible. |
-| 2 | Repérer Mise en page auto dans la barre, d’abord désactivée puis activée. | Auto reste directement visible hors du menu Plus et son état affiché suit la page. |
-| 3 | Ouvrir Plus et parcourir Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller et Supprimer. | Toutes les commandes secondaires sont présentes dans leur ordre relatif, avec leur libellé complet et leur état activé ou désactivé correct. |
-| 4 | Tourner l’appareil ou le simulateur en paysage, puis rouvrir Plus. | La barre et le menu restent entièrement accessibles ; la sélection et la page active sont conservées. |
-| 5 | Activer VoiceOver et parcourir la barre compacte puis le menu Plus. | Chaque commande possède un libellé accessible non ambigu et annonce correctement son état indisponible lorsqu’elle est désactivée. |
+| 1 | Ouvrir l’éditeur en portrait sur un iPhone réel ou un simulateur Xcode produisant une largeur compacte. | La barre principale et la barre sous le canevas sont entièrement visibles ; aucune commande n’est coupée ou inaccessible. |
+| 2 | Examiner la barre sous le canevas, puis presser Ajouter une page une fois. | Ajouter une page reste accessible avec son libellé complet ou son icône annoncée ; l’ancien ajout photo n’est pas dupliqué dans cette barre et une seule page vide est insérée après la page active. |
+| 3 | Parcourir le sélecteur de mode. | Créer, Gérer les pages et Prévisualiser restent directement accessibles dans cet ordre et ne sont pas enfouis dans Plus. |
+| 4 | Repérer Mise en page auto dans la barre, d’abord désactivée puis activée. | Auto reste directement visible hors du menu Plus et son état affiché suit la page. |
+| 5 | Ouvrir Plus et parcourir Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller et Supprimer. | Toutes les commandes secondaires sont présentes dans leur ordre relatif, avec leur libellé complet et leur état activé ou désactivé correct. |
+| 6 | Tourner l’appareil ou le simulateur en paysage, puis rouvrir Plus. | Les barres, le sélecteur et le menu restent entièrement accessibles ; la sélection et la page active sont conservées. |
+| 7 | Activer VoiceOver et parcourir Ajouter une page, les trois modes, la barre compacte puis le menu Plus. | Chaque commande possède un libellé accessible non ambigu et annonce correctement son effet ou son état indisponible. |
 
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner avec appareil/simulateur, version système, version

@@ -2,7 +2,8 @@
 
 Cette matrice couvre le premier incrément interne du Lot 2, d’abord testé au
 commit `d427d4e747dd2de56235341bd661d537a9a31c8e`, puis corrigé dans le candidat
-`024a60bcd7b7a837497a5d6a00e8e42cacfd9366`. La source normative reste
+`024a60bcd7b7a837497a5d6a00e8e42cacfd9366`. L’ajustement de navigation est
+figé dans `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4`. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -46,6 +47,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-010` | Marges, panneau droit et replis indépendants | `EDT-002`, `EDT-006`, `EDT-021`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-011` | Confirmation Appliquer pour un modèle plus petit | `TPL-005…010`, `TPL-016`, `ERR-022` | 🟢 `RÉUSSI` |
 | `IPAD-L2-012` | Sélection à nom long et commande aléatoire explicite | `ELM-014`, `ACC-002`, `RND-001…005`, `TPL-018`, `EDT-020` | 🟢 `RÉUSSI` |
+| `IPAD-L2-013` | Ajouter une page sous le canevas et Gérer les pages | `EDT-003`, `EDT-008`, `EDT-012`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013…015`, `PHO-004`, `PHO-011`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -58,12 +60,17 @@ sélecteur d’élément et déplace le dé dans Mise en page. Les contrôles
 `009…012` le qualifient désormais sur iPad par le retour global « tous les
 tests sont ok », sans capture ni détail par étape. Cette preuve est limitée à
 ces quatre fiches. Le menu Plus n’est pas demandé au plein écran iPad :
-`APPLE-L2-001` reste ⚪ et vérifiera `EDT-004` sur iPhone ou dans un
-environnement Xcode réellement compact.
+`APPLE-L2-001` reste ⚪ et vérifiera `EDT-004`, Ajouter une page et Gérer les
+pages sur iPhone ou dans un environnement Xcode réellement compact.
+
+Le candidat `b86c4b3…` modifie ensuite la barre sous le canevas et le libellé
+du mode pages. `IPAD-L2-013` est la seule preuve manuelle attribuable à cette
+surface modifiée ; les réussites `009…012` restent valides pour leurs surfaces
+inchangées mais ne sont pas extrapolées à ce nouvel ajustement.
 
 | ID Apple différé | Objet | Exigences principales | État |
 |---|---|---|---|
-| `APPLE-L2-001` | Barre compacte et menu Plus sur iPhone/Xcode | `EDT-003`, `EDT-004`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` |
+| `APPLE-L2-001` | Barre compacte, Gérer les pages et menu Plus sur iPhone/Xcode | `EDT-003`, `EDT-004`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-013`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Écarts connus de l’incrément
 

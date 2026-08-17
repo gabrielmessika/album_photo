@@ -16,7 +16,7 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-17 |
-| Phase courante | Lot 2 — premier incrément de composition qualifié sur iPad, poursuite de la parité |
+| Phase courante | Lot 2 — ajustement de navigation à qualifier sur iPad, poursuite de la parité |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
@@ -27,7 +27,7 @@ résultats du prototype 2.1.
 | Candidat d’adaptation validé sur iPad | `101e2948252f51991933b8d61f767f52aa6b629d` ; `IPAD-L1-143…144` réussis |
 | Premier incrément Lot 2 | Candidat `d427d4e747dd2de56235341bd661d537a9a31c8e` sur `feature/lot2-composition` ; campagne `IPAD-L2-001…008` exécutée : 5 réussites, 2 échecs, 1 blocage |
 | Correctif des retours Lot 2 | Candidat `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` : `IPAD-L2-009…012` réussis ; confirmation capturée par page, marges et panneau droit repliable par section, sélection à nom borné et dé déplacé validés sur iPad |
-| Ajustement de navigation Lot 2 à figer | Ajouter une page remplace Ajouter une photo sous le canevas ; Organiser devient Gérer les pages ; 134 tests WSL et parse AppModule réussis, régression iPad requise après gel |
+| Ajustement de navigation Lot 2 | Candidat `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` : Ajouter une page remplace Ajouter une photo sous le canevas ; Organiser devient Gérer les pages ; `IPAD-L2-013` à exécuter |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du correctif Lot 2 | `spec.md` dans `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` précise `EDT-002`, `ELM-014` et `RND-001` conformément aux retours utilisateur du 17 août 2026 |
@@ -36,8 +36,8 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Couvrir `EDT-004` avec `APPLE-L2-001` sur iPhone ou environnement réellement compact ; poursuivre les fonctionnalités Lot 2 manquantes |
-| État global | 🟡 **Lot 1 viable sur l’iPad 8 ; correctif du premier incrément Lot 2 validé par 4/4 régressions iPad, puis navigation locale ajustée sous WSL mais pas encore requalifiée sur Apple ; largeur compacte et fonctionnalités restantes empêchent encore la sortie du lot** |
+| Validation indispensable restante | Exécuter `IPAD-L2-013` sur iPad ; couvrir ensuite `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode ; poursuivre les fonctionnalités Lot 2 manquantes |
+| État global | 🟡 **Lot 1 viable sur l’iPad 8 ; correctif du premier incrément Lot 2 validé par 4/4 régressions iPad, puis navigation locale `b86c4b3…` ajustée sous WSL mais encore à ⚪ sous `IPAD-L2-013` ; largeur compacte et fonctionnalités restantes empêchent encore la sortie du lot** |
 
 ## Légende
 
@@ -255,16 +255,18 @@ qualifications différées exigées par `DONE-001` à `DONE-005`.
 | Application des modèles | 🟡 | Modèle plus grand validé sous `IPAD-L2-003` ; requête capturée et `pageID` du modèle plus petit validés par `IPAD-L2-011`, Annuler/Rétablir et relance inclus (`TPL-004…023`) | Étendre avec les zones de texte dans leur incrément |
 | Dé | 🟡 | Compatibilité, sac sans répétition, Annuler/Rétablir et persistance réussis sous `IPAD-L2-005` ; nouvel emplacement, libellé visible, icône `die.face.5.fill` et absence dans la barre locale validés par `IPAD-L2-012` (`RND-001…006`) | Qualification compacte iPhone/Xcode encore différée |
 | Mise en page auto | 🟡 | Interrupteur, confirmation, densités, ajout/retrait/dupliquer, sortie vers libre, Annuler et persistance réussis sous `IPAD-L2-006…007` (`AUT-001…008`, `AUT-012…019`, `PHO-014`) | `AUT-009…011` Remplir l’album n’est pas encore exposé ; qualifications iPhone/Xcode restantes |
-| Navigation locale et pages | 🟡 | Ajouter une page remplace l’ajout photo redondant sous le canevas et appelle `EditorViewModel.addPage()` ; Gérer les pages remplace Organiser dans le sélecteur et l’aide (`EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`) | Contrat source et parse WSL réussis ; régression iPad à préparer sur le candidat figé |
+| Navigation locale et pages | 🟡 | Dans `b86c4b3…`, Ajouter une page remplace l’ajout photo redondant sous le canevas et appelle `EditorViewModel.addPage()` ; Gérer les pages remplace Organiser dans le sélecteur et l’aide (`EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`) | Contrat source et parse WSL réussis ; exécuter `IPAD-L2-013` |
 | Texte, stickers et cadres | ⬜ | Modèles avec texte présentés comme prochaine étape sans création d’un contenu non éditable ; aucun sticker/cadre Lot 2 persisté | Implémenter l’éditeur texte, puis figer assets/licences `CAT-009` avant stickers et cadres |
 
 Ce premier incrément reste 🟡 : le candidat initial compte cinq réussites, deux
 échecs et un blocage, puis le correctif `024a60b…` réussit les quatre
 régressions `IPAD-L2-009…012`. Les échecs historiques restent enregistrés mais
-sont couverts par les nouveaux IDs. `IPAD-L2-008` reste bloqué uniquement pour
-la largeur compacte, reprise par `APPLE-L2-001`. L’incrément ne constitue pas
-la sortie `ACPT-125`, car Remplir l’album manque encore, et ne prétend
-satisfaire aucune des autres sorties finales du Lot 2.
+sont couverts par les nouveaux IDs. Le candidat `b86c4b3…` ajuste ensuite la
+barre locale et le nom du mode pages ; `IPAD-L2-013` reste à ⚪ et ne remet pas
+en cause les surfaces inchangées validées par `009…012`. `IPAD-L2-008` reste
+bloqué uniquement pour la largeur compacte, reprise par `APPLE-L2-001`.
+L’incrément ne constitue pas la sortie `ACPT-125`, car Remplir l’album manque
+encore, et ne prétend satisfaire aucune des autres sorties finales du Lot 2.
 
 ## Arbitrage normatif appliqué
 
@@ -303,6 +305,7 @@ Lot 3 n’est rendu public.
 
 | Environnement | Commande ou contrôle | Résultat connu | Portée et limite |
 |---|---|---|---|
+| Dépôt, registre de navigation Lot 2, 2026-08-17 | Contrôle de `IPAD-L2-013`, du hash candidat et du tableau des étapes | **OK** : 13/13 IDs Lot 2 synthétiques et détaillés ; 9 étapes numérotées ; les 6 fiches encore à ⚪ utilisent le tableau requis | Contrôle documentaire uniquement ; aucune preuve Apple |
 | WSL, Swift 6.3.3, 2026-08-17 | `swift test --parallel` après remplacement de l’action locale et renommage du mode pages | **134 tests, 0 échec** | Ajoute un contrat statique sur Ajouter une page, l’absence de l’ancien raccord photo et Gérer les pages ; ne valide pas SwiftUI/iOS |
 | WSL, frontend Swift, 2026-08-17 | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` après ajustement de navigation | **OK** | Syntaxe de la nouvelle action, du libellé et du retrait du mode photo redondant ; sans type-check SwiftUI ni disponibilité réelle du symbole |
 | WSL, Swift 6.3.3, 2026-08-17 | `swift test --parallel` après correction des retours Lot 2 | **133 tests, 0 échec** | Ajoute 2 tests `ELM-014`/`ACC-002` sur la troncature ciblée et le libellé accessible complet ; ne valide pas SwiftUI/iOS |
@@ -343,8 +346,8 @@ Lot 3 n’est rendu public.
 
 | Validation | État | Motif |
 |---|---|---|
-| Action rapide Ajouter une page et libellé Gérer les pages | ⚪ Non testés sur Apple | Le code et le contrat source passent sous WSL ; figer le candidat puis vérifier rendu, insertion, page active, adaptation et VoiceOver sur iPad |
-| `APPLE-L2-001`, largeur compacte de `IPAD-L2-008` | 🟠 Bloqué sur cet iPad | Swift Playgrounds ne permet pas de réduire suffisamment la fenêtre ; reprendre sur iPhone ou environnement Xcode réellement compact |
+| `IPAD-L2-013`, action rapide Ajouter une page et libellé Gérer les pages sur `b86c4b3…` | ⚪ Non testé sur Apple | Le code et le contrat source passent sous WSL ; vérifier rendu, insertion, page active, ajout photo conservé, adaptation et VoiceOver sur iPad |
+| `APPLE-L2-001`, largeur compacte de `IPAD-L2-008` et du candidat `b86c4b3…` | 🟠 Bloqué sur cet iPad | Swift Playgrounds ne permet pas de réduire suffisamment la fenêtre ; reprendre la barre, Gérer les pages et le menu Plus sur iPhone ou environnement Xcode réellement compact |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
 | Accessibilité et adaptation exhaustives iPhone/Xcode | ⚪ Non testées | `114`, `115`, `118…120` réussis sur l’iPad 8 ; matrice iPhone et Accessibility Inspector toujours absents |
@@ -378,12 +381,12 @@ Lot 3 n’est rendu public.
 | `RSK-3.0-019` | Levé sur l’iPad déclaré | Le bouton Replier du rail agissait sur le panneau opposé et les contenus droits partageaient mal la hauteur. Dans `024a60b…`, le masquage est dans le panneau droit et ses deux sections se replient indépendamment. | `IPAD-L2-010` valide les quatre combinaisons, Réduire les animations et la conservation de la sélection. |
 | `RSK-3.0-020` | Levé sur l’iPad déclaré | Un nom long masquait position et plan dans Sélectionner un élément. `024a60b…` borne le libellé visible à 45 caractères en tronquant le seul détail et conserve le libellé accessible complet. | 2 tests Core et `IPAD-L2-012` avec VoiceOver réussissent ; compléter sur iPhone reste différé. |
 | `RSK-3.0-021` | Levé sur l’iPad déclaré | Le dé était fonctionnel mais peu explicite. `024a60b…` applique `RND-001` : bouton `die.face.5.fill` à libellé visible dans Mise en page, absent de la barre du canevas. | `IPAD-L2-012` valide l’icône, le libellé et la séquence fonctionnelle. |
-| `RSK-3.0-022` | 🟡 À valider | Le remplacement d’une commande dans la barre sous le canevas rend la preuve d’adaptation `IPAD-L1-144` insuffisante pour cette nouvelle composition, et le nouveau libellé du sélecteur peut se comprimer. | Figer le candidat et exécuter une régression iPad dédiée en portrait, paysage et VoiceOver avant de lever ce risque. |
+| `RSK-3.0-022` | 🟡 À valider | Le remplacement d’une commande dans la barre sous le canevas rend la preuve d’adaptation `IPAD-L1-144` insuffisante pour cette nouvelle composition, et le nouveau libellé du sélecteur peut se comprimer. | Exécuter `IPAD-L2-013` sur `b86c4b3…` en portrait, paysage et VoiceOver avant de lever ce risque. |
 
 ## Prochaines actions
 
-1. Figer l’ajustement de navigation et préparer sa régression iPad dédiée avant
-   tout nouveau développement fonctionnel.
+1. Transférer `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` et exécuter
+   `IPAD-L2-013` avant tout nouveau développement fonctionnel.
 2. Implémenter `AUT-009…011` Remplir l’album après cette requalification.
 3. Reprendre séparément `APPLE-L2-001` sur un iPhone ou un environnement Xcode
    réellement compact ; ne pas demander le menu Plus au plein écran iPad.
@@ -400,6 +403,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-17 | Codex | Gel du candidat de navigation `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` et préparation de `IPAD-L2-013` avec étapes en tableau | `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot2.md` ; `TST-001…005`, `TST-013`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PHO-011`, `ACC-002`, `ACC-021` | 13e fiche Lot 2 à ⚪ ; rendu, toucher, adaptation, insertion de page et VoiceOver Apple NON TESTÉS |
 | 2026-08-17 | Codex | Ajustement demandé de la navigation locale : Ajouter une page remplace l’ajout photo sous le canevas, Organiser devient Gérer les pages et le mode de choix photo devenu mort est retiré | `AlbumEditorView.swift`, `EditorViewModel.swift`, `HelpView.swift`, `ManifestContractTests.swift`, `spec.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `EDT-003`, `EDT-008`, `EDT-012`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PHO-011`, `PHO-013` | WSL : 134 tests, 0 échec ; parse AppModule OK ; rendu, toucher, adaptation et VoiceOver Apple NON TESTÉS ; candidat et régression iPad à figer |
 | 2026-08-17 | Codex | Enregistrement du retour global de la campagne corrective Lot 2 ; portée explicitement limitée à `IPAD-L2-009…012`, sans extrapolation aux contrôles Apple différés | `suivi_tests.md`, `SUIVI_PROJET.md`, `README.md`, `docs/traceability/lot2.md` ; `ENV-001…005`, `EDT-002`, `ELM-014`, `TPL-005…010`, `RND-001…005`, `TST-004`, `TST-013` | Retour « tous les tests sont ok » : 4 réussites sur `024a60b…`, aucune capture ni observation par étape ; environnement repris de l’en-tête et non redéclaré ; tests automatisés non relancés car sources inchangées |
 | 2026-08-17 | Codex | Mise en tableau des étapes des neuf procédures détaillées encore à exécuter, avec un résultat attendu associé à chaque action ; règle rendue obligatoire pour toute future fiche détaillée | `AGENTS.md`, `suivi_tests.md`, `SUIVI_PROJET.md` ; `TST-004`, `TST-005`, `TST-013` | Format documentaire contrôlé sur 4 fiches iPad et 5 fiches Apple ; états inchangés à ⚪ ; tests automatisés non relancés car aucun code ni contrat produit n’a changé |

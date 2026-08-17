@@ -52,10 +52,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   borné dans Sélectionner un élément et dé à libellé visible déplacé dans Mise
   en page. Les quatre régressions `IPAD-L2-009…012` sont réussies sur iPad ;
   le retour global ne couvre aucun contrôle Apple différé.
-  Un ajustement d’interface ultérieur remplace maintenant, sous le canevas,
-  Ajouter une photo par l’action rapide Ajouter une page et renomme le mode
-  Organiser en Gérer les pages. L’ajout de photo reste disponible depuis le
-  panneau Photos et les cadres ; cet ajustement attend sa régression iPad.
+  Le candidat `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` remplace ensuite,
+  sous le canevas, Ajouter une photo par l’action rapide Ajouter une page et
+  renomme le mode Organiser en Gérer les pages. L’ajout de photo reste
+  disponible depuis le panneau Photos et les cadres ; `IPAD-L2-013` doit
+  requalifier cet ajustement sur iPad.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -70,7 +71,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
-  `024a60b…`. Le menu Plus n’est attendu qu’en largeur compacte et sera repris
+  `024a60b…`. `IPAD-L2-013` est ⚪ `NON TESTÉ` sur `b86c4b3…`. Le menu Plus
+  n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
