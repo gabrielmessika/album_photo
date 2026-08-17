@@ -38,6 +38,8 @@ private struct AlbumEditorScene: View {
     @State private var lifecycleTask: Task<Void, Never>?
     @State private var lifecycleOperationBlockTokens: [UUID] = []
     @State private var showsInspector = true
+    @State private var showsElementInspectorContent = true
+    @State private var showsActivePanelContent = true
 
     init(albumID: UUID, appModel: AppModel) {
         _model = StateObject(
@@ -164,7 +166,7 @@ private struct AlbumEditorScene: View {
                         : "\(request.removedPhotoCount) occurrences photo seront retirées de la page. Les originaux resteront disponibles dans Photos."
                 ),
                 primaryButton: .default(Text("Appliquer")) {
-                    Task { await model.confirmLayoutTemplateApplication() }
+                    Task { await model.confirmLayoutTemplateApplication(request) }
                 },
                 secondaryButton: .cancel(Text("Annuler")) {
                     model.cancelLayoutTemplateApplication()
@@ -214,9 +216,10 @@ private struct AlbumEditorScene: View {
                 if model.cropDraft == nil, showsInspector {
                     Divider()
                     regularInspector
-                        .frame(width: 340)
+                        .frame(width: 324)
                 }
             }
+            .padding(.horizontal, 8)
         } else if model.presentationMode == .page,
                   model.cropDraft == nil,
                   let mobilePanel {
@@ -290,7 +293,6 @@ private struct AlbumEditorScene: View {
                 HStack(spacing: 14) {
                     if model.cropDraft == nil {
                         addPhotoButton(title: nil)
-                        shuffleLayoutButton
                     }
                     CanvasZoomControls(model: model)
                 }
@@ -305,7 +307,6 @@ private struct AlbumEditorScene: View {
         HStack(spacing: 14) {
             if model.cropDraft == nil {
                 addPhotoButton(title: addPhotoTitle)
-                shuffleLayoutButton
             }
             CanvasZoomControls(model: model)
             Divider().frame(height: 26)
@@ -329,22 +330,6 @@ private struct AlbumEditorScene: View {
         .controlSize(.large)
         .disabled(model.isReadOnly)
         .accessibilityLabel("Ajouter une photo")
-    }
-
-    private var shuffleLayoutButton: some View {
-        Button("Changer aléatoirement la mise en page", systemImage: "dice") {
-            Task { await model.shuffleLayout() }
-        }
-        .labelStyle(.iconOnly)
-        .buttonStyle(.bordered)
-        .controlSize(.large)
-        .disabled(!model.canShuffleLayout || model.cropDraft != nil)
-        .accessibilityLabel("Changer aléatoirement la mise en page")
-        .accessibilityHint(
-            model.canShuffleLayout
-                ? "Choisit un autre modèle compatible sans ajouter ni retirer d’élément."
-                : "Aucun autre modèle n’est compatible avec les éléments de cette page."
-        )
     }
 
     private var pageNavigation: some View {
@@ -380,6 +365,7 @@ private struct AlbumEditorScene: View {
             ForEach(EditorPanel.allCases) { panel in
                 Button {
                     model.activePanel = panel
+                    showsActivePanelContent = true
                     if reduceMotion {
                         showsInspector = true
                     } else {
@@ -408,29 +394,28 @@ private struct AlbumEditorScene: View {
                 .disabled(model.cropDraft != nil)
             }
             Spacer()
-            Button {
-                if showsInspector { model.cancelPhotoChoice() }
-                if reduceMotion {
-                    showsInspector.toggle()
-                } else {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        showsInspector.toggle()
+            if !showsInspector {
+                Button {
+                    if reduceMotion {
+                        showsInspector = true
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showsInspector = true
+                        }
                     }
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: "sidebar.right")
+                            .font(.title3)
+                        Text("Panneau")
+                            .font(.caption2)
+                    }
+                    .frame(width: 66, height: 58)
                 }
-            } label: {
-                VStack(spacing: 4) {
-                    Image(systemName: "sidebar.left")
-                        .font(.title3)
-                    Text(showsInspector ? "Replier" : "Afficher")
-                        .font(.caption2)
-                }
-                .frame(width: 66, height: 58)
+                .buttonStyle(.plain)
+                .accessibilityLabel("Afficher le panneau droit")
+                .accessibilityHint("Conserve la sélection et le contenu de la page.")
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(
-                showsInspector ? "Replier l’inspecteur" : "Afficher l’inspecteur"
-            )
-            .accessibilityHint("Conserve la sélection et le contenu de la page.")
         }
         .padding(.vertical, 12)
         .frame(width: 78)
@@ -451,17 +436,98 @@ private struct AlbumEditorScene: View {
 
     private var regularInspector: some View {
         VStack(spacing: 0) {
-            if model.selectedElement != nil {
-                ScrollView {
-                    selectedElementInspector
-                        .padding(12)
+            HStack {
+                Text("Panneau droit")
+                    .font(.headline)
+                Spacer()
+                Button("Masquer le panneau droit", systemImage: "sidebar.right") {
+                    if reduceMotion {
+                        showsInspector = false
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showsInspector = false
+                        }
+                    }
                 }
-                .frame(maxHeight: 390)
+                .labelStyle(.iconOnly)
+                .accessibilityHint(
+                    "Le bouton Panneau du rail permet de le réafficher."
+                )
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+
+            Divider()
+
+            if model.selectedElement != nil {
+                inspectorSectionHeader(
+                    "Inspecteur de l’élément",
+                    systemImage: "slider.horizontal.3",
+                    isExpanded: $showsElementInspectorContent
+                )
+
+                if showsElementInspectorContent {
+                    ScrollView {
+                        selectedElementInspector
+                            .padding(12)
+                    }
+                    .frame(maxHeight: 280)
+                }
+
                 Divider()
             }
-            panelContent(model.activePanel)
+
+            inspectorSectionHeader(
+                model.activePanel.title,
+                systemImage: model.activePanel.symbol,
+                isExpanded: $showsActivePanelContent
+            )
+
+            if showsActivePanelContent {
+                panelContent(model.activePanel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                Spacer(minLength: 0)
+            }
         }
         .background(.bar)
+    }
+
+    private func inspectorSectionHeader(
+        _ title: String,
+        systemImage: String,
+        isExpanded: Binding<Bool>
+    ) -> some View {
+        Button {
+            if reduceMotion {
+                isExpanded.wrappedValue.toggle()
+            } else {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isExpanded.wrappedValue.toggle()
+                }
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Label(title, systemImage: systemImage)
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                Image(
+                    systemName: isExpanded.wrappedValue
+                        ? "chevron.up" : "chevron.down"
+                )
+                .foregroundStyle(.secondary)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .accessibilityValue(isExpanded.wrappedValue ? "Développé" : "Replié")
+        .accessibilityHint(
+            isExpanded.wrappedValue
+                ? "Replie le contenu jusqu’à son titre."
+                : "Affiche le contenu de cette section."
+        )
     }
 
     private var selectedElementInspector: some View {
@@ -1008,6 +1074,9 @@ private struct AlbumEditorScene: View {
                     Button(model.elementSelectionLabel(element)) {
                         model.select(elementID: element.id)
                     }
+                    .accessibilityLabel(
+                        model.elementSelectionAccessibilityLabel(element)
+                    )
                 }
             }
         }

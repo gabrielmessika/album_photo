@@ -40,10 +40,17 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   viable sur cet appareil. Le premier incrément interne du Lot 2 est désormais
   figé dans `d427d4e747dd2de56235341bd661d537a9a31c8e` conformément à
   `LOT-003` : panneau Mise en page, modèles sans texte, dé et Auto. Le candidat
-  et le canevas
-  multiélément restent reconstruits from
-  scratch, en conservant
-  uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
+  compile et sa première campagne iPad compte cinq réussites (`001`, `003`,
+  `005`, `006`, `007`), deux échecs (`002`, `004`) et un blocage (`008`) :
+  léger rognage des panneaux en portrait, action Appliquer sans effet pour un
+  modèle plus petit et largeur compacte inaccessible dans Swift Playgrounds.
+  Un correctif local traite les deux échecs et les retours d’ergonomie :
+  requête Appliquer capturée avec sa page, marges latérales et panneau droit
+  plus étroit, deux sections droites repliables indépendamment, nom visible
+  borné dans Sélectionner un élément et dé à libellé visible déplacé dans Mise
+  en page. Ce correctif attend encore sa compilation et sa régression iPad.
+  Le candidat et le canevas multiélément restent reconstruits from scratch,
+  en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
@@ -52,9 +59,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   l’éditeur de texte ; Remplir l’album, stickers, cadres décoratifs et
   presse-papiers multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
-- Validation actuelle : 131 tests du noyau multiplateforme, les contrats et la
-  syntaxe AppModule sont validés sous WSL. La nouvelle campagne
-  `IPAD-L2-001…008` est préparée et reste entièrement `NON TESTÉE`. Les
+- Validation actuelle : 133 tests du noyau multiplateforme, les contrats et la
+  syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
+  `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur

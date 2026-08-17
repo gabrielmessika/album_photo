@@ -478,7 +478,7 @@ haut à gauche, largeur et hauteur normalisées de `0` à `1`.
 | ID | Exigence |
 |---|---|
 | `EDT-001` | Les cinq panneaux de création DOIVENT apparaître dans cet ordre stable : Photos, Mise en page, Fonds, Stickers, Cadres et formes. |
-| `EDT-002` | Sur iPad en largeur régulière, ces panneaux DOIVENT utiliser un rail latéral et un inspecteur repliable fixé à droite du canevas ; sur iPhone ou en largeur compacte, ils DOIVENT utiliser une barre inférieure et une présentation adaptative dans la même fenêtre. Leur contenu et leur ordre fonctionnel restent identiques. Le rail, ses choix Photos/Fonds et l’inspecteur ouvert DOIVENT rester entièrement visibles dans chaque orientation prise en charge. Aucune orientation ni largeur prise en charge NE DOIT tronquer une colonne de miniatures ou étirer verticalement une commande locale pour compenser un manque de largeur. |
+| `EDT-002` | Sur iPad en largeur régulière, ces panneaux DOIVENT utiliser un rail latéral et un inspecteur repliable fixé à droite du canevas ; sur iPhone ou en largeur compacte, ils DOIVENT utiliser une barre inférieure et une présentation adaptative dans la même fenêtre. Leur contenu et leur ordre fonctionnel restent identiques. Le rail, ses choix Photos/Fonds et l’inspecteur ouvert DOIVENT rester entièrement visibles dans chaque orientation prise en charge. Aucune orientation ni largeur prise en charge NE DOIT tronquer une colonne de miniatures ou étirer verticalement une commande locale pour compenser un manque de largeur. Lorsque l’inspecteur de l’élément et le panneau actif sont empilés à droite, chacun DOIT pouvoir replier indépendamment son contenu jusqu’à un titre restant visible. La commande masquant tout le panneau droit DOIT se trouver dans ce panneau ; une éventuelle commande de réaffichage placée dans le rail DOIT nommer explicitement le panneau droit. |
 | `EDT-003` | Dans l’ordre fonctionnel, la barre principale DOIT proposer Retour, Aide, nom de l’album avec Renommer, état de sauvegarde, Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller, Supprimer, Mise en page auto, Créer — Vue page, Organiser — Vue globale, Prévisualiser puis Exporter. |
 | `EDT-004` | Une commande trop large pour l’iPhone DOIT rester disponible dans un menu Plus sans changer son libellé, son effet ni son ordre relatif. |
 | `EDT-005` | La marge de sécurité, un prix, Commander et toute commande commerciale NE DOIVENT PAS apparaître. |
@@ -525,7 +525,7 @@ commande.
 | Rail ou barre de panneaux | Cadres et formes | `square.on.circle` | aucun cadre photo sélectionné |
 | Page | Ajouter une photo | `photo.badge.plus` | jamais |
 | Page | Ajouter du texte | `textformat` avec badge `+` | jamais |
-| Page | Changer aléatoirement la mise en page | `dice` | moins de deux modèles compatibles |
+| Panneau Mise en page | Changer aléatoirement la mise en page | `die.face.5.fill` | moins de deux modèles compatibles |
 | Canevas | Zoom arrière | `minus.magnifyingglass` | zoom à `50 %` ou mode cadrage |
 | Canevas | Ajuster | `arrow.up.left.and.arrow.down.right` | zoom à `100 %` et page centrée, ou mode cadrage |
 | Canevas | Zoom avant | `plus.magnifyingglass` | zoom à `400 %` ou mode cadrage |
@@ -593,7 +593,7 @@ commande.
 | `ELM-011` | Les touches fléchées DOIVENT déplacer la sélection de `0,01` de la dimension correspondante ; avec la touche Option, le pas DOIT être `0,0025`. |
 | `ELM-012` | Le déplacement et le redimensionnement DOIVENT avoir des alternatives accessibles par menu ; aucune opération obligatoire NE DOIT dépendre uniquement d’un geste multipoint. |
 | `ELM-013` | Rotation… DOIT ouvrir un contrôle accessible exprimé en degrés, borné dans `[-180, 180)`, avec pas de `1°`, actions `−90°`, `+90°` et Réinitialiser à `0°`. Toute variation DOIT être prévisualisée immédiatement sur le canevas en arrière-plan sans écrire de commande. Annuler, y compris la fermeture interactive, restaure exactement l’angle d’entrée ; Valider constitue une seule commande annulable sur la géométrie de l’élément. Pour une photo, cette rotation du cadre reste distincte des rotations de contenu de `FRM-005`. |
-| `ELM-014` | Une pression longue sur un point couvert par plusieurs éléments DOIT proposer Sélectionner un élément, lister les candidats du premier plan vers l’arrière-plan avec un type, un extrait ou une description accessible non ambiguë, puis sélectionner le choix sans changer sa profondeur. Une action VoiceOver équivalente DOIT permettre de retrouver notamment un texte entièrement masqué par une photo. |
+| `ELM-014` | Une pression longue sur un point couvert par plusieurs éléments DOIT proposer Sélectionner un élément, lister les candidats du premier plan vers l’arrière-plan avec un type, un extrait ou une description accessible non ambiguë, puis sélectionner le choix sans changer sa profondeur. Si la largeur visible impose une troncature, elle DOIT porter d’abord sur le nom ou l’extrait afin que la position et le plan restent visibles ; le libellé accessible conserve la description complète non tronquée. Une action VoiceOver équivalente DOIT permettre de retrouver notamment un texte entièrement masqué par une photo. |
 
 ### 7.3.1 Zoom du canevas
 
@@ -667,7 +667,7 @@ raccourcis NE DOIVENT PAS s’exécuter lorsqu’un champ de texte les consomme.
 
 | ID | Exigence |
 |---|---|
-| `RND-001` | Un bouton portant une icône de dé et le libellé accessible Changer aléatoirement la mise en page DOIT être visible dans Vue page. |
+| `RND-001` | Un bouton portant une icône de dé explicite et le libellé visible Changer aléatoirement la mise en page DOIT se trouver dans le panneau Mise en page de Vue page. Il NE DOIT PAS occuper la barre locale d’ajout, zoom et navigation du canevas. Son libellé accessible reste identique au libellé visible. |
 | `RND-002` | Pour le dé, un modèle est compatible si et seulement s’il possède exactement autant d’emplacements photo que la page contient de cadres photo, remplis ou vides, et exactement autant d’emplacements texte que la page contient de zones de texte, vides ou non. Le dé NE DOIT donc ajouter ni retirer aucun élément. |
 | `RND-003` | Le dé NE DOIT changer ni le nombre, ni l’ordre des contenus, ni le fond, ni les stickers ; il change seulement les géométries définies par le modèle. |
 | `RND-004` | Tant qu'un autre modèle compatible n'existe pas, le bouton DOIT être désactivé. Dans chaque cycle défini par `RND-006`, le modèle courant ne peut pas être choisi deux fois de suite et tous les autres modèles compatibles du sac DOIVENT être parcourus avant répétition. |

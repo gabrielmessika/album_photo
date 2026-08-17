@@ -74,10 +74,11 @@ enum EditorPanel: String, CaseIterable, Identifiable {
 }
 
 struct LayoutTemplateConfirmationRequest: Identifiable, Equatable {
+    let pageID: UUID
     let template: LayoutTemplateDefinition
     let removedPhotoCount: Int
 
-    var id: String { "\(template.id)#\(template.version)" }
+    var id: String { "\(pageID.uuidString)#\(template.id)#\(template.version)" }
 }
 
 enum EditorPresentationMode: String, CaseIterable, Identifiable {
@@ -592,15 +593,51 @@ final class EditorViewModel: ObservableObject {
     }
 
     func elementSelectionLabel(_ element: PageElement) -> String {
+        let parts = elementSelectionLabelParts(element)
+        return ElementSelectionLabelFormatter.compact(
+            type: parts.type,
+            detail: parts.detail,
+            position: parts.position,
+            depth: parts.compactDepth
+        )
+    }
+
+    func elementSelectionAccessibilityLabel(_ element: PageElement) -> String {
+        let parts = elementSelectionLabelParts(element)
+        return ElementSelectionLabelFormatter.accessible(
+            type: parts.type,
+            detail: parts.detail,
+            position: parts.position,
+            depth: parts.accessibleDepth
+        )
+    }
+
+    private func elementSelectionLabelParts(
+        _ element: PageElement
+    ) -> (
+        type: String,
+        detail: String?,
+        position: String,
+        compactDepth: String,
+        accessibleDepth: String
+    ) {
         let ordered = activePage?.orderedElements ?? []
         let depthIndex = ordered.firstIndex(where: { $0.id == element.id })
-        let depth = depthIndex.map { "plan \($0 + 1) sur \(ordered.count)" }
+        let compactDepth = depthIndex.map { "plan \($0 + 1) sur \(ordered.count)" }
+            ?? "plan inconnu"
+        let accessibleDepth = depthIndex.map { "plan \($0 + 1) sur \(ordered.count)" }
             ?? "profondeur inconnue"
         let position = approximatePosition(of: element.geometry)
         switch element {
         case let .photo(frame):
             guard let placement = frame.content else {
-                return "Cadre photo vide — \(position) — \(depth)"
+                return (
+                    "Cadre vide",
+                    nil,
+                    position,
+                    compactDepth,
+                    accessibleDepth
+                )
             }
             let description = placement.accessibilityDescription?
                 .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -612,14 +649,26 @@ final class EditorViewModel: ObservableObject {
                     return value
                 }
                 .first ?? "photo \(placement.assetID.uuidString.prefix(6))"
-            return "Photo — \(detail) — \(position) — \(depth)"
+            return ("Photo", detail, position, compactDepth, accessibleDepth)
         case let .text(text):
             let excerpt = text.content.plainText.trimmingCharacters(
                 in: .whitespacesAndNewlines
             )
-            return "Texte — \(excerpt.isEmpty ? "vide" : String(excerpt.prefix(32))) — \(position) — \(depth)"
+            return (
+                "Texte",
+                excerpt.isEmpty ? "vide" : excerpt,
+                position,
+                compactDepth,
+                accessibleDepth
+            )
         case let .sticker(sticker):
-            return "Sticker — \(sticker.resource.catalogID) — \(position) — \(depth)"
+            return (
+                "Sticker",
+                sticker.resource.catalogID,
+                position,
+                compactDepth,
+                accessibleDepth
+            )
         }
     }
 
@@ -806,7 +855,9 @@ final class EditorViewModel: ObservableObject {
     }
 
     func requestLayoutTemplate(_ template: LayoutTemplateDefinition) async {
-        guard let page = activePage, template.isActive else { return }
+        guard let page = activePage,
+              let pageID = activePageID,
+              template.isActive else { return }
         guard template.textSlots.isEmpty else {
             errorMessage = "Les modèles avec texte seront activés avec l’éditeur de texte du prochain incrément."
             return
@@ -818,6 +869,7 @@ final class EditorViewModel: ObservableObject {
                 : "Ce modèle retirerait \(count) zones de texte non vides."
         case let .requiresPhotoRemovalConfirmation(count):
             layoutTemplateConfirmation = LayoutTemplateConfirmationRequest(
+                pageID: pageID,
                 template: template,
                 removedPhotoCount: count
             )
@@ -826,11 +878,13 @@ final class EditorViewModel: ObservableObject {
         }
     }
 
-    func confirmLayoutTemplateApplication() async {
-        guard let request = layoutTemplateConfirmation else { return }
+    func confirmLayoutTemplateApplication(
+        _ request: LayoutTemplateConfirmationRequest
+    ) async {
         layoutTemplateConfirmation = nil
         await applyLayoutTemplate(
             request.template,
+            to: request.pageID,
             confirmsPhotoRemoval: true
         )
     }
@@ -891,10 +945,11 @@ final class EditorViewModel: ObservableObject {
 
     private func applyLayoutTemplate(
         _ template: LayoutTemplateDefinition,
+        to requestedPageID: UUID? = nil,
         confirmsPhotoRemoval: Bool
     ) async {
-        guard let pageID = activePageID else { return }
-        let wasAutomatic = activePage?.layout.isAutoLayoutEnabled == true
+        guard let pageID = requestedPageID ?? activePageID else { return }
+        let wasAutomatic = album?.page(id: pageID)?.layout.isAutoLayoutEnabled == true
         layoutShuffleBag.reset()
         let succeeded = await mutate("Impossible d’appliquer cette mise en page.") {
             try await self.service.applyLayoutTemplate(

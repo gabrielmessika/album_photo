@@ -21,7 +21,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif compilé et testé lors de la troisième campagne | `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` — 6 réussites, 1 échec |
 | Candidat testé lors de la quatrième campagne ciblée | `48e9fef9c317835f605df430c4112320d8cb66c3` — `141` réussi implicitement, `142` échoué en portrait |
 | Candidat d’adaptation validé lors de la cinquième campagne ciblée | `101e2948252f51991933b8d61f767f52aa6b629d` — `143…144` réussis |
-| Premier candidat Lot 2 à tester | `d427d4e747dd2de56235341bd661d537a9a31c8e` — modèles sans texte, dé et Auto |
+| Premier candidat Lot 2 testé | `d427d4e747dd2de56235341bd661d537a9a31c8e` — modèles sans texte, dé et Auto ; 5 réussites, 2 échecs, 1 blocage |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -30,7 +30,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Swift Playgrounds | 4.7 |
 | Orientation initiale | Portrait |
 | Réseau initial | Connecté, sauf test hors ligne |
-| Date et lieu de la campagne | 16 août 2026 — Paris, France |
+| Date et lieu de la campagne | Début le 16 août 2026 — Paris, France ; retour Lot 2 reçu le 17 août, lieu non redéclaré |
 | Langue et région | Français — France |
 
 Le code de la première campagne reste figé par l’empreinte Git exacte
@@ -184,8 +184,13 @@ indirecte de lancement et `142` échoue en portrait. Sur
 la compilation, le rail Photos/Fonds, l’inspecteur, les trois colonnes et les
 commandes adaptatives sont confirmés par le retour « tout est ok maintenant ».
 Le candidat Lot 2 `d427d4e747dd2de56235341bd661d537a9a31c8e`
-ajoute huit fiches neuves, toutes initialisées à ⚪ `NON TESTÉ` ; aucune preuve
-Lot 1 n’est extrapolée à ces nouvelles surfaces.
+a été exécuté sous `IPAD-L2-001…008`. La campagne compte cinq réussites
+(`001`, `003`, `005`, `006`, `007`), deux échecs (`002`, `004`) et un blocage
+(`008`). Le retour « `002` : ok » n’est pas converti en réussite, car
+l’observation globale de panneaux encore rognés en portrait contredit son
+résultat attendu. Pour `008`, les contrôles accessibles sont déclarés bons,
+mais le menu Plus de largeur compacte n’a pas pu être atteint dans Swift
+Playgrounds sur cet iPad.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -271,14 +276,14 @@ Lot 1 n’est extrapolée à ces nouvelles surfaces.
 | `IPAD-L1-142` | Trois colonnes contraintes et action locale adaptative | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — portrait toujours débordant, accès Photos/Fonds absent |
 | `IPAD-L1-143` | Compilation du correctif de largeur globale | `3:ENV-001` à `3:ENV-005`, `3:LOT-001`, `3:DONE-005` | 🟢 `RÉUSSI` — preuve indirecte par l’exécution fonctionnelle de `144` |
 | `IPAD-L1-144` | Rail, inspecteur et commandes du canevas entièrement adaptatifs | `3:EDT-002`, `3:EDT-020`, `3:PHO-002`, `3:PHO-011`, `3:PHO-019`, `3:ACC-021` | 🟢 `RÉUSSI` |
-| `IPAD-L2-001` | Compilation, ouverture du store Lot 1 et nouvelle interface | `3:ENV-001` à `3:ENV-005`, `3:LOT-003`, `3:DAT-042`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-002` | Panneau Mise en page adaptatif, groupes et miniatures | `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:TPL-001` à `3:TPL-003`, `3:ACC-021` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-003` | Modèle plus grand, conservation et Annuler/Rétablir | `3:TPL-004` à `3:TPL-006`, `3:TPL-009`, `3:TPL-010`, `3:TPL-014` à `3:TPL-017`, `3:DAT-042` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-004` | Modèle plus petit, confirmation exacte et atomicité | `3:TPL-005` à `3:TPL-010`, `3:TPL-016`, `3:ERR-022` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-005` | Dé compatible, sac sans répétition et persistance | `3:RND-001` à `3:RND-006`, `3:TPL-018`, `3:DAT-042` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-006` | Activation Auto, ajouts/retraits et désactivation manuelle | `3:AUT-001` à `3:AUT-008`, `3:AUT-012` à `3:AUT-019`, `3:PHO-014` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-007` | Densité, portée par page, relance et Annuler/Rétablir | `3:AUT-001`, `3:AUT-003` à `3:AUT-005`, `3:AUT-012`, `3:AUT-015` à `3:AUT-018`, `3:DAT-037` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-008` | Commandes incompatibles, aide et non-exposition du reste du Lot 2 | `3:AUT-019`, `3:EDT-003`, `3:EDT-004`, `3:EDT-019`, `3:ARC-014`, `3:CAT-009` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-001` | Compilation, ouverture du store Lot 1 et nouvelle interface | `3:ENV-001` à `3:ENV-005`, `3:LOT-003`, `3:DAT-042`, `3:DONE-005` | 🟢 `RÉUSSI` |
+| `IPAD-L2-002` | Panneau Mise en page adaptatif, groupes et miniatures | `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:TPL-001` à `3:TPL-003`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — rail et inspecteur encore légèrement rognés en portrait |
+| `IPAD-L2-003` | Modèle plus grand, conservation et Annuler/Rétablir | `3:TPL-004` à `3:TPL-006`, `3:TPL-009`, `3:TPL-010`, `3:TPL-014` à `3:TPL-017`, `3:DAT-042` | 🟢 `RÉUSSI` |
+| `IPAD-L2-004` | Modèle plus petit, confirmation exacte et atomicité | `3:TPL-005` à `3:TPL-010`, `3:TPL-016`, `3:ERR-022` | 🔴 `ÉCHOUÉ` — Appliquer dans la confirmation ne produit aucun changement |
+| `IPAD-L2-005` | Dé compatible, sac sans répétition et persistance | `3:RND-001` à `3:RND-006`, `3:TPL-018`, `3:DAT-042` | 🟢 `RÉUSSI` — découvrabilité et emplacement du dé à revoir séparément |
+| `IPAD-L2-006` | Activation Auto, ajouts/retraits et désactivation manuelle | `3:AUT-001` à `3:AUT-008`, `3:AUT-012` à `3:AUT-019`, `3:PHO-014` | 🟢 `RÉUSSI` |
+| `IPAD-L2-007` | Densité, portée par page, relance et Annuler/Rétablir | `3:AUT-001`, `3:AUT-003` à `3:AUT-005`, `3:AUT-012`, `3:AUT-015` à `3:AUT-018`, `3:DAT-037` | 🟢 `RÉUSSI` |
+| `IPAD-L2-008` | Commandes incompatibles, aide et non-exposition du reste du Lot 2 | `3:AUT-019`, `3:EDT-003`, `3:EDT-004`, `3:EDT-019`, `3:ARC-014`, `3:CAT-009` | 🟠 `BLOQUÉ` — menu Plus compact inaccessible dans Swift Playgrounds sur cet iPad |
 
 ## Fiches détaillées
 
@@ -2473,10 +2478,12 @@ explicitement hors de ce candidat.
   1 restent lisibles et inchangées ; le rail ou la barre expose désormais
   Photos, Mise en page et Fonds dans cet ordre ; aucune commande Lot 3
   n’apparaît.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — diagnostic de compilation et capture de l’éditeur.
-- Environnement : à renseigner — appareil, iPadOS, Swift Playgrounds, date,
-  lieu, langue et région.
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : retour utilisateur explicite « `IPAD-L2-001 : ok` » ; aucune
+  capture ni journal de compilation joint à ce retour.
+- Environnement : 17 août 2026 ; candidat exact ci-dessus. Appareil, iPadOS,
+  Swift Playgrounds, lieu, langue et région repris de l’environnement déclaré
+  en tête de campagne et non redéclarés dans ce retour.
 
 ### `IPAD-L2-002` — Panneau Mise en page adaptatif et catalogue
 
@@ -2497,10 +2504,14 @@ explicitement hors de ce candidat.
   des duplicatas trompeurs ; l’ordre des trois panneaux reste stable ; Avec
   texte annonce clairement son report ; l’aide explique modèle, dé et Auto
   sans réseau.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures portrait/paysage et liste des groupes
-  parcourus.
-- Environnement : à renseigner.
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : malgré le retour synthétique « `IPAD-L2-002 : ok` », l’observation
+  globale précise qu’en portrait les panneaux de menu à gauche et l’inspecteur
+  à droite restent légèrement rognés, quoique lisibles. Cet écart contredit
+  directement l’attente « aucun rail ni panneau coupé » ; aucune capture
+  jointe.
+- Environnement : même environnement déclaré que `IPAD-L2-001` ; non
+  redéclaré dans ce retour.
 
 ### `IPAD-L2-003` — Modèle plus grand, conservation et commande unique
 
@@ -2519,10 +2530,11 @@ explicitement hors de ce candidat.
   Annuler restaure exactement les deux cadres initiaux en une action ; Rétablir
   restaure les quatre ; après relance, Grille A reste sélectionnée et les
   géométries ne sont pas recalculées aléatoirement.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures avant/après/Annuler/Rétablir et après
-  relance.
-- Environnement : à renseigner.
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : retour utilisateur explicite « `IPAD-L2-003 : ok` » ; aucune
+  capture jointe.
+- Environnement : même environnement déclaré que `IPAD-L2-001` ; non
+  redéclaré dans ce retour.
 
 ### `IPAD-L2-004` — Modèle plus petit et confirmation exacte
 
@@ -2539,10 +2551,12 @@ explicitement hors de ce candidat.
   deux premières occurrences selon l’ordre accessible, retire les deux autres
   cadres sans supprimer leurs assets de Photos et désactive Auto s’il était
   actif ; un seul Annuler restaure les quatre cadres avec leurs cadrages.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — texte du dialogue, ordre des photos et captures des
-  trois états.
-- Environnement : à renseigner.
+- Résultat : 🔴 `ÉCHOUÉ`.
+- Preuve : le dialogue s’affiche, mais toucher **Appliquer** ne produit aucun
+  changement observable. Le retrait des deux occurrences, la commande unique
+  et sa restauration ne peuvent donc pas être validés ; aucune capture jointe.
+- Environnement : même environnement déclaré que `IPAD-L2-001` ; non
+  redéclaré dans ce retour.
 
 ### `IPAD-L2-005` — Dé compatible, cycle et persistance
 
@@ -2559,9 +2573,14 @@ explicitement hors de ce candidat.
   variante est visitée avant répétition ; nombre, ordre des contenus, cadrages,
   fond et assets ne changent pas ; chaque pression est une commande ; le
   dernier résultat, et non un nouveau tirage, persiste après relance.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — séquence des noms sélectionnés et captures.
-- Environnement : à renseigner.
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : retour utilisateur explicite « `IPAD-L2-005 : ok` ». Observation
+  hors verdict fonctionnel : l’icône actuelle est jugée peu compréhensible ;
+  une icône de dé montrant plusieurs faces et un déplacement dans le panneau
+  Mise en page avec libellé clair sont demandés. Aucune séquence écrite des
+  modèles ni capture jointe.
+- Environnement : même environnement déclaré que `IPAD-L2-001` ; non
+  redéclaré dans ce retour.
 
 ### `IPAD-L2-006` — Auto, occurrences photo et sortie vers le mode libre
 
@@ -2582,10 +2601,11 @@ explicitement hors de ce candidat.
   Auto ; le déplacement désactive Auto et affiche « Mise en page auto
   désactivée pour cette page » ; son action Annuler restaure à la fois Auto et
   la géométrie précédente.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — vidéo ou captures de chaque nombre d’occurrences et
-  de l’avertissement.
-- Environnement : à renseigner.
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : retour utilisateur explicite « `IPAD-L2-006 : ok` » ; aucune vidéo
+  ni capture jointe.
+- Environnement : même environnement déclaré que `IPAD-L2-001` ; non
+  redéclaré dans ce retour.
 
 ### `IPAD-L2-007` — Densité, portée par page et relance
 
@@ -2603,10 +2623,11 @@ explicitement hors de ce candidat.
   produit une composition déterministe et une commande annulable ; désactiver
   Auto conserve exactement la dernière géométrie ; les états Auto et densité
   sont indépendants par page et persistent ; la page vide reste sans cadre.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures des trois densités et des deux pages après
-  relance.
-- Environnement : à renseigner.
+- Résultat : 🟢 `RÉUSSI`.
+- Preuve : retour utilisateur explicite « `IPAD-L2-007 : ok` » ; aucune
+  capture jointe.
+- Environnement : même environnement déclaré que `IPAD-L2-001` ; non
+  redéclaré dans ce retour.
 
 ### `IPAD-L2-008` — Commandes incompatibles et frontière de l’incrément
 
@@ -2626,10 +2647,14 @@ explicitement hors de ce candidat.
   reste visible hors du menu Plus et toutes les commandes existantes restent
   contenues ; l’aide est locale ; les fonctions Lot 2 non livrées ne sont pas
   actives et aucun asset sticker/cadre n’est persisté.
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures des états désactivés, des deux orientations
-  et de l’aide.
-- Environnement : à renseigner.
+- Résultat : 🟠 `BLOQUÉ`.
+- Preuve : les parties accessibles sont déclarées bonnes, mais le menu Plus
+  n’a pas été contrôlé : Swift Playgrounds sur cet iPad ne permet pas de
+  réduire suffisamment la fenêtre pour obtenir la largeur compacte. Le retour
+  « ok mais menu Plus inaccessible » ne prouve donc pas toute la fiche ; aucune
+  capture jointe.
+- Environnement : même environnement déclaré que `IPAD-L2-001` ; limitation
+  Swift Playgrounds signalée par l’utilisateur.
 
 ## Qualification différée Apple/macOS/Xcode
 
@@ -2796,6 +2821,7 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
+| `IPAD-L2-001…008` sur `d427d4e…` | 17 août 2026 | 5 réussites (`001`, `003`, `005`, `006`, `007`), 2 échecs (`002`, `004`) et 1 blocage (`008`) | Retours par identifiant et observations globales ; aucune capture jointe. `002` reste en échec malgré « ok », car le rognage portrait contredit son attente | Panneaux portrait, action Appliquer, ergonomie des panneaux, libellés de sélection et emplacement du dé à reprendre ; menu Plus compact différé | Environnement déclaré en tête de campagne : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; détails non redéclarés dans ce retour |
 | `IPAD-L1-063…093` | 16 août 2026 | 31 fiches retranscrites individuellement ci-dessus : 18 réussies, 8 échouées, 4 bloquées et 1 non applicable | Réponses et observations consignées dans chaque fiche ; aucune réussite extrapolée | Correctif regroupé et régressions `109…131` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; copie `aeae5c439c461e7994117067d81a416591d348bd` |
 | Candidat `06c30b9…` | 16 août 2026 | Compilation impossible : `maximumPixelSize` manquant dans `AlbumCoverView` et paramètre générique non inféré dans `AppModel` | Retour utilisateur avec diagnostics du compilateur | Correctif minimal et contrôle `IPAD-L1-132` | Environnement de campagne déclaré : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 |
 | `IPAD-L1-132` sur `84ec71e…` | 16 août 2026 | 🔴 Échec de compilation : appel `catalogImage(for:)` sans `maximumPixelSize` à la ligne 128 d’`AlbumCoverView` | Diagnostic exact transmis par l’utilisateur | Deux appels corrigés ; nouveau contrôle `IPAD-L1-133` | iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 |

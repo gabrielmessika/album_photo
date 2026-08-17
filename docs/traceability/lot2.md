@@ -6,9 +6,10 @@ Cette matrice couvre le premier incrément interne du Lot 2 figé par le commit
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
-Elle ne déclare pas `ACPT-125` réussi : Remplir l’album (`AUT-009…011`) et la
-qualification Apple manquent. Les zones de texte éditables, stickers, cadres
-décoratifs et presse-papiers multi-types appartiennent aux incréments suivants.
+Elle ne déclare pas `ACPT-125` réussi : Remplir l’album (`AUT-009…011`) manque,
+`IPAD-L2-002` et `004` échouent et `008` reste bloqué. Les zones de texte
+éditables, stickers, cadres décoratifs et presse-papiers multi-types
+appartiennent aux incréments suivants.
 
 ## Contrôles automatisés
 
@@ -19,8 +20,9 @@ décoratifs et presse-papiers multi-types appartiennent aux incréments suivants
 | `A-L2-TEMPLATE` | `LayoutTemplateEngine`, cinq tests de `PrototypeEngineTests`, `AlbumApplicationServiceTests.testApplyingBuiltInTemplateIsOneValidatedUndoableCommand`, `testSmallerBuiltInTemplateRequiresConfirmationWithoutPartialCommit`, `testMovingTemplateTextOnlyFreesThatTextProvenance` | `TPL-004…018`, `TPL-021…023`, `RND-002…006` | Transition pure et transaction mémoire ; dialogue, miniatures et toucher restent manuels |
 | `A-L2-AUTO` | `AutoLayoutEngine`, `AlbumApplicationService.setAutomaticLayoutEnabled`, commandes structurelles Auto et tests `testAutomaticLayoutRecomposesStructuralPhotoCommandsAndIsUndoable`, `testEnablingAutoOnExistingTemplateRequiresConfirmationAndClearsSlots` | `AUT-001…008`, `AUT-012…019`, `PHO-014`, `DAT-037`, `DAT-043` | `AUT-009…011` non implémentés ; UI et persistance Apple non prouvées |
 | `A-L2-UI-PARSE` | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` | structure de `EDT-001…004`, `EDT-019`, `RND-001`, `AUT-001` | Syntaxe seulement, sans type-check SwiftUI ni disponibilité des SF Symbols |
+| `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
 
-La suite WSL complète compte 131 tests sans échec sur ce candidat. Les
+La suite WSL complète compte 133 tests sans échec avec le correctif local. Les
 contrats publiés et leurs dix empreintes sont également valides. Ces résultats
 ne remplacent aucune fiche iPad.
 
@@ -28,18 +30,24 @@ ne remplacent aucune fiche iPad.
 
 | ID | Objet | Exigences principales | État |
 |---|---|---|---|
-| `IPAD-L2-001` | Compilation, store Lot 1 et nouvelle interface | `ENV-001…005`, `LOT-003`, `DAT-042`, `DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-002` | Panneau adaptatif, groupes, filtres et miniatures | `EDT-001`, `EDT-002`, `EDT-006`, `TPL-001…003`, `ACC-021` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-003` | Modèle plus grand et commande unique | `TPL-004…006`, `TPL-009`, `TPL-010`, `TPL-014…017`, `DAT-042` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-004` | Modèle plus petit et confirmation exacte | `TPL-005…010`, `TPL-016`, `ERR-022` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-005` | Dé compatible, cycle et persistance | `RND-001…006`, `TPL-018`, `DAT-042` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-006` | Auto, occurrences et transformation manuelle | `AUT-001…008`, `AUT-012…019`, `PHO-014`, `FRM-003` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-007` | Densité, portée par page et relance | `AUT-001`, `AUT-003…005`, `AUT-012`, `AUT-015…018`, `DAT-037` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-008` | Commandes incompatibles et frontière | `AUT-019`, `EDT-003`, `EDT-004`, `EDT-019`, `ARC-014`, `CAT-009` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-001` | Compilation, store Lot 1 et nouvelle interface | `ENV-001…005`, `LOT-003`, `DAT-042`, `DONE-005` | 🟢 `RÉUSSI` |
+| `IPAD-L2-002` | Panneau adaptatif, groupes, filtres et miniatures | `EDT-001`, `EDT-002`, `EDT-006`, `TPL-001…003`, `ACC-021` | 🔴 `ÉCHOUÉ` — panneaux légèrement rognés en portrait |
+| `IPAD-L2-003` | Modèle plus grand et commande unique | `TPL-004…006`, `TPL-009`, `TPL-010`, `TPL-014…017`, `DAT-042` | 🟢 `RÉUSSI` |
+| `IPAD-L2-004` | Modèle plus petit et confirmation exacte | `TPL-005…010`, `TPL-016`, `ERR-022` | 🔴 `ÉCHOUÉ` — Appliquer sans effet |
+| `IPAD-L2-005` | Dé compatible, cycle et persistance | `RND-001…006`, `TPL-018`, `DAT-042` | 🟢 `RÉUSSI` — ergonomie du dé à revoir |
+| `IPAD-L2-006` | Auto, occurrences et transformation manuelle | `AUT-001…008`, `AUT-012…019`, `PHO-014`, `FRM-003` | 🟢 `RÉUSSI` |
+| `IPAD-L2-007` | Densité, portée par page et relance | `AUT-001`, `AUT-003…005`, `AUT-012`, `AUT-015…018`, `DAT-037` | 🟢 `RÉUSSI` |
+| `IPAD-L2-008` | Commandes incompatibles et frontière | `AUT-019`, `EDT-003`, `EDT-004`, `EDT-019`, `ARC-014`, `CAT-009` | 🟠 `BLOQUÉ` — largeur compacte inaccessible sur cet iPad dans Swift Playgrounds |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
 qualifie ni iPhone, ni Xcode, ni Release, ni TestFlight.
+
+Le correctif local postérieur à `d427d4e…` ne change aucun verdict ci-dessus.
+Il capture la requête et le `pageID` du dialogue Appliquer, ajoute les marges et
+les replis indépendants du panneau droit, borne uniquement le détail visible du
+sélecteur d’élément et déplace le dé dans Mise en page. Il doit être figé avant
+la création de nouveaux contrôles de régression.
 
 ## Écarts connus de l’incrément
 
@@ -51,3 +59,9 @@ qualifie ni iPhone, ni Xcode, ni Release, ni TestFlight.
   licences et goldens exigé par `CAT-009`.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
+- Le candidat testé garde un rail et un inspecteur légèrement rognés en
+  portrait ; le correctif local doit encore prouver ses marges et replis.
+- La confirmation Appliquer du candidat testé ne publie aucun changement ; la
+  requête capturée du correctif attend une preuve tactile.
+- La troncature ciblée du nom et le nouveau bouton Dé dans Mise en page sont
+  couverts structurellement, mais pas encore par le rendu Apple.

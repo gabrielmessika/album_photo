@@ -31,6 +31,23 @@ struct LayoutPanelView: View {
                 .labelStyle(.iconOnly)
             }
 
+            Button(
+                "Changer aléatoirement la mise en page",
+                systemImage: "die.face.5.fill"
+            ) {
+                Task { await model.shuffleLayout() }
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .disabled(!model.canShuffleLayout || model.isReadOnly)
+            .accessibilityLabel("Changer aléatoirement la mise en page")
+            .accessibilityHint(
+                model.canShuffleLayout
+                    ? "Choisit un autre modèle compatible sans ajouter ni retirer d’élément."
+                    : "Aucun autre modèle n’est compatible avec les éléments de cette page."
+            )
+
             VStack(alignment: .leading, spacing: 7) {
                 Text("Nombre de photos")
                     .font(.caption.weight(.semibold))

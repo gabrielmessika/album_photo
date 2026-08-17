@@ -397,6 +397,9 @@ struct EditablePageCanvas: View {
                             Button(model.elementSelectionLabel(element)) {
                                 model.select(elementID: element.id)
                             }
+                            .accessibilityLabel(
+                                model.elementSelectionAccessibilityLabel(element)
+                            )
                         }
                     }
                 }
