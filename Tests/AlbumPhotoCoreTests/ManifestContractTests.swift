@@ -229,6 +229,27 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("TextEditor(text: $text, selection: $selection)"))
         XCTAssertTrue(textEditor.contains("AttributedTextSelection"))
         XCTAssertTrue(textEditor.contains("AlbumTextFormattingDefinition"))
+        XCTAssertTrue(textEditor.contains("struct AlbumTextModelAttributes: AttributeScope"))
+        XCTAssertTrue(textEditor.contains("private struct ApplyAlbumFont"))
+        XCTAssertTrue(textEditor.contains(
+            "typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute"
+        ))
+        XCTAssertTrue(textEditor.contains("private struct ApplyAlbumForegroundColor"))
+        XCTAssertTrue(textEditor.contains(
+            "typealias AttributeKey = AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute"
+        ))
+        XCTAssertTrue(textEditor.contains(
+            "typealias AttributeKey = AttributeScopes.CoreTextAttributes.TextAlignmentAttribute"
+        ))
+        XCTAssertTrue(textEditor.contains(
+            "typealias AttributeKey = AttributeScopes.CoreTextAttributes.LineHeightAttribute"
+        ))
+        XCTAssertFalse(textEditor.contains(
+            "typealias AttributeKey = AlbumTextStyleAttribute"
+        ))
+        XCTAssertFalse(textEditor.contains(
+            "typealias AttributeKey = AlbumParagraphStyleAttribute"
+        ))
         XCTAssertTrue(textEditor.contains(
             ".textInputFormattingControlVisibility(.hidden, for: .all)"
         ))

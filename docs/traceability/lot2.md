@@ -25,8 +25,11 @@ choix de densité et le compteur dans un dialogue, ainsi qu’un cadrage initial
 couvrant pour toute nouvelle affectation. L’adaptation est figée dans
 `3944fae199b2eb37c7b1f0a1aae5558197455b87`, passe 139 tests Core et réussit
 `IPAD-L2-019` selon le retour global « tout est ok ». Le candidat suivant,
-`d882183d31de7ed6078c70f9e79a80d6ba994dd6`, active les zones de texte et passe 146 tests Core ;
-`IPAD-L2-020` doit le qualifier. La source normative reste
+`d882183d31de7ed6078c70f9e79a80d6ba994dd6`, active les zones de texte et
+passe 146 tests Core, mais `IPAD-L2-020` échoue dès la compilation Apple. Le
+correctif `À FIGER` adopte une portée métier imbriquée et une contrainte par
+attribut modifiable ; `IPAD-L2-021` reprend la qualification complète. La
+source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -51,7 +54,7 @@ multi-types appartiennent aux incréments suivants.
 | `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel`, `testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity` | `EDT-001`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017`, `AUT-009…011` | Vérifie le bouton compact, l’absence de groupe permanent, le dialogue interne, les trois densités, Annuler/Valider et le service de remplissage ; pas le rendu Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
 | `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, tests de service et de modèles | `TBX-001…020`, `TBX-023…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017` | Prouve les primitives de modèles, styles persistants, contraste initial, limite, hauteur/débordement, géométrie et atomicité dans le Core ; pas l’éditeur Apple ni les exigences intégrées complètes |
-| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024`, `TXA-001`, `TXA-002` | Contrat source et parse uniquement ; API riches, clavier, sélection, collage, rendu et accessibilité doivent compiler et être testés sur Apple |
+| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024`, `TXA-001`, `TXA-002` | Le contrat source vérifie notamment la portée métier imbriquée et une contrainte par `AttributeKey`, et le parse reste syntaxique ; API riches, clavier, sélection, collage, rendu et accessibilité doivent compiler et être testés sur Apple |
 
 La suite WSL complète compte 146 tests sans échec après l’ajout du texte,
 du cadrage couvrant et du dialogue compact. Les
@@ -81,7 +84,8 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-017` | Dialogue interne sans gel | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `AUT-009…012`, `FRM-009`, `TPL-005`, `UND-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `7815396…`, retour global sans capture ni détail par étape |
 | `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage couvrant | `DEC-07`, section 3.1, `AUT-002`, `AUT-004`, `AUT-009…011`, `PHO-005`, `PHO-006`, `PHO-014`, `FRM-004`, `FRM-009`, `CRP-001`, `CRP-004…007`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `3944fae…`, retour global sans capture ni détail par étape |
-| `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `d882183…` |
+| `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation d’`AlbumTextEditorView` impossible sur `d882183…` |
+| `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — correctif `À FIGER` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -112,8 +116,9 @@ suppression du formulaire défilant et de la hauteur fixe.
 
 ## Écarts connus de l’incrément
 
-- Les variantes avec un slot texte et l’éditeur sont actives dans le nouveau
-  candidat, mais restent à compiler et qualifier sous `IPAD-L2-020`.
+- Les variantes avec un slot texte et l’éditeur sont actives. Leur premier
+  candidat échoue à la compilation sous `IPAD-L2-020` ; le correctif reste à
+  compiler et qualifier sous `IPAD-L2-021`.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure

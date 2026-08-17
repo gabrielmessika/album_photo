@@ -93,9 +93,13 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   les zones de texte : ajout depuis la page ou le menu, éditeur riche SwiftUI
   iOS 26, quatre polices système hors ligne, styles de caractères et de
   paragraphes, opacité, limite de 1 000 caractères, hauteur automatique,
-  avertissement de débordement et modèles avec texte. Ce candidat est figé dans
-  `d882183d31de7ed6078c70f9e79a80d6ba994dd6` et passe 146 tests Core, mais
-  reste à compiler et qualifier sous `IPAD-L2-020`.
+  avertissement de débordement et modèles avec texte. Le premier candidat,
+  `d882183d31de7ed6078c70f9e79a80d6ba994dd6`, passe 146 tests Core mais
+  `IPAD-L2-020` échoue dès sa compilation Apple : ses contraintes de formatage
+  écrivaient plusieurs attributs alors que leur proxy n’en autorise qu’un. Le
+  correctif `À FIGER` imbrique la portée métier et sépare police, couleur,
+  alignement et interligne ; il doit être compilé et qualifié sous
+  `IPAD-L2-021`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -126,8 +130,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   compacte et la nouvelle règle de cadrage sont 🟢 sous `IPAD-L2-019` sur
   `3944fae…`, d’après un retour global sans capture ni détail par étape. Le
   premier incrément texte dispose de tests Core, contrats source et analyse
-  syntaxique ; sa compilation, son rendu et ses gestes Apple restent ⚪ sous
-  `IPAD-L2-020`. L’alignement justifié, le regroupement de frappe à 750 ms,
+  syntaxique, mais `IPAD-L2-020` est 🔴 après les erreurs de compilation
+  photographiées dans `AlbumTextEditorView`. Le correctif repasse les 146 tests
+  Core et le contrat ciblé ; sa compilation, son rendu et ses gestes Apple
+  restent ⚪ sous `IPAD-L2-021`. Les photos de diagnostic restent hors de Git.
+  L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris

@@ -29,19 +29,23 @@ private struct AlbumParagraphStyleAttribute: CodableAttributedStringKey {
 }
 
 private extension AttributeScopes {
+    struct AlbumTextModelAttributes: AttributeScope {
+        let albumTextStyle: AlbumTextStyleAttribute
+        let albumParagraphStyle: AlbumParagraphStyleAttribute
+    }
+
     struct AlbumTextAttributes: AttributeScope {
+        let model: AlbumTextModelAttributes
         let font: AttributeScopes.SwiftUIAttributes.FontAttribute
         let foregroundColor: AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute
         let alignment: AttributeScopes.CoreTextAttributes.TextAlignmentAttribute
         let lineHeight: AttributeScopes.CoreTextAttributes.LineHeightAttribute
-        let albumTextStyle: AlbumTextStyleAttribute
-        let albumParagraphStyle: AlbumParagraphStyleAttribute
     }
 }
 
 private extension AttributeDynamicLookup {
     subscript<T: AttributedStringKey>(
-        dynamicMember keyPath: KeyPath<AttributeScopes.AlbumTextAttributes, T>
+        dynamicMember keyPath: KeyPath<AttributeScopes.AlbumTextModelAttributes, T>
     ) -> T {
         self[T.self]
     }
@@ -51,29 +55,39 @@ private struct AlbumTextFormattingDefinition: AttributedTextFormattingDefinition
     typealias Scope = AttributeScopes.AlbumTextAttributes
 
     var body: some AttributedTextFormattingDefinition<Scope> {
-        NormalizeAlbumCharacterStyle()
-        NormalizeAlbumParagraphStyle()
+        ApplyAlbumFont()
+        ApplyAlbumForegroundColor()
+        ApplyAlbumAlignment()
+        ApplyAlbumLineHeight()
     }
 }
 
-private struct NormalizeAlbumCharacterStyle: AttributedTextValueConstraint {
+private struct ApplyAlbumFont: AttributedTextValueConstraint {
     typealias Scope = AlbumTextFormattingDefinition.Scope
-    typealias AttributeKey = AlbumTextStyleAttribute
+    typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute
 
     func constrain(_ container: inout Attributes) {
         let style = container.albumTextStyle ?? TextStyleDefaults()
-        container.albumTextStyle = style
         container.font = AlbumTextAttributedBridge.font(
             for: style,
             pageHeight: AlbumPhotoConstants.canonicalPageHeight
         )
+    }
+}
+
+private struct ApplyAlbumForegroundColor: AttributedTextValueConstraint {
+    typealias Scope = AlbumTextFormattingDefinition.Scope
+    typealias AttributeKey = AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute
+
+    func constrain(_ container: inout Attributes) {
+        let style = container.albumTextStyle ?? TextStyleDefaults()
         container.foregroundColor = style.color.swiftUIColor
     }
 }
 
-private struct NormalizeAlbumParagraphStyle: AttributedTextValueConstraint {
+private struct ApplyAlbumAlignment: AttributedTextValueConstraint {
     typealias Scope = AlbumTextFormattingDefinition.Scope
-    typealias AttributeKey = AlbumParagraphStyleAttribute
+    typealias AttributeKey = AttributeScopes.CoreTextAttributes.TextAlignmentAttribute
 
     func constrain(_ container: inout Attributes) {
         let defaults = container.albumTextStyle ?? TextStyleDefaults()
@@ -81,8 +95,20 @@ private struct NormalizeAlbumParagraphStyle: AttributedTextValueConstraint {
             alignment: defaults.alignment,
             lineSpacing: defaults.lineSpacing
         )
-        container.albumParagraphStyle = style
         container.alignment = AlbumTextAttributedBridge.attributedAlignment(style.alignment)
+    }
+}
+
+private struct ApplyAlbumLineHeight: AttributedTextValueConstraint {
+    typealias Scope = AlbumTextFormattingDefinition.Scope
+    typealias AttributeKey = AttributeScopes.CoreTextAttributes.LineHeightAttribute
+
+    func constrain(_ container: inout Attributes) {
+        let defaults = container.albumTextStyle ?? TextStyleDefaults()
+        let style = container.albumParagraphStyle ?? AlbumParagraphStyleValue(
+            alignment: defaults.alignment,
+            lineSpacing: defaults.lineSpacing
+        )
         container.lineHeight = .multiple(factor: CGFloat(style.lineSpacing))
     }
 }
