@@ -97,7 +97,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `d882183d31de7ed6078c70f9e79a80d6ba994dd6`, passe 146 tests Core mais
   `IPAD-L2-020` échoue dès sa compilation Apple : ses contraintes de formatage
   écrivaient plusieurs attributs alors que leur proxy n’en autorise qu’un. Le
-  correctif `À FIGER` imbrique la portée métier et sépare police, couleur,
+  correctif `0f4b16c6c6435c29ca44da4e2726fac210add520` imbrique la portée métier et sépare police, couleur,
   alignement et interligne ; il doit être compilé et qualifié sous
   `IPAD-L2-021`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,

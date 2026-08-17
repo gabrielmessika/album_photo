@@ -27,7 +27,7 @@ couvrant pour toute nouvelle affectation. L’adaptation est figée dans
 `IPAD-L2-019` selon le retour global « tout est ok ». Le candidat suivant,
 `d882183d31de7ed6078c70f9e79a80d6ba994dd6`, active les zones de texte et
 passe 146 tests Core, mais `IPAD-L2-020` échoue dès la compilation Apple. Le
-correctif `À FIGER` adopte une portée métier imbriquée et une contrainte par
+correctif `0f4b16c6c6435c29ca44da4e2726fac210add520` adopte une portée métier imbriquée et une contrainte par
 attribut modifiable ; `IPAD-L2-021` reprend la qualification complète. La
 source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
@@ -85,7 +85,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `AUT-009…012`, `FRM-009`, `TPL-005`, `UND-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `7815396…`, retour global sans capture ni détail par étape |
 | `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage couvrant | `DEC-07`, section 3.1, `AUT-002`, `AUT-004`, `AUT-009…011`, `PHO-005`, `PHO-006`, `PHO-014`, `FRM-004`, `FRM-009`, `CRP-001`, `CRP-004…007`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `3944fae…`, retour global sans capture ni détail par étape |
 | `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation d’`AlbumTextEditorView` impossible sur `d882183…` |
-| `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — correctif `À FIGER` |
+| `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — correctif `0f4b16c…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
