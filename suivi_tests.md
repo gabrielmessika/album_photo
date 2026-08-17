@@ -30,7 +30,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif de gel testé | `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` — dialogue interne centré, sur fond assombri et sans négociation de taille de feuille ; `IPAD-L2-017` réussi selon le retour global « c’est ok » |
 | Candidat Remplir l’album testé | `781539603d6b98523fe48326ee49e24288dfa09b` — trois densités, plan déterministe, confirmation chiffrée et commande unique ; `IPAD-L2-018` réussi selon le retour global « les tests sont ok » |
 | Candidat compact et cadrage testé | `3944fae199b2eb37c7b1f0a1aae5558197455b87` — bouton compact, dialogue Densité/compteur/Annuler/Valider et cadrage initial couvrant ; `IPAD-L2-019` réussi selon le retour global « tout est ok » |
-| Candidat zones de texte à tester | `À FIGER` — création et édition riche natives, modèles avec texte, rendu commun, hauteur automatique et alerte de débordement ; `IPAD-L2-020` à exécuter |
+| Candidat zones de texte à tester | `d882183d31de7ed6078c70f9e79a80d6ba994dd6` — création et édition riche natives, modèles avec texte, rendu commun, hauteur automatique et alerte de débordement ; `IPAD-L2-020` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -105,7 +105,8 @@ affectations et la conservation des cadrages déjà persistés ; elle ne modifie
 aucun verdict historique. Elle réussit selon le retour global « tout est ok »
 reçu après remise de cette seule fiche. Cette preuve ne contient ni capture ni
 observation par étape et ne couvre aucun contrôle `APPLE-*`.
-La régression `IPAD-L2-020` vise le prochain candidat exact à figer. Elle
+La régression `IPAD-L2-020` vise exactement le candidat
+`d882183d31de7ed6078c70f9e79a80d6ba994dd6`. Elle
 qualifie le premier incrément public des zones de texte ; l’alignement justifié,
 le regroupement de frappe après 750 ms, l’export et le presse-papiers commun
 restent explicitement hors de cette preuve.
@@ -3118,7 +3119,7 @@ leur candidat.
 
 ### `IPAD-L2-020` — Création, édition riche et débordement
 
-- Candidat : `À FIGER`.
+- Candidat : `d882183d31de7ed6078c70f9e79a80d6ba994dd6`.
 - Spécification : 3.0 incluse dans le candidat exact ; l’ADR
   `docs/architecture/ADR-003-swiftui-rich-text-alignment.md` documente la limite
   publique actuelle de l’alignement justifié.

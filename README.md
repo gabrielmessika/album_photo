@@ -93,8 +93,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   les zones de texte : ajout depuis la page ou le menu, éditeur riche SwiftUI
   iOS 26, quatre polices système hors ligne, styles de caractères et de
   paragraphes, opacité, limite de 1 000 caractères, hauteur automatique,
-  avertissement de débordement et modèles avec texte. Ce candidat passe 146
-  tests Core mais reste à figer, compiler et qualifier sous `IPAD-L2-020`.
+  avertissement de débordement et modèles avec texte. Ce candidat est figé dans
+  `d882183d31de7ed6078c70f9e79a80d6ba994dd6` et passe 146 tests Core, mais
+  reste à compiler et qualifier sous `IPAD-L2-020`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
