@@ -52,6 +52,7 @@ enum DefaultPhotoQualityPolicy {
 enum EditorPanel: String, CaseIterable, Identifiable {
     case photos
     case layouts
+    case text
     case backgrounds
 
     var id: String { rawValue }
@@ -60,6 +61,7 @@ enum EditorPanel: String, CaseIterable, Identifiable {
         switch self {
         case .photos: "Photos"
         case .layouts: "Mise en page"
+        case .text: "Texte"
         case .backgrounds: "Fonds"
         }
     }
@@ -68,6 +70,7 @@ enum EditorPanel: String, CaseIterable, Identifiable {
         switch self {
         case .photos: "photo.on.rectangle"
         case .layouts: "rectangle.3.group"
+        case .text: "textformat"
         case .backgrounds: "paintpalette"
         }
     }
@@ -720,7 +723,9 @@ final class EditorViewModel: ObservableObject {
         textEditingRequest = TextEditingRequest(
             pageID: page.id,
             original: text,
-            isNew: true
+            isNew: true,
+            pageBackground: page.background,
+            previewPageHeight: textPreviewPageHeight(for: page.id)
         )
     }
 
@@ -737,7 +742,72 @@ final class EditorViewModel: ObservableObject {
         textEditingRequest = TextEditingRequest(
             pageID: pageID,
             original: text,
-            isNew: false
+            isNew: false,
+            pageBackground: activePage?.background ?? .none,
+            previewPageHeight: textPreviewPageHeight(for: pageID)
+        )
+    }
+
+    func applySelectedTextCharacterStyle(_ patch: TextCharacterStylePatch) async {
+        guard let pageID = activePageID,
+              let text = selectedTextBox else { return }
+        do {
+            let count = text.content.plainText.count
+            let content = try TextEditingPrototype.applying(
+                patch,
+                to: text.content,
+                selection: TextSelectionRange(lowerBound: 0, upperBound: count)
+            )
+            let defaults = try TextEditingPrototype.typingDefaults(
+                applying: patch,
+                to: text.typingDefaults
+            )
+            await updateSelectedTextBox(
+                text,
+                pageID: pageID,
+                content: content,
+                typingDefaults: defaults,
+                opacity: text.opacity
+            )
+        } catch {
+            present(error, fallback: "Impossible de modifier le format du texte.")
+        }
+    }
+
+    func applySelectedTextParagraphStyle(_ patch: TextParagraphStylePatch) async {
+        guard let pageID = activePageID,
+              let text = selectedTextBox else { return }
+        do {
+            let count = text.content.plainText.count
+            let content = try TextEditingPrototype.applying(
+                patch,
+                to: text.content,
+                selection: TextSelectionRange(lowerBound: 0, upperBound: count)
+            )
+            var defaults = text.typingDefaults
+            if let alignment = patch.alignment { defaults.alignment = alignment }
+            if let lineSpacing = patch.lineSpacing { defaults.lineSpacing = lineSpacing }
+            await updateSelectedTextBox(
+                text,
+                pageID: pageID,
+                content: content,
+                typingDefaults: defaults,
+                opacity: text.opacity
+            )
+        } catch {
+            present(error, fallback: "Impossible de modifier les paragraphes.")
+        }
+    }
+
+    func setSelectedTextOpacity(_ opacity: Double) async {
+        guard let pageID = activePageID,
+              let text = selectedTextBox else { return }
+        await updateSelectedTextBox(
+            text,
+            pageID: pageID,
+            content: text.content,
+            typingDefaults: text.typingDefaults,
+            opacity: opacity
         )
     }
 
@@ -783,6 +853,28 @@ final class EditorViewModel: ObservableObject {
             )
         }
         if succeeded { selectedElementID = request.id }
+    }
+
+    private func updateSelectedTextBox(
+        _ original: TextBoxElement,
+        pageID: UUID,
+        content: TextBoxContent,
+        typingDefaults: TextStyleDefaults,
+        opacity: Double
+    ) async {
+        guard !isReadOnly,
+              selectedElementID == original.id else { return }
+        let succeeded = await mutate("Impossible de modifier le texte.") {
+            try await self.service.updateTextBox(
+                original.id,
+                on: pageID,
+                in: self.albumID,
+                content: content,
+                typingDefaults: typingDefaults,
+                opacity: opacity
+            )
+        }
+        if succeeded { selectedElementID = original.id }
     }
 
     func requestPresentationMode(_ mode: EditorPresentationMode) {
@@ -2296,6 +2388,14 @@ final class EditorViewModel: ObservableObject {
               viewportSize.width > 0, viewportSize.height > 0 else { return }
         renderedPageSizes[pageID] = size
         canvasWorkspaceSizes[pageID] = viewportSize
+    }
+
+    private func textPreviewPageHeight(for pageID: UUID) -> Double {
+        guard let height = renderedPageSizes[pageID]?.height,
+              height > 0 else {
+            return AlbumTextPresentationMetrics.fallbackPreviewPageHeight
+        }
+        return Double(height)
     }
 
     @discardableResult

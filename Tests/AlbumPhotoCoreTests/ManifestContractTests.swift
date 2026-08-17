@@ -209,6 +209,10 @@ final class ManifestContractTests: XCTestCase {
             contentsOf: appModule.appendingPathComponent("AlbumTextEditorView.swift"),
             encoding: .utf8
         )
+        let textPanel = try String(
+            contentsOf: appModule.appendingPathComponent("TextPanelView.swift"),
+            encoding: .utf8
+        )
         let canvas = try String(
             contentsOf: appModule.appendingPathComponent("PageCanvasView.swift"),
             encoding: .utf8
@@ -231,6 +235,7 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("AlbumTextFormattingDefinition"))
         XCTAssertTrue(textEditor.contains("struct AlbumTextModelAttributes: AttributeScope"))
         XCTAssertTrue(textEditor.contains("private struct ApplyAlbumFont"))
+        XCTAssertTrue(textEditor.contains("ApplyAlbumFont(pageHeight: pageHeight)"))
         XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute"
         ))
@@ -253,6 +258,16 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains(
             ".textInputFormattingControlVisibility(.hidden, for: .all)"
         ))
+        XCTAssertTrue(textEditor.contains("selection: request.pageBackground"))
+        XCTAssertTrue(textEditor.contains(".scrollContentBackground(.hidden)"))
+        XCTAssertTrue(textEditor.contains("pageHeight: request.previewPageHeight"))
+        XCTAssertFalse(textEditor.contains(
+            "pageHeight: AlbumPhotoConstants.canonicalPageHeight"
+        ))
+        XCTAssertTrue(textEditor.contains(".opacity(opacity)"))
+        XCTAssertTrue(textEditor.contains("Circle()"))
+        XCTAssertTrue(textEditor.contains(".fill(option.color.swiftUIColor)"))
+        XCTAssertTrue(textEditor.contains(".popover(isPresented: $showsColorPalette)"))
         XCTAssertTrue(textEditor.contains("newValue.characters.count > 1_000"))
         XCTAssertTrue(textEditor.contains("acceptedInsertedCount"))
         XCTAssertTrue(textEditor.contains("result.removeSubrange"))
@@ -274,7 +289,28 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(editor.contains(
             "Button(\"Ajouter du texte\", systemImage: \"text.badge.plus\")"
         ))
+        XCTAssertEqual(
+            editor.components(
+                separatedBy: "Button(\"Ajouter du texte\", systemImage: \"text.badge.plus\")"
+            ).count - 1,
+            1,
+            "Ajouter du texte ne doit plus être superposé au canevas"
+        )
+        XCTAssertTrue(editor.contains("case .text:"))
+        XCTAssertTrue(editor.contains("TextPanelView(model: model)"))
         XCTAssertTrue(editor.contains(".sheet(item: $model.textEditingRequest)"))
+        XCTAssertTrue(textPanel.contains(
+            "Button(\"Ajouter un texte\", systemImage: \"text.badge.plus\")"
+        ))
+        XCTAssertTrue(editor.contains("TextElementInspectorView(model: model, text: text)"))
+        XCTAssertTrue(textPanel.contains("Text(\"Texte à afficher\")"))
+        XCTAssertTrue(textPanel.contains("dans l’inspecteur de l’élément"))
+        XCTAssertTrue(textPanel.contains("Format de toute la zone"))
+        XCTAssertTrue(textPanel.contains("applySelectedTextCharacterStyle"))
+        XCTAssertTrue(textPanel.contains("applySelectedTextParagraphStyle"))
+        XCTAssertTrue(textPanel.contains("setSelectedTextOpacity"))
+        XCTAssertTrue(viewModel.contains("case text"))
+        XCTAssertTrue(viewModel.contains("previewPageHeight: textPreviewPageHeight"))
         XCTAssertTrue(viewModel.contains("func beginAddingText()"))
         XCTAssertTrue(viewModel.contains("func commitTextEditing("))
         XCTAssertTrue(viewModel.contains("firstOverflowingTextLocation"))

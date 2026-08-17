@@ -290,7 +290,7 @@ quotidienne.
 | `DEC-35` | Appliquer un modèle plus petit qu’un ensemble de cadres remplis demande confirmation avant de retirer les occurrences excédentaires ; leurs originaux restent disponibles dans Photos. |
 | `DEC-36` | Les zones de texte participent librement à la même pile de profondeur que les photos et stickers ; elles peuvent être placées devant ou derrière eux. |
 | `DEC-37` | Ajouter des photos propose une source native Depuis vos autres albums afin de réutiliser, sans duplication binaire inutile, des originaux déjà présents dans l’application. |
-| `DEC-38` | Le Lot 1 expose uniquement la création locale centrée sur les panneaux Photos et Fonds. Le Lot 2 livre la composition Photoweb complète avec les cinq panneaux, modèles, dé, Auto, texte, stickers, cadres décoratifs et presse-papiers commun photo/texte/sticker ; `ACPT-123` et `ACPT-130` y sont validés. Le Lot 3 livre lecture, diaporama, package et PDF ; `ACPT-127` y est validé. |
+| `DEC-38` | Le Lot 1 expose uniquement la création locale centrée sur les panneaux Photos et Fonds. Le Lot 2 livre la composition Photoweb complète avec les six panneaux, modèles, dé, Auto, texte, stickers, cadres décoratifs et presse-papiers commun photo/texte/sticker ; `ACPT-123` et `ACPT-130` y sont validés. Le Lot 3 livre lecture, diaporama, package et PDF ; `ACPT-127` y est validé. |
 
 ## 3.1 Convention technique de zoom dynamique
 
@@ -492,14 +492,14 @@ haut à gauche, largeur et hauteur normalisées de `0` à `1`.
 
 | ID | Exigence |
 |---|---|
-| `EDT-001` | Les cinq panneaux de création DOIVENT apparaître dans cet ordre stable : Photos, Mise en page, Fonds, Stickers, Cadres et formes. |
+| `EDT-001` | Les six panneaux de création DOIVENT apparaître dans cet ordre stable : Photos, Mise en page, Texte, Fonds, Stickers, Cadres et formes. |
 | `EDT-002` | Sur iPad en largeur régulière, ces panneaux DOIVENT utiliser un rail latéral et un inspecteur repliable fixé à droite du canevas ; sur iPhone ou en largeur compacte, ils DOIVENT utiliser une barre inférieure et une présentation adaptative dans la même fenêtre. Leur contenu et leur ordre fonctionnel restent identiques. Le rail, ses choix Photos/Fonds et l’inspecteur ouvert DOIVENT rester entièrement visibles dans chaque orientation prise en charge. Aucune orientation ni largeur prise en charge NE DOIT tronquer une colonne de miniatures ou étirer verticalement une commande locale pour compenser un manque de largeur. Lorsque l’inspecteur de l’élément et le panneau actif sont empilés à droite, chacun DOIT pouvoir replier indépendamment son contenu jusqu’à un titre restant visible. La commande masquant tout le panneau droit DOIT se trouver dans ce panneau ; une éventuelle commande de réaffichage placée dans le rail DOIT nommer explicitement le panneau droit. |
 | `EDT-003` | Dans l’ordre fonctionnel, la barre principale DOIT proposer Retour, Aide, nom de l’album avec Renommer, état de sauvegarde, Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller, Supprimer, Mise en page auto, Créer — Vue page, Gérer les pages — Vue globale, Prévisualiser puis Exporter. |
 | `EDT-004` | Une commande trop large pour l’iPhone DOIT rester disponible dans un menu Plus sans changer son libellé, son effet ni son ordre relatif. |
 | `EDT-005` | La marge de sécurité, un prix, Commander et toute commande commerciale NE DOIVENT PAS apparaître. |
 | `EDT-006` | Changer ou fermer un panneau NE DOIT PAS modifier ni désélectionner l’élément courant. |
 | `EDT-007` | L’état de sauvegarde DOIT afficher Enregistré, Enregistrement… ou Échec de sauvegarde selon le dernier résultat durable. |
-| `EDT-008` | La page DOIT proposer une action rapide Ajouter une page près du zoom et de la navigation. Cette action ouvre la confirmation de `PAG-017`, sauf si l’utilisateur l’a désactivée pour la session courante de l’album. Ajouter une photo reste accessible depuis le panneau Photos ou un cadre vide. Ajouter du texte reste accessible dans la page et dans le menu d’ajout conformément à `TBX-002`, hors du groupe zoom et navigation. |
+| `EDT-008` | La page DOIT proposer une action rapide Ajouter une page près du zoom et de la navigation. Cette action ouvre la confirmation de `PAG-017`, sauf si l’utilisateur l’a désactivée pour la session courante de l’album. Ajouter une photo reste accessible depuis le panneau Photos ou un cadre vide. Ajouter un texte reste accessible depuis le panneau Texte et dans le menu d’ajout conformément à `TBX-002` ; aucune commande d’ajout de texte NE DOIT être superposée au canevas. |
 
 ### 7.2.1 Libellés et icônes fonctionnelles
 
@@ -535,6 +535,8 @@ commande.
 | Panneau Photos | Trier | `arrow.up.arrow.down` | moins de deux photos |
 | Panneau Photos | Remplir l’album | `wand.and.stars` | aucune photo inutilisée ou tâche atomique en cours |
 | Rail ou barre de panneaux | Mise en page | `rectangle.3.group` | jamais |
+| Rail ou barre de panneaux | Texte | `textformat` | jamais |
+| Panneau Texte | Ajouter un texte | `text.badge.plus` | album ouvert en lecture seule |
 | Rail ou barre de panneaux | Fonds | `paintpalette` | jamais |
 | Rail ou barre de panneaux | Stickers | `face.smiling` | jamais |
 | Rail ou barre de panneaux | Cadres et formes | `square.on.circle` | aucun cadre photo sélectionné |
@@ -579,7 +581,7 @@ commande.
 |---|---|
 | `EDT-010` | Chaque commande des tableaux 7.2.1 et 7.2.2 DOIT conserver son ordre relatif, son libellé accessible et son état activé/désactivé sur iPhone et iPad. |
 | `EDT-011` | L’état actif d’un panneau ou d’une vue DOIT combiner forme, libellé ou indicateur avec la couleur ; la couleur seule est interdite. |
-| `EDT-012` | Sans sélection, Couper, Copier et Supprimer sont désactivés ; Photos, Mise en page, Fonds et Stickers, Ajouter une page, le dé compatible, Auto, Gérer les pages — Vue globale et Prévisualiser restent accessibles. Cadres et formes est désactivé tant qu’aucun cadre photo n’est sélectionné. |
+| `EDT-012` | Sans sélection, Couper, Copier et Supprimer sont désactivés ; Photos, Mise en page, Texte, Fonds et Stickers, Ajouter une page, le dé compatible, Auto, Gérer les pages — Vue globale et Prévisualiser restent accessibles. Cadres et formes est désactivé tant qu’aucun cadre photo n’est sélectionné. |
 | `EDT-013` | Avec un cadre vide sélectionné, la barre contextuelle DOIT proposer Ajouter une photo, Cadres et formes, Dupliquer, ordre de profondeur et Supprimer. Recadrer et les transformations du contenu sont désactivés. |
 | `EDT-014` | Avec une photo, un texte ou un sticker sélectionné, seule la barre propre au type définie par `FRM-005`, `TBX-009` ou `STK-016` DOIT apparaître, suivie des commandes communes dans le même ordre. |
 | `EDT-015` | En mode cadrage, les panneaux, navigation de page et transformations du cadre DOIVENT être temporairement désactivés ; la barre DOIT proposer Zoom photo avec sa valeur en `×`, Annuler, Réinitialiser et Terminé. Zoom photo expose toute la plage de `CRP-004`, y compris les valeurs inférieures à `1×`, avec un ajustement accessible sans pincement. Les commandes de zoom du canevas restent visuellement distinctes et désactivées jusqu’à la sortie du cadrage. |
@@ -987,7 +989,7 @@ l'élément ni modifier le cadrage.
 | ID | Exigence |
 |---|---|
 | `TBX-001` | Une page DOIT accepter plusieurs zones de texte indépendantes, superposables aux photos et stickers et ordonnées librement dans la pile commune. Toutes les commandes Premier plan, Avancer, Reculer et Arrière-plan leur sont applicables ; un texte PEUT donc se trouver derrière une photo ou un sticker. |
-| `TBX-002` | Ajouter du texte DOIT être disponible dans la page et dans le menu d’ajout. La nouvelle zone DOIT être centrée, mesurer `0,60` de la largeur et `0,12` de la hauteur de page, et être placée au premier plan. |
+| `TBX-002` | Ajouter un texte DOIT être disponible dans le panneau Texte, au même niveau fonctionnel qu’Ajouter un cadre vide dans Photos, ainsi que dans le menu d’ajout de la barre principale aux côtés d’Ajouter un cadre photo. Le bouton du panneau NE DOIT PAS être superposé à la page. La nouvelle zone DOIT être centrée, mesurer `0,60` de la largeur et `0,12` de la hauteur de page, et être placée au premier plan. |
 | `TBX-003` | Une nouvelle zone DOIT afficher Votre texte comme texte indicatif sélectionné, ouvrir le clavier et supprimer la zone si l’utilisateur quitte sans remplacer l’indication. |
 | `TBX-004` | Une pression sélectionne la zone ; une seconde pression ou un double toucher place le curseur. Terminer valide la saisie et Annuler restaure le contenu et le style à l’ouverture. |
 | `TBX-005` | Le clavier et sa barre d’outils NE DOIVENT PAS masquer durablement le curseur ni la sélection sur iPhone ou iPad. |
@@ -999,14 +1001,14 @@ l'élément ni modifier le cadrage.
 
 | ID | Exigence |
 |---|---|
-| `TBX-009` | La barre texte DOIT proposer dans cet ordre Police, Taille, Gras, Italique, Couleur, Alignement, Interligne, Opacité, puis les commandes communes de `ELM-008`. |
+| `TBX-009` | L’inspecteur de l’élément DOIT afficher le texte de la zone sélectionnée, proposer Modifier le texte et le format, puis dans cet ordre Police, Taille, Gras, Italique, Couleur, Alignement, Interligne et Opacité pour toute la zone. Le panneau Texte contient l’action Ajouter un texte et renvoie vers cet inspecteur dès qu’une zone est sélectionnée. La fenêtre de modification DOIT proposer le même ordre pour la sélection de caractères ou de paragraphes. Ces commandes sont suivies des commandes communes de `ELM-008` dans l’inspecteur. |
 | `TBX-010` | Police, taille, graisse, italique et couleur DOIVENT s’appliquer aux caractères sélectionnés ; sans sélection, ils deviennent le style de frappe. |
 | `TBX-011` | L’alignement gauche, centré, droit ou justifié et l’interligne de `0,8` à `2,0` DOIVENT s’appliquer aux paragraphes touchés. |
-| `TBX-012` | L’opacité, comprise entre `0,1` et `1`, la rotation et l’ordre de profondeur DOIVENT s’appliquer à toute la zone. |
+| `TBX-012` | L’opacité, comprise entre `0,1` et `1`, la rotation et l’ordre de profondeur DOIVENT s’appliquer à toute la zone. Toute modification d’opacité DOIT être visible immédiatement dans la fenêtre de modification ou sur le canevas, puis persister après validation. |
 | `TBX-013` | Les polices proposées DOIVENT être décrites dans un manifeste, embarquées ou garanties par iOS et autorisées pour la distribution afin que le rendu soit stable hors ligne et à l’export. |
-| `TBX-014` | Les tailles DOIVENT être persistées relativement à la hauteur logique de page, avec une plage équivalente à 8–96 points sur la page de référence ; l’interface PEUT afficher l’équivalent en points. |
+| `TBX-014` | Les tailles DOIVENT être persistées relativement à la hauteur logique de page, avec une plage équivalente à 8–96 points sur la page de référence ; l’interface PEUT afficher l’équivalent en points. La fenêtre de modification DOIT rendre ces tailles selon la hauteur affichée du canevas afin que son aperçu conserve la même échelle visuelle que la page au zoom courant. |
 | `TBX-015` | Une couleur DOIT être stockée en RGBA sRGB, avec quatre composantes finies bornées entre `0` et `1`. |
-| `TBX-016` | Les boutons DOIVENT utiliser des icônes natives équivalentes à `textformat`, `textformat.size`, `bold`, `italic`, `paintpalette`, `text.alignleft` et `line.3.horizontal`, avec un libellé VoiceOver explicite. |
+| `TBX-016` | Les boutons DOIVENT utiliser des icônes natives équivalentes à `textformat`, `textformat.size`, `bold`, `italic`, `paintpalette`, `text.alignleft` et `line.3.horizontal`, avec un libellé VoiceOver explicite. Chaque choix de couleur DOIT afficher une pastille de sa couleur sRGB réelle, avec un contour conservant la visibilité du blanc et du noir, sans dépendre de la teinte monochrome d’un menu système. |
 | `TBX-017` | Listes, cases à cocher, tableaux, retraits, surlignage, pièces jointes, dessin, audio et styles Notes NE DOIVENT PAS être proposés. |
 
 ## 12.3 Géométrie, débordement et persistance
@@ -1020,7 +1022,7 @@ l'élément ni modifier le cadrage.
 | `TBX-022` | Une séquence de frappe DOIT être regroupée après 750 ms d’inactivité ou à la perte de focus, persistée comme une commande et rester annulable. |
 | `TBX-023` | Le modèle persistant DOIT stocker une suite ordonnée de paragraphes et de runs dont la concaténation correspond exactement au texte, sans RTF opaque ni structure de tableau ou de liste. |
 | `TBX-024` | Le texte complet, ses attributs pris en charge et sa géométrie DOIVENT produire le même rendu dans toutes les sorties de `CAN-008`. |
-| `TBX-025` | Une nouvelle zone DOIT utiliser la police système régulière, une taille relative équivalente à 18 points sur la page de référence, ni gras ni italique, la couleur initiale déterminée par `BG-011` ou `BG-016`, l’alignement centré, un interligne de `1`, une opacité de `1`, une rotation nulle et l’ajustement automatique de hauteur activé. |
+| `TBX-025` | Une nouvelle zone DOIT utiliser la police système régulière, une taille relative équivalente à 18 points sur la page de référence, ni gras ni italique, la couleur initiale déterminée par `BG-011` ou `BG-016`, l’alignement centré, un interligne de `1`, une opacité de `1`, une rotation nulle et l’ajustement automatique de hauteur activé. La fenêtre de modification DOIT afficher le fond réel de la page derrière le texte afin que ce choix initial ne devienne pas noir sur noir ou blanc sur blanc à cause de l’apparence système de la fenêtre. |
 
 ---
 
@@ -2361,7 +2363,7 @@ protocol AlbumEditLeaseService
 | `ACC-018` | Les PDF DOIVENT respecter les exigences de balisage et de texte alternatif de `PDF-013` et `PDF-014`. |
 | `ACC-019` | La palette de texte DOIT signaler une combinaison qui ne respecte pas le contraste WCAG AA avec le fond visible au centre de la zone, sans empêcher un choix explicite. |
 | `ACC-020` | Le glisser-déposer d’une photo, la réorganisation d’une page et chaque commande du dé ou de l’automatisme DOIVENT posséder une alternative activable par VoiceOver. |
-| `ACC-021` | Le changement iPad/iPhone entre rail latéral, barre inférieure et feuille NE DOIT perdre ni le focus, ni la sélection, ni l’accès aux cinq panneaux. |
+| `ACC-021` | Le changement iPad/iPhone entre rail latéral, barre inférieure et feuille NE DOIT perdre ni le focus, ni la sélection, ni l’accès aux six panneaux. |
 
 ---
 
@@ -2518,7 +2520,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 **Lot de validation :** Lot 2<br>
 **Couvre :** `EDT-001` à `EDT-020`, `ZOM-001` à `ZOM-008`, `GLO-001`, `GLO-002`, `NAV-001` à `NAV-007`<br>
 **Étant donné** le même album de plusieurs pages sur iPhone étroit et iPad large<br>
-**Quand** l'utilisateur parcourt Photos, Mise en page, Fonds, Stickers et Cadres et formes, ouvre l'aide hors ligne depuis deux panneaux, zoome par commandes et pincement, revient de Vue globale et de la prévisualisation, puis atteint les bornes de l'album avec les boutons et les balayages<br>
+**Quand** l'utilisateur parcourt Photos, Mise en page, Texte, Fonds, Stickers et Cadres et formes, ouvre l'aide hors ligne depuis deux panneaux, zoome par commandes et pincement, revient de Vue globale et de la prévisualisation, puis atteint les bornes de l'album avec les boutons et les balayages<br>
 **Alors** l'ordre, les commandes, les symboles fonctionnels, leurs libellés accessibles et leurs états activés ou désactivés respectent les matrices 7.2.1 et 7.2.2 dans les présentations natives adaptées, l'aide explique le contexte actif sans réseau, le zoom de session est restauré sans modifier l'album, Précédent et Suivant ciblent les mêmes pages, et une seule page est toujours affichée.
 
 ## 29.17 `ACPT-124` — Photos et cadres multiples — version 1.0
@@ -2672,7 +2674,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 - Dynamic Type
 - VoiceOver
 - Réduire les animations
-- ordre des cinq panneaux et adaptation iPhone/iPad
+- ordre des six panneaux et adaptation iPhone/iPad
 - garantie d’une seule page visible à toute largeur
 - vue globale, réorganisation et retour vers la page choisie
 - sélection, poignées et barre contextuelle de chaque type d’élément
@@ -2830,7 +2832,7 @@ rejoint la campagne macOS/Xcode ; il n’est pas réputé réussi.
 - stickers statiques intégrés
 - formes, contours et cadres décoratifs
 - gestes, clavier, ordre de profondeur et adaptation iPhone/iPad
-- ordre et adaptation native des cinq panneaux de création
+- ordre et adaptation native des six panneaux de création
 - presse-papiers commun aux photos, textes et stickers
 
 **Sortie :** `ACPT-123`, `ACPT-125`, `ACPT-126`, `ACPT-128` et

@@ -6,8 +6,60 @@ struct TextEditingRequest: Identifiable, Equatable {
     let pageID: UUID
     let original: TextBoxElement
     let isNew: Bool
+    let pageBackground: BackgroundSelection
+    let previewPageHeight: Double
 
     var id: UUID { original.id }
+}
+
+enum AlbumTextPresentationMetrics {
+    static let fallbackPreviewPageHeight = 600.0
+}
+
+struct AlbumTextColorOption: Identifiable {
+    let title: String
+    let color: SRGBAColor
+
+    var id: String { title }
+
+    static let all: [AlbumTextColorOption] = [
+        AlbumTextColorOption(title: "Noir", color: .black),
+        AlbumTextColorOption(title: "Blanc", color: .white),
+        AlbumTextColorOption(
+            title: "Rouge",
+            color: SRGBAColor(red: 0.85, green: 0.12, blue: 0.12)
+        ),
+        AlbumTextColorOption(
+            title: "Orange",
+            color: SRGBAColor(red: 0.95, green: 0.45, blue: 0.05)
+        ),
+        AlbumTextColorOption(
+            title: "Vert",
+            color: SRGBAColor(red: 0.12, green: 0.55, blue: 0.24)
+        ),
+        AlbumTextColorOption(
+            title: "Bleu",
+            color: SRGBAColor(red: 0.10, green: 0.35, blue: 0.90)
+        )
+    ]
+}
+
+struct AlbumTextColorLabel: View {
+    let option: AlbumTextColorOption
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Circle()
+                .fill(option.color.swiftUIColor)
+                .frame(width: 20, height: 20)
+                .overlay {
+                    Circle()
+                        .stroke(.primary.opacity(0.35), lineWidth: 1)
+                }
+            Text(option.title)
+        }
+        .accessibilityElement(children: .combine)
+    }
 }
 
 private struct AlbumParagraphStyleValue: Codable, Sendable, Equatable, Hashable {
@@ -53,9 +105,10 @@ private extension AttributeDynamicLookup {
 
 private struct AlbumTextFormattingDefinition: AttributedTextFormattingDefinition {
     typealias Scope = AttributeScopes.AlbumTextAttributes
+    let pageHeight: Double
 
     var body: some AttributedTextFormattingDefinition<Scope> {
-        ApplyAlbumFont()
+        ApplyAlbumFont(pageHeight: pageHeight)
         ApplyAlbumForegroundColor()
         ApplyAlbumAlignment()
         ApplyAlbumLineHeight()
@@ -65,12 +118,13 @@ private struct AlbumTextFormattingDefinition: AttributedTextFormattingDefinition
 private struct ApplyAlbumFont: AttributedTextValueConstraint {
     typealias Scope = AlbumTextFormattingDefinition.Scope
     typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute
+    let pageHeight: Double
 
     func constrain(_ container: inout Attributes) {
         let style = container.albumTextStyle ?? TextStyleDefaults()
         container.font = AlbumTextAttributedBridge.font(
             for: style,
-            pageHeight: AlbumPhotoConstants.canonicalPageHeight
+            pageHeight: pageHeight
         )
     }
 }
@@ -287,9 +341,9 @@ enum AlbumTextAttributedBridge {
 
 struct AlbumTextEditorView: View {
     private static let placeholder = "Votre texte"
-    private static let referenceHeight = AlbumPhotoConstants.canonicalPageHeight
 
     let request: TextEditingRequest
+    let imageCache: PhotoImageCache
     let onCancel: () -> Void
     let onCommit: (TextBoxContent, TextStyleDefaults, Double) -> Void
 
@@ -298,14 +352,17 @@ struct AlbumTextEditorView: View {
     @State private var typingDefaults: TextStyleDefaults
     @State private var opacity: Double
     @State private var showsCharacterLimit = false
+    @State private var showsColorPalette = false
     @FocusState private var editorIsFocused: Bool
 
     init(
         request: TextEditingRequest,
+        imageCache: PhotoImageCache,
         onCancel: @escaping () -> Void,
         onCommit: @escaping (TextBoxContent, TextStyleDefaults, Double) -> Void
     ) {
         self.request = request
+        self.imageCache = imageCache
         self.onCancel = onCancel
         self.onCommit = onCommit
         let defaults = request.original.typingDefaults
@@ -319,7 +376,7 @@ struct AlbumTextEditorView: View {
         let attributed = AlbumTextAttributedBridge.attributedString(
             from: source,
             defaults: defaults,
-            pageHeight: Self.referenceHeight
+            pageHeight: request.previewPageHeight
         )
         _text = State(initialValue: attributed)
         _selection = State(initialValue: AttributedTextSelection())
@@ -330,29 +387,44 @@ struct AlbumTextEditorView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                TextEditor(text: $text, selection: $selection)
-                    .attributedTextFormattingDefinition(AlbumTextFormattingDefinition())
-                    .textInputFormattingControlVisibility(.hidden, for: .all)
-                    .focused($editorIsFocused)
-                    .scrollDismissesKeyboard(.interactively)
-                    .padding(12)
-                    .accessibilityLabel("Contenu de la zone de texte")
-                    .onChange(of: text) { oldValue, newValue in
-                        guard newValue.characters.count > 1_000 else { return }
-                        let limited = limitedText(oldValue: oldValue, newValue: newValue)
-                        text = limited.value
-                        selection = AttributedTextSelection(
-                            insertionPoint: text.characters.index(
-                                text.startIndex,
-                                offsetBy: limited.insertionOffset
-                            ),
-                            typingAttributes: AlbumTextAttributedBridge.typingAttributes(
-                                for: typingDefaults,
-                                pageHeight: Self.referenceHeight
+                ZStack {
+                    AlbumPageBackground(
+                        selection: request.pageBackground,
+                        imageCache: imageCache,
+                        maximumPixelSize: 1_200
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    TextEditor(text: $text, selection: $selection)
+                        .attributedTextFormattingDefinition(
+                            AlbumTextFormattingDefinition(
+                                pageHeight: request.previewPageHeight
                             )
                         )
-                        showsCharacterLimit = true
-                    }
+                        .textInputFormattingControlVisibility(.hidden, for: .all)
+                        .scrollContentBackground(.hidden)
+                        .focused($editorIsFocused)
+                        .scrollDismissesKeyboard(.interactively)
+                        .padding(12)
+                        .opacity(opacity)
+                        .accessibilityLabel("Contenu de la zone de texte")
+                        .onChange(of: text) { oldValue, newValue in
+                            guard newValue.characters.count > 1_000 else { return }
+                            let limited = limitedText(oldValue: oldValue, newValue: newValue)
+                            text = limited.value
+                            selection = AttributedTextSelection(
+                                insertionPoint: text.characters.index(
+                                    text.startIndex,
+                                    offsetBy: limited.insertionOffset
+                                ),
+                                typingAttributes: AlbumTextAttributedBridge.typingAttributes(
+                                    for: typingDefaults,
+                                    pageHeight: request.previewPageHeight
+                                )
+                            )
+                            showsCharacterLimit = true
+                        }
+                }
 
                 Divider()
 
@@ -394,7 +466,7 @@ struct AlbumTextEditorView: View {
                     insertionPoint: text.endIndex,
                     typingAttributes: AlbumTextAttributedBridge.typingAttributes(
                         for: typingDefaults,
-                        pageHeight: Self.referenceHeight
+                        pageHeight: request.previewPageHeight
                     )
                 )
             }
@@ -451,7 +523,8 @@ struct AlbumTextEditorView: View {
             ForEach([8, 12, 18, 24, 36, 48, 72, 96], id: \.self) { points in
                 Button("\(points) points") {
                     applyCharacterStyle {
-                        $0.relativeFontSize = Double(points) / Self.referenceHeight
+                        $0.relativeFontSize = Double(points)
+                            / AlbumPhotoConstants.canonicalPageHeight
                     }
                 }
             }
@@ -460,24 +533,31 @@ struct AlbumTextEditorView: View {
     }
 
     private var colorMenu: some View {
-        Menu("Couleur", systemImage: "paintpalette") {
-            colorButton("Noir", color: .black)
-            colorButton("Blanc", color: .white)
-            colorButton("Rouge", color: SRGBAColor(red: 0.85, green: 0.12, blue: 0.12))
-            colorButton("Orange", color: SRGBAColor(red: 0.95, green: 0.45, blue: 0.05))
-            colorButton("Vert", color: SRGBAColor(red: 0.12, green: 0.55, blue: 0.24))
-            colorButton("Bleu", color: SRGBAColor(red: 0.10, green: 0.35, blue: 0.90))
+        Button("Couleur", systemImage: "paintpalette") {
+            showsColorPalette = true
+        }
+        .popover(isPresented: $showsColorPalette) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Couleur du texte")
+                    .font(.headline)
+                    .padding(.bottom, 4)
+
+                ForEach(AlbumTextColorOption.all) { option in
+                    Button {
+                        applyCharacterStyle { $0.color = option.color }
+                        showsColorPalette = false
+                    } label: {
+                        AlbumTextColorLabel(option: option)
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(14)
+            .frame(minWidth: 190)
+            .presentationCompactAdaptation(.popover)
         }
         .accessibilityLabel("Couleur du texte")
-    }
-
-    private func colorButton(_ title: String, color: SRGBAColor) -> some View {
-        Button {
-            applyCharacterStyle { $0.color = color }
-        } label: {
-            Label(title, systemImage: "circle.fill")
-                .foregroundStyle(color.swiftUIColor)
-        }
     }
 
     private var alignmentMenu: some View {
@@ -537,7 +617,7 @@ struct AlbumTextEditorView: View {
             attributes[AlbumTextStyleAttribute.self] = style
             attributes.font = AlbumTextAttributedBridge.font(
                 for: style,
-                pageHeight: Self.referenceHeight
+                pageHeight: request.previewPageHeight
             )
             attributes.foregroundColor = style.color.swiftUIColor
         }

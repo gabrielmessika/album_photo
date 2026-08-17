@@ -297,6 +297,7 @@ private struct AlbumEditorScene: View {
         .sheet(item: $model.textEditingRequest) { request in
             AlbumTextEditorView(
                 request: request,
+                imageCache: model.imageCache,
                 onCancel: { model.cancelTextEditing() },
                 onCommit: { content, defaults, opacity in
                     Task {
@@ -453,21 +454,7 @@ private struct AlbumEditorScene: View {
                 .background(Color.orange.opacity(0.16))
             }
 
-            ZStack(alignment: .topTrailing) {
-                EditablePageCanvas(model: model)
-
-                if model.cropDraft == nil {
-                    Button("Ajouter du texte", systemImage: "text.badge.plus") {
-                        model.beginAddingText()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(model.isReadOnly)
-                    .padding(12)
-                    .accessibilityHint(
-                        "Crée une zone centrée au premier plan et ouvre le clavier."
-                    )
-                }
-            }
+            EditablePageCanvas(model: model)
 
             pageWorkspaceCommands
             .padding(.horizontal)
@@ -624,6 +611,8 @@ private struct AlbumEditorScene: View {
             PhotosPanelView(model: model)
         case .layouts:
             LayoutPanelView(model: model)
+        case .text:
+            TextPanelView(model: model)
         case .backgrounds:
             BackgroundPickerView(model: model)
         }
@@ -785,12 +774,10 @@ private struct AlbumEditorScene: View {
                 Divider()
             }
 
-            if model.selectedTextBox != nil {
+            if let text = model.selectedTextBox {
                 Text("Zone de texte")
                     .font(.headline)
-                inspectorButton("Modifier le texte", systemImage: "textformat") {
-                    model.beginEditingSelectedText()
-                }
+                TextElementInspectorView(model: model, text: text)
                 Divider()
             }
 

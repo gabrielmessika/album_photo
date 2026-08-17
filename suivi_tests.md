@@ -31,7 +31,8 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat Remplir l’album testé | `781539603d6b98523fe48326ee49e24288dfa09b` — trois densités, plan déterministe, confirmation chiffrée et commande unique ; `IPAD-L2-018` réussi selon le retour global « les tests sont ok » |
 | Candidat compact et cadrage testé | `3944fae199b2eb37c7b1f0a1aae5558197455b87` — bouton compact, dialogue Densité/compteur/Annuler/Valider et cadrage initial couvrant ; `IPAD-L2-019` réussi selon le retour global « tout est ok » |
 | Candidat zones de texte rejeté à la compilation | `d882183d31de7ed6078c70f9e79a80d6ba994dd6` — `IPAD-L2-020` échoue à l’étape 1 : les contraintes de formatage tentaient d’écrire des attributs autres que leur `AttributeKey` |
-| Correctif zones de texte à tester | `0f4b16c6c6435c29ca44da4e2726fac210add520` — une portée métier imbriquée et une contrainte distincte par police, couleur, alignement et interligne ; `IPAD-L2-021` à exécuter |
+| Correctif de compilation texte testé | `0f4b16c6c6435c29ca44da4e2726fac210add520` — compilation réussie indirectement, mais `IPAD-L2-021` échoue sur l’emplacement de l’ajout, le fond de l’éditeur, les pastilles couleur, l’échelle et l’opacité |
+| Correctif ergonomie et rendu texte à tester | `À FIGER` — panneau Texte, canevas dégagé, fond réel, palette colorée, aperçu à l’échelle et opacité immédiate ; `IPAD-L2-022` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -116,8 +117,13 @@ proxies de `AttributedTextValueConstraint` refusent les écritures de police,
 couleur, alignement et interligne lorsque ces clés ne sont pas l’`AttributeKey`
 de la contrainte. Aucune étape fonctionnelle n’est attribuée à ce candidat.
 La régression `IPAD-L2-021` reprend toute la qualification sur le correctif
-exact `0f4b16c6c6435c29ca44da4e2726fac210add520` ; elle ne modifie aucun verdict
-historique.
+exact `0f4b16c6c6435c29ca44da4e2726fac210add520`. Son lancement prouve
+indirectement la compilation, mais le retour et `IMG_4191.jpg` signalent un
+bouton superposé au canevas, un éditeur noir sur noir, des choix de couleur
+blancs, une échelle de taille différente entre fenêtre et page et une opacité
+sans effet visible. Les étapes non commentées ne sont pas transformées en
+réussites. `IPAD-L2-022` requalifiera le panneau Texte demandé et tout le rendu
+après correction ; aucun verdict historique n’est modifié.
 
 ## Mode de réponse
 
@@ -361,7 +367,8 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `3:AUT-009` à `3:AUT-012`, `3:FRM-009`, `3:TPL-005`, `3:UND-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage initial couvrant | `3:DEC-07`, section 3.1, `3:AUT-002`, `3:AUT-004`, `3:AUT-009` à `3:AUT-011`, `3:PHO-005`, `3:PHO-006`, `3:PHO-014`, `3:FRM-004`, `3:FRM-009`, `3:CRP-001`, `3:CRP-004` à `3:CRP-007`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `3:TBX-001` à `3:TBX-010`, `3:TBX-012` à `3:TBX-020`, `3:TBX-023` à `3:TBX-025`, `3:TPL-012`, `3:TPL-013`, `3:TPL-017`, `3:TXA-001`, `3:TXA-002`, `3:TXA-004`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — compilation impossible dans `AlbumTextEditorView` |
-| `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `3:TBX-001` à `3:TBX-010`, `3:TBX-012` à `3:TBX-020`, `3:TBX-023` à `3:TBX-025`, `3:TPL-012`, `3:TPL-013`, `3:TPL-017`, `3:TXA-001`, `3:TXA-002`, `3:TXA-004`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `3:TBX-001` à `3:TBX-010`, `3:TBX-012` à `3:TBX-020`, `3:TBX-023` à `3:TBX-025`, `3:TPL-012`, `3:TPL-013`, `3:TPL-017`, `3:TXA-001`, `3:TXA-002`, `3:TXA-004`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — compilation réussie, cinq défauts d’interface/rendu |
+| `IPAD-L2-022` | Panneau Texte, palette, échelle et opacité | `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:EDT-008`, `3:EDT-012`, `3:EDT-014`, `3:EDT-021`, `3:TBX-001` à `3:TBX-020`, `3:TBX-023` à `3:TBX-025`, `3:TPL-012`, `3:TPL-013`, `3:TPL-017`, `3:TXA-001`, `3:TXA-002`, `3:TXA-004`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -3211,13 +3218,70 @@ leur candidat.
 | 15 | Annuler puis Rétablir les derniers ajouts/modifications, fermer proprement l’album et le rouvrir. | Chaque validation Terminer est une commande cohérente et annulable ; contenu, runs, paragraphes, styles, opacité, géométrie, profondeur et zones de modèle persistent après relance. |
 | 16 | Refaire les étapes 2, 5 et 11 en paysage puis parcourir le bouton, l’éditeur, sa barre et l’alerte avec VoiceOver. | Le clavier ne masque pas durablement la sélection ; les commandes restent utilisables et annoncées dans un ordre cohérent, avec libellés explicites et alerte de débordement accessible. |
 
+- Résultat : 🔴 `ÉCHOUÉ` après compilation et lancement réussis. Le bouton
+  Ajouter du texte est superposé au canevas ; dans la fenêtre, le texte initial
+  devient noir sur le fond noir de l’apparence système, les six pastilles de
+  couleur apparaissent blanches, la taille visible ne correspond pas à celle du
+  canevas et l’opacité ne produit pas d’effet perceptible.
+- Preuve : retour utilisateur du 17 août 2026 et `IMG_4191.jpg`, conservée hors
+  Git. La capture montre le bouton posé sur la page et un texte de grande taille
+  dans l’éditeur rendu beaucoup plus petit sur le canevas. Elle ne montre pas
+  la fenêtre ni l’opacité ; ces deux constats restent des observations directes
+  du testeur sans capture associée.
+- Portée : l’étape 1 est réussie indirectement par l’exécution de l’app. Les
+  anomalies concernent le parcours des étapes 2, 3, 5 et 6 ; les étapes 4 et
+  7 à 16 ne reçoivent aucun verdict détaillé.
+- Environnement : repris de la fiche faute de nouvelle déclaration : iPad 8e
+  génération ; iPadOS 26.5.2 ; Swift Playgrounds 4.7 ; Paris, France ; français
+  (France). Aucun contrôle `APPLE-*` n’est inclus.
+
+### `IPAD-L2-022` — Panneau Texte et rendu cohérent
+
+- Candidat : `À FIGER`.
+- Spécification : 3.0 modifiée conformément au retour utilisateur : nouveau
+  panneau Texte entre Mise en page et Fonds, ajout hors canevas, contenu et
+  formats dans l’inspecteur, palette colorée, fond réel et échelle du canevas
+  dans l’éditeur, opacité immédiatement visible.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:EDT-001`, `3:EDT-002`,
+  `3:EDT-006`, `3:EDT-008`, `3:EDT-012`, `3:EDT-014`, `3:EDT-021`,
+  `3:TBX-001` à `3:TBX-010`, `3:TBX-012` à `3:TBX-020`, `3:TBX-023` à
+  `3:TBX-025`, `3:TPL-012`, `3:TPL-013`, `3:TPL-017`, `3:TXA-001`,
+  `3:TXA-002`, `3:TXA-004`, `3:UND-001`, `3:SAV-001`, `3:ACC-002`,
+  `3:ACC-006`, `3:ACC-021` et `3:DONE-005`.
+- Limites explicites : cette fiche ne valide ni l’alignement justifié de
+  `TBX-011`, ni le regroupement à 750 ms de `TBX-022`, ni Exporter de
+  `TBX-021`/Lot 3, ni le presse-papiers multi-types.
+- Préconditions : transférer exactement le nouveau candidat ; ouvrir un album
+  jetable avec une page claire, une page utilisant le fond sombre intégré, deux
+  photos superposables et un modèle Avec texte. Commencer à un zoom de canevas
+  de 100 % et avec l’apparence sombre de l’iPad.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et rouvrir l’album en portrait. | La compilation et le lancement réussissent sans diagnostic ; les contenus validés jusqu’à `IPAD-L2-019` restent présents et lisibles. |
+| 2 | Parcourir le rail dans l’ordre, ouvrir Texte puis Fonds, et revenir à Texte sans désélectionner l’élément courant. | Photos, Mise en page, Texte et Fonds apparaissent dans cet ordre ; le panneau droit reste lisible, Texte se replie indépendamment et le changement de panneau conserve la sélection. |
+| 3 | Observer la page, puis ouvrir le menu `+` de la barre supérieure. | Aucun bouton Ajouter du texte ne recouvre le canevas. Le menu `+` conserve exactement les raccourcis Ajouter un cadre photo et Ajouter du texte. |
+| 4 | Dans le panneau Texte sans zone sélectionnée, presser Ajouter un texte puis Annuler ; recommencer et valider « Bonjour album ». | Le bouton est au niveau du panneau, ouvre l’éditeur avec « Votre texte » sélectionné et Annuler ne crée rien. La validation crée une zone centrée au premier plan, large de 60 % et haute d’au moins 12 %. |
+| 5 | Sur la page claire en apparence sombre, rouvrir « Bonjour album ». | La fenêtre affiche le fond réel clair derrière le texte noir ; aucun noir sur noir ne provient de l’apparence système. |
+| 6 | Ouvrir Couleur dans la fenêtre, vérifier les six choix puis appliquer successivement Blanc, Rouge, Vert et Bleu à une sélection. | Chaque choix possède une pastille de sa couleur réelle avec un contour visible ; seule la sélection change et la palette ne transforme aucune pastille en blanc générique. |
+| 7 | Au zoom 100 %, appliquer 18 puis 96 points à la même sélection et comparer immédiatement la fenêtre au canevas après Terminer. | La taille est rendue dans la fenêtre selon la hauteur affichée de la page ; le rapport entre 18 et 96 points et la taille finale restent visuellement cohérents au retour sur le canevas. |
+| 8 | Dans la fenêtre, choisir successivement 25 %, 50 % puis 100 % d’opacité avant de terminer ; refaire 50 % depuis le panneau Texte. | L’effet est visible immédiatement dans la fenêtre, puis sur le canevas. Le réglage du panneau s’applique à toute la zone et sa valeur affichée suit 50 %. |
+| 9 | Sélectionner la zone, lire l’inspecteur de l’élément, puis appliquer Police, Taille, Gras, Italique, Couleur, Alignement et Interligne depuis cet inspecteur. | Le texte complet à afficher est lisible dans l’inspecteur ; les options sont dans l’ordre prévu, agissent sur toute la zone en commandes annulables et Modifier le texte et le format permet toujours de cibler une sélection. Le panneau Texte renvoie clairement vers l’inspecteur. |
+| 10 | Sur le fond sombre intégré, ajouter une nouvelle zone puis saisir du texte. | La fenêtre reprend le fond sombre et le texte initial est blanc ; aucun blanc sur blanc ou noir sur noir n’apparaît. Un changement ultérieur du fond ne recolore pas la zone existante. |
+| 11 | Dans la fenêtre, sélectionner seulement un mot, modifier son format, créer deux paragraphes avec alignements/interlignes distincts, puis dépasser 1 000 caractères par collage. | Seule la sélection change, les paragraphes restent indépendants, le compteur s’arrête à 1 000 `Character` et seuls les caractères excédentaires sont refusés. |
+| 12 | Terminer, déplacer, tourner et redimensionner la zone, modifier ensuite sa longueur, puis Annuler/Rétablir. | Les transformations et la profondeur restent communes aux éléments ; redimensionner ne change pas la police, désactive la hauteur automatique et chaque validation reste une commande cohérente. |
+| 13 | Créer une zone automatique sur plusieurs lignes, provoquer un débordement par réduction puis tenter Prévisualiser. | La hauteur automatique suit le contenu avant redimensionnement ; le débordement affiche contour rouge, icône et explication, et bloque Prévisualiser en revenant sur la zone. |
+| 14 | Corriger le débordement, appliquer un modèle Avec texte et toucher son emplacement vide. | La prévisualisation redevient accessible ; l’emplacement vide n’apparaît qu’en édition et ouvre la même saisie sans produire de texte vide dans la sortie. |
+| 15 | Superposer deux textes et une photo, utiliser les quatre commandes de profondeur, fermer proprement puis rouvrir l’album. | Les trois types partagent une pile ; contenu, runs, paragraphes, formats, opacité, géométrie et profondeur persistent après relance. |
+| 16 | Refaire les étapes 2, 4, 6, 8 et 13 en paysage, puis parcourir le panneau, la palette, l’éditeur et l’alerte avec VoiceOver. | Aucun panneau ni canevas n’est rogné ; commandes, couleurs, valeurs d’opacité et alerte sont annoncées avec des libellés explicites dans un ordre cohérent. |
+
 - Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner après retour utilisateur, en associant toute anomalie à
-  l’ID numérique de l’étape et, si possible, une capture de l’éditeur, d’un
-  texte riche et d’un débordement.
+- Preuve : à renseigner par ID d’étape ; joindre si possible une capture de la
+  fenêtre sur fond clair et sombre, de la palette et du canevas après 96 points
+  puis 50 % d’opacité.
 - Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
-  Playgrounds 4.7 ; taille de texte standard ; portrait initial, paysage et
-  VoiceOver à l’étape 16 ; Paris, France ; français (France).
+  Playgrounds 4.7 ; portrait puis paysage ; apparence sombre ; zoom 100 % pour
+  la comparaison ; Paris, France ; français (France).
 
 ## Qualification différée Apple/macOS/Xcode
 
@@ -3379,6 +3443,7 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
+| `IPAD-L2-021` sur `0f4b16c…` | 17 août 2026 | **Échec fonctionnel après compilation et lancement réussis** ; seule l’étape 1 est attribuée comme réussite | Retour utilisateur et `IMG_4191.jpg`, reçue dans le dépôt de travail mais non versionnée | Ajout superposé, éditeur noir sur noir, pastilles blanches, échelle incohérente et opacité sans effet visible ; régression complète préparée sous `IPAD-L2-022` | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; aucun contrôle `APPLE-*` inclus |
 | `IPAD-L2-020` sur `d882183…` | 17 août 2026 | **Échec de compilation à l’étape 1** ; étapes 2 à 16 non exécutées | `IMG_4188.HEIC` et `IMG_4189.HEIC`, reçues dans le dépôt de travail mais non versionnées | Les contraintes écrivaient plusieurs attributs via un proxy qui ne rend modifiable que leur `AttributeKey`; séparer police, couleur, alignement et interligne sous `IPAD-L2-021` | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; aucun contrôle fonctionnel ni `APPLE-*` inclus |
 | `IPAD-L2-019` sur `3944fae…` | 17 août 2026 | **1 réussite** : dialogue compact et cadrage couvrant | Retour global explicite « tout est ok » après remise de cette seule fiche ; aucune capture ni observation par étape jointe | Aucun défaut du candidat signalé ; la preuve ne s’étend ni au nouvel incrément texte ni aux contrôles `APPLE-*` | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 |
 | `IPAD-L2-018` sur `7815396…` | 17 août 2026 | **1 réussite** : Remplir l’album, trois densités et commande unique | Retour global explicite « les tests sont ok » après remise de cette seule fiche ; aucune capture ni observation par étape jointe | Aucun défaut de ce candidat signalé ; l’interface compacte et le cadrage demandés avec le retour ont été qualifiés séparément sous `019` | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 |

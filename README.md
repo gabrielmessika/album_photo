@@ -97,16 +97,20 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `d882183d31de7ed6078c70f9e79a80d6ba994dd6`, passe 146 tests Core mais
   `IPAD-L2-020` échoue dès sa compilation Apple : ses contraintes de formatage
   écrivaient plusieurs attributs alors que leur proxy n’en autorise qu’un. Le
-  correctif `0f4b16c6c6435c29ca44da4e2726fac210add520` imbrique la portée métier et sépare police, couleur,
-  alignement et interligne ; il doit être compilé et qualifié sous
-  `IPAD-L2-021`.
+  correctif `0f4b16c6c6435c29ca44da4e2726fac210add520` imbrique la portée métier et
+  sépare police, couleur, alignement et interligne. Il compile et lance l’app,
+  mais `IPAD-L2-021` relève cinq défauts : ajout superposé à la page, fond noir
+  de l’éditeur, pastilles blanches, échelle différente et opacité non visible.
+  Le correctif suivant `À FIGER` ajoute un panneau Texte et les formats dans
+  l’inspecteur, reprend le fond et l’échelle du canevas et fournit une palette réellement colorée ;
+  `IPAD-L2-022` doit le qualifier.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
-  migration. Les panneaux publics sont maintenant `Photos`, `Mise en page` et
-  `Fonds`. Les variantes avec texte sont actives dans le candidat en cours ;
+  migration. Les panneaux publics sont maintenant `Photos`, `Mise en page`,
+  `Texte` et `Fonds`. Les variantes avec texte sont actives dans le candidat en cours ;
   stickers, cadres décoratifs et presse-papiers
   multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
@@ -132,8 +136,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   premier incrément texte dispose de tests Core, contrats source et analyse
   syntaxique, mais `IPAD-L2-020` est 🔴 après les erreurs de compilation
   photographiées dans `AlbumTextEditorView`. Le correctif repasse les 146 tests
-  Core et le contrat ciblé ; sa compilation, son rendu et ses gestes Apple
-  restent ⚪ sous `IPAD-L2-021`. Les photos de diagnostic restent hors de Git.
+  Core et compile sur l’iPad, mais `IPAD-L2-021` est 🔴 sur les cinq défauts
+  d’interface et de rendu décrits plus haut. La correction suivante repasse les
+  146 tests Core, le contrat ciblé, les contrats du dépôt, les dix empreintes et
+  l’analyse syntaxique ; sa compilation, son rendu et ses
+  gestes Apple restent ⚪ sous `IPAD-L2-022`. Les photos de diagnostic restent
+  hors de Git.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.

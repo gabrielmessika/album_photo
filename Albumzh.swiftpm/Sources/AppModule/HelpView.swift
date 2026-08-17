@@ -4,6 +4,7 @@ enum HelpContext: String, Identifiable {
     case editor
     case photos
     case layouts
+    case text
     case backgrounds
     case crop
     case globalPages
@@ -46,7 +47,7 @@ struct HelpView: View {
             HelpSection(
                 title: "Zones de texte",
                 symbol: "textformat",
-                text: "Ajouter du texte crée une zone centrée. Sélectionnez-la puis touchez-la à nouveau, ou utilisez Modifier le texte, pour saisir et mettre en forme une sélection. Terminer enregistre une seule action ; Annuler restaure le contenu initial. Un contour rouge signale un débordement qui bloque la prévisualisation."
+                text: "Le panneau Texte ajoute une zone centrée. L’inspecteur affiche le texte sélectionné et les formats applicables à toute la zone. Modifier le texte et le format ouvre l’éditeur pour agir sur une sélection de caractères. La fenêtre reprend le fond et l’échelle de la page ; Terminer enregistre une seule action et Annuler restaure le contenu initial."
             ),
             HelpSection(
                 title: "Fonds",
@@ -118,6 +119,12 @@ private struct HelpSection: Identifiable {
                 title: "Panneau Mise en page",
                 symbol: "rectangle.3.group",
                 text: "Filtrez les modèles par nombre de photos et par présence d’une zone de texte. Une zone vide affiche Ajouter du texte uniquement dans l’éditeur et reste absente de la prévisualisation."
+            )
+        case .text:
+            return HelpSection(
+                title: "Panneau Texte",
+                symbol: "textformat",
+                text: "Ajoutez une zone sans recouvrir le canevas. Son contenu et les réglages de toute la zone apparaissent dans l’inspecteur de l’élément ; ouvrez Modifier le texte et le format pour cibler seulement certains caractères ou paragraphes."
             )
         case .backgrounds:
             return HelpSection(
