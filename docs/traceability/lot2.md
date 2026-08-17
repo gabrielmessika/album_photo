@@ -14,8 +14,9 @@ la fenêtre est minuscule et illisible. La seconde correction, à cadre iPad
 explicite et présentation compacte native, est figée dans
 `7d8772c6d87a769a239b4f9eafabe74c8c126681`, mais `IPAD-L2-016` échoue :
 l’app se fige et la confirmation ne s’affiche pas. Le correctif courant retire
-la feuille système au profit d’un dialogue interne centré et bloquant, encore
-non testé sur Apple. La source normative reste
+la feuille système au profit d’un dialogue interne centré et bloquant. Il est
+figé dans `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et sera vérifié par
+`IPAD-L2-017`. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -63,6 +64,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `ENV-001…005`, `EDT-008`, `EDT-012`, `EDT-016`, `PAG-002`, `PAG-013…017`, `UND-001`, `UND-002`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre trop large et trop basse ; pied de texte après défilement |
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
 | `IPAD-L2-016` | Cadre lisible de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — app figée, aucune confirmation affichée |
+| `IPAD-L2-017` | Dialogue interne sans gel | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -114,4 +116,4 @@ suppression du formulaire défilant et de la hauteur fixe.
   son pied de texte. `IPAD-L2-015` échoue ensuite car l’ajustement fitted
   comprime toute la fenêtre. `IPAD-L2-016` échoue enfin parce que l’ouverture
   de la feuille de `7d8772c…` fige l’app sans rien afficher ; le dialogue
-  interne de remplacement doit recevoir un nouvel ID de régression.
+  interne de `57afa71…` est à requalifier par `IPAD-L2-017`.

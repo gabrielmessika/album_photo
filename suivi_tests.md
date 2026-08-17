@@ -27,7 +27,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat d’ajout de page Lot 2 testé | `02430b16f2853c01dbcafc88d48cd40c48373c4c` — ajout au dernier rang, confirmation commune et réglage temporaire fonctionnels ; `IPAD-L2-014` échoué car la fenêtre est trop large, trop basse et impose un défilement pour son pied de texte |
 | Premier correctif de fenêtre testé | `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` — `IPAD-L2-015` échoué : le dimensionnement ajusté comprime toute la fenêtre, devenue minuscule et illisible |
 | Second correctif de fenêtre testé | `7d8772c6d87a769a239b4f9eafabe74c8c126681` — `IPAD-L2-016` échoué : le bouton fige l’app sans afficher la confirmation |
-| Correctif de gel en préparation | Remplacement de la feuille système par un dialogue interne centré, sur fond assombri et sans négociation de taille ; candidat exact et nouvelle régression à figer |
+| Correctif de gel à tester | `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` — dialogue interne centré, sur fond assombri et sans négociation de taille de feuille ; `IPAD-L2-017` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -84,7 +84,9 @@ La régression `IPAD-L2-016` vise exactement le candidat
 `7d8772c6d87a769a239b4f9eafabe74c8c126681` et remplace `015` uniquement pour
 la lisibilité et l’adaptation de la fenêtre. Elle échoue dès l’ouverture : le
 bouton fige l’app et aucune confirmation n’apparaît. Le correctif suivant
-retire ce parcours de feuille système ; il recevra un nouvel ID.
+retire ce parcours de feuille système. La régression `IPAD-L2-017` vise
+exactement `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` pour vérifier le dialogue
+interne de remplacement et l’absence de gel.
 
 ## Mode de réponse
 
@@ -324,6 +326,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-014` | Ajout en fin, confirmation et réglage temporaire | `3:ENV-001` à `3:ENV-005`, `3:EDT-008`, `3:EDT-012`, `3:EDT-016`, `3:PAG-002`, `3:PAG-013` à `3:PAG-017`, `3:UND-001`, `3:UND-002`, `3:SAV-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre trop large et trop basse ; pied de texte visible seulement après défilement |
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
 | `IPAD-L2-016` | Cadre lisible de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — le bouton fige l’app et aucune confirmation n’apparaît |
+| `IPAD-L2-017` | Dialogue interne sans gel pour l’ajout de page | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -2963,6 +2966,37 @@ leur candidat.
   de texte standard ; portrait ; Paris, France ; français (France). Aucun
   résultat iPhone, Xcode ou `APPLE-*` n’est extrapolé.
 
+## Troisième régression ciblée de la confirmation d’ajout
+
+### `IPAD-L2-017` — Dialogue interne sans gel
+
+- Candidat : `57afa71e3eeac8b48f05e0aaa719cf77e8a97834`.
+- Spécification : 3.0 incluse dans le candidat exact ; `PAG-017` impose un
+  dialogue centré, borné à 400 points, avec 16 points de marge latérale et un
+  éditeur assombri non interactif.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`,
+  `3:ACC-006`, `3:ACC-021` et `3:DONE-005`.
+- Préconditions : transférer exactement le candidat ; ouvrir en portrait un
+  album modifiable contenant au moins deux pages ; désactiver « Ne plus
+  demander avant d’ajouter une page » dans Gérer les pages ; utiliser la taille
+  de texte standard.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et ouvrir l’album préparé. | La compilation et le lancement réussissent ; l’album reste lisible et l’app répond normalement. |
+| 2 | En portrait dans Créer, presser Ajouter une page et attendre l’affichage sans toucher une autre commande. | L’app ne se fige pas : un dialogue centré apparaît immédiatement sur l’éditeur assombri. Sa largeur ne dépasse pas 400 points, ses marges latérales atteignent au moins 16 points et le titre, les deux textes, la case, Annuler et Ajouter la page sont entièrement visibles sans défilement. |
+| 3 | Pendant que le dialogue est ouvert, tenter d’utiliser une commande de l’éditeur derrière lui, puis cocher et décocher « Ne plus demander » et presser Annuler. | Aucune commande située derrière le dialogue ne réagit ; la case réagit à chaque pression, Annuler ferme le dialogue, l’app reste fluide et aucune page n’est créée. |
+| 4 | Ouvrir Gérer les pages, presser son bouton Ajouter une page, puis presser Ajouter la page dans le dialogue. | Le même dialogue apparaît sans gel ; la confirmation ajoute exactement une page au dernier rang, la rend active, ferme le dialogue et laisse l’app utilisable. |
+| 5 | Revenir en portrait si nécessaire, rouvrir le dialogue, le fermer, tourner l’iPad en paysage et répéter son ouverture. | Dans les deux orientations, le dialogue reste centré, ses marges et tous ses contenus restent visibles sans défilement, et chaque ouverture et fermeture laisse l’app réactive. |
+| 6 | En portrait, activer VoiceOver, rouvrir le dialogue et parcourir son titre, ses textes, la case et ses deux actions. | VoiceOver traite le dialogue comme modal, suit un ordre cohérent, annonce l’état de la case et n’atteint pas les commandes de l’éditeur placé derrière. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner après retour utilisateur, avec toute anomalie associée à
+  l’ID numérique de l’étape.
+- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
+  Playgrounds 4.7 ; taille de texte standard ; portrait initial, paysage à
+  l’étape 5 ; VoiceOver à l’étape 6 ; Paris, France ; français (France).
+
 ## Qualification différée Apple/macOS/Xcode
 
 Ces contrôles complètent les preuves que Swift Playgrounds ou un seul iPad ne
@@ -2990,7 +3024,7 @@ explicitement enregistré.
 
 ### `APPLE-L2-001` — Barre compacte, confirmation et menu Plus
 
-- Candidat : `7d8772c6d87a769a239b4f9eafabe74c8c126681`.
+- Candidat : `57afa71e3eeac8b48f05e0aaa719cf77e8a97834`.
 - Spécification : 3.0, incluse dans le candidat exact ci-dessus.
 - Type : test manuel sur iPhone réel ou simulateur Xcode produisant réellement
   une largeur compacte ; le plein écran iPad n’est pas un substitut.
@@ -3123,6 +3157,7 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
+| `IPAD-L2-016` sur `7d8772c…` | 17 août 2026 | **Échec immédiat** : le bouton fige l’app et aucune confirmation ne s’affiche | Retour utilisateur explicite ; aucune capture ; seule l’étape 2 est attribuable au retour | La feuille système à cadre explicite ne s’ouvre pas ; la retirer au profit d’un dialogue interne et créer `IPAD-L2-017` | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; aucun contrôle `APPLE-*` inclus |
 | `IPAD-L2-015` sur `8aa7f56…` | 17 août 2026 | **Échec immédiat** : fenêtre minuscule et illisible | Retour utilisateur explicite « ko » ; aucune capture ; seule l’étape 2 est attribuable au retour | Le dimensionnement fitted comprime le `NavigationStack` ; utiliser un cadre iPad explicite et la présentation native en largeur compacte, puis créer un nouvel ID | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; aucun contrôle `APPLE-*` inclus |
 | `IPAD-L2-014` sur `02430b1…` | 17 août 2026 | **1 échec ciblé** : ajout en fin, confirmation et réglage déclarés corrects, mais adaptation de la fenêtre non conforme | Retour « tout est ok sauf la taille de la popup » : trop large, trop basse et défilement nécessaire pour lire la fin du pied de texte ; aucune capture ni détail par étape | Étape 11 en échec ; remplacer le formulaire et la hauteur fixe par une présentation ajustée au contenu, puis créer une régression dédiée | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; aucun contrôle `APPLE-*` inclus |
 | `IPAD-L2-013` sur `b86c4b3…` | 17 août 2026 | **1 réussite** : action rapide Ajouter une page et libellé Gérer les pages | Retour global explicite « tests ok » après remise de cette seule fiche ; aucune capture ni observation par étape jointe | Aucun défaut du candidat signalé ; la nouvelle règle d’ajout en fin avec confirmation est une évolution ultérieure et recevra un nouvel ID | Environnement repris de la fiche : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; aucun contrôle `APPLE-*` inclus |

@@ -73,7 +73,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   presser le bouton fige l’app sans afficher la confirmation. Le correctif
   courant retire donc cette feuille système et affiche un dialogue interne
   centré, de 400 points maximum avec 16 points de marge latérale, au-dessus de
-  l’éditeur assombri et bloqué.
+  l’éditeur assombri et bloqué. Ce correctif est figé dans
+  `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et doit être testé sous
+  `IPAD-L2-017`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -96,7 +98,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   🔴 `ÉCHOUÉ` sur `8aa7f56…`. `IPAD-L2-016` est également 🔴 `ÉCHOUÉ` sur
   `7d8772c…`, car l’app se fige avant d’afficher la fenêtre. Le dialogue
   interne qui supprime ce chemin de présentation passe 134 tests et l’analyse
-  syntaxique sous WSL ; son rendu Apple reste à qualifier sous un nouvel ID.
+  syntaxique sous WSL ; son rendu Apple reste ⚪ `NON TESTÉ` sous
+  `IPAD-L2-017` sur `57afa71…`.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
