@@ -18,8 +18,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 
 ## État du projet
 
-- Spécification : projet 3.0 mis à jour le 16 août 2026 après la première
-  campagne iPad ; le repère canonique
+- Spécification : projet 3.0 mis à jour le 17 août 2026 après les retours de la
+  première campagne iPad Lot 2 ; le repère canonique
   `2 400 × 3 000`, la taille native centrée à `1×` et la borne basse de zoom
   dynamique sont confirmés. La frontière des lots est également figée :
   création photo locale au Lot 1, composition Photoweb complète au Lot 2,
@@ -44,11 +44,14 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `005`, `006`, `007`), deux échecs (`002`, `004`) et un blocage (`008`) :
   léger rognage des panneaux en portrait, action Appliquer sans effet pour un
   modèle plus petit et largeur compacte inaccessible dans Swift Playgrounds.
-  Un correctif local traite les deux échecs et les retours d’ergonomie :
+  Le correctif figé
+  `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` traite les deux échecs et les
+  retours d’ergonomie :
   requête Appliquer capturée avec sa page, marges latérales et panneau droit
   plus étroit, deux sections droites repliables indépendamment, nom visible
   borné dans Sélectionner un élément et dé à libellé visible déplacé dans Mise
-  en page. Ce correctif attend encore sa compilation et sa régression iPad.
+  en page. Les régressions `IPAD-L2-009…012` sont prêtes et attendent leur
+  exécution sur iPad.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -62,6 +65,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 - Validation actuelle : 133 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
+  quatre contrôles correctifs `IPAD-L2-009…012` sont à ⚪ `NON TESTÉ` sur
+  `024a60b…`. Le menu Plus n’est attendu qu’en largeur compacte et sera repris
+  séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur
