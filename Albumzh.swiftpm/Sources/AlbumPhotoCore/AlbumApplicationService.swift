@@ -1110,6 +1110,85 @@ public actor AlbumApplicationService {
         }
     }
 
+    // MARK: Text boxes
+
+    @discardableResult
+    public func addTextBox(
+        to pageID: UUID,
+        in albumID: UUID,
+        content: TextBoxContent,
+        typingDefaults: TextStyleDefaults,
+        opacity: Double = 1,
+        elementID: UUID = UUID(),
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        var candidate = TextBoxElement(
+            id: elementID,
+            content: content,
+            typingDefaults: typingDefaults,
+            opacity: opacity
+        )
+        candidate.geometry = TextPrototypeEngine.automaticallyFittedGeometry(
+            for: content,
+            from: candidate.geometry
+        )
+        try DomainValidator.validate(candidate)
+        return try await mutateAlbum(
+            albumID,
+            label: "Ajouter du texte",
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            candidate.geometry.order = nextOrder(in: album.pages[page])
+            album.pages[page].elements.append(.text(candidate))
+            album.pages[page].accessibilityOrder.append(elementID)
+        }
+    }
+
+    @discardableResult
+    public func updateTextBox(
+        _ elementID: UUID,
+        on pageID: UUID,
+        in albumID: UUID,
+        content: TextBoxContent,
+        typingDefaults: TextStyleDefaults,
+        opacity: Double,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try DomainValidator.validate(TextBoxElement(
+            id: elementID,
+            content: content,
+            typingDefaults: typingDefaults,
+            opacity: opacity
+        ))
+        return try await mutateAlbum(
+            albumID,
+            label: "Modifier le texte",
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            let element = try elementIndex(elementID, in: album.pages[page])
+            guard var text = album.pages[page].elements[element].textBox else {
+                throw DomainValidationError.elementNotFound(elementID)
+            }
+            text.content = content
+            text.typingDefaults = typingDefaults
+            text.opacity = opacity
+            if text.usesAutomaticHeight {
+                text.geometry = TextPrototypeEngine.automaticallyFittedGeometry(
+                    for: content,
+                    from: text.geometry
+                )
+            }
+            try DomainValidator.validate(text)
+            album.pages[page].elements[element] = .text(text)
+        }
+    }
+
     // MARK: Layout templates and automatic composition
 
     public func planAlbumFill(
@@ -1348,8 +1427,11 @@ public actor AlbumApplicationService {
                 album.pages[page].elements[element].geometry = normalized
                 setFreeLayout(&album.pages[page])
             case var .text(text):
+                let wasResized = text.geometry.width != normalized.width
+                    || text.geometry.height != normalized.height
                 text.geometry = normalized
                 text.sourceTemplateSlotID = nil
+                if wasResized { text.usesAutomaticHeight = false }
                 album.pages[page].elements[element] = .text(text)
             case .sticker:
                 album.pages[page].elements[element].geometry = normalized

@@ -697,6 +697,44 @@ public enum TextWeightValue: String, Codable, Sendable, Equatable, Hashable {
     case bold
 }
 
+public enum TextFontDesignValue: String, Codable, Sendable, Equatable, Hashable {
+    case standard
+    case serif
+    case rounded
+    case monospaced
+}
+
+public struct TextFontDefinition: Codable, Sendable, Equatable, Hashable, Identifiable {
+    public let id: String
+    public let localizedName: String
+    public let design: TextFontDesignValue
+
+    public init(id: String, localizedName: String, design: TextFontDesignValue) {
+        self.id = id
+        self.localizedName = localizedName
+        self.design = design
+    }
+}
+
+/// Offline-safe font manifest. Every entry maps to a system design guaranteed
+/// by SwiftUI on the deployment target; no downloadable font is referenced.
+public enum BuiltInTextFontCatalog {
+    public static let manifest: [TextFontDefinition] = [
+        TextFontDefinition(id: "system", localizedName: "Système", design: .standard),
+        TextFontDefinition(id: "system.serif", localizedName: "Sérif", design: .serif),
+        TextFontDefinition(id: "system.rounded", localizedName: "Arrondie", design: .rounded),
+        TextFontDefinition(
+            id: "system.monospaced",
+            localizedName: "Chasse fixe",
+            design: .monospaced
+        )
+    ]
+
+    public static func definition(id: String) -> TextFontDefinition? {
+        manifest.first { $0.id == id }
+    }
+}
+
 public struct TextStyleDefaults: Codable, Sendable, Equatable, Hashable {
     public var fontID: String
     public var relativeFontSize: Double

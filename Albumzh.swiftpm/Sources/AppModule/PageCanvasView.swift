@@ -99,20 +99,25 @@ struct PageCompositionView: View {
                 )
             }
         case let .text(text):
-            if !text.content.plainText.isEmpty {
-                Text(text.content.plainText)
-                    .font(.system(size: max(5, text.typingDefaults.relativeFontSize * pageSize.height)))
-                    .foregroundStyle(text.typingDefaults.color.swiftUIColor.opacity(text.opacity))
-                    .multilineTextAlignment(.center)
-                    .frame(
-                        width: elementGeometry.width * pageSize.width,
-                        height: elementGeometry.height * pageSize.height
-                    )
-                    .rotationEffect(.radians(elementGeometry.rotationRadians))
-                    .position(
-                        x: elementGeometry.centerX * pageSize.width,
-                        y: elementGeometry.centerY * pageSize.height
-                    )
+            if !text.content.plainText.isEmpty || purpose == .editor {
+                TextBoxRenderView(
+                    text: text,
+                    geometry: elementGeometry,
+                    pageSize: pageSize,
+                    purpose: purpose,
+                    pageNumber: pageNumber,
+                    visualIndex: visualIndex,
+                    visualCount: visualCount
+                )
+                .frame(
+                    width: max(1, elementGeometry.width * pageSize.width),
+                    height: max(1, elementGeometry.height * pageSize.height)
+                )
+                .rotationEffect(.radians(elementGeometry.rotationRadians))
+                .position(
+                    x: elementGeometry.centerX * pageSize.width,
+                    y: elementGeometry.centerY * pageSize.height
+                )
             }
         case .sticker:
             if purpose == .editor {
@@ -131,6 +136,71 @@ struct PageCompositionView: View {
                     )
             }
         }
+    }
+}
+
+private struct TextBoxRenderView: View {
+    let text: TextBoxElement
+    let geometry: ElementGeometry
+    let pageSize: CGSize
+    let purpose: PageRenderPurpose
+    let pageNumber: Int?
+    let visualIndex: Int
+    let visualCount: Int
+
+    private var overflows: Bool {
+        TextPrototypeEngine.overflows(content: text.content, geometry: geometry)
+    }
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            if text.content.plainText.isEmpty {
+                Label("Ajouter du texte", systemImage: "text.badge.plus")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.secondary.opacity(0.08))
+            } else {
+                Text(AlbumTextAttributedBridge.attributedString(
+                    from: text.content,
+                    defaults: text.typingDefaults,
+                    pageHeight: Double(pageSize.height)
+                ))
+                .opacity(text.opacity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            }
+
+            if purpose == .editor, overflows {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.white, .red)
+                    .padding(4)
+                    .accessibilityHidden(true)
+            }
+        }
+        .overlay {
+            if purpose == .editor {
+                Rectangle()
+                    .stroke(
+                        overflows ? Color.red : Color.secondary.opacity(0.45),
+                        style: StrokeStyle(
+                            lineWidth: overflows ? 2 : 1,
+                            dash: text.content.plainText.isEmpty ? [5, 4] : []
+                        )
+                    )
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private var accessibilityLabel: String {
+        let page = pageNumber.map { ", page \($0)" } ?? ""
+        let depth = visualCount > 1 ? ", plan \(visualIndex) sur \(visualCount)" : ""
+        if text.content.plainText.isEmpty {
+            return "Zone de texte vide\(page)\(depth), Ajouter du texte"
+        }
+        let warning = overflows ? ", alerte : le texte déborde de sa zone" : ""
+        return "Texte\(page), \(text.content.plainText)\(depth)\(warning)"
     }
 }
 
@@ -572,7 +642,7 @@ struct EditablePageCanvas: View {
             .onEnded { value in
                 guard model.cropDraft == nil else { return }
                 let point = normalizedPoint(value.location, pageSize: pageSize)
-                model.select(
+                model.handleCanvasTap(
                     elementID: CanvasHitTesting.topmostElement(at: point, in: page)?.id
                 )
             }
@@ -685,8 +755,17 @@ private struct SelectionOverlay: View {
                 .contentShape(Rectangle())
                 .gesture(moveGesture)
                 .simultaneousGesture(twoFingerTransformGesture)
+                .onTapGesture {
+                    if element.textBox != nil {
+                        model.beginEditingText(elementID: element.id)
+                    }
+                }
                 .onTapGesture(count: 2) {
-                    if element.photoFrame?.content != nil { model.beginCrop() }
+                    if element.photoFrame?.content != nil {
+                        model.beginCrop()
+                    } else if element.textBox != nil {
+                        model.beginEditingText(elementID: element.id)
+                    }
                 }
                 .frame(width: overlaySize.width, height: overlaySize.height)
 

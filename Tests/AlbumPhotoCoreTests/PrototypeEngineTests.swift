@@ -218,6 +218,25 @@ final class PrototypeEngineTests: XCTestCase {
         )
     }
 
+    // 3:BG-011, 3:BG-016, 3:TBX-025, 3:TPL-012, 3:TPL-017
+    func testEmptyTemplateTextUsesCurrentBackgroundContrastWhenSlotHasNoStyle() throws {
+        let template = try XCTUnwrap(BuiltInLayoutTemplateCatalog.active.first {
+            $0.textSlots.contains(where: { $0.defaultTextStyle == nil })
+        })
+        let dark = try XCTUnwrap(BackgroundCatalog.themes.first {
+            $0.textContrastHint == .lightText
+        })
+        let page = PageSnapshot(background: .catalog(dark.reference))
+        let applied = try LayoutTemplateEngine.apply(
+            template,
+            to: page,
+            confirmsPhotoRemoval: false
+        )
+        let text = try XCTUnwrap(applied.elements.compactMap(\.textBox).first)
+        XCTAssertTrue(text.content.plainText.isEmpty)
+        XCTAssertEqual(text.typingDefaults.color, .white)
+    }
+
     // 3:RND-001...3:RND-006
     func testShuffleBagUsesOnlyExactCompatibleSetWithoutImmediateRepeat() {
         let frameID = UUID()

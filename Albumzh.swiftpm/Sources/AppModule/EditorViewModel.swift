@@ -282,6 +282,7 @@ final class EditorViewModel: ObservableObject {
     @Published var skipsPageAdditionConfirmation = false
     @Published var showsPageAdditionConfirmation = false
     @Published var pageAdditionDoNotAskAgainDraft = false
+    @Published var textEditingRequest: TextEditingRequest?
 
     init(albumID: UUID, appModel: AppModel) {
         self.albumID = albumID
@@ -317,6 +318,10 @@ final class EditorViewModel: ObservableObject {
 
     var selectedPhotoFrame: PhotoFrameElement? {
         selectedElement?.photoFrame
+    }
+
+    var selectedTextBox: TextBoxElement? {
+        selectedElement?.textBox
     }
 
     var selectedPhotoMetadata: PhotoAssetMetadata? {
@@ -696,6 +701,115 @@ final class EditorViewModel: ObservableObject {
         selectedElementID = elementID
     }
 
+    func handleCanvasTap(elementID: UUID?) {
+        guard cropDraft == nil else { return }
+        let wasSelected = selectedElementID == elementID
+        selectedElementID = elementID
+        if wasSelected,
+           let elementID,
+           activePage?.element(id: elementID)?.textBox != nil {
+            beginEditingText(elementID: elementID)
+        }
+    }
+
+    func beginAddingText() {
+        guard !isReadOnly, cropDraft == nil, let page = activePage else { return }
+        var defaults = TextStyleDefaults()
+        defaults.color = TextInitialStyleEngine.color(for: page.background)
+        let text = TextBoxElement(id: UUID(), typingDefaults: defaults)
+        textEditingRequest = TextEditingRequest(
+            pageID: page.id,
+            original: text,
+            isNew: true
+        )
+    }
+
+    func beginEditingSelectedText() {
+        guard let selectedElementID else { return }
+        beginEditingText(elementID: selectedElementID)
+    }
+
+    func beginEditingText(elementID: UUID) {
+        guard !isReadOnly, cropDraft == nil,
+              let pageID = activePageID,
+              let text = activePage?.element(id: elementID)?.textBox else { return }
+        selectedElementID = elementID
+        textEditingRequest = TextEditingRequest(
+            pageID: pageID,
+            original: text,
+            isNew: false
+        )
+    }
+
+    func cancelTextEditing() {
+        textEditingRequest = nil
+    }
+
+    func commitTextEditing(
+        _ request: TextEditingRequest,
+        content: TextBoxContent,
+        typingDefaults: TextStyleDefaults,
+        opacity: Double
+    ) async {
+        guard textEditingRequest?.id == request.id else { return }
+        textEditingRequest = nil
+        if request.isNew {
+            guard !content.plainText.isEmpty else { return }
+            let succeeded = await mutate("Impossible d’ajouter le texte.") {
+                try await self.service.addTextBox(
+                    to: request.pageID,
+                    in: self.albumID,
+                    content: content,
+                    typingDefaults: typingDefaults,
+                    opacity: opacity,
+                    elementID: request.id
+                )
+            }
+            if succeeded { selectedElementID = request.id }
+            return
+        }
+
+        guard content != request.original.content
+                || typingDefaults != request.original.typingDefaults
+                || opacity != request.original.opacity else { return }
+        let succeeded = await mutate("Impossible de modifier le texte.") {
+            try await self.service.updateTextBox(
+                request.id,
+                on: request.pageID,
+                in: self.albumID,
+                content: content,
+                typingDefaults: typingDefaults,
+                opacity: opacity
+            )
+        }
+        if succeeded { selectedElementID = request.id }
+    }
+
+    func requestPresentationMode(_ mode: EditorPresentationMode) {
+        if mode == .preview,
+           let target = firstOverflowingTextLocation {
+            activePageID = target.pageID
+            selectedElementID = target.elementID
+            presentationMode = .page
+            errorMessage = "Une zone de texte déborde. Corrigez-la avant de prévisualiser."
+            return
+        }
+        presentationMode = mode
+    }
+
+    private var firstOverflowingTextLocation: (pageID: UUID, elementID: UUID)? {
+        guard let album else { return nil }
+        for page in album.pages {
+            for text in page.elements.compactMap(\.textBox) where TextPrototypeEngine.overflows(
+                content: text.content,
+                geometry: text.geometry
+            ) {
+                return (page.id, text.id)
+            }
+        }
+        return nil
+    }
+
     func beginSelectedPhotoFrameChoice() {
         guard !isReadOnly, cropDraft == nil, let pageID = activePageID,
               let frame = selectedPhotoFrame else { return }
@@ -882,10 +996,6 @@ final class EditorViewModel: ObservableObject {
         guard let page = activePage,
               let pageID = activePageID,
               template.isActive else { return }
-        guard template.textSlots.isEmpty else {
-            errorMessage = "Les modèles avec texte seront activés avec l’éditeur de texte du prochain incrément."
-            return
-        }
         switch LayoutTemplateEngine.preview(applying: template, to: page).disposition {
         case let .disabledBecauseTextWouldBeRemoved(count):
             errorMessage = count == 1

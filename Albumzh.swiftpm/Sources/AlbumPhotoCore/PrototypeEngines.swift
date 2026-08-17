@@ -170,7 +170,10 @@ public enum LayoutTemplateEngine {
                     resultingElements.append(.text(text))
                 } else {
                     let id = makeID()
-                    let defaults = slot.defaultTextStyle ?? TextStyleDefaults()
+                    var defaults = slot.defaultTextStyle ?? TextStyleDefaults()
+                    if slot.defaultTextStyle == nil {
+                        defaults.color = TextInitialStyleEngine.color(for: page.background)
+                    }
                     let text = TextBoxElement(
                         id: id,
                         geometry: slot.geometry.elementGeometry(order: nextOrder),
@@ -750,19 +753,80 @@ public enum TextPrototypeEngine {
         geometry: ElementGeometry,
         averageGlyphWidthFactor: Double = 0.52
     ) -> Bool {
-        let text = content.plainText
-        guard !text.isEmpty else { return false }
-        let estimatedFontHeight = max(0.000_001, content.paragraphs.first?.runs.first?.relativeFontSize
-            ?? TextStyleDefaults().relativeFontSize)
-        let widthUnits = geometry.width * AlbumPhotoConstants.canonicalPageWidth
-        let heightUnits = geometry.height * AlbumPhotoConstants.canonicalPageHeight
-        let glyphWidth = estimatedFontHeight * AlbumPhotoConstants.canonicalPageHeight * averageGlyphWidthFactor
-        let lineHeight = estimatedFontHeight * AlbumPhotoConstants.canonicalPageHeight
-        let charactersPerLine = max(1, Int(widthUnits / max(1, glyphWidth)))
-        let lines = text.split(separator: "\n", omittingEmptySubsequences: false).reduce(0) {
-            $0 + max(1, Int(ceil(Double($1.count) / Double(charactersPerLine))))
+        requiredHeight(
+            for: content,
+            width: geometry.width,
+            averageGlyphWidthFactor: averageGlyphWidthFactor
+        ) > geometry.height + 0.000_001
+    }
+
+    public static func automaticallyFittedGeometry(
+        for content: TextBoxContent,
+        from geometry: ElementGeometry,
+        averageGlyphWidthFactor: Double = 0.52
+    ) -> ElementGeometry {
+        var result = geometry
+        let required = requiredHeight(
+            for: content,
+            width: geometry.width,
+            averageGlyphWidthFactor: averageGlyphWidthFactor
+        )
+        result.height = min(1, max(geometry.height, required))
+        result.centerY = min(1 - result.height / 2, max(result.height / 2, result.centerY))
+        return result
+    }
+
+    public static func requiredHeight(
+        for content: TextBoxContent,
+        width: Double,
+        averageGlyphWidthFactor: Double = 0.52
+    ) -> Double {
+        guard !content.plainText.isEmpty else { return 0 }
+        let widthUnits = max(1, width * AlbumPhotoConstants.canonicalPageWidth)
+        let heightUnits = content.paragraphs.reduce(0.0) { total, paragraph in
+            let fallback = TextStyleDefaults().relativeFontSize
+                * AlbumPhotoConstants.canonicalPageHeight
+            let maximumFontHeight = paragraph.runs.map {
+                $0.relativeFontSize * AlbumPhotoConstants.canonicalPageHeight
+            }.max() ?? fallback
+            let estimatedWidth = paragraph.runs.reduce(0.0) { partial, run in
+                let fontHeight = run.relativeFontSize
+                    * AlbumPhotoConstants.canonicalPageHeight
+                return partial + Double(run.text.count) * fontHeight
+                    * averageGlyphWidthFactor
+            }
+            let lineCount = max(1, Int(ceil(estimatedWidth / widthUnits)))
+            return total + Double(lineCount) * maximumFontHeight * paragraph.lineSpacing
         }
-        return Double(lines) * lineHeight > heightUnits
+        return heightUnits / AlbumPhotoConstants.canonicalPageHeight
+    }
+}
+
+public enum TextInitialStyleEngine {
+    /// Chooses the initial text color only; existing text is never passed to
+    /// this function and therefore can never be recolored by a background.
+    public static func color(for background: BackgroundSelection) -> SRGBAColor {
+        switch background {
+        case .none:
+            return .black
+        case let .solid(color):
+            return relativeLuminance(color) > 0.179 ? .black : .white
+        case let .catalog(reference):
+            return BackgroundCatalog.theme(id: reference.catalogID)?.textContrastHint
+                == .lightText ? .white : .black
+        }
+    }
+
+    private static func relativeLuminance(_ color: SRGBAColor) -> Double {
+        func linear(_ component: Double) -> Double {
+            let bounded = min(1, max(0, component))
+            return bounded <= 0.04045
+                ? bounded / 12.92
+                : pow((bounded + 0.055) / 1.055, 2.4)
+        }
+        return 0.2126 * linear(color.red)
+            + 0.7152 * linear(color.green)
+            + 0.0722 * linear(color.blue)
     }
 }
 

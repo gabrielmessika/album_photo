@@ -194,6 +194,80 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(service.contains("label: \"Remplir l’album\""))
     }
 
+    // 3:EDT-008, 3:EDT-014, 3:TPL-012, 3:TBX-002...006,
+    // 3:TBX-009...017, 3:TBX-020, 3:TBX-021, 3:TBX-024, 3:TXA-001...004
+    func testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates() throws {
+        let appModule = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
+        let core = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AlbumPhotoCore", isDirectory: true)
+        let editor = try String(
+            contentsOf: appModule.appendingPathComponent("AlbumEditorView.swift"),
+            encoding: .utf8
+        )
+        let textEditor = try String(
+            contentsOf: appModule.appendingPathComponent("AlbumTextEditorView.swift"),
+            encoding: .utf8
+        )
+        let canvas = try String(
+            contentsOf: appModule.appendingPathComponent("PageCanvasView.swift"),
+            encoding: .utf8
+        )
+        let layouts = try String(
+            contentsOf: appModule.appendingPathComponent("LayoutPanelView.swift"),
+            encoding: .utf8
+        )
+        let viewModel = try String(
+            contentsOf: appModule.appendingPathComponent("EditorViewModel.swift"),
+            encoding: .utf8
+        )
+        let service = try String(
+            contentsOf: core.appendingPathComponent("AlbumApplicationService.swift"),
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(textEditor.contains("TextEditor(text: $text, selection: $selection)"))
+        XCTAssertTrue(textEditor.contains("AttributedTextSelection"))
+        XCTAssertTrue(textEditor.contains("AlbumTextFormattingDefinition"))
+        XCTAssertTrue(textEditor.contains(
+            ".textInputFormattingControlVisibility(.hidden, for: .all)"
+        ))
+        XCTAssertTrue(textEditor.contains("newValue.characters.count > 1_000"))
+        XCTAssertTrue(textEditor.contains("acceptedInsertedCount"))
+        XCTAssertTrue(textEditor.contains("result.removeSubrange"))
+        XCTAssertTrue(textEditor.contains("static let runBoundaries"))
+        let orderedCommands = [
+            "fontMenu", "sizeMenu", "Button(\"Gras\"", "Button(\"Italique\"",
+            "colorMenu", "alignmentMenu", "lineSpacingMenu", "opacityMenu"
+        ]
+        var commandOffset = textEditor.startIndex
+        for command in orderedCommands {
+            let range = try XCTUnwrap(textEditor.range(
+                of: command,
+                range: commandOffset..<textEditor.endIndex
+            ), command)
+            commandOffset = range.upperBound
+        }
+
+        XCTAssertTrue(editor.contains("Menu(\"Ajouter\", systemImage: \"plus\")"))
+        XCTAssertTrue(editor.contains(
+            "Button(\"Ajouter du texte\", systemImage: \"text.badge.plus\")"
+        ))
+        XCTAssertTrue(editor.contains(".sheet(item: $model.textEditingRequest)"))
+        XCTAssertTrue(viewModel.contains("func beginAddingText()"))
+        XCTAssertTrue(viewModel.contains("func commitTextEditing("))
+        XCTAssertTrue(viewModel.contains("firstOverflowingTextLocation"))
+        XCTAssertTrue(canvas.contains("Label(\"Ajouter du texte\""))
+        XCTAssertTrue(canvas.contains("TextPrototypeEngine.overflows"))
+        XCTAssertTrue(canvas.contains("model.handleCanvasTap("))
+        XCTAssertFalse(layouts.contains("!template.textSlots.isEmpty"))
+        XCTAssertFalse(layouts.contains("prochain incrément"))
+        XCTAssertTrue(service.contains("public func addTextBox("))
+        XCTAssertTrue(service.contains("public func updateTextBox("))
+        XCTAssertTrue(service.contains("label: \"Ajouter du texte\""))
+        XCTAssertTrue(service.contains("label: \"Modifier le texte\""))
+    }
+
     // Lot 0, 3:PKG-003, 3:PKG-005...3:PKG-007
     func testPhotoAlbumSchemaAndExamplesAreValidJSONAndChecksumsAreLowercaseSHA256() throws {
         let docs = repositoryRoot.appendingPathComponent("docs", isDirectory: true)

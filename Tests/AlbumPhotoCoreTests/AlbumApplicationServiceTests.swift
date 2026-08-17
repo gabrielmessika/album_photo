@@ -622,6 +622,114 @@ final class AlbumApplicationServiceTests: XCTestCase {
         )
     }
 
+    // 3:TBX-001...3:TBX-002, 3:TBX-012, 3:TBX-019, 3:TBX-023...3:TBX-025
+    func testAddAndEditTextAreAtomicUndoableCommandsWithAutomaticHeight() async throws {
+        let service = TestFixtures.service()
+        let initial = try await service.createAlbum(named: "Texte")
+        let pageID = initial.pages[0].id
+        let textID = UUID()
+        let style = TextStyleDefaults(
+            fontID: "system.serif",
+            relativeFontSize: 96 / AlbumPhotoConstants.canonicalPageHeight,
+            weight: .bold,
+            isItalic: true,
+            color: .white,
+            alignment: .leading,
+            lineSpacing: 2
+        )
+        let content = TextBoxContent(paragraphs: [TextParagraph(
+            alignment: .leading,
+            lineSpacing: 2,
+            runs: [TextRun(text: String(repeating: "Album ", count: 80), style: style)]
+        )])
+
+        let added = try await service.addTextBox(
+            to: pageID,
+            in: initial.id,
+            content: content,
+            typingDefaults: style,
+            opacity: 0.75,
+            elementID: textID
+        )
+        let text = try XCTUnwrap(added.pages[0].element(id: textID)?.textBox)
+        XCTAssertEqual(text.geometry.width, 0.60)
+        XCTAssertGreaterThan(text.geometry.height, 0.12)
+        XCTAssertEqual(text.geometry.order, AlbumPhotoConstants.elementOrderStep)
+        XCTAssertEqual(text.opacity, 0.75)
+        XCTAssertTrue(text.usesAutomaticHeight)
+
+        let editedContent = TextBoxContent(paragraphs: [TextParagraph(
+            alignment: .center,
+            runs: [TextRun(text: "Titre", style: TextStyleDefaults())]
+        )])
+        let edited = try await service.updateTextBox(
+            textID,
+            on: pageID,
+            in: initial.id,
+            content: editedContent,
+            typingDefaults: TextStyleDefaults(),
+            opacity: 1
+        )
+        XCTAssertEqual(
+            edited.pages[0].element(id: textID)?.textBox?.content.plainText,
+            "Titre"
+        )
+
+        let undoneEdit = try await service.undo(albumID: initial.id)
+        XCTAssertEqual(undoneEdit.pages[0].element(id: textID)?.textBox?.content, content)
+        let undoneAdd = try await service.undo(albumID: initial.id)
+        XCTAssertNil(undoneAdd.pages[0].element(id: textID))
+    }
+
+    // 3:TBX-018, 3:TBX-019, 3:TPL-011
+    func testManualTextResizeDisablesAutomaticHeightWithoutChangingFont() async throws {
+        let service = TestFixtures.service()
+        let initial = try await service.createAlbum(named: "Texte redimensionné")
+        let pageID = initial.pages[0].id
+        let textID = UUID()
+        let style = TextStyleDefaults()
+        let content = TextBoxContent(paragraphs: [TextParagraph(
+            runs: [TextRun(text: "Texte", style: style)]
+        )])
+        let added = try await service.addTextBox(
+            to: pageID,
+            in: initial.id,
+            content: content,
+            typingDefaults: style,
+            elementID: textID
+        )
+        var geometry = try XCTUnwrap(
+            added.pages[0].element(id: textID)?.textBox?.geometry
+        )
+        geometry.width = 0.30
+        geometry.height = 0.08
+        let resized = try await service.updateElementGeometry(
+            geometry,
+            elementID: textID,
+            on: pageID,
+            in: initial.id
+        )
+        let resizedText = try XCTUnwrap(resized.pages[0].element(id: textID)?.textBox)
+        XCTAssertFalse(resizedText.usesAutomaticHeight)
+        XCTAssertEqual(
+            resizedText.content.paragraphs[0].runs[0].relativeFontSize,
+            style.relativeFontSize
+        )
+
+        let longer = TextBoxContent(paragraphs: [TextParagraph(
+            runs: [TextRun(text: String(repeating: "Texte ", count: 100), style: style)]
+        )])
+        let updated = try await service.updateTextBox(
+            textID,
+            on: pageID,
+            in: initial.id,
+            content: longer,
+            typingDefaults: style,
+            opacity: 1
+        )
+        XCTAssertEqual(updated.pages[0].element(id: textID)?.textBox?.geometry, geometry)
+    }
+
     // 3:AUT-001...3:AUT-008, 3:AUT-018, 3:AUT-019
     func testAutomaticLayoutRecomposesStructuralPhotoCommandsAndIsUndoable() async throws {
         let service = TestFixtures.service()

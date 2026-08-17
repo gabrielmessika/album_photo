@@ -23,19 +23,21 @@ l’iPad déclaré selon le retour global « les tests sont ok », sans capture 
 détail par étape. Le retour demande ensuite une action compacte ouvrant le
 choix de densité et le compteur dans un dialogue, ainsi qu’un cadrage initial
 couvrant pour toute nouvelle affectation. L’adaptation est figée dans
-`3944fae199b2eb37c7b1f0a1aae5558197455b87`, passe 139 tests Core et doit être
-qualifiée par `IPAD-L2-019`. La source normative reste
+`3944fae199b2eb37c7b1f0a1aae5558197455b87`, passe 139 tests Core et réussit
+`IPAD-L2-019` selon le retour global « tout est ok ». Le candidat suivant,
+encore à figer, active les zones de texte et passe 146 tests Core ;
+`IPAD-L2-020` doit le qualifier. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
-Elle ne déclare pas `ACPT-125` réussi : Remplir l’album est qualifié sur l’iPad
-déclaré dans sa version `7815396…`, mais `IPAD-L2-019` et les autres sorties du
-lot restent à valider ; `IPAD-L2-008` reste bloqué pour la seule
-largeur compacte. Les échecs
+Elle ne déclare pas `ACPT-125` réussi : Remplir l’album, son dialogue compact et
+le cadrage couvrant sont qualifiés jusqu’à `IPAD-L2-019`, mais les zones de
+texte et les autres sorties du lot restent à valider ; `IPAD-L2-008` reste
+bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
-`010` et `011`. Les zones de texte éditables, stickers, cadres décoratifs et
-presse-papiers multi-types appartiennent aux incréments suivants.
+`010` et `011`. Les stickers, cadres décoratifs et le presse-papiers
+multi-types appartiennent aux incréments suivants.
 
 ## Contrôles automatisés
 
@@ -48,9 +50,11 @@ presse-papiers multi-types appartiennent aux incréments suivants.
 | `A-L2-UI-PARSE` | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` | structure de `EDT-001…004`, `EDT-019`, `RND-001`, `AUT-001` | Syntaxe seulement, sans type-check SwiftUI ni disponibilité des SF Symbols |
 | `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel`, `testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity` | `EDT-001`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017`, `AUT-009…011` | Vérifie le bouton compact, l’absence de groupe permanent, le dialogue interne, les trois densités, Annuler/Valider et le service de remplissage ; pas le rendu Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
+| `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, tests de service et de modèles | `TBX-001…020`, `TBX-023…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017` | Prouve les primitives de modèles, styles persistants, contraste initial, limite, hauteur/débordement, géométrie et atomicité dans le Core ; pas l’éditeur Apple ni les exigences intégrées complètes |
+| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024`, `TXA-001`, `TXA-002` | Contrat source et parse uniquement ; API riches, clavier, sélection, collage, rendu et accessibilité doivent compiler et être testés sur Apple |
 
-La suite WSL complète compte 139 tests sans échec après l’ajout du cadrage
-couvrant et du dialogue compact. Les
+La suite WSL complète compte 146 tests sans échec après l’ajout du texte,
+du cadrage couvrant et du dialogue compact. Les
 contrats publiés et leurs dix empreintes sont également valides. Ces résultats
 ne remplacent aucune fiche iPad.
 
@@ -76,7 +80,8 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-016` | Cadre lisible de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — app figée, aucune confirmation affichée |
 | `IPAD-L2-017` | Dialogue interne sans gel | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `AUT-009…012`, `FRM-009`, `TPL-005`, `UND-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `7815396…`, retour global sans capture ni détail par étape |
-| `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage couvrant | `DEC-07`, section 3.1, `AUT-002`, `AUT-004`, `AUT-009…011`, `PHO-005`, `PHO-006`, `PHO-014`, `FRM-004`, `FRM-009`, `CRP-001`, `CRP-004…007`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `3944fae…` |
+| `IPAD-L2-019` | Bouton compact, dialogue de densité et cadrage couvrant | `DEC-07`, section 3.1, `AUT-002`, `AUT-004`, `AUT-009…011`, `PHO-005`, `PHO-006`, `PHO-014`, `FRM-004`, `FRM-009`, `CRP-001`, `CRP-004…007`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — candidat `3944fae…`, retour global sans capture ni détail par étape |
+| `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — candidat à figer |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -107,12 +112,15 @@ suppression du formulaire défilant et de la hauteur fixe.
 
 ## Écarts connus de l’incrément
 
-- Les variantes avec un slot texte sont listées pour vérifier le catalogue,
-  mais désactivées jusqu’à l’intégration de `TBX-004` et `TPL-012`.
+- Les variantes avec un slot texte et l’éditeur sont actives dans le nouveau
+  candidat, mais restent à compiler et qualifier sous `IPAD-L2-020`.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
-  `3944fae…` restent à qualifier sous `IPAD-L2-019`, et `ACPT-125` demeure
+  `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure
   incomplet jusqu’aux autres sorties et qualifications Apple applicables.
+- L’ADR-003 documente l’absence d’alignement justifié dans l’API SwiftUI
+  publique utilisée : `TBX-011` reste partiel, comme `TBX-007`, `TBX-021` et
+  le regroupement de frappe `TBX-022`.
 - Aucun sticker ni cadre décoratif n’est persisté avant le gel des assets,
   licences et goldens exigé par `CAT-009`.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste

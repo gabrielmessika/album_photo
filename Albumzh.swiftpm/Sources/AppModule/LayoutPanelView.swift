@@ -95,16 +95,6 @@ struct LayoutPanelView: View {
                     : "Sera utilisée à la prochaine activation d’Auto."
             )
 
-            if includesText {
-                Label(
-                    "Ces variantes seront activées avec l’éditeur de texte du prochain incrément.",
-                    systemImage: "textformat"
-                )
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            }
-
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(filteredTemplates) { template in
@@ -162,14 +152,10 @@ struct LayoutPanelView: View {
             }
         }
         .buttonStyle(.plain)
-        .disabled(model.isReadOnly || !template.textSlots.isEmpty)
+        .disabled(model.isReadOnly)
         .accessibilityLabel(templateAccessibilityLabel(template))
         .accessibilityValue(isSelected ? "Sélectionné" : "")
-        .accessibilityHint(
-            template.textSlots.isEmpty
-                ? "Applique cette mise en page à la page active"
-                : "Disponible avec l’éditeur de texte du prochain incrément"
-        )
+        .accessibilityHint("Applique cette mise en page à la page active")
     }
 
     private func selectCurrentPhotoCount() {

@@ -128,4 +128,83 @@ final class TextEditingPrototypeTests: XCTestCase {
         XCTAssertEqual(result.count, 1_000)
         XCTAssertTrue(result.hasSuffix("x"))
     }
+
+    // 3:TBX-013, 3:TBX-025
+    func testBuiltInFontManifestUsesUniqueOfflineSystemDesigns() {
+        let fonts = BuiltInTextFontCatalog.manifest
+        XCTAssertEqual(Set(fonts.map(\.id)).count, fonts.count)
+        XCTAssertEqual(
+            Set(fonts.map(\.design)),
+            Set<TextFontDesignValue>([.standard, .serif, .rounded, .monospaced])
+        )
+        XCTAssertEqual(BuiltInTextFontCatalog.definition(id: "system")?.design, .standard)
+        XCTAssertNil(BuiltInTextFontCatalog.definition(id: "downloaded-font"))
+    }
+
+    // 3:BG-011, 3:BG-016, 3:TBX-025
+    func testInitialTextColorUsesBackgroundContrastWithoutChangingContent() {
+        XCTAssertEqual(TextInitialStyleEngine.color(for: .none), .black)
+        XCTAssertEqual(
+            TextInitialStyleEngine.color(for: .solid(SRGBAColor(
+                red: 0.95,
+                green: 0.95,
+                blue: 0.95
+            ))),
+            .black
+        )
+        XCTAssertEqual(
+            TextInitialStyleEngine.color(for: .solid(SRGBAColor(
+                red: 0.05,
+                green: 0.05,
+                blue: 0.05
+            ))),
+            .white
+        )
+        XCTAssertEqual(
+            TextInitialStyleEngine.color(for: .catalog(
+                BackgroundCatalog.themes.first {
+                    $0.textContrastHint == .lightText
+                }!.reference
+            )),
+            .white
+        )
+    }
+
+    // 3:TBX-018...3:TBX-020
+    func testAutomaticHeightUsesLargestRunAndParagraphLineSpacing() {
+        let large = TextStyleDefaults(
+            relativeFontSize: 96 / AlbumPhotoConstants.canonicalPageHeight,
+            lineSpacing: 2
+        )
+        let content = TextBoxContent(paragraphs: [
+            TextParagraph(
+                alignment: .leading,
+                lineSpacing: 2,
+                runs: [TextRun(text: String(repeating: "M", count: 350), style: large)]
+            )
+        ])
+        let original = ElementGeometry(width: 0.60, height: 0.12)
+        let fitted = TextPrototypeEngine.automaticallyFittedGeometry(
+            for: content,
+            from: original
+        )
+        XCTAssertGreaterThan(fitted.height, original.height)
+        XCTAssertFalse(TextPrototypeEngine.overflows(content: content, geometry: fitted))
+        XCTAssertTrue(TextPrototypeEngine.overflows(
+            content: content,
+            geometry: ElementGeometry(width: 0.60, height: 0.12)
+        ))
+
+        let small = TextStyleDefaults(
+            relativeFontSize: 8 / AlbumPhotoConstants.canonicalPageHeight
+        )
+        XCTAssertEqual(
+            TextPrototypeEngine.requiredHeight(
+                for: self.content("M", style: small),
+                width: 0.60
+            ),
+            8 / AlbumPhotoConstants.canonicalPageHeight,
+            accuracy: 0.000_001
+        )
+    }
 }

@@ -41,7 +41,12 @@ struct HelpView: View {
             HelpSection(
                 title: "Modèles, dé et Auto",
                 symbol: "rectangle.3.group",
-                text: "Le panneau Mise en page applique un modèle à la page active. Le dé parcourt les autres modèles compatibles sans changer le nombre d’éléments. Auto réorganise les cadres photo remplis après chaque ajout ou retrait ; une transformation manuelle d’un cadre photo le désactive pour cette page."
+                text: "Le panneau Mise en page applique un modèle à la page active, y compris ses emplacements de texte. Le dé parcourt les autres modèles compatibles sans changer le nombre d’éléments. Auto réorganise les cadres photo remplis après chaque ajout ou retrait ; une transformation manuelle d’un cadre photo le désactive pour cette page."
+            ),
+            HelpSection(
+                title: "Zones de texte",
+                symbol: "textformat",
+                text: "Ajouter du texte crée une zone centrée. Sélectionnez-la puis touchez-la à nouveau, ou utilisez Modifier le texte, pour saisir et mettre en forme une sélection. Terminer enregistre une seule action ; Annuler restaure le contenu initial. Un contour rouge signale un débordement qui bloque la prévisualisation."
             ),
             HelpSection(
                 title: "Fonds",
@@ -112,7 +117,7 @@ private struct HelpSection: Identifiable {
             return HelpSection(
                 title: "Panneau Mise en page",
                 symbol: "rectangle.3.group",
-                text: "Filtrez les modèles par nombre de photos. Les variantes avec texte sont visibles mais seront activées avec l’éditeur de texte du prochain incrément."
+                text: "Filtrez les modèles par nombre de photos et par présence d’une zone de texte. Une zone vide affiche Ajouter du texte uniquement dans l’éditeur et reste absente de la prévisualisation."
             )
         case .backgrounds:
             return HelpSection(

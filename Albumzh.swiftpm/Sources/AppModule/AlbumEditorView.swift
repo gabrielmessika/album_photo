@@ -294,6 +294,22 @@ private struct AlbumEditorScene: View {
                 }
             }
         }
+        .sheet(item: $model.textEditingRequest) { request in
+            AlbumTextEditorView(
+                request: request,
+                onCancel: { model.cancelTextEditing() },
+                onCommit: { content, defaults, opacity in
+                    Task {
+                        await model.commitTextEditing(
+                            request,
+                            content: content,
+                            typingDefaults: defaults,
+                            opacity: opacity
+                        )
+                    }
+                }
+            )
+        }
         .sheet(item: $model.helpContext) { context in
             HelpView(context: context)
         }
@@ -437,7 +453,21 @@ private struct AlbumEditorScene: View {
                 .background(Color.orange.opacity(0.16))
             }
 
-            EditablePageCanvas(model: model)
+            ZStack(alignment: .topTrailing) {
+                EditablePageCanvas(model: model)
+
+                if model.cropDraft == nil {
+                    Button("Ajouter du texte", systemImage: "text.badge.plus") {
+                        model.beginAddingText()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(model.isReadOnly)
+                    .padding(12)
+                    .accessibilityHint(
+                        "Crée une zone centrée au premier plan et ouvre le clavier."
+                    )
+                }
+            }
 
             pageWorkspaceCommands
             .padding(.horizontal)
@@ -755,7 +785,16 @@ private struct AlbumEditorScene: View {
                 Divider()
             }
 
-            Text("Cadre")
+            if model.selectedTextBox != nil {
+                Text("Zone de texte")
+                    .font(.headline)
+                inspectorButton("Modifier le texte", systemImage: "textformat") {
+                    model.beginEditingSelectedText()
+                }
+                Divider()
+            }
+
+            Text(model.selectedPhotoFrame != nil ? "Cadre" : "Élément")
                 .font(.headline)
             inspectorButton("Rotation…", systemImage: "rotate.right") {
                 presentRotationEditor()
@@ -855,6 +894,18 @@ private struct AlbumEditorScene: View {
         }
 
         ToolbarItemGroup(placement: .topBarTrailing) {
+            Menu("Ajouter", systemImage: "plus") {
+                Button("Ajouter un cadre photo", systemImage: "photo.badge.plus") {
+                    Task { await model.addEmptyPhotoFrame() }
+                }
+                .disabled(!model.canAddEmptyPhotoFrame)
+
+                Button("Ajouter du texte", systemImage: "text.badge.plus") {
+                    model.beginAddingText()
+                }
+            }
+            .disabled(model.cropDraft != nil || model.isReadOnly)
+
             Toggle(
                 "Mise en page auto",
                 systemImage: "wand.and.stars",
@@ -995,7 +1046,7 @@ private struct AlbumEditorScene: View {
             .padding(8)
             .background(.bar)
         } else if model.presentationMode == .global {
-            Picker("Mode d’affichage", selection: $model.presentationMode) {
+            Picker("Mode d’affichage", selection: presentationModeBinding) {
                 ForEach(EditorPresentationMode.allCases) { mode in
                     Label(mode.title, systemImage: mode.symbol)
                         .accessibilityLabel(mode.accessibilityLabel)
@@ -1040,7 +1091,7 @@ private struct AlbumEditorScene: View {
                     Divider().frame(height: 24)
                 }
 
-                Picker("Mode d’affichage", selection: $model.presentationMode) {
+                Picker("Mode d’affichage", selection: presentationModeBinding) {
                     ForEach(EditorPresentationMode.allCases) { mode in
                         Label(mode.title, systemImage: mode.symbol)
                             .accessibilityLabel(mode.accessibilityLabel)
@@ -1107,6 +1158,12 @@ private struct AlbumEditorScene: View {
                                     .accessibilityDescription ?? ""
                             )
                         }
+                    }
+                }
+
+                if model.selectedTextBox != nil {
+                    Button("Modifier le texte", systemImage: "textformat") {
+                        model.beginEditingSelectedText()
                     }
                 }
 
@@ -1325,6 +1382,13 @@ private struct AlbumEditorScene: View {
         .padding(.horizontal)
         .padding(.vertical, 8)
         .background(.bar)
+    }
+
+    private var presentationModeBinding: Binding<EditorPresentationMode> {
+        Binding(
+            get: { model.presentationMode },
+            set: { model.requestPresentationMode($0) }
+        )
     }
 
     private var canMoveDepthForward: Bool {

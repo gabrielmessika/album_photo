@@ -88,19 +88,24 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   aussi la règle de placement initial : une nouvelle photo est centrée au plus
   petit zoom uniforme couvrant le cadre, qu’il faille l’agrandir ou la réduire ;
   les cadrages déjà persistés ne sont pas migrés. Cette adaptation est figée
-  dans `3944fae199b2eb37c7b1f0a1aae5558197455b87` et doit être qualifiée sous
-  `IPAD-L2-019`.
+  dans `3944fae199b2eb37c7b1f0a1aae5558197455b87` et `IPAD-L2-019` réussit
+  selon le retour global « tout est ok ». Le développement active maintenant
+  les zones de texte : ajout depuis la page ou le menu, éditeur riche SwiftUI
+  iOS 26, quatre polices système hors ligne, styles de caractères et de
+  paragraphes, opacité, limite de 1 000 caractères, hauteur automatique,
+  avertissement de débordement et modèles avec texte. Ce candidat passe 146
+  tests Core mais reste à figer, compiler et qualifier sous `IPAD-L2-020`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
   migration. Les panneaux publics sont maintenant `Photos`, `Mise en page` et
-  `Fonds`. Les variantes avec texte restent visibles mais désactivées jusqu’à
-  l’éditeur de texte ; stickers, cadres décoratifs et presse-papiers
+  `Fonds`. Les variantes avec texte sont actives dans le candidat en cours ;
+  stickers, cadres décoratifs et presse-papiers
   multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
-- Validation actuelle : 139 tests du noyau multiplateforme, les contrats et la
+- Validation actuelle : 146 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
@@ -117,9 +122,13 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   étape. Remplir l’album porte la suite historique à 137 tests Core et passe
   l’analyse syntaxique WSL ; `IPAD-L2-018` est 🟢 `RÉUSSI` sur `7815396…`
   d’après le retour global « les tests sont ok ». La nouvelle présentation
-  compacte et la nouvelle règle de cadrage disposent de tests Core/contrat UI
-  mis à jour sur `3944fae…`, mais leur compilation, rendu et comportement Apple
-  restent ⚪ `NON TESTÉ` sous `IPAD-L2-019`.
+  compacte et la nouvelle règle de cadrage sont 🟢 sous `IPAD-L2-019` sur
+  `3944fae…`, d’après un retour global sans capture ni détail par étape. Le
+  premier incrément texte dispose de tests Core, contrats source et analyse
+  syntaxique ; sa compilation, son rendu et ses gestes Apple restent ⚪ sous
+  `IPAD-L2-020`. L’alignement justifié, le regroupement de frappe à 750 ms,
+  l’export bloqué et la conservation fine des attributs d’un collage externe
+  restent explicitement partiels.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
