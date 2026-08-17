@@ -14,6 +14,53 @@ private struct PhotoDescriptionRequest: Identifiable {
     var id: UUID { elementID }
 }
 
+private struct PageAdditionConfirmationSheet: View {
+    @Binding var doNotAskAgain: Bool
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text(
+                        "Une page vide sera ajoutée à la fin de l’album et deviendra la page active."
+                    )
+                }
+
+                Section {
+                    Button {
+                        doNotAskAgain.toggle()
+                    } label: {
+                        Label(
+                            "Ne plus demander",
+                            systemImage: doNotAskAgain ? "checkmark.square.fill" : "square"
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityValue(doNotAskAgain ? "Coché" : "Non coché")
+                } footer: {
+                    Text(
+                        "Ce choix reste modifiable dans Gérer les pages et sera réinitialisé à la fermeture de l’album."
+                    )
+                }
+            }
+            .navigationTitle("Ajouter une page ?")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler", action: onCancel)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Ajouter la page", action: onConfirm)
+                }
+            }
+        }
+        .presentationDetents([.height(280)])
+        .interactiveDismissDisabled()
+    }
+}
+
 struct AlbumEditorView: View {
     @EnvironmentObject private var appModel: AppModel
     let albumID: UUID
@@ -90,6 +137,13 @@ private struct AlbumEditorScene: View {
                 showsRename = false
                 Task { await model.renameAlbum(to: name) }
             }
+        }
+        .sheet(isPresented: $model.showsPageAdditionConfirmation) {
+            PageAdditionConfirmationSheet(
+                doNotAskAgain: $model.pageAdditionDoNotAskAgainDraft,
+                onCancel: { model.cancelPageAddition() },
+                onConfirm: { Task { await model.confirmPageAddition() } }
+            )
         }
         .sheet(item: $rotationRequest) { request in
             ElementRotationSheet(
@@ -316,7 +370,7 @@ private struct AlbumEditorScene: View {
 
     private func addPageButton(title: String?) -> some View {
         Button {
-            Task { await model.addPage() }
+            Task { await model.requestPageAddition() }
         } label: {
             if let title {
                 Label(title, systemImage: "rectangle.stack.badge.plus")
@@ -329,7 +383,7 @@ private struct AlbumEditorScene: View {
         .controlSize(.large)
         .disabled(model.isReadOnly)
         .accessibilityLabel("Ajouter une page")
-        .accessibilityHint("Crée une page vide après la page active.")
+        .accessibilityHint("Propose de créer une page vide à la fin de l’album.")
     }
 
     private var pageNavigation: some View {

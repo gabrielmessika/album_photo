@@ -49,9 +49,9 @@ struct HelpView: View {
                 text: "Un fond s’applique immédiatement à la page active. Appliquer à toutes les pages est une commande distincte et annulable."
             ),
             HelpSection(
-                title: "Vue globale",
+                title: "Ajouter et gérer les pages",
                 symbol: "square.grid.2x2",
-                text: "La vue globale sert à ajouter, supprimer et réorganiser les pages. Touchez une miniature pour revenir à cette page. Elle ne permet pas de modifier les éléments internes."
+                text: "Gérer les pages sert à ajouter une page à la fin de l’album, supprimer et réorganiser les pages. Touchez une miniature pour revenir à cette page. Le réglage Ne plus demander désactive la confirmation d’ajout jusqu’à la fermeture de l’album."
             ),
             HelpSection(
                 title: "Alertes de qualité",
@@ -130,7 +130,7 @@ private struct HelpSection: Identifiable {
             return HelpSection(
                 title: "Gérer les pages",
                 symbol: "square.grid.2x2",
-                text: "Les miniatures représentent une seule page chacune. Il n’existe aucun affichage ni réglage en double page."
+                text: "Les miniatures représentent une seule page chacune. Une nouvelle page est toujours ajoutée à la fin de l’album. Il n’existe aucun affichage ni réglage en double page."
             )
         case .editor:
             return HelpSection(

@@ -278,6 +278,9 @@ final class EditorViewModel: ObservableObject {
     @Published var layoutTemplateConfirmation: LayoutTemplateConfirmationRequest?
     @Published var showsAutomaticLayoutConfirmation = false
     @Published var showsAutomaticLayoutDisabledNotice = false
+    @Published var skipsPageAdditionConfirmation = false
+    @Published var showsPageAdditionConfirmation = false
+    @Published var pageAdditionDoNotAskAgainDraft = false
 
     init(albumID: UUID, appModel: AppModel) {
         self.albumID = albumID
@@ -749,13 +752,33 @@ final class EditorViewModel: ObservableObject {
         interaction = .idle
     }
 
-    func addPage() async {
-        guard let current = activePageID else { return }
+    func requestPageAddition() async {
+        guard !isReadOnly, cropDraft == nil else { return }
+        if skipsPageAdditionConfirmation {
+            await addPageToEnd()
+        } else {
+            pageAdditionDoNotAskAgainDraft = false
+            showsPageAdditionConfirmation = true
+        }
+    }
+
+    func cancelPageAddition() {
+        showsPageAdditionConfirmation = false
+        pageAdditionDoNotAskAgainDraft = false
+    }
+
+    func confirmPageAddition() async {
+        skipsPageAdditionConfirmation = pageAdditionDoNotAskAgainDraft
+        showsPageAdditionConfirmation = false
+        pageAdditionDoNotAskAgainDraft = false
+        await addPageToEnd()
+    }
+
+    private func addPageToEnd() async {
         let newID = UUID()
         await mutate("Impossible d’ajouter la page.") {
             try await self.service.addPage(
                 to: self.albumID,
-                after: current,
                 pageID: newID
             )
         }

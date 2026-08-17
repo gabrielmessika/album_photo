@@ -449,7 +449,6 @@ final class PersistenceAndHashTests: XCTestCase {
 
             let first = try await service.addPage(
                 to: album.id,
-                after: album.pages[0].id,
                 pageID: pageID,
                 now: TestFixtures.date.addingTimeInterval(1),
                 commandID: commandID
@@ -460,7 +459,6 @@ final class PersistenceAndHashTests: XCTestCase {
 
             let retry = try await service.addPage(
                 to: album.id,
-                after: album.pages[0].id,
                 pageID: pageID,
                 now: TestFixtures.date.addingTimeInterval(1),
                 commandID: commandID

@@ -1,7 +1,7 @@
 # Spécification fonctionnelle et technique — Application iOS d’albums photo
 
 > **Version :** 3.0<br>
-> **Date :** 16 août 2026<br>
+> **Date :** 17 août 2026<br>
 > **Statut :** projet consolidé — retours de la première campagne iPad intégrés<br>
 > **Plateformes :** iPhone et iPad  
 > **Version minimale :** iOS 26 et iPadOS 26  
@@ -484,7 +484,7 @@ haut à gauche, largeur et hauteur normalisées de `0` à `1`.
 | `EDT-005` | La marge de sécurité, un prix, Commander et toute commande commerciale NE DOIVENT PAS apparaître. |
 | `EDT-006` | Changer ou fermer un panneau NE DOIT PAS modifier ni désélectionner l’élément courant. |
 | `EDT-007` | L’état de sauvegarde DOIT afficher Enregistré, Enregistrement… ou Échec de sauvegarde selon le dernier résultat durable. |
-| `EDT-008` | La page DOIT proposer une action rapide Ajouter une page près du zoom et de la navigation. Ajouter une photo reste accessible depuis le panneau Photos ou un cadre vide. Ajouter du texte reste accessible dans la page et dans le menu d’ajout conformément à `TBX-002`, hors du groupe zoom et navigation. |
+| `EDT-008` | La page DOIT proposer une action rapide Ajouter une page près du zoom et de la navigation. Cette action ouvre la confirmation de `PAG-017`, sauf si l’utilisateur l’a désactivée pour la session courante de l’album. Ajouter une photo reste accessible depuis le panneau Photos ou un cadre vide. Ajouter du texte reste accessible dans la page et dans le menu d’ajout conformément à `TBX-002`, hors du groupe zoom et navigation. |
 
 ### 7.2.1 Libellés et icônes fonctionnelles
 
@@ -612,7 +612,7 @@ commande.
 | ID | Exigence |
 |---|---|
 | `PAG-001` | Un album DOIT toujours contenir au moins une page. |
-| `PAG-002` | Le bouton rapide Ajouter une page sous le canevas et celui de la vue globale DOIVENT créer une page vide immédiatement après la page active et rendre cette nouvelle page active. |
+| `PAG-002` | Le bouton rapide Ajouter une page sous le canevas et celui de la vue globale DOIVENT créer une page vide à la fin de l’album et rendre cette nouvelle page active, quelle que soit la page active avant l’action. |
 | `PAG-003` | Le gestionnaire des pages DOIT afficher des miniatures numérotées. |
 | `PAG-004` | Une pression longue suivie d’un glissement DOIT permettre de réorganiser les pages. |
 | `PAG-005` | La réorganisation DOIT être enregistrée comme une seule action annulable. |
@@ -624,9 +624,10 @@ commande.
 | `PAG-011` | Les numéros affichés DOIVENT être recalculés après une réorganisation. |
 | `PAG-012` | L’application DOIT garantir son fonctionnement jusqu’à cent pages par album et DOIT avertir l’utilisateur au-delà sans imposer de limite arbitraire si les ressources de l’appareil restent suffisantes. |
 | `PAG-013` | Vue page DOIT afficher sous le canevas une barre ordonnée Ajouter une page, commandes de zoom, Précédent, `Page N sur M`, Suivant. Les états suivent `NAV-001` à `NAV-003` et les icônes le tableau 7.2.1 ; le compteur est accessible mais non interactif. |
-| `PAG-014` | Vue globale DOIT placer Ajouter une page dans sa barre d’outils. Chaque miniature DOIT offrir Réorganiser par poignée ou geste et Supprimer la page par menu contextuel ; les alternatives VoiceOver appliquent les mêmes règles et icônes que le tableau 7.2.1. |
+| `PAG-014` | Gérer les pages DOIT placer Ajouter une page dans sa barre d’outils et permettre de modifier le réglage de session « Ne plus demander avant d’ajouter une page » défini par `PAG-017`. Chaque miniature DOIT offrir Réorganiser par poignée ou geste et Supprimer la page par menu contextuel ; les alternatives VoiceOver appliquent les mêmes règles et icônes que le tableau 7.2.1. |
 | `PAG-015` | Une page créée par Ajouter une page DOIT utiliser le fond par défaut de `BG-002`, l’état de mise en page de `AUT-015`, une liste d’éléments et un ordre d’accessibilité vides. Elle NE DOIT PAS copier implicitement le fond ou les éléments de la page active. |
 | `PAG-016` | Pendant une réorganisation par glisser-déposer, Vue globale DOIT afficher dans l’espace entre les miniatures un indicateur d’insertion clignotant avant la page cible ou après la dernière page, et non le superposer au contenu de la cible. Si Réduire les animations est actif, l’indicateur reste fixe et visible. Après Rétablir d’une commande ayant recréé une page supprimée, cette page recréée DOIT devenir la page active et être distinguée par un contour renforcé et un libellé « Page active », sans dépendre de la couleur seule. |
+| `PAG-017` | Toute commande Ajouter une page DOIT demander confirmation avant de modifier l’album. La fenêtre DOIT proposer Annuler, Ajouter la page et une case « Ne plus demander ». Annuler NE DOIT créer aucune page ni modifier le réglage. Lorsque la case est cochée et que l’ajout est confirmé, les ajouts suivants NE DOIVENT plus afficher cette fenêtre pendant la session d’édition courante de l’album. Ce réglage DOIT rester modifiable dans Gérer les pages, NE DOIT PAS être sérialisé et DOIT revenir à la confirmation active après fermeture puis réouverture de l’album. |
 
 ## 7.5 Raccourcis clavier
 

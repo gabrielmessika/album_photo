@@ -97,10 +97,12 @@ final class ManifestContractTests: XCTestCase {
         }
     }
 
-    // 3:EDT-003, 3:EDT-008, 3:EDT-016, 3:EDT-020, 3:PAG-002, 3:PAG-013
-    func testPageWorkspaceUsesQuickPageAdditionAndExplicitPageManagementLabel() throws {
+    // 3:EDT-003, 3:EDT-008, 3:EDT-016, 3:EDT-020, 3:PAG-002, 3:PAG-013, 3:PAG-017
+    func testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel() throws {
         let appModule = repositoryRoot
             .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
+        let core = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AlbumPhotoCore", isDirectory: true)
         let editor = try String(
             contentsOf: appModule.appendingPathComponent("AlbumEditorView.swift"),
             encoding: .utf8
@@ -109,17 +111,36 @@ final class ManifestContractTests: XCTestCase {
             contentsOf: appModule.appendingPathComponent("EditorViewModel.swift"),
             encoding: .utf8
         )
+        let globalPages = try String(
+            contentsOf: appModule.appendingPathComponent("GlobalPagesView.swift"),
+            encoding: .utf8
+        )
+        let service = try String(
+            contentsOf: core.appendingPathComponent("AlbumApplicationService.swift"),
+            encoding: .utf8
+        )
 
         XCTAssertTrue(editor.contains("pageWorkspaceCommandRow(addPageTitle: \"Ajouter une page\")"))
-        XCTAssertTrue(editor.contains("Task { await model.addPage() }"))
+        XCTAssertTrue(editor.contains("Task { await model.requestPageAddition() }"))
+        XCTAssertTrue(editor.contains(".sheet(isPresented: $model.showsPageAdditionConfirmation)"))
+        XCTAssertTrue(editor.contains("\"Ne plus demander\""))
+        XCTAssertTrue(editor.contains("à la fin de l’album"))
         XCTAssertTrue(editor.contains(".accessibilityLabel(\"Ajouter une page\")"))
         XCTAssertFalse(editor.contains("pageWorkspaceCommandRow(addPhotoTitle:"))
         XCTAssertFalse(editor.contains("func addPhotoButton(title:"))
         XCTAssertTrue(editor.contains(".accessibilityLabel(mode.accessibilityLabel)"))
+        XCTAssertTrue(globalPages.contains("Task { await model.requestPageAddition() }"))
+        XCTAssertTrue(globalPages.contains("isOn: $model.skipsPageAdditionConfirmation"))
+        XCTAssertTrue(viewModel.contains("func requestPageAddition() async"))
+        XCTAssertTrue(viewModel.contains("func confirmPageAddition() async"))
+        XCTAssertTrue(viewModel.contains("private func addPageToEnd() async"))
+        XCTAssertTrue(viewModel.contains("@Published var skipsPageAdditionConfirmation = false"))
         XCTAssertTrue(viewModel.contains("case .global: \"Gérer les pages\""))
         XCTAssertTrue(viewModel.contains("case .global: \"Gérer les pages — Vue globale\""))
         XCTAssertFalse(viewModel.contains("case .global: \"Organiser\""))
         XCTAssertFalse(viewModel.contains("func beginNewPhotoFrameChoice()"))
+        XCTAssertTrue(service.contains("album.pages.append(PageSnapshot(id: pageID))"))
+        XCTAssertFalse(service.contains("after activePageID"))
     }
 
     // Lot 0, 3:PKG-003, 3:PKG-005...3:PKG-007

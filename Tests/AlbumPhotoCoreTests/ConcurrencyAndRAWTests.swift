@@ -47,7 +47,6 @@ final class LibraryConcurrencyTests: XCTestCase {
                 group.addTask {
                     _ = try await service.addPage(
                         to: album.id,
-                        after: album.pages[0].id,
                         pageID: pageID
                     )
                 }
@@ -63,7 +62,6 @@ final class LibraryConcurrencyTests: XCTestCase {
         )
         async let page: AlbumSnapshot = service.addPage(
             to: album.id,
-            after: album.pages[0].id,
             pageID: finalPageID
         )
         _ = try await (background, page)

@@ -254,7 +254,7 @@ final class AlbumApplicationServiceTests: XCTestCase {
     }
 
     // 3:PAG-001...3:PAG-011, 3:ACPT-104
-    func testPageAddReorderDeleteAndTwoUndosRestoreInitialOrder() async throws {
+    func testPageAddAppendsReorderDeleteAndTwoUndosRestoreInitialOrder() async throws {
         let service = TestFixtures.service()
         let ids = (0..<5).map { _ in UUID() }
         var album = try await service.createAlbum(
@@ -264,10 +264,10 @@ final class AlbumApplicationServiceTests: XCTestCase {
         for id in ids.dropFirst() {
             album = try await service.addPage(
                 to: album.id,
-                after: album.pages.last!.id,
                 pageID: id
             )
         }
+        XCTAssertEqual(album.pages.map(\.id), ids)
         _ = try await service.reorderPages(
             in: album.id,
             orderedPageIDs: [ids[0], ids[4], ids[1], ids[2], ids[3]]
@@ -294,7 +294,7 @@ final class AlbumApplicationServiceTests: XCTestCase {
     func testBackgroundPerPageApplyAllAndUndoAreAtomic() async throws {
         let service = TestFixtures.service()
         var album = try await service.createAlbum(named: "Guatemala")
-        album = try await service.addPage(to: album.id, after: album.pages[0].id)
+        album = try await service.addPage(to: album.id)
         album = try await service.setBackground(.solid(.black), on: album.pages[0].id, in: album.id)
         XCTAssertEqual(album.pages[0].background, .solid(.black))
         XCTAssertEqual(album.pages[1].background, .classicSpiral)
@@ -377,13 +377,11 @@ final class AlbumApplicationServiceTests: XCTestCase {
         let pageID = UUID()
         _ = try await service.addPage(
             to: album.id,
-            after: album.pages[0].id,
             pageID: pageID,
             commandID: commandID
         )
         let repeated = try await service.addPage(
             to: album.id,
-            after: album.pages[0].id,
             pageID: pageID,
             commandID: commandID
         )
@@ -837,7 +835,7 @@ final class AlbumApplicationServiceTests: XCTestCase {
             elementID: TestFixtures.elementID
         )
         let secondPageID = UUID()
-        album = try await service.addPage(to: album.id, after: album.pages[0].id, pageID: secondPageID)
+        album = try await service.addPage(to: album.id, pageID: secondPageID)
         try await service.copyElement(TestFixtures.elementID, on: initial.pages[0].id, in: initial.id)
         let pastedID = UUID()
         album = try await service.pasteElement(on: secondPageID, in: initial.id, newElementID: pastedID)
@@ -1082,9 +1080,9 @@ final class AlbumApplicationServiceTests: XCTestCase {
     func testNewModificationAfterUndoClearsRedoBranch() async throws {
         let service = TestFixtures.service()
         let album = try await service.createAlbum(named: "Guatemala")
-        _ = try await service.addPage(to: album.id, after: album.pages[0].id)
+        _ = try await service.addPage(to: album.id)
         _ = try await service.undo(albumID: album.id)
-        _ = try await service.addPage(to: album.id, after: album.pages[0].id)
+        _ = try await service.addPage(to: album.id)
         let canRedo = await service.canRedo(albumID: album.id)
         XCTAssertFalse(canRedo)
     }
@@ -1205,7 +1203,6 @@ final class AlbumApplicationServiceTests: XCTestCase {
         let otherPageID = UUID(), existingID = UUID(), crossPageCopyID = UUID()
         album = try await service.addPage(
             to: initial.id,
-            after: initial.pages[0].id,
             pageID: otherPageID
         )
         album = try await service.addPhotoFrame(
@@ -1251,7 +1248,7 @@ final class AlbumApplicationServiceTests: XCTestCase {
         let sceneB = UUID()
         let acquiredByA = await leases.acquire(albumID: album.id, sceneID: sceneA)
         XCTAssertTrue(acquiredByA)
-        _ = try await service.addPage(to: album.id, after: album.pages[0].id)
+        _ = try await service.addPage(to: album.id)
 
         let closedA = try await service.closeEditingSession(albumID: album.id, sceneID: sceneA)
         XCTAssertTrue(closedA)
@@ -1260,7 +1257,6 @@ final class AlbumApplicationServiceTests: XCTestCase {
         let pageAddedByB = UUID()
         _ = try await service.addPage(
             to: album.id,
-            after: album.pages[0].id,
             pageID: pageAddedByB
         )
         let canUndoBeforeStaleClose = await service.canUndo(albumID: album.id)

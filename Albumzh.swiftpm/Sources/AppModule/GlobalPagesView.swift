@@ -51,15 +51,30 @@ struct GlobalPagesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Text("Vue globale")
-                    .font(.headline)
-                Spacer()
-                Button("Ajouter une page", systemImage: "rectangle.stack.badge.plus") {
-                    Task { await model.addPage() }
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("Gérer les pages")
+                        .font(.headline)
+                    Spacer()
+                    Button("Ajouter une page", systemImage: "rectangle.stack.badge.plus") {
+                        Task { await model.requestPageAddition() }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(model.isReadOnly)
                 }
-                .buttonStyle(.borderedProminent)
+
+                Toggle(
+                    "Ne plus demander avant d’ajouter une page",
+                    isOn: $model.skipsPageAdditionConfirmation
+                )
                 .disabled(model.isReadOnly)
+                .accessibilityHint(
+                    "Ce réglage est réinitialisé à la fermeture de l’album."
+                )
+
+                Text("Réglage temporaire, réinitialisé à la fermeture de l’album.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
             .padding()
 

@@ -3,7 +3,10 @@
 Cette matrice couvre le premier incrément interne du Lot 2, d’abord testé au
 commit `d427d4e747dd2de56235341bd661d537a9a31c8e`, puis corrigé dans le candidat
 `024a60bcd7b7a837497a5d6a00e8e42cacfd9366`. L’ajustement de navigation est
-figé dans `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4`. La source normative reste
+figé dans `b86c4b323e0b8d2cfe2fc2e0394ff9d5f3e4e0b4` et réussi sous
+`IPAD-L2-013`. L’évolution suivante ajoute en fin d’album avec une confirmation
+désactivable pour la seule session ; son candidat et sa régression iPad restent
+à figer. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -23,11 +26,11 @@ presse-papiers multi-types appartiennent aux incréments suivants.
 | `A-L2-TEMPLATE` | `LayoutTemplateEngine`, cinq tests de `PrototypeEngineTests`, `AlbumApplicationServiceTests.testApplyingBuiltInTemplateIsOneValidatedUndoableCommand`, `testSmallerBuiltInTemplateRequiresConfirmationWithoutPartialCommit`, `testMovingTemplateTextOnlyFreesThatTextProvenance` | `TPL-004…018`, `TPL-021…023`, `RND-002…006` | Transition pure et transaction mémoire ; dialogue, miniatures et toucher restent manuels |
 | `A-L2-AUTO` | `AutoLayoutEngine`, `AlbumApplicationService.setAutomaticLayoutEnabled`, commandes structurelles Auto et tests `testAutomaticLayoutRecomposesStructuralPhotoCommandsAndIsUndoable`, `testEnablingAutoOnExistingTemplateRequiresConfirmationAndClearsSlots` | `AUT-001…008`, `AUT-012…019`, `PHO-014`, `DAT-037`, `DAT-043` | `AUT-009…011` non implémentés ; UI et persistance Apple non prouvées |
 | `A-L2-UI-PARSE` | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` | structure de `EDT-001…004`, `EDT-019`, `RND-001`, `AUT-001` | Syntaxe seulement, sans type-check SwiftUI ni disponibilité des SF Symbols |
-| `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesQuickPageAdditionAndExplicitPageManagementLabel` | `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013` | Vérifie les libellés et le raccord statique à `addPage()` ; pas le rendu ni le toucher Apple |
+| `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel` | `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017` | Vérifie les deux raccords à la confirmation, le réglage temporaire et l’ajout Core en fin ; pas le rendu ni le toucher Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
 
-La suite WSL complète compte 134 tests sans échec après l’ajustement de la
-barre locale et du libellé de gestion des pages. Les
+La suite WSL complète compte 134 tests sans échec après l’ajout en fin d’album
+et le nouveau parcours de confirmation. Les
 contrats publiés et leurs dix empreintes sont également valides. Ces résultats
 ne remplacent aucune fiche iPad.
 
@@ -47,7 +50,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-010` | Marges, panneau droit et replis indépendants | `EDT-002`, `EDT-006`, `EDT-021`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` |
 | `IPAD-L2-011` | Confirmation Appliquer pour un modèle plus petit | `TPL-005…010`, `TPL-016`, `ERR-022` | 🟢 `RÉUSSI` |
 | `IPAD-L2-012` | Sélection à nom long et commande aléatoire explicite | `ELM-014`, `ACC-002`, `RND-001…005`, `TPL-018`, `EDT-020` | 🟢 `RÉUSSI` |
-| `IPAD-L2-013` | Ajouter une page sous le canevas et Gérer les pages | `EDT-003`, `EDT-008`, `EDT-012`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013…015`, `PHO-004`, `PHO-011`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-013` | Ajouter une page sous le canevas et Gérer les pages | `EDT-003`, `EDT-008`, `EDT-012`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013…015`, `PHO-004`, `PHO-011`, `ACC-002`, `ACC-021` | 🟢 `RÉUSSI` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -64,9 +67,10 @@ ces quatre fiches. Le menu Plus n’est pas demandé au plein écran iPad :
 pages sur iPhone ou dans un environnement Xcode réellement compact.
 
 Le candidat `b86c4b3…` modifie ensuite la barre sous le canevas et le libellé
-du mode pages. `IPAD-L2-013` est la seule preuve manuelle attribuable à cette
-surface modifiée ; les réussites `009…012` restent valides pour leurs surfaces
-inchangées mais ne sont pas extrapolées à ce nouvel ajustement.
+du mode pages. `IPAD-L2-013` réussit cette surface modifiée sur le retour
+« tests ok » ; les réussites `009…012` restent limitées à leurs surfaces.
+L’évolution ultérieure vers l’ajout en fin avec confirmation rend cette preuve
+insuffisante pour le nouveau parcours, qui recevra un nouvel identifiant.
 
 | ID Apple différé | Objet | Exigences principales | État |
 |---|---|---|---|
@@ -89,6 +93,7 @@ inchangées mais ne sont pas extrapolées à ce nouvel ajustement.
 - La troncature ciblée du nom et la nouvelle commande de dé dans Mise en page
   sont validées sur l’iPad par `IPAD-L2-012` ; la matrice iPhone/Xcode reste
   différée.
-- L’action rapide Ajouter une page et le libellé Gérer les pages sont couverts
-  statiquement sous WSL, mais leur rendu, leur effet tactile et leur adaptation
-  doivent être requalifiés sur iPad après gel du candidat.
+- L’action rapide et le libellé Gérer les pages de `b86c4b3…` sont validés par
+  `IPAD-L2-013`. L’ajout désormais placé en fin d’album, la nouvelle fenêtre,
+  sa case et la réinitialisation à la fermeture restent à requalifier sur iPad
+  après gel du nouveau candidat.

@@ -677,17 +677,13 @@ public actor AlbumApplicationService {
     @discardableResult
     public func addPage(
         to albumID: UUID,
-        after activePageID: UUID,
         pageID: UUID = UUID(),
         now: Date = Date(),
         commandID: UUID = UUID()
     ) async throws -> AlbumSnapshot {
         try await mutateAlbum(albumID, label: "Ajouter une page", now: now, commandID: commandID) {
             album, _ in
-            guard let index = album.pages.firstIndex(where: { $0.id == activePageID }) else {
-                throw DomainValidationError.pageNotFound(activePageID)
-            }
-            album.pages.insert(PageSnapshot(id: pageID), at: index + 1)
+            album.pages.append(PageSnapshot(id: pageID))
         }
     }
 
