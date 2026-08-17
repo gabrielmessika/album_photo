@@ -17,8 +17,9 @@ l’app se fige et la confirmation ne s’affiche pas. Le correctif suivant reti
 la feuille système au profit d’un dialogue interne centré et bloquant. Il est
 figé dans `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et `IPAD-L2-017` réussit
 selon le retour global « c’est ok ». Remplir l’album (`AUT-009…011`) est
-maintenant implémenté dans le Core, le service et le panneau Photos ; son
-candidat exact et sa preuve iPad restent à figer. La source normative reste
+maintenant implémenté dans le Core, le service et le panneau Photos au commit
+`781539603d6b98523fe48326ee49e24288dfa09b` ; `IPAD-L2-018` doit le qualifier
+sur iPad. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -67,6 +68,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
 | `IPAD-L2-016` | Cadre lisible de la confirmation | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — app figée, aucune confirmation affichée |
 | `IPAD-L2-017` | Dialogue interne sans gel | `ENV-001…005`, `PAG-017`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `AUT-009…012`, `FRM-009`, `TPL-005`, `UND-001`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `7815396…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -99,8 +101,9 @@ suppression du formulaire défilant et de la hauteur fixe.
 
 - Les variantes avec un slot texte sont listées pour vérifier le catalogue,
   mais désactivées jusqu’à l’intégration de `TBX-004` et `TPL-012`.
-- Remplir l’album (`AUT-009…011`) est exposé et couvert sous WSL ; `ACPT-125`
-  reste incomplet jusqu’à la qualification Apple de ce nouveau parcours.
+- Remplir l’album (`AUT-009…011`) est exposé et couvert sous WSL dans
+  `7815396…` ; `ACPT-125` reste incomplet jusqu’à `IPAD-L2-018` et aux autres
+  qualifications Apple de cette sortie.
 - Aucun sticker ni cadre décoratif n’est persisté avant le gel des assets,
   licences et goldens exigé par `CAT-009`.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste

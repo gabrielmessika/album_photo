@@ -79,7 +79,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   Photos : choix Aérée, Équilibrée ou Dense, plan déterministe des photos
   inutilisées, confirmation chiffrée, réutilisation des premières pages sans
   photo, création du complément en fin d’album et commande atomique
-  Annuler/Rétablir. Il reste à figer puis à qualifier sur iPad.
+  Annuler/Rétablir. Ce nouvel incrément est figé dans
+  `781539603d6b98523fe48326ee49e24288dfa09b` et doit être qualifié sous
+  `IPAD-L2-018`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -106,7 +108,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `57afa71…`, d’après le retour global « c’est ok » sans capture ni détail par
   étape. Remplir l’album porte la suite à 137 tests Core et passe l’analyse
   syntaxique WSL ; sa compilation, son rendu et son comportement Apple restent
-  à qualifier après gel du candidat.
+  ⚪ `NON TESTÉ` sous `IPAD-L2-018` sur `7815396…`.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,

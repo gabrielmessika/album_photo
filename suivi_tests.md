@@ -28,7 +28,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Premier correctif de fenêtre testé | `8aa7f566de775c15ddf5a9e702a01ed5e9fdb640` — `IPAD-L2-015` échoué : le dimensionnement ajusté comprime toute la fenêtre, devenue minuscule et illisible |
 | Second correctif de fenêtre testé | `7d8772c6d87a769a239b4f9eafabe74c8c126681` — `IPAD-L2-016` échoué : le bouton fige l’app sans afficher la confirmation |
 | Correctif de gel testé | `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` — dialogue interne centré, sur fond assombri et sans négociation de taille de feuille ; `IPAD-L2-017` réussi selon le retour global « c’est ok » |
-| Incrément Remplir l’album | `AUT-009…011` implémentés et validés sous WSL ; candidat exact et nouvelle fiche iPad à figer |
+| Candidat Remplir l’album à tester | `781539603d6b98523fe48326ee49e24288dfa09b` — trois densités, plan déterministe, confirmation chiffrée et commande unique ; `IPAD-L2-018` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -90,6 +90,9 @@ exactement `57afa71e3eeac8b48f05e0aaa719cf77e8a97834` et réussit selon le retou
 global « c’est ok » reçu après remise de cette seule fiche. Cette preuve ne
 contient ni capture ni observation par étape et ne couvre aucun contrôle
 `APPLE-*`.
+La régression `IPAD-L2-018` vise exactement le candidat
+`781539603d6b98523fe48326ee49e24288dfa09b`. Elle qualifie séparément Remplir
+l’album et ne modifie aucun verdict historique.
 
 ## Mode de réponse
 
@@ -330,6 +333,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-015` | Taille intrinsèque et lisibilité de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — fenêtre minuscule et illisible |
 | `IPAD-L2-016` | Cadre lisible de la confirmation d’ajout | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🔴 `ÉCHOUÉ` — le bouton fige l’app et aucune confirmation n’apparaît |
 | `IPAD-L2-017` | Dialogue interne sans gel pour l’ajout de page | `3:ENV-001` à `3:ENV-005`, `3:PAG-017`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` |
+| `IPAD-L2-018` | Remplir l’album, trois densités et commande unique | `3:AUT-009` à `3:AUT-012`, `3:FRM-009`, `3:TPL-005`, `3:UND-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -3002,6 +3006,44 @@ leur candidat.
   de texte standard ; portrait initial, paysage à l’étape 5 ; VoiceOver à
   l’étape 6 ; Paris, France ; français (France). Aucun résultat iPhone, Xcode
   ou `APPLE-*` n’est extrapolé.
+
+## Campagne Remplir l’album
+
+### `IPAD-L2-018` — Trois densités et commande unique
+
+- Candidat : `781539603d6b98523fe48326ee49e24288dfa09b`.
+- Spécification : 3.0 incluse dans le candidat exact.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:AUT-009` à `3:AUT-012`,
+  `3:FRM-009`, `3:TPL-005`, `3:UND-001`, `3:SAV-001`, `3:ACC-002`,
+  `3:ACC-006`, `3:ACC-021` et `3:DONE-005`.
+- Préconditions : transférer exactement le candidat ; créer un album jetable
+  « Test Remplir » de deux pages ; importer onze images nettement
+  reconnaissables nommées visuellement `U`, puis `A…J`, dont les dates de prise
+  de vue de `A…J` sont strictement croissantes ; placer seulement `U` dans la
+  page 1 ; laisser la page 2 sans photo utilisée, avec exactement deux cadres
+  photo vides et un fond noir ; vérifier qu’il n’existe aucune autre page et
+  que `A…J` sont les dix seules photos inutilisées.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et ouvrir « Test Remplir » en portrait. | La compilation et le lancement réussissent ; l’album préparé contient deux pages, onze assets et dix photos inutilisées sans altération du store existant. |
+| 2 | Ouvrir Photos et examiner le groupe Remplir l’album avant toute action. | Le groupe affiche l’icône baguette `wand.and.stars`, les choix Aérée (1–2), Équilibrée (3–4) et Dense (5–8), le compteur « 10 photos inutilisées » et un bouton actif ; Équilibrée est sélectionnée par défaut. |
+| 3 | Avec Équilibrée, presser Remplir l’album, lire toute la confirmation, puis presser Annuler. | La confirmation annonce exactement 10 photos, 2 cadres vides retirés, 1 page existante réutilisée et 2 pages créées, et précise que les photos importées sont conservées ; Annuler ferme l’alerte sans changer pages, cadres, fond, occurrences ni compteur. |
+| 4 | Rouvrir la même confirmation et presser Remplir. Examiner successivement les quatre pages produites. | L’opération termine sans gel : la page 1 et `U` restent inchangés ; la page 2 conserve son fond noir, perd ses deux cadres vides et reçoit `A…D` ; deux pages sont ajoutées après la dernière avec `E…H`, puis `I…J`. Elles ne contiennent aucun cadre photo vide, utilisent Équilibrée et Auto, et chaque photo commence à `1×`, centrée et non tournée. |
+| 5 | Revenir dans Photos après le remplissage et contrôler les miniatures/assets. | Le compteur indique « Aucune photo inutilisée », Remplir l’album est désactivé, et les onze photos importées sont toujours présentes ; aucun asset n’a été supprimé. |
+| 6 | Presser Annuler une seule fois, contrôler l’album, puis presser Rétablir une seule fois. | Un seul Annuler restaure exactement les deux pages initiales, les deux cadres vides, le fond noir et les dix photos inutilisées ; un seul Rétablir restaure exactement les quatre pages et les groupes `A…D`, `E…H`, `I…J`. |
+| 7 | Presser de nouveau Annuler, choisir Aérée, ouvrir la confirmation puis confirmer. | La confirmation annonce 10 photos, 2 cadres vides, 1 page réutilisée et 4 pages créées ; le résultat contient six pages au total et cinq groupes ordonnés de deux photos : `A–B`, `C–D`, `E–F`, `G–H`, `I–J`, tous en Auto/Aérée. |
+| 8 | Annuler une fois, choisir Dense, ouvrir la confirmation puis confirmer. | La confirmation annonce 10 photos, 2 cadres vides, 1 page réutilisée et 1 page créée ; le résultat contient trois pages au total, `A…H` sur la page 2 et `I…J` sur la nouvelle dernière page, toutes deux en Auto/Dense. |
+| 9 | Fermer proprement l’album, le rouvrir et revoir les trois pages ainsi que Photos. | Le résultat Dense, le fond noir, l’ordre `A…H` puis `I…J`, les onze assets et l’absence de photo inutilisée persistent après relance. |
+| 10 | En portrait puis paysage, activer VoiceOver et parcourir le groupe, le sélecteur de densité, le compteur et le bouton désactivé. | Aucun contenu utile n’est rogné ; VoiceOver annonce le groupe, les densités, le compteur, le bouton et son état désactivé dans un ordre cohérent ; l’app reste réactive. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner après retour utilisateur, avec toute anomalie associée à
+  l’ID numérique de l’étape et, si possible, une capture des confirmations
+  Équilibrée et Dense.
+- Environnement attendu : iPad 8e génération ; iPadOS 26.5.2 ; Swift
+  Playgrounds 4.7 ; taille de texte standard ; portrait initial, paysage et
+  VoiceOver à l’étape 10 ; Paris, France ; français (France).
 
 ## Qualification différée Apple/macOS/Xcode
 
