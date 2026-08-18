@@ -273,7 +273,13 @@ enum AlbumTextAttributedBridge {
         case .monospaced: design = .monospaced
         }
         return Font.system(
-            size: CGFloat(max(1, style.relativeFontSize * pageHeight)),
+            size: CGFloat(max(
+                1,
+                TextPrototypeEngine.renderedFontSize(
+                    relativeFontSize: style.relativeFontSize,
+                    pageHeight: pageHeight
+                )
+            )),
             weight: style.weight == .bold ? .bold : .regular,
             design: design
         )

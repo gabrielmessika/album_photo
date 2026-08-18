@@ -94,6 +94,17 @@ de demander une nouvelle campagne iPad. Le regroupement ne doit pas mélanger
 des lots incompatibles, masquer un risque d’intégrité ni retarder un contrôle
 nécessaire après une modification dangereuse de la persistance.
 
+Découper toutefois la campagne en plusieurs fiches courtes et ciblées plutôt
+qu’en un seul test monolithique. Chaque fiche doit pouvoir recevoir son propre
+verdict et s’arrêter au premier défaut sans rendre ambigu le résultat des
+autres fonctions.
+
+Définir un jeu de test partagé et stable pour les fiches successives d’un même
+incrément. Réutiliser, lorsque c’est pertinent, l’album et l’état final de la
+fiche précédente ; documenter explicitement cet état comme précondition de la
+fiche suivante. Ne demander de reconstruire tout le jeu de test que si
+l’isolation, une migration ou un risque d’intégrité l’exige.
+
 Pour chaque remise nécessitant une validation manuelle :
 
 1. ajouter dans `suivi_tests.md` tous les tests à exécuter ;

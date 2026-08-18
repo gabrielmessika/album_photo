@@ -101,9 +101,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   sépare police, couleur, alignement et interligne. Il compile et lance l’app,
   mais `IPAD-L2-021` relève cinq défauts : ajout superposé à la page, fond noir
   de l’éditeur, pastilles blanches, échelle différente et opacité non visible.
-  Le correctif suivant `7bc495ec623e5b12301569d0108fbccadb978630` ajoute un panneau Texte et les formats dans
-  l’inspecteur, reprend le fond et l’échelle du canevas et fournit une palette réellement colorée ;
-  `IPAD-L2-022` doit le qualifier.
+  Le correctif suivant `7bc495ec623e5b12301569d0108fbccadb978630`
+  ajoute un panneau Texte et les formats dans l’inspecteur, reprend le fond et
+  l’échelle du canevas et fournit une palette réellement colorée. Il compile et
+  ouvre l’éditeur, mais `IPAD-L2-022` échoue : 18 points étaient projetés comme
+  `18 / 3000` de la hauteur affichée et la saisie devenait pratiquement
+  invisible. Le correctif `À FIGER` applique la conversion typographique
+  `N × H / 720` sans migrer les valeurs enregistrées. La qualification est
+  désormais découpée en fiches courtes `IPAD-L2-023…029` qui réutilisent le
+  même album ; `023` contrôle d’abord la compilation et la saisie visible.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -114,7 +120,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   stickers, cadres décoratifs et presse-papiers
   multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
-- Validation actuelle : 146 tests du noyau multiplateforme, les contrats et la
+- Validation actuelle : 147 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
@@ -137,11 +143,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   syntaxique, mais `IPAD-L2-020` est 🔴 après les erreurs de compilation
   photographiées dans `AlbumTextEditorView`. Le correctif repasse les 146 tests
   Core et compile sur l’iPad, mais `IPAD-L2-021` est 🔴 sur les cinq défauts
-  d’interface et de rendu décrits plus haut. La correction suivante repasse les
-  146 tests Core, le contrat ciblé, les contrats du dépôt, les dix empreintes et
-  l’analyse syntaxique ; sa compilation, son rendu et ses
-  gestes Apple restent ⚪ sous `IPAD-L2-022`. Les photos de diagnostic restent
-  hors de Git.
+  d’interface et de rendu décrits plus haut. `7bc495e…` repasse les 146 tests
+  Core mais `IPAD-L2-022` échoue sur la lisibilité de la saisie. La conversion
+  typographique corrigée passe maintenant 147 tests Core, le contrat ciblé,
+  les contrats du dépôt, les dix empreintes et l’analyse syntaxique ; sa
+  compilation et son rendu Apple restent ⚪ sous `IPAD-L2-023`, avant les
+  petites fiches `024…029`. Les photos de diagnostic restent hors de Git.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.

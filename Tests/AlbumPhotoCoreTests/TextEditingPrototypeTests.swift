@@ -180,7 +180,7 @@ final class TextEditingPrototypeTests: XCTestCase {
             TextParagraph(
                 alignment: .leading,
                 lineSpacing: 2,
-                runs: [TextRun(text: String(repeating: "M", count: 350), style: large)]
+                runs: [TextRun(text: String(repeating: "M", count: 20), style: large)]
             )
         ])
         let original = ElementGeometry(width: 0.60, height: 0.12)
@@ -203,7 +203,34 @@ final class TextEditingPrototypeTests: XCTestCase {
                 for: self.content("M", style: small),
                 width: 0.60
             ),
-            8 / AlbumPhotoConstants.canonicalPageHeight,
+            8 * AlbumPhotoConstants.canonicalUnitsPerTypographicPoint
+                / AlbumPhotoConstants.canonicalPageHeight,
+            accuracy: 0.000_001
+        )
+    }
+
+    // 3:TBX-003, 3:TBX-014, 3:TBX-025
+    func testTypographicPointsRemainReadableAtRenderedPageScale() {
+        let renderedPageHeight = 600.0
+        XCTAssertEqual(
+            TextStyleDefaults().relativeFontSize,
+            18 / AlbumPhotoConstants.canonicalPageHeight,
+            accuracy: 0.000_001
+        )
+        XCTAssertEqual(
+            TextPrototypeEngine.renderedFontSize(
+                relativeFontSize: TextStyleDefaults().relativeFontSize,
+                pageHeight: renderedPageHeight
+            ),
+            15,
+            accuracy: 0.000_001
+        )
+        XCTAssertEqual(
+            TextPrototypeEngine.renderedFontSize(
+                relativeFontSize: 96 / AlbumPhotoConstants.canonicalPageHeight,
+                pageHeight: renderedPageHeight
+            ),
+            80,
             accuracy: 0.000_001
         )
     }

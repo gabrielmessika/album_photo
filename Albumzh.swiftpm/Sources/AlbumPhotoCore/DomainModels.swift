@@ -10,6 +10,9 @@ public enum AlbumModelVersion {
 public enum AlbumPhotoConstants {
     public static let canonicalPageWidth = 2_400.0
     public static let canonicalPageHeight = 3_000.0
+    /// The canonical canvas represents the 300 ppi reference output while
+    /// typography is expressed in 72 points per inch.
+    public static let canonicalUnitsPerTypographicPoint = 300.0 / 72.0
     public static let maximumNativeScale = 8.0
     public static let elementOrderStep: Int64 = 1_024
     public static let defaultBackgroundID = "album.classicSpiral"

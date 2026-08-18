@@ -261,6 +261,7 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("selection: request.pageBackground"))
         XCTAssertTrue(textEditor.contains(".scrollContentBackground(.hidden)"))
         XCTAssertTrue(textEditor.contains("pageHeight: request.previewPageHeight"))
+        XCTAssertTrue(textEditor.contains("TextPrototypeEngine.renderedFontSize("))
         XCTAssertFalse(textEditor.contains(
             "pageHeight: AlbumPhotoConstants.canonicalPageHeight"
         ))

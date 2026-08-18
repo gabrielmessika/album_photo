@@ -740,6 +740,17 @@ public enum AlbumFillEngine {
 }
 
 public enum TextPrototypeEngine {
+    /// Converts the persisted canonical font value to the destination page
+    /// scale. Existing albums keep their stored `relativeFontSize` unchanged.
+    public static func renderedFontSize(
+        relativeFontSize: Double,
+        pageHeight: Double
+    ) -> Double {
+        relativeFontSize
+            * pageHeight
+            * AlbumPhotoConstants.canonicalUnitsPerTypographicPoint
+    }
+
     public static func appending(
         _ text: String,
         to existing: String,
@@ -784,14 +795,21 @@ public enum TextPrototypeEngine {
         guard !content.plainText.isEmpty else { return 0 }
         let widthUnits = max(1, width * AlbumPhotoConstants.canonicalPageWidth)
         let heightUnits = content.paragraphs.reduce(0.0) { total, paragraph in
-            let fallback = TextStyleDefaults().relativeFontSize
-                * AlbumPhotoConstants.canonicalPageHeight
+            let fallback = renderedFontSize(
+                relativeFontSize: TextStyleDefaults().relativeFontSize,
+                pageHeight: AlbumPhotoConstants.canonicalPageHeight
+            )
             let maximumFontHeight = paragraph.runs.map {
-                $0.relativeFontSize * AlbumPhotoConstants.canonicalPageHeight
+                renderedFontSize(
+                    relativeFontSize: $0.relativeFontSize,
+                    pageHeight: AlbumPhotoConstants.canonicalPageHeight
+                )
             }.max() ?? fallback
             let estimatedWidth = paragraph.runs.reduce(0.0) { partial, run in
-                let fontHeight = run.relativeFontSize
-                    * AlbumPhotoConstants.canonicalPageHeight
+                let fontHeight = renderedFontSize(
+                    relativeFontSize: run.relativeFontSize,
+                    pageHeight: AlbumPhotoConstants.canonicalPageHeight
+                )
                 return partial + Double(run.text.count) * fontHeight
                     * averageGlyphWidthFactor
             }
