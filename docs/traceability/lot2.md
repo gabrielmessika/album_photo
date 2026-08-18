@@ -33,7 +33,8 @@ mais `IPAD-L2-021` échoue sur l’ajout superposé, le fond de l’éditeur, la
 palette, l’échelle et l’opacité. Le correctif
 `7bc495ec623e5b12301569d0108fbccadb978630` introduit le panneau Texte et les
 formats dans l’inspecteur, mais `IPAD-L2-022` échoue car la saisie est rendue à
-une taille pratiquement invisible. Le correctif `À FIGER` applique la
+une taille pratiquement invisible. Le correctif
+`f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` applique la
 conversion typographique 300/72 et les fiches courtes `IPAD-L2-023…029`
 réutilisent progressivement le même album. La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
@@ -93,7 +94,7 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation d’`AlbumTextEditorView` impossible sur `d882183…` |
 | `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation réussie, cinq défauts d’interface/rendu sur `0f4b16c…` |
 | `IPAD-L2-022` | Panneau Texte, palette, échelle et opacité | `EDT-001`, `EDT-002`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-001…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — saisie pratiquement invisible sur `7bc495e…` |
-| `IPAD-L2-023` | Compilation et saisie visible | `ENV-001…005`, `TBX-002…005`, `TBX-014`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` — correctif `À FIGER` |
+| `IPAD-L2-023` | Compilation et saisie visible | `ENV-001…005`, `TBX-002…005`, `TBX-014`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` — candidat `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` |
 | `IPAD-L2-024…029` | Six contrôles courts réutilisant le jeu Texte-A : panneau/inspecteur, taille/opacité, fond/palette, sélection/limite, géométrie/modèle, profondeur/persistance | `EDT-001`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-001…021`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `UND-001`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — exécuter une fiche à la fois après `023` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.

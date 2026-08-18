@@ -16,7 +16,7 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-18 |
-| Phase courante | Lot 2 — `IPAD-L2-022` échoué ; correction typographique à figer pour la fiche courte `IPAD-L2-023` |
+| Phase courante | Lot 2 — `IPAD-L2-022` échoué ; correction typographique figée pour la fiche courte `IPAD-L2-023` |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
@@ -37,7 +37,7 @@ résultats du prototype 2.1.
 | Candidat zones de texte Lot 2 rejeté | `d882183d31de7ed6078c70f9e79a80d6ba994dd6` : `IPAD-L2-020` échoue dès la compilation d’`AlbumTextEditorView`; captures `IMG_4188.HEIC`/`IMG_4189.HEIC`, aucune étape fonctionnelle exécutée |
 | Correctif de compilation texte Lot 2 testé | `0f4b16c6c6435c29ca44da4e2726fac210add520` : compilation et lancement Apple réussis indirectement, mais `IPAD-L2-021` échoue sur l’ajout superposé, le fond noir de l’éditeur, les pastilles blanches, l’échelle et l’opacité ; `IMG_4191.jpg` conservée hors Git |
 | Correctif panneau et rendu texte Lot 2 testé | `7bc495ec623e5b12301569d0108fbccadb978630` : compilation et ouverture de l’éditeur réussies indirectement, mais `IPAD-L2-022` échoue à l’étape 4 car la saisie est pratiquement invisible |
-| Correctif typographique Lot 2 | `À FIGER` : conversion `N × H / 720` commune à l’éditeur, au canevas et aux mesures de débordement, sans migration des valeurs persistées ; 147 tests, contrats, empreintes et parse AppModule réussis ; `IPAD-L2-023` à exécuter en premier |
+| Correctif typographique Lot 2 | `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` : conversion `N × H / 720` commune à l’éditeur, au canevas et aux mesures de débordement, sans migration des valeurs persistées ; 147 tests, contrats, empreintes et parse AppModule réussis ; `IPAD-L2-023` à exécuter en premier |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du correctif Lot 2 | `spec.md` dans `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` précise `EDT-002`, `ELM-014` et `RND-001` conformément aux retours utilisateur du 17 août 2026 |
@@ -46,7 +46,7 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Figer puis exécuter d’abord `IPAD-L2-023`; poursuivre une fiche courte à la fois avec `024…029` en réutilisant le jeu Texte-A ; couvrir `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode |
+| Validation indispensable restante | Transférer `f0a0cca…` puis exécuter d’abord `IPAD-L2-023`; poursuivre une fiche courte à la fois avec `024…029` en réutilisant le jeu Texte-A ; couvrir `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode |
 | État global | 🟡 **Lot 1 viable sur l’iPad 8 ; l’action compacte et le cadrage couvrant sont validés par `IPAD-L2-019` ; `IPAD-L2-022` compile mais bloque la saisie visible, corrigée sous WSL et à requalifier d’abord avec `IPAD-L2-023`** |
 
 ## Légende
@@ -478,8 +478,8 @@ Lot 3 n’est rendu public.
 | `IPAD-L2-020`, zones de texte sur `d882183…` | 🔴 Échec de compilation Apple | Étape 1 échouée ; aucune étape fonctionnelle exécutée, preuve limitée aux diagnostics visibles dans les deux captures reçues |
 | `IPAD-L2-021`, correctif texte `0f4b16c…` | 🔴 Échec fonctionnel sur Apple | Compilation et lancement réussis, puis cinq défauts signalés ; aucune réussite extrapolée aux étapes non commentées |
 | `IPAD-L2-022`, panneau et rendu texte `7bc495e…` | 🔴 Échec fonctionnel sur Apple | Compilation et ouverture de l’éditeur réussies indirectement ; étape 4 échouée car la saisie est pratiquement invisible, suite non exécutée |
-| `IPAD-L2-023`, compilation et saisie `À FIGER` | ⚪ Non testé sur Apple | Première fiche courte : vérifier compilation, indication, frappe visible et Annuler sans reconstruire l’album de `022` |
-| `IPAD-L2-024…029`, jeu Texte-A `À FIGER` | ⚪ Non testés sur Apple | Exécuter une seule fiche à la fois après réussite de la précédente ; chaque précondition réutilise explicitement son état final |
+| `IPAD-L2-023`, compilation et saisie `f0a0cca…` | ⚪ Non testé sur Apple | Première fiche courte : vérifier compilation, indication, frappe visible et Annuler sans reconstruire l’album de `022` |
+| `IPAD-L2-024…029`, jeu Texte-A `f0a0cca…` | ⚪ Non testés sur Apple | Exécuter une seule fiche à la fois après réussite de la précédente ; chaque précondition réutilise explicitement son état final |
 | `APPLE-L2-001`, largeur compacte de `57afa71…` | 🟠 Bloqué sur cet iPad | Swift Playgrounds ne permet pas de réduire suffisamment la fenêtre ; reprendre le dialogue, la barre, Gérer les pages et le menu Plus sur iPhone ou environnement Xcode réellement compact |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
@@ -526,7 +526,8 @@ Lot 3 n’est rendu public.
 
 ## Prochaines actions
 
-1. Figer le correctif typographique, le transférer et exécuter uniquement
+1. Transférer le correctif typographique
+   `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` et exécuter uniquement
    `IPAD-L2-023` sur l’iPad déclaré.
 2. Si `023` réussit, conserver exactement sa zone « Bonjour album » et avancer
    d’une seule fiche à la fois dans `024…029`, sans recréer l’album Texte-A.
@@ -547,6 +548,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-18 | Codex | Gel du correctif typographique `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` et injection du candidat exact dans les sept fiches courtes `IPAD-L2-023…029` | `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `TBX-014`, `TST-001…005`, `TST-013` | WSL : 147 tests Core, parse AppModule, contrats et 10/10 empreintes réussis ; `IPAD-L2-023` reste ⚪ sur Apple et doit être exécuté seul en premier |
 | 2026-08-18 | Codex | Enregistrement de l’échec `IPAD-L2-022`, correction de la conversion 300 unités/72 points sans migration, ajout d’une preuve Core de lisibilité et découpage de la campagne texte en sept fiches réutilisant le jeu Texte-A | `AlbumPhotoCore/DomainModels.swift`, `PrototypeEngines.swift`, `AlbumTextEditorView.swift`, tests, `AGENTS.md`, `spec.md`, `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `DEC-32`, `TBX-003`, `TBX-014`, `TBX-019`, `TBX-020`, `TBX-024`, `TBX-025`, `TST-001…005`, `TST-013` | Retour iPad sans capture ; WSL : 147 tests Core, 11 ciblés, parse AppModule, contrats et 10/10 empreintes réussis ; 29/29 IDs Lot 2 ; Apple du correctif NON TESTÉ |
 | 2026-08-17 | Codex | Gel du correctif panneau/rendu texte `7bc495ec623e5b12301569d0108fbccadb978630` et injection du candidat exact dans `IPAD-L2-022` | `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `TST-001…005`, `TST-013`, `EDT-001`, `EDT-008`, `EDT-021`, `TBX-002`, `TBX-009`, `TBX-012`, `TBX-014`, `TBX-016`, `TBX-025` | WSL : 146 tests Core, contrat ciblé, parse AppModule, contrats et 10/10 empreintes réussis ; 22/22 IDs Lot 2 ; `IPAD-L2-022` reste ⚪ sur Apple |
 | 2026-08-17 | Codex | Enregistrement de l’échec fonctionnel `IPAD-L2-021`, ajout du panneau Texte, retrait du bouton superposé, formats de zone dans l’inspecteur, fond réel, palette colorée, aperçu à l’échelle du canevas et opacité immédiate ; préparation de `IPAD-L2-022` | `spec.md`, `AlbumTextEditorView.swift`, `TextPanelView.swift`, `EditorViewModel.swift`, `AlbumEditorView.swift`, `HelpView.swift`, `ManifestContractTests.swift`, `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `EDT-001`, `EDT-002`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002`, `TBX-009`, `TBX-012`, `TBX-014`, `TBX-016`, `TBX-025`, `ACC-002`, `ACC-006`, `ACC-021` | Retour iPad et `IMG_4191.jpg` hors Git ; WSL : 146 tests Core, contrat ciblé, parse AppModule, contrats et 10/10 empreintes réussis ; 22/22 IDs Lot 2 ; compilation/rendu Apple du correctif NON TESTÉS |

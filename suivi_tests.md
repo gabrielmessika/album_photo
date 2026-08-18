@@ -33,7 +33,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat zones de texte rejeté à la compilation | `d882183d31de7ed6078c70f9e79a80d6ba994dd6` — `IPAD-L2-020` échoue à l’étape 1 : les contraintes de formatage tentaient d’écrire des attributs autres que leur `AttributeKey` |
 | Correctif de compilation texte testé | `0f4b16c6c6435c29ca44da4e2726fac210add520` — compilation réussie indirectement, mais `IPAD-L2-021` échoue sur l’emplacement de l’ajout, le fond de l’éditeur, les pastilles couleur, l’échelle et l’opacité |
 | Correctif ergonomie et rendu texte testé | `7bc495ec623e5b12301569d0108fbccadb978630` — compilation et ouverture de l’éditeur réussies, mais `IPAD-L2-022` échoue car la saisie est pratiquement invisible |
-| Correctif de lisibilité typographique à tester | `À FIGER` — conversion 300 unités/72 points sans migration des valeurs persistées ; commencer par la fiche courte `IPAD-L2-023`, puis réutiliser son état pour `024…029` |
+| Correctif de lisibilité typographique à tester | `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` — conversion 300 unités/72 points sans migration des valeurs persistées ; commencer par la fiche courte `IPAD-L2-023`, puis réutiliser son état pour `024…029` |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -3311,7 +3311,7 @@ correctif suivant repartira du dernier état effectivement obtenu.
 
 ### `IPAD-L2-023` — Compilation et saisie visible
 
-- Candidat : `À FIGER`.
+- Candidat : `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`.
 - Préconditions : conserver l’album de `IPAD-L2-022` et ouvrir sa page claire à
   100 %. Aucune zone nommée « Bonjour album » n’est requise au départ.
 - Exigences : `3:ENV-001` à `3:ENV-005`, `3:TBX-002` à `3:TBX-005`,
@@ -3330,7 +3330,7 @@ correctif suivant repartira du dernier état effectivement obtenu.
 
 ### `IPAD-L2-024` — Panneau Texte, raccourcis et inspecteur
 
-- Candidat : `À FIGER`.
+- Candidat : `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`.
 - Préconditions : reprendre directement la page claire laissée par
   `IPAD-L2-023`, avec la zone « Bonjour album ».
 - Exigences : `3:EDT-001`, `3:EDT-006`, `3:EDT-008`, `3:EDT-012`,
@@ -3348,7 +3348,7 @@ correctif suivant repartira du dernier état effectivement obtenu.
 
 ### `IPAD-L2-025` — Taille et opacité cohérentes
 
-- Candidat : `À FIGER`.
+- Candidat : `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`.
 - Préconditions : reprendre la zone bleue et grasse laissée par
   `IPAD-L2-024`, sur la même page claire à 100 %.
 - Exigences : `3:TBX-010`, `3:TBX-012`, `3:TBX-014`, `3:TBX-024`.
@@ -3365,7 +3365,7 @@ correctif suivant repartira du dernier état effectivement obtenu.
 
 ### `IPAD-L2-026` — Fond réel et palette colorée
 
-- Candidat : `À FIGER`.
+- Candidat : `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`.
 - Préconditions : conserver la page claire et « Bonjour album ». Réutiliser la
   page sombre de `IPAD-L2-022`; si elle n’existe pas, ajouter une seule page et
   lui appliquer le fond sombre intégré, puis la conserver pour les fiches
@@ -3385,7 +3385,7 @@ correctif suivant repartira du dernier état effectivement obtenu.
 
 ### `IPAD-L2-027` — Sélections, paragraphes et limite
 
-- Candidat : `À FIGER`.
+- Candidat : `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`.
 - Préconditions : revenir à « Bonjour album » sur la page claire, sans recréer
   les deux pages ni leurs zones.
 - Exigences : `3:TBX-006` à `3:TBX-011`, `3:TBX-013`, `3:TBX-017`,
@@ -3403,7 +3403,7 @@ correctif suivant repartira du dernier état effectivement obtenu.
 
 ### `IPAD-L2-028` — Géométrie, débordement et modèle texte
 
-- Candidat : `À FIGER`.
+- Candidat : `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`.
 - Préconditions : reprendre la zone longue laissée par `IPAD-L2-027` sur la
   page claire et le modèle Avec texte déjà utilisé pour `IPAD-L2-022`.
 - Exigences : `3:TBX-018` à `3:TBX-021`, `3:TPL-012`, `3:TPL-013`,
@@ -3421,7 +3421,7 @@ correctif suivant repartira du dernier état effectivement obtenu.
 
 ### `IPAD-L2-029` — Profondeur, persistance et accessibilité
 
-- Candidat : `À FIGER`.
+- Candidat : `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`.
 - Préconditions : conserver les pages et zones obtenues jusqu’à
   `IPAD-L2-028`; utiliser une photo déjà présente dans l’album, sans en
   réimporter une.

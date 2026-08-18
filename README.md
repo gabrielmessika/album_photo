@@ -106,7 +106,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   l’échelle du canevas et fournit une palette réellement colorée. Il compile et
   ouvre l’éditeur, mais `IPAD-L2-022` échoue : 18 points étaient projetés comme
   `18 / 3000` de la hauteur affichée et la saisie devenait pratiquement
-  invisible. Le correctif `À FIGER` applique la conversion typographique
+  invisible. Le correctif `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59`
+  applique la conversion typographique
   `N × H / 720` sans migrer les valeurs enregistrées. La qualification est
   désormais découpée en fiches courtes `IPAD-L2-023…029` qui réutilisent le
   même album ; `023` contrôle d’abord la compilation et la saisie visible.
