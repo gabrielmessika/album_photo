@@ -112,6 +112,10 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-027` | Sélections, paragraphes et limite | `TBX-006…011`, `TBX-013`, `TBX-017`, `TBX-023`, `TXA-001`, `TXA-002`, `TXA-004` | 🔴 `ÉCHOUÉ` — Système/Arrondie identiques et Italique sans effet perceptible ; étapes 2 à 4 déclarées conformes |
 | `IPAD-L2-028` | Géométrie, débordement et modèle texte | `TBX-018…021`, `TPL-012`, `TPL-013`, `TPL-017` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-029` | Profondeur, persistance et accessibilité | `TBX-001`, `TBX-004`, `TBX-023`, `TBX-024`, `UND-001`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-030` | Compilation, descendantes et motifs intégrés | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-002…005`, `TBX-019`, `TBX-020`, `TBX-024`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
+| `IPAD-L2-031` | Ordre et séparation sans titre des panneaux | `DEC-32`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
+| `IPAD-L2-032` | Sélection, palette et portées en paysage | `TBX-005`, `TBX-010…012`, `TBX-015`, `TBX-016`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
+| `IPAD-L2-033` | Polices, italique et persistance de la sélection | `TBX-010`, `TBX-013`, `TBX-023`, `TBX-024`, `SAV-001`, `ACC-002` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne

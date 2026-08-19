@@ -34,6 +34,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif de compilation texte testé | `0f4b16c6c6435c29ca44da4e2726fac210add520` — compilation réussie indirectement, mais `IPAD-L2-021` échoue sur l’emplacement de l’ajout, le fond de l’éditeur, les pastilles couleur, l’échelle et l’opacité |
 | Correctif ergonomie et rendu texte testé | `7bc495ec623e5b12301569d0108fbccadb978630` — compilation et ouverture de l’éditeur réussies, mais `IPAD-L2-022` échoue car la saisie est pratiquement invisible |
 | Correctif de lisibilité typographique testé | `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` — compilation et saisie visible confirmées, mais campagne `IPAD-L2-023…029` limitée à 2 réussites (`028`, `029`) et 5 échecs (`023…027`) : descendantes rognées, motif devant l’éditeur, organisation des panneaux rejetée, sélection/palette inadaptées au paysage et styles Police/Italique sans effet perceptible |
+| Correctif groupé texte à tester | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` — descendantes, composition des motifs, ordre/séparation sans titre, sélection conservée, palette défilable, portées explicites et ciblage Police/Italique ; commencer par `IPAD-L2-030`, puis exécuter `031…033` |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -384,6 +385,10 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-027` | Sélections, paragraphes et limite | `3:TBX-006` à `3:TBX-011`, `3:TBX-013`, `3:TBX-017`, `3:TBX-023`, `3:TXA-001`, `3:TXA-002`, `3:TXA-004` | 🔴 `ÉCHOUÉ` — étape 1 : Système/Arrondie identiques et Italique sans effet perceptible |
 | `IPAD-L2-028` | Géométrie, débordement et modèle texte | `3:TBX-018` à `3:TBX-021`, `3:TPL-012`, `3:TPL-013`, `3:TPL-017` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-029` | Profondeur, persistance et accessibilité | `3:TBX-001`, `3:TBX-004`, `3:TBX-023`, `3:TBX-024`, `3:UND-001`, `3:SAV-001`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-030` | Compilation, descendantes et motifs intégrés | `3:ENV-001` à `3:ENV-005`, `3:CAN-003`, `3:BG-007`, `3:TBX-002` à `3:TBX-005`, `3:TBX-019`, `3:TBX-020`, `3:TBX-024`, `3:TBX-025`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-031` | Ordre et séparation sans titre des panneaux | `3:DEC-32`, `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:EDT-012`, `3:EDT-021`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-032` | Sélection, palette et portées en paysage | `3:TBX-005`, `3:TBX-010` à `3:TBX-012`, `3:TBX-015`, `3:TBX-016`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-033` | Polices, italique et persistance de la sélection | `3:TBX-010`, `3:TBX-013`, `3:TBX-023`, `3:TBX-024`, `3:SAV-001`, `3:ACC-002` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -3496,6 +3501,88 @@ correctif suivant repartira du dernier état effectivement obtenu.
   et VoiceOver proviennent de la procédure, mais leurs réglages précis n’ont
   pas été redéclarés. Aucun résultat iPhone, Xcode ou autre `APPLE-*` n’est
   extrapolé.
+
+## Régressions du correctif Texte-B
+
+Les fiches `IPAD-L2-030…033` visent exactement le candidat
+`cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa`. Elles réutilisent l’album Texte-A
+laissé par `IPAD-L2-029` : aucune migration ni reconstruction du jeu n’est
+requise. Arrêter seulement la fiche en défaut ; les autres contrôles restent
+attribuables s’ils peuvent être exécutés sans dépendre de son état final.
+
+### `IPAD-L2-030` — Compilation, descendantes et motifs intégrés
+
+- Candidat : `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa`.
+- Préconditions : transférer exactement ce candidat, conserver l’album
+  Texte-A et disposer d’une page claire ainsi que des trois motifs intégrés.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:CAN-003`, `3:BG-007`,
+  `3:TBX-002` à `3:TBX-005`, `3:TBX-019`, `3:TBX-020`, `3:TBX-024`,
+  `3:TBX-025` et `3:DONE-005`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et rouvrir l’album Texte-A en portrait. | La compilation et le lancement réussissent ; les zones, formats et pages existants sont conservés. |
+| 2 | Sur la page claire, créer une zone d’une seule ligne contenant exactement « Bonjour jpgqy », presser Terminer et observer chaque descendante. | Le bas de `j`, `p`, `g`, `q` et `y` est entièrement visible ; aucune lettre ne ressemble à un `i` et aucun faux débordement n’apparaît. |
+| 3 | Rouvrir la zone, ajouter une seconde ligne « jpgqy », terminer puis revenir à une seule ligne. | Les glyphes restent complets avec une ou deux lignes ; la hauteur automatique s’adapte sans saut ni rognage. |
+| 4 | Ouvrir successivement l’éditeur sur chacun des trois motifs intégrés, saisir quelques caractères, faire défiler la barre et ouvrir Couleur ; alterner plusieurs fois avec une couleur unie. | Le motif reste strictement derrière le texte et les outils. Texte, formats, palette et boutons restent lisibles et tactiles ; aucune couche blanche ou motif ne recouvre l’éditeur. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Environnement attendu : iPad 8e génération, iPadOS 26.5.2, Swift
+  Playgrounds 4.7, portrait ; noter toute différence.
+
+### `IPAD-L2-031` — Ordre et séparation sans titre des panneaux
+
+- Candidat : `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa`.
+- Préconditions : reprendre l’album après `IPAD-L2-030`, sur une page contenant
+  au moins une photo et une zone de texte.
+- Exigences : `3:DEC-32`, `3:EDT-001`, `3:EDT-002`, `3:EDT-006`,
+  `3:EDT-012`, `3:EDT-021` et `3:ACC-021`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Parcourir le rail de haut en bas en portrait, sans ouvrir le menu `+`. | Les entrées publiques apparaissent dans l’ordre Photos, Texte, séparation simple, Mise en page, Fonds. La séparation ne porte aucun titre et n’est ni tactile ni annoncée. |
+| 2 | Ouvrir successivement Photos, Texte, Mise en page et Fonds, puis ouvrir le menu `+`. | Chaque entrée reste un menu distinct ; Mise en page et Fonds ne sont pas fusionnés. Le menu `+` conserve Ajouter un cadre photo et Ajouter du texte. |
+| 3 | Refaire le parcours en paysage avec une zone sélectionnée. | L’ordre et la séparation restent identiques, le rail et le panneau droit ne sont pas rognés et la sélection de l’élément persiste. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Environnement attendu : celui de `IPAD-L2-030`, avec portrait puis paysage.
+
+### `IPAD-L2-032` — Sélection, palette et portées en paysage
+
+- Candidat : `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa`.
+- Préconditions : reprendre la zone « Bonjour jpgqy », l’ouvrir en paysage et
+  la remettre en police Système régulière, noire, opacité 100 %.
+- Exigences : `3:TBX-005`, `3:TBX-010` à `3:TBX-012`, `3:TBX-015`,
+  `3:TBX-016`, `3:ACC-002`, `3:ACC-006` et `3:ACC-021`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Sélectionner seulement « Bonjour » et parcourir horizontalement la barre de formats. | Sélection regroupe Police, Taille, Gras, Italique et Couleur ; Paragraphe regroupe Alignement et Interligne ; Zone contient Opacité. De simples séparations distinguent les trois portées. |
+| 2 | Presser Masquer le clavier, puis choisir Bleu. | Le clavier disparaît, « Sélection conservée » apparaît et seule la plage « Bonjour » devient bleue ; « jpgqy » reste noire. |
+| 3 | Réafficher le clavier, conserver « Bonjour » comme cible, ouvrir Couleur puis faire défiler la palette jusqu’à chaque choix. | La palette défile malgré la hauteur réduite ; Noir, Blanc, Rouge, Orange, Vert et Bleu sont tous accessibles et annoncés. |
+| 4 | Masquer à nouveau le clavier, appliquer un alignement au paragraphe puis 50 % d’opacité. | L’alignement vise le paragraphe complet et l’opacité la zone complète ; la sélection de caractères n’est ni perdue ni utilisée à tort pour limiter l’opacité. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Environnement attendu : celui de `IPAD-L2-031`, en paysage.
+
+### `IPAD-L2-033` — Polices, italique et persistance de la sélection
+
+- Candidat : `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa`.
+- Préconditions : conserver la même zone en paysage, revenir à 100 %
+  d’opacité et sélectionner seulement « Bonjour » avec le clavier masqué.
+- Exigences : `3:TBX-010`, `3:TBX-013`, `3:TBX-023`, `3:TBX-024`,
+  `3:SAV-001` et `3:ACC-002`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Avec l’indicateur « Sélection conservée » visible, appliquer Système puis Arrondie à « Bonjour ». | Arrondie produit un dessin visiblement arrondi distinct de Système ; seule la sélection change et « jpgqy » conserve sa police. |
+| 2 | Activer Italique, le désactiver, puis le réactiver sur la même sélection. | L’inclinaison de « Bonjour » change à chaque action ; le reste du texte ne change pas. |
+| 3 | Presser Terminer, rouvrir la zone puis fermer et rouvrir proprement l’album. | Police Arrondie et Italique persistent uniquement sur « Bonjour » ; contenu, opacité et autres formats restent intacts. |
+| 4 | Avec VoiceOver, parcourir Sélection, « Sélection conservée », Paragraphe, Zone et les commandes Police/Italique. | Les libellés et portées sont annoncés dans l’ordre visible sans faire passer les séparations pour des commandes. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Environnement attendu : celui de `IPAD-L2-032`, en paysage avec VoiceOver à
+  l’étape 4.
 
 ## Qualification différée Apple/macOS/Xcode
 

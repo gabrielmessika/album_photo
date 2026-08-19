@@ -121,7 +121,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   défilable et distingue visuellement les portées Sélection, Paragraphe et
   Zone. Le rail place désormais Photos et Texte côte à côte, puis une simple
   séparation avant Mise en page et Fonds ; Stickers rejoindra le premier
-  groupe lorsqu’il sera livré.
+  groupe lorsqu’il sera livré. Ce correctif est figé dans
+  `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` et reçoit les régressions
+  `IPAD-L2-030…033`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -166,8 +168,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   de paragraphes et de zone. `EDT-001` fixe désormais l’ordre Photos, Texte,
   Stickers, une séparation simple sans titre, Mise en page, Fonds, puis Cadres
   et formes ; le nouveau code applique l’ordre de l’incrément visible, mais sa
-  compilation et son rendu Apple restent à requalifier. Les photos de
-  diagnostic restent hors de Git.
+  compilation et son rendu Apple restent à requalifier sous
+  `IPAD-L2-030…033`. Les photos de diagnostic restent hors de Git.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.
