@@ -528,6 +528,12 @@ struct AlbumTextEditorView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 formattingScopeLabel("Sélection", systemImage: "character.cursor.ibeam")
+                if !editorIsFocused, validRetainedSelection != nil {
+                    Label("Sélection conservée", systemImage: "checkmark.circle.fill")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.green)
+                        .fixedSize()
+                }
                 fontMenu
                 sizeMenu
 

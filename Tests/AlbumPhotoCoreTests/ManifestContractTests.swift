@@ -284,6 +284,7 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains(".frame(maxHeight: 320)"))
         XCTAssertTrue(textEditor.contains("retainedSelection: AttributedTextSelection?"))
         XCTAssertTrue(textEditor.contains("retainSelectionForFormatting()"))
+        XCTAssertTrue(textEditor.contains("Sélection conservée"))
         XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Sélection\""))
         XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Paragraphe\""))
         XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Zone\""))
