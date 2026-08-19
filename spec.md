@@ -1,8 +1,8 @@
 # Spécification fonctionnelle et technique — Application iOS d’albums photo
 
 > **Version :** 3.0<br>
-> **Date :** 17 août 2026<br>
-> **Statut :** projet consolidé — retours de la première campagne iPad intégrés<br>
+> **Date :** 19 août 2026<br>
+> **Statut :** projet consolidé — retours des campagnes iPad Lot 2 intégrés<br>
 > **Plateformes :** iPhone et iPad  
 > **Version minimale :** iOS 26 et iPadOS 26  
 > **Technologies principales :** Swift et SwiftUI
@@ -284,7 +284,7 @@ quotidienne.
 | `DEC-29` | Une seule fenêtre peut modifier un album donné à la fois. Une seconde fenêtre peut l’ouvrir en lecture seule. |
 | `DEC-30` | Les documents `.photoalbum` sont des packages natifs Apple, documentés pour permettre leur lecture et leur création par des logiciels tiers. |
 | `DEC-31` | La référence fonctionnelle est l’éditeur Web Photoweb documenté et observé en 2026 ; l’interface finale utilise des composants iOS natifs et adaptatifs, sans reprendre la marque, les assets, les couleurs commerciales ni le parcours de commande Photoweb. |
-| `DEC-32` | Les panneaux sont ordonnés `Photos`, `Mise en page`, `Texte`, `Fonds`, `Stickers`, `Cadres et formes`. La marge de sécurité n’est jamais proposée. |
+| `DEC-32` | Les panneaux sont ordonnés `Photos`, `Texte`, `Stickers`, puis, après une séparation simple sans titre, `Mise en page`, `Fonds`, `Cadres et formes`. La marge de sécurité n’est jamais proposée. |
 | `DEC-33` | Le développement redémarre sur le modèle 3.0. Les données produites par les prototypes 2.1 ne sont pas migrées et leurs tests constituent uniquement un historique ; le premier schéma publiable adopte directement le canevas multiélément. |
 | `DEC-34` | Le panneau Photos permet de supprimer un original de l’album courant uniquement lorsque son nombre d’occurrences dans cet album est nul. La suppression demande confirmation et reste annulable pendant la session. |
 | `DEC-35` | Appliquer un modèle plus petit qu’un ensemble de cadres remplis demande confirmation avant de retirer les occurrences excédentaires ; leurs originaux restent disponibles dans Photos. |
@@ -492,7 +492,7 @@ haut à gauche, largeur et hauteur normalisées de `0` à `1`.
 
 | ID | Exigence |
 |---|---|
-| `EDT-001` | Les six panneaux de création DOIVENT apparaître dans cet ordre stable : Photos, Mise en page, Texte, Fonds, Stickers, Cadres et formes. |
+| `EDT-001` | Les six panneaux de création DOIVENT apparaître dans cet ordre stable : Photos, Texte, Stickers, Mise en page, Fonds, Cadres et formes. Photos, Texte et Stickers forment le groupe contigu des éléments ajoutables. Une séparation visuelle simple DOIT apparaître après Stickers, avant Mise en page ; elle NE DOIT porter aucun titre ni créer un panneau ou une commande supplémentaire. Mise en page et Fonds restent deux panneaux distincts. |
 | `EDT-002` | Sur iPad en largeur régulière, ces panneaux DOIVENT utiliser un rail latéral et un inspecteur repliable fixé à droite du canevas ; sur iPhone ou en largeur compacte, ils DOIVENT utiliser une barre inférieure et une présentation adaptative dans la même fenêtre. Leur contenu et leur ordre fonctionnel restent identiques. Le rail, ses choix Photos/Fonds et l’inspecteur ouvert DOIVENT rester entièrement visibles dans chaque orientation prise en charge. Aucune orientation ni largeur prise en charge NE DOIT tronquer une colonne de miniatures ou étirer verticalement une commande locale pour compenser un manque de largeur. Lorsque l’inspecteur de l’élément et le panneau actif sont empilés à droite, chacun DOIT pouvoir replier indépendamment son contenu jusqu’à un titre restant visible. La commande masquant tout le panneau droit DOIT se trouver dans ce panneau ; une éventuelle commande de réaffichage placée dans le rail DOIT nommer explicitement le panneau droit. |
 | `EDT-003` | Dans l’ordre fonctionnel, la barre principale DOIT proposer Retour, Aide, nom de l’album avec Renommer, état de sauvegarde, Sauvegarder, Annuler, Rétablir, Couper, Copier, Coller, Supprimer, Mise en page auto, Créer — Vue page, Gérer les pages — Vue globale, Prévisualiser puis Exporter. |
 | `EDT-004` | Une commande trop large pour l’iPhone DOIT rester disponible dans un menu Plus sans changer son libellé, son effet ni son ordre relatif. |
@@ -534,11 +534,11 @@ commande.
 | Panneau Photos | Masquer / Afficher les photos utilisées | `eye.slash` / `eye` | jamais |
 | Panneau Photos | Trier | `arrow.up.arrow.down` | moins de deux photos |
 | Panneau Photos | Remplir l’album | `wand.and.stars` | aucune photo inutilisée ou tâche atomique en cours |
-| Rail ou barre de panneaux | Mise en page | `rectangle.3.group` | jamais |
 | Rail ou barre de panneaux | Texte | `textformat` | jamais |
 | Panneau Texte | Ajouter un texte | `text.badge.plus` | album ouvert en lecture seule |
-| Rail ou barre de panneaux | Fonds | `paintpalette` | jamais |
 | Rail ou barre de panneaux | Stickers | `face.smiling` | jamais |
+| Rail ou barre de panneaux | Mise en page | `rectangle.3.group` | jamais |
+| Rail ou barre de panneaux | Fonds | `paintpalette` | jamais |
 | Rail ou barre de panneaux | Cadres et formes | `square.on.circle` | aucun cadre photo sélectionné |
 | Page | Ajouter une page | `rectangle.stack.badge.plus` | tâche atomique incompatible en cours |
 | Panneau Mise en page | Changer aléatoirement la mise en page | `die.face.5.fill` | moins de deux modèles compatibles |
@@ -581,7 +581,7 @@ commande.
 |---|---|
 | `EDT-010` | Chaque commande des tableaux 7.2.1 et 7.2.2 DOIT conserver son ordre relatif, son libellé accessible et son état activé/désactivé sur iPhone et iPad. |
 | `EDT-011` | L’état actif d’un panneau ou d’une vue DOIT combiner forme, libellé ou indicateur avec la couleur ; la couleur seule est interdite. |
-| `EDT-012` | Sans sélection, Couper, Copier et Supprimer sont désactivés ; Photos, Mise en page, Texte, Fonds et Stickers, Ajouter une page, le dé compatible, Auto, Gérer les pages — Vue globale et Prévisualiser restent accessibles. Cadres et formes est désactivé tant qu’aucun cadre photo n’est sélectionné. |
+| `EDT-012` | Sans sélection, Couper, Copier et Supprimer sont désactivés ; Photos, Texte, Stickers, Mise en page et Fonds, Ajouter une page, le dé compatible, Auto, Gérer les pages — Vue globale et Prévisualiser restent accessibles. Cadres et formes est désactivé tant qu’aucun cadre photo n’est sélectionné. |
 | `EDT-013` | Avec un cadre vide sélectionné, la barre contextuelle DOIT proposer Ajouter une photo, Cadres et formes, Dupliquer, ordre de profondeur et Supprimer. Recadrer et les transformations du contenu sont désactivés. |
 | `EDT-014` | Avec une photo, un texte ou un sticker sélectionné, seule la barre propre au type définie par `FRM-005`, `TBX-009` ou `STK-016` DOIT apparaître, suivie des commandes communes dans le même ordre. |
 | `EDT-015` | En mode cadrage, les panneaux, navigation de page et transformations du cadre DOIVENT être temporairement désactivés ; la barre DOIT proposer Zoom photo avec sa valeur en `×`, Annuler, Réinitialiser et Terminé. Zoom photo expose toute la plage de `CRP-004`, y compris les valeurs inférieures à `1×`, avec un ajustement accessible sans pincement. Les commandes de zoom du canevas restent visuellement distinctes et désactivées jusqu’à la sortie du cadrage. |
@@ -2520,7 +2520,7 @@ L’appareil de référence est le plus ancien iPhone ou iPad officiellement com
 **Lot de validation :** Lot 2<br>
 **Couvre :** `EDT-001` à `EDT-020`, `ZOM-001` à `ZOM-008`, `GLO-001`, `GLO-002`, `NAV-001` à `NAV-007`<br>
 **Étant donné** le même album de plusieurs pages sur iPhone étroit et iPad large<br>
-**Quand** l'utilisateur parcourt Photos, Mise en page, Texte, Fonds, Stickers et Cadres et formes, ouvre l'aide hors ligne depuis deux panneaux, zoome par commandes et pincement, revient de Vue globale et de la prévisualisation, puis atteint les bornes de l'album avec les boutons et les balayages<br>
+**Quand** l'utilisateur parcourt Photos, Texte, Stickers, la séparation sans titre, Mise en page, Fonds et Cadres et formes, ouvre l'aide hors ligne depuis deux panneaux, zoome par commandes et pincement, revient de Vue globale et de la prévisualisation, puis atteint les bornes de l'album avec les boutons et les balayages<br>
 **Alors** l'ordre, les commandes, les symboles fonctionnels, leurs libellés accessibles et leurs états activés ou désactivés respectent les matrices 7.2.1 et 7.2.2 dans les présentations natives adaptées, l'aide explique le contexte actif sans réseau, le zoom de session est restauré sans modifier l'album, Précédent et Suivant ciblent les mêmes pages, et une seule page est toujours affichée.
 
 ## 29.17 `ACPT-124` — Photos et cadres multiples — version 1.0

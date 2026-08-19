@@ -36,7 +36,18 @@ formats dans l’inspecteur, mais `IPAD-L2-022` échoue car la saisie est rendue
 une taille pratiquement invisible. Le correctif
 `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` applique la
 conversion typographique 300/72 et les fiches courtes `IPAD-L2-023…029`
-réutilisent progressivement le même album. La source normative reste
+réutilisent progressivement le même album. La campagne du 19 août 2026 compte
+deux réussites (`028`, `029`) et cinq échecs (`023…027`) : compilation et
+frappe visible acquises, mais descendantes, composition des motifs,
+organisation des panneaux, sélection/palette en paysage et Police/Italique
+restent à reprendre sur le candidat testé. Le correctif courant réserve la
+métrique normale aux interlignes neutres, borne et place le motif sous
+l’éditeur, conserve la sélection sans clavier, rend la palette défilable,
+explicite les trois portées de format et applique l’ordre visible Photos,
+Texte, séparation simple sans titre, Mise en page, Fonds. Après clarification,
+`EDT-001` fixe l’ordre complet Photos, Texte, Stickers, séparation simple sans
+titre, Mise en page, Fonds, Cadres et formes.
+La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
@@ -60,8 +71,8 @@ multi-types appartiennent aux incréments suivants.
 | `A-L2-UI-PARSE` | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` | structure de `EDT-001…004`, `EDT-019`, `RND-001`, `AUT-001` | Syntaxe seulement, sans type-check SwiftUI ni disponibilité des SF Symbols |
 | `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel`, `testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity` | `EDT-001`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017`, `AUT-009…011` | Vérifie le bouton compact, l’absence de groupe permanent, le dialogue interne, les trois densités, Annuler/Valider et le service de remplissage ; pas le rendu Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
-| `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, tests de service et de modèles | `TBX-001…020`, `TBX-023…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017` | Prouve les primitives de modèles, la conversion typographique 300/72, les styles persistants, le contraste initial, la limite, la hauteur/débordement, la géométrie et l’atomicité dans le Core ; pas l’éditeur Apple ni les exigences intégrées complètes |
-| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024`, `TXA-001`, `TXA-002` | Le contrat source vérifie la portée métier imbriquée, une contrainte par `AttributeKey`, l’unique ajout rapide supérieur, le panneau Texte, le fond réel, l’échelle, la palette et l’opacité ; le parse reste syntaxique et le rendu/accessibilité doivent être testés sur Apple |
+| `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, tests de service et de modèles | `TBX-001…020`, `TBX-023…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017` | Prouve les primitives de modèles, la conversion typographique 300/72, la marge ascente/descente, les styles persistants, le contraste initial, la limite, la hauteur/débordement, la géométrie et l’atomicité dans le Core ; pas l’éditeur Apple ni les exigences intégrées complètes |
+| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `AlbumPageBackground`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024`, `TBX-025`, `TXA-001`, `TXA-002` | Le contrat source vérifie la portée métier imbriquée, une contrainte par `AttributeKey`, l’ordre et la séparation des panneaux visibles, le fond borné sous l’éditeur, l’échelle, la sélection conservée, les trois portées, la palette défilable et l’opacité ; le parse reste syntaxique et le rendu/accessibilité doivent être testés sur Apple |
 
 La suite WSL complète compte 147 tests sans échec après la correction typographique,
 du cadrage couvrant et du dialogue compact. Les
@@ -94,8 +105,13 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-020` | Création, édition riche et rendu des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation d’`AlbumTextEditorView` impossible sur `d882183…` |
 | `IPAD-L2-021` | Compilation corrigée et qualification complète des zones de texte | `TBX-001…010`, `TBX-012…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — compilation réussie, cinq défauts d’interface/rendu sur `0f4b16c…` |
 | `IPAD-L2-022` | Panneau Texte, palette, échelle et opacité | `EDT-001`, `EDT-002`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-001…020`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `ACC-002`, `ACC-006`, `ACC-021` | 🔴 `ÉCHOUÉ` — saisie pratiquement invisible sur `7bc495e…` |
-| `IPAD-L2-023` | Compilation et saisie visible | `ENV-001…005`, `TBX-002…005`, `TBX-014`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` — candidat `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` |
-| `IPAD-L2-024…029` | Six contrôles courts réutilisant le jeu Texte-A : panneau/inspecteur, taille/opacité, fond/palette, sélection/limite, géométrie/modèle, profondeur/persistance | `EDT-001`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-001…021`, `TBX-023…025`, `TPL-012`, `TPL-013`, `TPL-017`, `TXA-001`, `TXA-002`, `TXA-004`, `UND-001`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — exécuter une fiche à la fois après `023` |
+| `IPAD-L2-023` | Compilation et saisie visible | `ENV-001…005`, `TBX-002…005`, `TBX-014`, `TBX-025`, `DONE-005` | 🔴 `ÉCHOUÉ` — compilation et étapes 1 à 3 réussies ; descendantes rognées et motif parfois devant l’éditeur à l’étape 4 |
+| `IPAD-L2-024` | Panneau Texte, raccourcis et inspecteur | `EDT-001`, `EDT-006`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002`, `TBX-009`, `UND-001` | 🔴 `ÉCHOUÉ` — organisation de l’étape 1 rejetée ; étapes 2 à 4 réussies, menu `+` accepté |
+| `IPAD-L2-025` | Taille et opacité cohérentes | `TBX-010`, `TBX-012`, `TBX-014`, `TBX-024` | 🔴 `ÉCHOUÉ` — sélection perdue sans clavier et portée des formats insuffisamment explicite ; l’opacité zone entière reste conforme à `TBX-012` |
+| `IPAD-L2-026` | Fond réel et palette colorée | `TBX-010`, `TBX-015`, `TBX-016`, `TBX-025`, `BG-011`, `BG-016` | 🔴 `ÉCHOUÉ` — palette non défilable et sélection perdue sans clavier en paysage ; étapes 3 et 4 sans verdict |
+| `IPAD-L2-027` | Sélections, paragraphes et limite | `TBX-006…011`, `TBX-013`, `TBX-017`, `TBX-023`, `TXA-001`, `TXA-002`, `TXA-004` | 🔴 `ÉCHOUÉ` — Système/Arrondie identiques et Italique sans effet perceptible ; étapes 2 à 4 déclarées conformes |
+| `IPAD-L2-028` | Géométrie, débordement et modèle texte | `TBX-018…021`, `TPL-012`, `TPL-013`, `TPL-017` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-029` | Profondeur, persistance et accessibilité | `TBX-001`, `TBX-004`, `TBX-023`, `TBX-024`, `UND-001`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -128,9 +144,11 @@ suppression du formulaire défilant et de la hauteur fixe.
 
 - Les variantes avec un slot texte et l’éditeur sont actives. Leur premier
   candidat échoue à la compilation sous `IPAD-L2-020`; `IPAD-L2-021` puis
-  `022` échouent fonctionnellement. La conversion typographique corrigée reste
-  à compiler sous `IPAD-L2-023`, puis les fonctions sont qualifiées une par une
-  sous `024…029` sans recréer l’album partagé.
+  `022` échouent fonctionnellement. `f0a0cca…` compile et `IPAD-L2-028…029`
+  valident globalement modèle, profondeur, persistance et accessibilité, mais
+  `023…027` conservent cinq écarts détaillés. Le regroupement demandé sous
+  `024` est arbitré dans `EDT-001`; le candidat n’applique pas encore cet ordre
+  ni la séparation sans titre.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure

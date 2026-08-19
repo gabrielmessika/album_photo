@@ -740,6 +740,11 @@ public enum AlbumFillEngine {
 }
 
 public enum TextPrototypeEngine {
+    /// Space required by one rendered glyph line, including ascenders and
+    /// descenders. Baseline spacing for additional lines remains controlled
+    /// by the persisted paragraph value.
+    static let glyphLineHeightFactor = 1.2
+
     /// Converts the persisted canonical font value to the destination page
     /// scale. Existing albums keep their stored `relativeFontSize` unchanged.
     public static func renderedFontSize(
@@ -814,7 +819,10 @@ public enum TextPrototypeEngine {
                     * averageGlyphWidthFactor
             }
             let lineCount = max(1, Int(ceil(estimatedWidth / widthUnits)))
-            return total + Double(lineCount) * maximumFontHeight * paragraph.lineSpacing
+            let baselineIntervals = Double(max(0, lineCount - 1))
+                * maximumFontHeight
+                * paragraph.lineSpacing
+            return total + maximumFontHeight * glyphLineHeightFactor + baselineIntervals
         }
         return heightUnits / AlbumPhotoConstants.canonicalPageHeight
     }

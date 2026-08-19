@@ -18,8 +18,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 
 ## État du projet
 
-- Spécification : projet 3.0 mis à jour le 17 août 2026 après les retours de la
-  première campagne iPad Lot 2 ; le repère canonique
+- Spécification : projet 3.0 mis à jour le 19 août 2026 après les retours des
+  campagnes iPad Lot 2 ; le repère canonique
   `2 400 × 3 000`, la taille native à `1×`, le cadrage initial couvrant centré
   et la borne basse de zoom dynamique sont confirmés. La frontière des lots est également figée :
   création photo locale au Lot 1, composition Photoweb complète au Lot 2,
@@ -110,14 +110,26 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   applique la conversion typographique
   `N × H / 720` sans migrer les valeurs enregistrées. La qualification est
   désormais découpée en fiches courtes `IPAD-L2-023…029` qui réutilisent le
-  même album ; `023` contrôle d’abord la compilation et la saisie visible.
+  même album. Leur campagne du 19 août confirme la compilation, la frappe
+  visible, la géométrie/modèle (`028`) et la profondeur/persistance/accessibilité
+  (`029`), mais relève cinq échecs (`023…027`) : descendantes rognées,
+  motif passant devant l’éditeur, organisation des panneaux rejetée,
+  sélection/palette inutilisables en paysage et styles Police/Italique sans
+  effet perceptible. Le correctif en cours utilise la métrique d’interligne
+  native pour préserver les descendantes, borne les motifs sous l’éditeur,
+  conserve une sélection lors du masquage du clavier, rend la palette
+  défilable et distingue visuellement les portées Sélection, Paragraphe et
+  Zone. Le rail place désormais Photos et Texte côte à côte, puis une simple
+  séparation avant Mise en page et Fonds ; Stickers rejoindra le premier
+  groupe lorsqu’il sera livré.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
-  migration. Les panneaux publics sont maintenant `Photos`, `Mise en page`,
-  `Texte` et `Fonds`. Les variantes avec texte sont actives dans le candidat en cours ;
+  migration. Les panneaux publics sont maintenant `Photos`, `Texte`, une
+  séparation sans titre, `Mise en page` et `Fonds`. Les variantes avec texte
+  sont actives dans le candidat en cours ;
   stickers, cadres décoratifs et presse-papiers
   multi-types restent à livrer au Lot 2. Lecture, diaporama,
   package et PDF relèvent du Lot 3.
@@ -147,9 +159,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   d’interface et de rendu décrits plus haut. `7bc495e…` repasse les 146 tests
   Core mais `IPAD-L2-022` échoue sur la lisibilité de la saisie. La conversion
   typographique corrigée passe maintenant 147 tests Core, le contrat ciblé,
-  les contrats du dépôt, les dix empreintes et l’analyse syntaxique ; sa
-  compilation et son rendu Apple restent ⚪ sous `IPAD-L2-023`, avant les
-  petites fiches `024…029`. Les photos de diagnostic restent hors de Git.
+  les contrats du dépôt, les dix empreintes et l’analyse syntaxique. Sur iPad,
+  `IPAD-L2-023…029` compte 2 réussites (`028`, `029`) et 5 échecs (`023…027`).
+  La portée de l’opacité sur toute la zone reste conforme à `TBX-012`; le
+  retour demande surtout de distinguer visuellement les formats de caractères,
+  de paragraphes et de zone. `EDT-001` fixe désormais l’ordre Photos, Texte,
+  Stickers, une séparation simple sans titre, Mise en page, Fonds, puis Cadres
+  et formes ; le nouveau code applique l’ordre de l’incrément visible, mais sa
+  compilation et son rendu Apple restent à requalifier. Les photos de
+  diagnostic restent hors de Git.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.

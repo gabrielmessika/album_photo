@@ -163,7 +163,9 @@ private struct ApplyAlbumLineHeight: AttributedTextValueConstraint {
             alignment: defaults.alignment,
             lineSpacing: defaults.lineSpacing
         )
-        container.lineHeight = .multiple(factor: CGFloat(style.lineSpacing))
+        container.lineHeight = AlbumTextAttributedBridge.attributedLineHeight(
+            style.lineSpacing
+        )
     }
 }
 
@@ -202,7 +204,7 @@ enum AlbumTextAttributedBridge {
                     lineSpacing: paragraph.lineSpacing
                 )
                 result[range].alignment = attributedAlignment(paragraph.alignment)
-                result[range].lineHeight = .multiple(factor: CGFloat(paragraph.lineSpacing))
+                result[range].lineHeight = attributedLineHeight(paragraph.lineSpacing)
             }
         }
         return result
@@ -260,7 +262,7 @@ enum AlbumTextAttributedBridge {
         attributes.font = font(for: style, pageHeight: pageHeight)
         attributes.foregroundColor = style.color.swiftUIColor
         attributes.alignment = attributedAlignment(style.alignment)
-        attributes.lineHeight = .multiple(factor: CGFloat(style.lineSpacing))
+        attributes.lineHeight = attributedLineHeight(style.lineSpacing)
         return attributes
     }
 
@@ -343,6 +345,16 @@ enum AlbumTextAttributedBridge {
         case .justified: .left
         }
     }
+
+    fileprivate static func attributedLineHeight(
+        _ lineSpacing: Double
+    ) -> AttributedString.LineHeight {
+        // A factor of exactly 1 creates a point-size line box and can crop
+        // descenders. The native normal metric includes ascent and descent;
+        // explicit user spacing keeps the requested ratio.
+        if abs(lineSpacing - 1) < 0.000_001 { return .normal }
+        return .multiple(factor: CGFloat(lineSpacing))
+    }
 }
 
 struct AlbumTextEditorView: View {
@@ -359,6 +371,8 @@ struct AlbumTextEditorView: View {
     @State private var opacity: Double
     @State private var showsCharacterLimit = false
     @State private var showsColorPalette = false
+    @State private var retainedSelection: AttributedTextSelection?
+    @State private var retainedSelectionText: String?
     @FocusState private var editorIsFocused: Bool
 
     init(
@@ -400,6 +414,9 @@ struct AlbumTextEditorView: View {
                         maximumPixelSize: 1_200
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                    .allowsHitTesting(false)
+                    .zIndex(0)
 
                     TextEditor(text: $text, selection: $selection)
                         .attributedTextFormattingDefinition(
@@ -413,8 +430,13 @@ struct AlbumTextEditorView: View {
                         .scrollDismissesKeyboard(.interactively)
                         .padding(12)
                         .opacity(opacity)
+                        .zIndex(1)
                         .accessibilityLabel("Contenu de la zone de texte")
                         .onChange(of: text) { oldValue, newValue in
+                            if String(oldValue.characters) != String(newValue.characters) {
+                                retainedSelection = nil
+                                retainedSelectionText = nil
+                            }
                             guard newValue.characters.count > 1_000 else { return }
                             let limited = limitedText(oldValue: oldValue, newValue: newValue)
                             text = limited.value
@@ -429,6 +451,16 @@ struct AlbumTextEditorView: View {
                                 )
                             )
                             showsCharacterLimit = true
+                        }
+                        .onChange(of: selection) { _, newValue in
+                            if isInsertionPoint(newValue) {
+                                if editorIsFocused {
+                                    retainedSelection = nil
+                                    retainedSelectionText = nil
+                                }
+                            } else {
+                                retainSelection(newValue)
+                            }
                         }
                 }
 
@@ -478,6 +510,13 @@ struct AlbumTextEditorView: View {
             }
             editorIsFocused = true
         }
+        .onChange(of: editorIsFocused) { wasFocused, isFocused in
+            if wasFocused, !isFocused {
+                retainSelectionForFormatting()
+            } else if !wasFocused, isFocused, let retainedSelection = validRetainedSelection {
+                selection = retainedSelection
+            }
+        }
         .alert("Limite atteinte", isPresented: $showsCharacterLimit) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -488,6 +527,7 @@ struct AlbumTextEditorView: View {
     private var formattingBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
+                formattingScopeLabel("Sélection", systemImage: "character.cursor.ibeam")
                 fontMenu
                 sizeMenu
 
@@ -502,15 +542,43 @@ struct AlbumTextEditorView: View {
                 .tint(currentStyle.isItalic ? Color.accentColor : nil)
 
                 colorMenu
+                formattingScopeDivider
+                formattingScopeLabel("Paragraphe", systemImage: "paragraph")
                 alignmentMenu
                 lineSpacingMenu
+                formattingScopeDivider
+                formattingScopeLabel("Zone", systemImage: "rectangle.dashed")
                 opacityMenu
+
+                Button(
+                    editorIsFocused ? "Masquer le clavier" : "Afficher le clavier",
+                    systemImage: editorIsFocused
+                        ? "keyboard.chevron.compact.down" : "keyboard"
+                ) {
+                    toggleKeyboard()
+                }
             }
             .buttonStyle(.bordered)
             .controlSize(.large)
             .padding(.horizontal)
             .padding(.vertical, 10)
         }
+    }
+
+    private func formattingScopeLabel(
+        _ title: String,
+        systemImage: String
+    ) -> some View {
+        Label(title, systemImage: systemImage)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .fixedSize()
+    }
+
+    private var formattingScopeDivider: some View {
+        Divider()
+            .frame(height: 32)
+            .accessibilityHidden(true)
     }
 
     private var fontMenu: some View {
@@ -540,6 +608,7 @@ struct AlbumTextEditorView: View {
 
     private var colorMenu: some View {
         Button("Couleur", systemImage: "paintpalette") {
+            retainSelectionForFormatting()
             showsColorPalette = true
         }
         .popover(isPresented: $showsColorPalette) {
@@ -548,16 +617,25 @@ struct AlbumTextEditorView: View {
                     .font(.headline)
                     .padding(.bottom, 4)
 
-                ForEach(AlbumTextColorOption.all) { option in
-                    Button {
-                        applyCharacterStyle { $0.color = option.color }
-                        showsColorPalette = false
-                    } label: {
-                        AlbumTextColorLabel(option: option)
-                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 6) {
+                        ForEach(AlbumTextColorOption.all) { option in
+                            Button {
+                                applyCharacterStyle { $0.color = option.color }
+                                showsColorPalette = false
+                            } label: {
+                                AlbumTextColorLabel(option: option)
+                                    .frame(
+                                        maxWidth: .infinity,
+                                        minHeight: 44,
+                                        alignment: .leading
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
+                .frame(maxHeight: 320)
             }
             .padding(14)
             .frame(minWidth: 190)
@@ -605,19 +683,33 @@ struct AlbumTextEditorView: View {
     }
 
     private var currentStyle: TextStyleDefaults {
-        selection.typingAttributes(in: text)[AlbumTextStyleAttribute.self]
+        formattingSelection.typingAttributes(in: text)[AlbumTextStyleAttribute.self]
             ?? typingDefaults
     }
 
-    private var selectionIsInsertionPoint: Bool {
-        if case .insertionPoint = selection.indices(in: text) { return true }
+    private var formattingSelection: AttributedTextSelection {
+        if isInsertionPoint(selection), let retainedSelection = validRetainedSelection {
+            return retainedSelection
+        }
+        return selection
+    }
+
+    private var validRetainedSelection: AttributedTextSelection? {
+        guard retainedSelectionText == String(text.characters) else { return nil }
+        return retainedSelection
+    }
+
+    private func isInsertionPoint(_ candidate: AttributedTextSelection) -> Bool {
+        if case .insertionPoint = candidate.indices(in: text) { return true }
         return false
     }
 
     private func applyCharacterStyle(
         _ update: (inout TextStyleDefaults) -> Void
     ) {
-        text.transformAttributes(in: &selection) { attributes in
+        var targetSelection = formattingSelection
+        let targetsTypingDefaults = isInsertionPoint(targetSelection)
+        text.transformAttributes(in: &targetSelection) { attributes in
             var style = attributes[AlbumTextStyleAttribute.self] ?? typingDefaults
             update(&style)
             attributes[AlbumTextStyleAttribute.self] = style
@@ -627,14 +719,21 @@ struct AlbumTextEditorView: View {
             )
             attributes.foregroundColor = style.color.swiftUIColor
         }
-        if selectionIsInsertionPoint { update(&typingDefaults) }
+        if targetsTypingDefaults {
+            update(&typingDefaults)
+        } else {
+            retainSelection(targetSelection)
+            selection = targetSelection
+        }
     }
 
     private func applyParagraphStyle(
         alignment: TextAlignmentValue? = nil,
         lineSpacing: Double? = nil
     ) {
-        text.transformAttributes(in: &selection) { attributes in
+        var targetSelection = formattingSelection
+        let targetsTypingDefaults = isInsertionPoint(targetSelection)
+        text.transformAttributes(in: &targetSelection) { attributes in
             let current = attributes[AlbumParagraphStyleAttribute.self]
                 ?? AlbumParagraphStyleValue(
                     alignment: typingDefaults.alignment,
@@ -648,11 +747,38 @@ struct AlbumTextEditorView: View {
             attributes.alignment = AlbumTextAttributedBridge.attributedAlignment(
                 changed.alignment
             )
-            attributes.lineHeight = .multiple(factor: CGFloat(changed.lineSpacing))
+            attributes.lineHeight = AlbumTextAttributedBridge.attributedLineHeight(
+                changed.lineSpacing
+            )
         }
-        if selectionIsInsertionPoint {
+        if targetsTypingDefaults {
             if let alignment { typingDefaults.alignment = alignment }
             if let lineSpacing { typingDefaults.lineSpacing = lineSpacing }
+        } else {
+            retainSelection(targetSelection)
+            selection = targetSelection
+        }
+    }
+
+    private func retainSelectionForFormatting() {
+        guard !isInsertionPoint(selection) else { return }
+        retainSelection(selection)
+    }
+
+    private func retainSelection(_ candidate: AttributedTextSelection) {
+        retainedSelection = candidate
+        retainedSelectionText = String(text.characters)
+    }
+
+    private func toggleKeyboard() {
+        if editorIsFocused {
+            retainSelectionForFormatting()
+            editorIsFocused = false
+        } else {
+            if let retainedSelection = validRetainedSelection {
+                selection = retainedSelection
+            }
+            editorIsFocused = true
         }
     }
 

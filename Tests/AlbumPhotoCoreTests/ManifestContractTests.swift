@@ -213,6 +213,10 @@ final class ManifestContractTests: XCTestCase {
             contentsOf: appModule.appendingPathComponent("TextPanelView.swift"),
             encoding: .utf8
         )
+        let pageBackground = try String(
+            contentsOf: appModule.appendingPathComponent("AlbumPageBackground.swift"),
+            encoding: .utf8
+        )
         let canvas = try String(
             contentsOf: appModule.appendingPathComponent("PageCanvasView.swift"),
             encoding: .utf8
@@ -260,8 +264,15 @@ final class ManifestContractTests: XCTestCase {
         ))
         XCTAssertTrue(textEditor.contains("selection: request.pageBackground"))
         XCTAssertTrue(textEditor.contains(".scrollContentBackground(.hidden)"))
+        XCTAssertTrue(textEditor.contains(".allowsHitTesting(false)"))
+        XCTAssertTrue(textEditor.contains(".zIndex(0)"))
+        XCTAssertTrue(textEditor.contains(".zIndex(1)"))
+        XCTAssertTrue(pageBackground.contains(
+            ".frame(maxWidth: .infinity, maxHeight: .infinity)\n        .clipped()"
+        ))
         XCTAssertTrue(textEditor.contains("pageHeight: request.previewPageHeight"))
         XCTAssertTrue(textEditor.contains("TextPrototypeEngine.renderedFontSize("))
+        XCTAssertTrue(textEditor.contains("return .normal"))
         XCTAssertFalse(textEditor.contains(
             "pageHeight: AlbumPhotoConstants.canonicalPageHeight"
         ))
@@ -269,6 +280,14 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("Circle()"))
         XCTAssertTrue(textEditor.contains(".fill(option.color.swiftUIColor)"))
         XCTAssertTrue(textEditor.contains(".popover(isPresented: $showsColorPalette)"))
+        XCTAssertTrue(textEditor.contains("LazyVStack(alignment: .leading, spacing: 6)"))
+        XCTAssertTrue(textEditor.contains(".frame(maxHeight: 320)"))
+        XCTAssertTrue(textEditor.contains("retainedSelection: AttributedTextSelection?"))
+        XCTAssertTrue(textEditor.contains("retainSelectionForFormatting()"))
+        XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Sélection\""))
+        XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Paragraphe\""))
+        XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Zone\""))
+        XCTAssertTrue(textEditor.contains("Masquer le clavier"))
         XCTAssertTrue(textEditor.contains("newValue.characters.count > 1_000"))
         XCTAssertTrue(textEditor.contains("acceptedInsertedCount"))
         XCTAssertTrue(textEditor.contains("result.removeSubrange"))
@@ -311,6 +330,14 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textPanel.contains("applySelectedTextParagraphStyle"))
         XCTAssertTrue(textPanel.contains("setSelectedTextOpacity"))
         XCTAssertTrue(viewModel.contains("case text"))
+        XCTAssertTrue(viewModel.contains(
+            "case photos\n    case text\n    case layouts\n    case backgrounds"
+        ))
+        XCTAssertEqual(
+            editor.components(separatedBy: "if panel == .text {").count - 1,
+            2,
+            "Les rails régulier et compact doivent séparer les ajouts de la page"
+        )
         XCTAssertTrue(viewModel.contains("previewPageHeight: textPreviewPageHeight"))
         XCTAssertTrue(viewModel.contains("func beginAddingText()"))
         XCTAssertTrue(viewModel.contains("func commitTextEditing("))

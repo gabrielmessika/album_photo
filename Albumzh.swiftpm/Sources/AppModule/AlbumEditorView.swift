@@ -574,6 +574,12 @@ private struct AlbumEditorScene: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(model.cropDraft != nil)
+
+                if panel == .text {
+                    Divider()
+                        .padding(.horizontal, 8)
+                        .accessibilityHidden(true)
+                }
             }
             Spacer()
             if !showsInspector {
@@ -1069,6 +1075,12 @@ private struct AlbumEditorScene: View {
                             mobilePanel = panel
                         }
                         .labelStyle(.iconOnly)
+
+                        if panel == .text {
+                            Divider()
+                                .frame(height: 24)
+                                .accessibilityHidden(true)
+                        }
                     }
                     Divider().frame(height: 24)
                 }

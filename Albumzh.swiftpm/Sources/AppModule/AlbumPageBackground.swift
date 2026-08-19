@@ -35,6 +35,7 @@ struct AlbumPageBackground: View {
                     .aspectRatio(4.0 / 5.0, contentMode: .fill)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
         .accessibilityHidden(true)
     }

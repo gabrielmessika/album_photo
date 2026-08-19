@@ -51,8 +51,8 @@ enum DefaultPhotoQualityPolicy {
 
 enum EditorPanel: String, CaseIterable, Identifiable {
     case photos
-    case layouts
     case text
+    case layouts
     case backgrounds
 
     var id: String { rawValue }

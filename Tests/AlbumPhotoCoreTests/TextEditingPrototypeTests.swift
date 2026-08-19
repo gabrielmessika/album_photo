@@ -200,10 +200,11 @@ final class TextEditingPrototypeTests: XCTestCase {
         )
         XCTAssertEqual(
             TextPrototypeEngine.requiredHeight(
-                for: self.content("M", style: small),
+                for: self.content("jpgqy", style: small),
                 width: 0.60
             ),
-            8 * AlbumPhotoConstants.canonicalUnitsPerTypographicPoint
+            8 * TextPrototypeEngine.glyphLineHeightFactor
+                * AlbumPhotoConstants.canonicalUnitsPerTypographicPoint
                 / AlbumPhotoConstants.canonicalPageHeight,
             accuracy: 0.000_001
         )
