@@ -53,10 +53,13 @@ Système/Arrondie ainsi que l’italique Arrondie. Le second correctif, figé au
 commit `3102cda0e6b2c483576585ec2f97fc947f87c96f`, attache le motif comme
 arrière-plan strict du `TextEditor`, renforce le profil arrondi et son
 inclinaison, puis matérialise tous les choix actifs selon `TBX-026`.
-`IPAD-L2-034…035` doivent maintenant qualifier ces surfaces sur l’iPad déclaré.
-L’ajout du bouton Info à la Bibliothèque produit ensuite le candidat combiné
+`IPAD-L2-034…035` réussissent globalement sur l'iPad déclaré, sans capture ni
+détail par étape. Le retour demande toutefois de réduire la largeur des boutons
+de format : `TBX-027` conserve un état courant visible tout en imposant un
+libellé court, une valeur abrégée ou un indicateur compact.
+L'ajout du bouton Info à la Bibliothèque produit ensuite le candidat combiné
 `60930587da16707dbb57eada9881f6fefcedd51e`. Son archive Git embarque son hash
-exact et les fiches `IPAD-L2-036…038` remplacent les deux fiches non exécutées
+exact et les fiches `IPAD-L2-036…038` remplacent les deux fiches historiques
 pour qualifier Info, motifs et formats sur ce nouveau package.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
@@ -127,8 +130,8 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-031` | Ordre et séparation sans titre des panneaux | `DEC-32`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-032` | Sélection, palette et portées en paysage | `TBX-005`, `TBX-010…012`, `TBX-015`, `TBX-016`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-033` | Polices, italique et persistance de la sélection | `TBX-010`, `TBX-013`, `TBX-023`, `TBX-024`, `SAV-001`, `ACC-002` | 🔴 `ÉCHOUÉ` — Système/Arrondie trop proches et Italique absent sur Arrondie ; étapes 3 et 4 déclarées conformes |
-| `IPAD-L2-034` | Motifs strictement bornés dans l’éditeur | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-024`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-035` | Arrondie, italique et choix actifs | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-034` | Motifs strictement bornés dans l'éditeur | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-024`, `TBX-025`, `DONE-005` | 🟢 `RÉUSSI` — retour global sur `3102cda…`, sans capture ni détail par étape |
+| `IPAD-L2-035` | Arrondie, italique et choix actifs | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sur `3102cda…` ; compacité des boutons reprise sous `TBX-027` |
 | `IPAD-L2-036` | Info, version et commit exact du candidat | `ENV-001…005`, `APP-001`, `APP-012`, `ACC-001…004`, `ACC-008`, `DONE-005` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
@@ -162,13 +165,14 @@ suppression du formulaire défilant et de la hauteur fixe.
 
 ## Écarts connus de l’incrément
 
-- Les variantes avec un slot texte et l’éditeur sont actives. Leur premier
+- Les variantes avec un slot texte et l'éditeur sont actives. Leur premier
   candidat échoue à la compilation sous `IPAD-L2-020`; `IPAD-L2-021` puis
   `022` échouent fonctionnellement. `f0a0cca…` compile et `IPAD-L2-028…029`
-  valident globalement modèle, profondeur, persistance et accessibilité, mais
-  `023…027` conservent cinq écarts détaillés. Le regroupement demandé sous
-  `024` est arbitré dans `EDT-001`; le candidat n’applique pas encore cet ordre
-  ni la séparation sans titre.
+  valident globalement modèle, profondeur, persistance et accessibilité. Les
+  correctifs suivants ferment sur `3102cda…` les écarts de motifs,
+  Arrondie/Italique et d'états actifs par les réussites globales `034…035`.
+  Le package combiné `6093058…` reste à qualifier sous `036…038`; la nouvelle
+  demande de compacité des boutons reste ouverte sous `TBX-027`.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure

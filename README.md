@@ -133,7 +133,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   arrière-plan strict du `TextEditor`, élargit légèrement le dessin système
   arrondi, lui applique un italique synthétique et matérialise les valeurs
   actives de tous les formats conformément à `TBX-026`. Les régressions
-  `IPAD-L2-034…035` restent liées à `3102cda…` et n’ont pas été exécutées.
+  `IPAD-L2-034…035`, liées à `3102cda…`, sont réussies globalement sur l'iPad
+  déclaré, sans capture ni détail par étape. Le prochain développement devra
+  toutefois réduire la largeur des boutons de format : selon `TBX-027`, leur
+  libellé principal reste court et la valeur active demeure visible dans le
+  bouton sous une forme abrégée ou compacte, dans le menu et via l'accessibilité.
   La Bibliothèque expose aussi un bouton `Info` dans sa barre principale. Sa
   fiche affiche la version marketing, le numéro de build et le hash Git complet
   du candidat, sélectionnable. Le hash est estampillé automatiquement dans les
@@ -190,12 +194,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   et formes. Sur `cb77862…`, `IPAD-L2-031…032` réussissent tandis que `030`
   et `033` échouent sur les motifs, la distinction Arrondie et son italique.
   Le correctif suivant est figé dans `3102cda…` et passe les 147 tests Core,
-  le contrat UI ciblé, l’analyse syntaxique, les contrats du dépôt et les dix
-  empreintes sous WSL. `IPAD-L2-034…035` restent ⚪ `NON TESTÉ` sur Apple et
-  doivent être exécutés dans cet ordre. Les photos de diagnostic restent hors
-  de Git. L’ajout de la fiche Info porte ensuite la suite à 148 tests sans
-  échec ; son contrat ciblé, l’analyse syntaxique, les contrats et les dix
-  empreintes réussissent également sous WSL. L’archive du candidat
+  le contrat UI ciblé, l'analyse syntaxique, les contrats du dépôt et les dix
+  empreintes sous WSL. `IPAD-L2-034…035` sont 🟢 `RÉUSSI` globalement sur
+  Apple pour ce candidat exact. Les photos de diagnostic restent hors de Git.
+  L'ajout de la fiche Info porte ensuite la suite à 148 tests sans
+  échec ; son contrat ciblé, l'analyse syntaxique, les contrats et les dix
+  empreintes réussissent également sous WSL. L'archive du candidat
   `6093058…` a été contrôlée : son marqueur est remplacé par le hash complet
   exact. `IPAD-L2-036…038` restent ⚪ `NON TESTÉ` sur Apple.
   L’alignement justifié, le regroupement de frappe à 750 ms,

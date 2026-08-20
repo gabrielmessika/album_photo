@@ -35,7 +35,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif ergonomie et rendu texte testé | `7bc495ec623e5b12301569d0108fbccadb978630` — compilation et ouverture de l’éditeur réussies, mais `IPAD-L2-022` échoue car la saisie est pratiquement invisible |
 | Correctif de lisibilité typographique testé | `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` — compilation et saisie visible confirmées, mais campagne `IPAD-L2-023…029` limitée à 2 réussites (`028`, `029`) et 5 échecs (`023…027`) : descendantes rognées, motif devant l’éditeur, organisation des panneaux rejetée, sélection/palette inadaptées au paysage et styles Police/Italique sans effet perceptible |
 | Correctif groupé texte testé | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` — `IPAD-L2-031…032` réussissent ; `030` échoue uniquement sur les trois motifs intégrés et `033` sur la faible distinction Système/Arrondie ainsi que l’italique Arrondie ; les autres étapes déclarées conformes |
-| Second correctif texte à tester | `3102cda0e6b2c483576585ec2f97fc947f87c96f` — motif strictement borné, Arrondie renforcée, italique Arrondie et états actifs ; exécuter `IPAD-L2-034`, puis `IPAD-L2-035` |
+| Second correctif texte testé | `3102cda0e6b2c483576585ec2f97fc947f87c96f` — `IPAD-L2-034…035` réussis globalement ; motifs, Arrondie/Italique, états actifs, persistance et VoiceOver déclarés conformes sans capture |
 | Candidat Info et correctifs texte à tester | `60930587da16707dbb57eada9881f6fefcedd51e` — Info version/build/commit exact, motifs stricts et formats actifs ; exécuter `IPAD-L2-036`, puis `037`, puis `038` |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
@@ -141,9 +141,13 @@ et les étapes 3 à 4 de `033`, mais échoue sur les trois motifs intégrés, la
 faible distinction Système/Arrondie et l’italique Arrondie. La demande de
 matérialiser chaque choix actif est enregistrée sous `3:TBX-026`. Le second
 correctif est figé au commit exact
-`3102cda0e6b2c483576585ec2f97fc947f87c96f` et doit maintenant être qualifié
-par `IPAD-L2-034…035`, sans rejouer les surfaces réussies sous `031…032`.
-Ces deux fiches restent liées à ce commit et ne sont pas retargetées. L’ajout
+`3102cda0e6b2c483576585ec2f97fc947f87c96f` et est qualifié globalement par
+les réussites `IPAD-L2-034…035`, sans rejouer les surfaces déjà réussies sous
+`031…032`. Le retour ajoute une demande ergonomique distincte : raccourcir les
+boutons de format dont le libellé principal inclut désormais la valeur active.
+Elle est enregistrée sous `3:TBX-027` pour le prochain développement et ne
+transforme pas rétroactivement `035` en échec. Ces deux fiches restent liées à
+ce commit et ne sont pas retargetées. L’ajout
 ultérieur du bouton Info produit le candidat combiné exact
 `60930587da16707dbb57eada9881f6fefcedd51e`; `IPAD-L2-036…038` remplacent
 `034…035` pour toute campagne exécutée sur ce nouveau package.
@@ -403,8 +407,8 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-031` | Ordre et séparation sans titre des panneaux | `3:DEC-32`, `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:EDT-012`, `3:EDT-021`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-032` | Sélection, palette et portées en paysage | `3:TBX-005`, `3:TBX-010` à `3:TBX-012`, `3:TBX-015`, `3:TBX-016`, `3:ACC-002`, `3:ACC-006`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-033` | Polices, italique et persistance de la sélection | `3:TBX-010`, `3:TBX-013`, `3:TBX-023`, `3:TBX-024`, `3:SAV-001`, `3:ACC-002` | 🔴 `ÉCHOUÉ` — Système/Arrondie trop proches et Italique sans effet sur Arrondie ; étapes 3 et 4 déclarées conformes |
-| `IPAD-L2-034` | Motifs strictement bornés dans l’éditeur | `3:ENV-001` à `3:ENV-005`, `3:CAN-003`, `3:BG-007`, `3:TBX-024`, `3:TBX-025`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-035` | Arrondie, italique et choix actifs | `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`, `3:TBX-026`, `3:SAV-001`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-034` | Motifs strictement bornés dans l’éditeur | `3:ENV-001` à `3:ENV-005`, `3:CAN-003`, `3:BG-007`, `3:TBX-024`, `3:TBX-025`, `3:DONE-005` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-035` | Arrondie, italique et choix actifs | `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`, `3:TBX-026`, `3:SAV-001`, `3:ACC-002`, `3:ACC-004` | 🟢 `RÉUSSI` — retour global ; boutons de format jugés trop larges, reprise future `TBX-027` |
 | `IPAD-L2-036` | Info, version et commit exact du candidat | `3:ENV-001` à `3:ENV-005`, `3:APP-001`, `3:APP-012`, `3:ACC-001` à `3:ACC-004`, `3:ACC-008`, `3:DONE-005` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `3:CAN-003`, `3:BG-007`, `3:TBX-024`, `3:TBX-025` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`, `3:TBX-026`, `3:SAV-001`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
@@ -3655,11 +3659,13 @@ requise.
 | 4 | Remplacer le fond par Minimal sombre et refaire le contrôle de l’étape 2. | Le motif reste derrière l’éditeur ; le texte et toutes les commandes conservent leur contraste et leur toucher. |
 | 5 | Alterner chacun des trois motifs avec une couleur unie, puis terminer l’édition. | Aucun fond ne recouvre l’éditeur pendant les transitions ; la couleur unie et les trois motifs restent correctement bornés. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner avec le résultat de chaque étape et une capture si un
-  motif recouvre encore le texte ou les commandes.
-- Environnement attendu : iPad 8e génération, iPadOS 26.5.2, Swift
-  Playgrounds 4.7, portrait. Noter toute différence réelle.
+- Résultat : 🟢 `RÉUSSI`. Les cinq étapes sont déclarées conformes globalement.
+- Preuve : retour utilisateur « c’est ok pour les 2 tests » reçu le 20 août
+  2026 après désignation explicite de `IPAD-L2-034` et `035`, sans capture ni
+  détail distinct par étape.
+- Environnement : repris de la fiche faute de différence déclarée : iPad 8e
+  génération, iPadOS 26.5.2, Swift Playgrounds 4.7, portrait. Aucun résultat
+  du candidat Info `6093058…` n’est extrapolé.
 
 ### `IPAD-L2-035` — Arrondie, italique et choix actifs
 
@@ -3684,11 +3690,17 @@ requise.
 | 10 | Fermer proprement puis rouvrir l’album et la même zone. | Arrondie, Italique, Taille 36, Rouge, Centré, Interligne 1,5 et Opacité 75 % persistent avec leurs portées respectives. |
 | 11 | Avec VoiceOver, parcourir les huit actions de format dans l’éditeur puis dans l’inspecteur. | Chaque commande annonce son libellé, sa valeur et son état actif sans dépendre uniquement d’une couleur. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner avec le résultat de chaque étape et une capture si la
-  différence Système/Arrondie, l’italique ou un état actif reste ambigu.
-- Environnement attendu : repris de `IPAD-L2-034`, paysage puis VoiceOver à
-  l’étape 11. Noter toute différence réelle.
+- Résultat : 🟢 `RÉUSSI`. Les onze étapes sont déclarées conformes globalement.
+  Le retour demande néanmoins de réduire la largeur des boutons de format :
+  l’ajout de la valeur courante dans leur libellé principal leur fait occuper
+  trop de place. Cette évolution future est enregistrée sous `3:TBX-027` et ne
+  contredit aucune attente dimensionnelle de la présente fiche.
+- Preuve : retour utilisateur « c’est ok pour les 2 tests » reçu le 20 août
+  2026 après désignation explicite de `IPAD-L2-034` et `035`, sans capture ni
+  détail distinct par étape.
+- Environnement : repris de `IPAD-L2-034`, en paysage puis avec VoiceOver à
+  l’étape 11 selon la procédure. Aucun résultat du candidat Info `6093058…`
+  n’est extrapolé.
 
 ## Régressions du candidat Info et texte
 
@@ -3931,7 +3943,9 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
-| `IPAD-L2-033` sur `cb77862…` | 20 août 2026 | **Échec aux étapes 1 et 2** ; étapes 3 et 4 déclarées conformes | Retour détaillé, sans capture | Système/Arrondie trop proches ; Italique visible avec Système, Sérif et Chasse fixe mais pas Arrondie ; nouvelle demande d’état actif pour tous les formats (`TBX-026`) | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paysage et VoiceOver selon la fiche |
+| `IPAD-L2-035` sur `3102cda…` | 20 août 2026 | **Réussi globalement** : Arrondie, italique, choix actifs, persistance et VoiceOver déclarés conformes | Retour explicite « c'est ok pour les 2 tests », sans capture ni détail par étape | Les valeurs courantes allongent trop les boutons de format ; reprise ergonomique future sous `TBX-027`, sans invalider cette fiche | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paysage puis VoiceOver selon la fiche |
+| `IPAD-L2-034` sur `3102cda…` | 20 août 2026 | **Réussi globalement** : les trois motifs sont déclarés strictement bornés dans l'éditeur | Retour explicite « c'est ok pour les 2 tests », sans capture ni détail par étape | Aucun défaut fonctionnel signalé ; preuve limitée au candidat exact `3102cda…` | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; portrait selon la fiche |
+| `IPAD-L2-033` sur `cb77862…` | 20 août 2026 | **Échec aux étapes 1 et 2** ; étapes 3 et 4 déclarées conformes | Retour détaillé, sans capture | Système/Arrondie trop proches ; Italique visible avec Système, Sérif et Chasse fixe mais pas Arrondie ; nouvelle demande d'état actif pour tous les formats (`TBX-026`) | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paysage et VoiceOver selon la fiche |
 | `IPAD-L2-032` sur `cb77862…` | 20 août 2026 | **Réussi globalement** : sélection conservée, palette et portées en paysage déclarées conformes | Retour explicite « ok », sans capture ni détail par étape | Aucun défaut supplémentaire signalé ; ne couvre que les quatre étapes de la fiche | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paysage selon la fiche |
 | `IPAD-L2-031` sur `cb77862…` | 20 août 2026 | **Réussi globalement** : ordre et séparation des panneaux déclarés conformes | Retour explicite « ok », sans capture ni détail par étape | Aucun défaut supplémentaire signalé ; largeur compacte `APPLE-L2-001` non couverte | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; portrait puis paysage selon la fiche |
 | `IPAD-L2-030` sur `cb77862…` | 20 août 2026 | **Échec à l’étape 4** après étapes 1 à 3 réussies | Retour détaillé par étape, sans capture | Descendantes et hauteur automatique corrigées ; chacun des trois motifs recouvre encore l’éditeur, tandis qu’une couleur unie fonctionne | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; portrait selon la fiche |

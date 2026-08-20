@@ -1012,6 +1012,7 @@ l'élément ni modifier le cadrage.
 | `TBX-016` | Les boutons DOIVENT utiliser des icônes natives équivalentes à `textformat`, `textformat.size`, `bold`, `italic`, `paintpalette`, `text.alignleft` et `line.3.horizontal`, avec un libellé VoiceOver explicite. Chaque choix de couleur DOIT afficher une pastille de sa couleur sRGB réelle, avec un contour conservant la visibilité du blanc et du noir, sans dépendre de la teinte monochrome d’un menu système. |
 | `TBX-017` | Listes, cases à cocher, tableaux, retraits, surlignage, pièces jointes, dessin, audio et styles Notes NE DOIVENT PAS être proposés. |
 | `TBX-026` | Dans la fenêtre de modification et dans l’inspecteur, chaque menu, palette ou bouton de formatage DOIT matérialiser sa valeur active par une coche ou un état sélectionné visible et par une valeur accessible. Cette indication NE DOIT PAS dépendre uniquement de la couleur et couvre Police, Taille, Gras, Italique, Couleur, Alignement, Interligne et Opacité. |
+| `TBX-027` | Les boutons ouvrant les actions de formatage du texte DOIVENT rester compacts même lorsqu'ils rappellent la valeur courante exigée par `TBX-026`. Leur libellé principal DOIT rester court et stable ; l'état courant DOIT être communiqué sans agrandir sensiblement le bouton, par exemple au moyen d'une valeur abrégée ou d'un indicateur compact, et rester explicite dans le menu ainsi que dans la valeur accessible. |
 
 ## 12.3 Géométrie, débordement et persistance
 
