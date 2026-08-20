@@ -133,13 +133,17 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   arrière-plan strict du `TextEditor`, élargit légèrement le dessin système
   arrondi, lui applique un italique synthétique et matérialise les valeurs
   actives de tous les formats conformément à `TBX-026`. Les régressions
-  `IPAD-L2-034…035` sont prêtes dans `suivi_tests.md`.
+  `IPAD-L2-034…035` restent liées à `3102cda…` et n’ont pas été exécutées.
   La Bibliothèque expose aussi un bouton `Info` dans sa barre principale. Sa
   fiche affiche la version marketing, le numéro de build et le hash Git complet
   du candidat, sélectionnable. Le hash est estampillé automatiquement dans les
   archives Git grâce à `export-subst`; un build Xcode peut fournir la clé de
   bundle `AlbumGitCommit`. Un checkout copié directement sans estampillage
   affiche explicitement `Non estampillé` au lieu d’un hash potentiellement faux.
+  Le candidat combiné est figé dans
+  `60930587da16707dbb57eada9881f6fefcedd51e`; les fiches
+  `IPAD-L2-036…038` couvrent désormais Info, les motifs puis les formats sur
+  ce package exact.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -191,8 +195,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   doivent être exécutés dans cet ordre. Les photos de diagnostic restent hors
   de Git. L’ajout de la fiche Info porte ensuite la suite à 148 tests sans
   échec ; son contrat ciblé, l’analyse syntaxique, les contrats et les dix
-  empreintes réussissent également sous WSL. Son affichage Apple reste à
-  qualifier sur le prochain candidat figé.
+  empreintes réussissent également sous WSL. L’archive du candidat
+  `6093058…` a été contrôlée : son marqueur est remplacé par le hash complet
+  exact. `IPAD-L2-036…038` restent ⚪ `NON TESTÉ` sur Apple.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.

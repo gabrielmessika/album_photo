@@ -54,6 +54,10 @@ commit `3102cda0e6b2c483576585ec2f97fc947f87c96f`, attache le motif comme
 arrière-plan strict du `TextEditor`, renforce le profil arrondi et son
 inclinaison, puis matérialise tous les choix actifs selon `TBX-026`.
 `IPAD-L2-034…035` doivent maintenant qualifier ces surfaces sur l’iPad déclaré.
+L’ajout du bouton Info à la Bibliothèque produit ensuite le candidat combiné
+`60930587da16707dbb57eada9881f6fefcedd51e`. Son archive Git embarque son hash
+exact et les fiches `IPAD-L2-036…038` remplacent les deux fiches non exécutées
+pour qualifier Info, motifs et formats sur ce nouveau package.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -125,6 +129,9 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-033` | Polices, italique et persistance de la sélection | `TBX-010`, `TBX-013`, `TBX-023`, `TBX-024`, `SAV-001`, `ACC-002` | 🔴 `ÉCHOUÉ` — Système/Arrondie trop proches et Italique absent sur Arrondie ; étapes 3 et 4 déclarées conformes |
 | `IPAD-L2-034` | Motifs strictement bornés dans l’éditeur | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-024`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-035` | Arrondie, italique et choix actifs | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-036` | Info, version et commit exact du candidat | `ENV-001…005`, `APP-001`, `APP-012`, `ACC-001…004`, `ACC-008`, `DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne

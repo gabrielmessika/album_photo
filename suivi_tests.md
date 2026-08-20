@@ -36,6 +36,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif de lisibilité typographique testé | `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` — compilation et saisie visible confirmées, mais campagne `IPAD-L2-023…029` limitée à 2 réussites (`028`, `029`) et 5 échecs (`023…027`) : descendantes rognées, motif devant l’éditeur, organisation des panneaux rejetée, sélection/palette inadaptées au paysage et styles Police/Italique sans effet perceptible |
 | Correctif groupé texte testé | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` — `IPAD-L2-031…032` réussissent ; `030` échoue uniquement sur les trois motifs intégrés et `033` sur la faible distinction Système/Arrondie ainsi que l’italique Arrondie ; les autres étapes déclarées conformes |
 | Second correctif texte à tester | `3102cda0e6b2c483576585ec2f97fc947f87c96f` — motif strictement borné, Arrondie renforcée, italique Arrondie et états actifs ; exécuter `IPAD-L2-034`, puis `IPAD-L2-035` |
+| Candidat Info et correctifs texte à tester | `60930587da16707dbb57eada9881f6fefcedd51e` — Info version/build/commit exact, motifs stricts et formats actifs ; exécuter `IPAD-L2-036`, puis `037`, puis `038` |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -142,6 +143,10 @@ matérialiser chaque choix actif est enregistrée sous `3:TBX-026`. Le second
 correctif est figé au commit exact
 `3102cda0e6b2c483576585ec2f97fc947f87c96f` et doit maintenant être qualifié
 par `IPAD-L2-034…035`, sans rejouer les surfaces réussies sous `031…032`.
+Ces deux fiches restent liées à ce commit et ne sont pas retargetées. L’ajout
+ultérieur du bouton Info produit le candidat combiné exact
+`60930587da16707dbb57eada9881f6fefcedd51e`; `IPAD-L2-036…038` remplacent
+`034…035` pour toute campagne exécutée sur ce nouveau package.
 
 ## Mode de réponse
 
@@ -400,6 +405,9 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-033` | Polices, italique et persistance de la sélection | `3:TBX-010`, `3:TBX-013`, `3:TBX-023`, `3:TBX-024`, `3:SAV-001`, `3:ACC-002` | 🔴 `ÉCHOUÉ` — Système/Arrondie trop proches et Italique sans effet sur Arrondie ; étapes 3 et 4 déclarées conformes |
 | `IPAD-L2-034` | Motifs strictement bornés dans l’éditeur | `3:ENV-001` à `3:ENV-005`, `3:CAN-003`, `3:BG-007`, `3:TBX-024`, `3:TBX-025`, `3:DONE-005` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-035` | Arrondie, italique et choix actifs | `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`, `3:TBX-026`, `3:SAV-001`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-036` | Info, version et commit exact du candidat | `3:ENV-001` à `3:ENV-005`, `3:APP-001`, `3:APP-012`, `3:ACC-001` à `3:ACC-004`, `3:ACC-008`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `3:CAN-003`, `3:BG-007`, `3:TBX-024`, `3:TBX-025` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`, `3:TBX-026`, `3:SAV-001`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -3680,6 +3688,87 @@ requise.
 - Preuve : à renseigner avec le résultat de chaque étape et une capture si la
   différence Système/Arrondie, l’italique ou un état actif reste ambigu.
 - Environnement attendu : repris de `IPAD-L2-034`, paysage puis VoiceOver à
+  l’étape 11. Noter toute différence réelle.
+
+## Régressions du candidat Info et texte
+
+Les trois fiches suivantes visent exactement le candidat
+`60930587da16707dbb57eada9881f6fefcedd51e`. Télécharger l’archive de ce commit
+précis afin que Git remplace le marqueur `export-subst`; ne pas utiliser le ZIP
+d’une branche ayant avancé. Elles remplacent `IPAD-L2-034…035` uniquement pour
+ce nouveau candidat et réutilisent l’album Texte-A.
+
+### `IPAD-L2-036` — Info, version et commit exact du candidat
+
+- Candidat : `60930587da16707dbb57eada9881f6fefcedd51e`.
+- Préconditions : télécharger ou produire l’archive Git de ce commit exact,
+  ouvrir son `Albumzh.swiftpm` dans Swift Playgrounds sans modifier les sources
+  et conserver l’album Texte-A.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:APP-001`, `3:APP-012`,
+  `3:ACC-001` à `3:ACC-004`, `3:ACC-008` et `3:DONE-005`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer le candidat et attendre l’affichage de la Bibliothèque en portrait. | La compilation et le lancement réussissent ; les albums existants sont conservés et la Bibliothèque reste l’écran racine. |
+| 2 | Repérer puis toucher Info dans la barre principale. | Le bouton Info est visible, possède l’icône d’information, répond au toucher et ouvre une fiche lisible. |
+| 3 | Lire les valeurs Version et Commit. | Version affiche `0.1.0 (1)` et Commit affiche exactement `60930587da16707dbb57eada9881f6fefcedd51e`, jamais `Non estampillé`. |
+| 4 | Sélectionner le hash, le copier, puis presser Fermer. | Les 40 caractères sont sélectionnables et copiables ; Fermer revient à la Bibliothèque sans modifier les albums. |
+| 5 | Refaire l’ouverture en paysage avec une grande taille de texte puis parcourir la fiche avec VoiceOver. | La fiche reste lisible sans contenu inaccessible ; Info, Version, Commit, le hash et Fermer sont annoncés sans dépendre de la seule icône. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner avec la version et le hash réellement affichés, ainsi
+  que l’appareil, iPadOS, Swift Playgrounds, les orientations et VoiceOver.
+- Environnement attendu : iPad 8e génération, iPadOS 26.5.2, Swift
+  Playgrounds 4.7, portrait puis paysage. Noter toute différence réelle.
+
+### `IPAD-L2-037` — Motifs strictement bornés sur le candidat Info
+
+- Candidat : `60930587da16707dbb57eada9881f6fefcedd51e`.
+- Préconditions : après `IPAD-L2-036`, ouvrir l’album Texte-A en portrait et
+  retrouver sa zone « Bonjour jpgqy ». Disposer des trois motifs intégrés et
+  d’une couleur unie.
+- Exigences : `3:CAN-003`, `3:BG-007`, `3:TBX-024` et `3:TBX-025`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Appliquer le motif Classique spirale à la page, ouvrir « Bonjour jpgqy », saisir quelques caractères puis ouvrir Couleur. | Le motif reste strictement dans le fond de la zone d’édition ; texte, barre, palette et boutons restent visibles et tactiles. |
+| 2 | Remplacer le fond par Voyage kraft et refaire le contrôle de l’étape 1. | Le motif reste derrière l’éditeur sans couche blanche, débordement ni interception tactile. |
+| 3 | Remplacer le fond par Minimal sombre et refaire le contrôle de l’étape 1. | Le motif reste derrière l’éditeur ; le texte et toutes les commandes conservent leur contraste et leur toucher. |
+| 4 | Alterner chacun des trois motifs avec une couleur unie, puis terminer l’édition. | Aucun fond ne recouvre l’éditeur pendant les transitions ; la couleur unie et les trois motifs restent correctement bornés. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner avec le résultat de chaque étape et une capture si un
+  motif recouvre encore le texte ou les commandes.
+- Environnement attendu : repris de `IPAD-L2-036`, portrait. Noter toute
+  différence réelle.
+
+### `IPAD-L2-038` — Arrondie, italique et choix actifs sur le candidat Info
+
+- Candidat : `60930587da16707dbb57eada9881f6fefcedd51e`.
+- Préconditions : partir de l’état final de `IPAD-L2-037`, revenir sur une
+  couleur unie, ouvrir « Bonjour jpgqy » en paysage, sélectionner seulement
+  « Bonjour » et masquer le clavier en conservant la sélection.
+- Exigences : `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`,
+  `3:TBX-026`, `3:SAV-001`, `3:ACC-002` et `3:ACC-004`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Ouvrir Police, vérifier Système, puis choisir Arrondie. | La police courante porte une coche ou un état distinct et accessible ; Arrondie devient nettement différente de Système sur « Bonjour » seulement. |
+| 2 | Ouvrir Italique, l’activer, le désactiver puis le réactiver. | L’état actif est visible ; Arrondie s’incline à chaque activation et revient droite à chaque désactivation sans modifier « jpgqy ». |
+| 3 | Ouvrir Taille, relever le choix courant puis choisir 36. | La taille courante est matérialisée avant et après le choix ; seule la sélection passe à 36. |
+| 4 | Ouvrir Gras, l’activer puis le désactiver. | L’état Gras est matérialisé à l’activation et disparaît à la désactivation ; seule la sélection change. |
+| 5 | Ouvrir Couleur, relever le choix courant puis choisir Rouge. | La couleur courante est indiquée autrement que par sa seule teinte ; seule la sélection devient rouge. |
+| 6 | Ouvrir Alignement, relever le choix courant puis choisir Centré. | L’alignement courant est matérialisé ; le paragraphe complet est centré. |
+| 7 | Ouvrir Interligne, relever le choix courant puis choisir 1,5. | L’interligne courant est matérialisé ; le paragraphe complet adopte 1,5. |
+| 8 | Ouvrir Opacité, relever le choix courant puis choisir 75 %. | L’opacité courante est matérialisée ; toute la zone passe à 75 %. |
+| 9 | Presser Terminer, sélectionner la zone sur la page puis parcourir son inspecteur Texte. | Police, Taille, Gras, Italique, Couleur, Alignement, Interligne et Opacité y matérialisent aussi leur valeur active, cohérente avec l’éditeur. |
+| 10 | Fermer proprement puis rouvrir l’album et la même zone. | Arrondie, Italique, Taille 36, Rouge, Centré, Interligne 1,5 et Opacité 75 % persistent avec leurs portées respectives. |
+| 11 | Avec VoiceOver, parcourir les huit actions de format dans l’éditeur puis dans l’inspecteur. | Chaque commande annonce son libellé, sa valeur et son état actif sans dépendre uniquement d’une couleur. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner avec le résultat de chaque étape et une capture si la
+  différence Système/Arrondie, l’italique ou un état actif reste ambigu.
+- Environnement attendu : repris de `IPAD-L2-037`, paysage puis VoiceOver à
   l’étape 11. Noter toute différence réelle.
 
 ## Qualification différée Apple/macOS/Xcode
