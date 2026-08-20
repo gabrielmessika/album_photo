@@ -25,6 +25,7 @@ struct LibraryView: View {
     @State private var trashRequest: AlbumTrashRequest?
     @State private var coverRequest: AlbumCoverRequest?
     @State private var showsTrash = false
+    @State private var showsApplicationInformation = false
     @State private var openedAlbum: AlbumRoute?
     @State private var pendingCreatedAlbumID: UUID?
     @State private var isCreatingAlbum = false
@@ -81,6 +82,11 @@ struct LibraryView: View {
                 }
 
                 ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button("Info", systemImage: "info.circle") {
+                        showsApplicationInformation = true
+                    }
+                    .accessibilityHint("Affiche la version et le commit de l’application")
+
                     Button("Corbeille", systemImage: "trash") {
                         showsTrash = true
                     }
@@ -96,6 +102,9 @@ struct LibraryView: View {
             .onReceive(maintenanceTimer) { _ in
                 Task { await appModel.loadLibrary() }
             }
+        }
+        .sheet(isPresented: $showsApplicationInformation) {
+            ApplicationInformationView()
         }
         .sheet(isPresented: $showsCreateAlbum, onDismiss: openPendingCreatedAlbum) {
             AlbumNameSheet(

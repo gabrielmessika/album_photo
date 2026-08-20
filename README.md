@@ -134,6 +134,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   arrondi, lui applique un italique synthétique et matérialise les valeurs
   actives de tous les formats conformément à `TBX-026`. Les régressions
   `IPAD-L2-034…035` sont prêtes dans `suivi_tests.md`.
+  La Bibliothèque expose aussi un bouton `Info` dans sa barre principale. Sa
+  fiche affiche la version marketing, le numéro de build et le hash Git complet
+  du candidat, sélectionnable. Le hash est estampillé automatiquement dans les
+  archives Git grâce à `export-subst`; un build Xcode peut fournir la clé de
+  bundle `AlbumGitCommit`. Un checkout copié directement sans estampillage
+  affiche explicitement `Non estampillé` au lieu d’un hash potentiellement faux.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -183,7 +189,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   le contrat UI ciblé, l’analyse syntaxique, les contrats du dépôt et les dix
   empreintes sous WSL. `IPAD-L2-034…035` restent ⚪ `NON TESTÉ` sur Apple et
   doivent être exécutés dans cet ordre. Les photos de diagnostic restent hors
-  de Git.
+  de Git. L’ajout de la fiche Info porte ensuite la suite à 148 tests sans
+  échec ; son contrat ciblé, l’analyse syntaxique, les contrats et les dix
+  empreintes réussissent également sous WSL. Son affichage Apple reste à
+  qualifier sur le prochain candidat figé.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.
@@ -738,7 +747,9 @@ Cette méthode convient très bien si le code est toujours modifié sur le PC.
 7. laisser Swift Playgrounds importer ou ouvrir le projet ;
 8. renommer la copie de test avec le hash court si nécessaire, par exemple
    `AlbumPhoto-a1b2c3d`, afin d’éviter toute confusion ;
-9. supprimer les anciennes copies uniquement après validation de la nouvelle.
+9. ouvrir `Info` dans la Bibliothèque et vérifier que le hash complet correspond
+   au commit téléchargé ;
+10. supprimer les anciennes copies uniquement après validation de la nouvelle.
 
 Le ZIP GitHub est un transport, pas une nouvelle source de vérité. Ne jamais
 réinjecter l’ensemble du ZIP dans le dépôt.

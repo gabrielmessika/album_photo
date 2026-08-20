@@ -414,6 +414,7 @@ photo dans le canevas et le calcul reproductible du contrôle de cadrage.
 | `APP-009` | Une terminaison brutale PEUT perdre le geste continu ou la saisie non validée en cours, mais NE DOIT PAS perdre une commande déjà validée. |
 | `APP-010` | Une ouverture en lecture seule causée par une autre fenêtre d’édition DOIT afficher la raison et proposer Réessayer lorsque le verrou d’édition est libéré. |
 | `APP-011` | Le verrou d’édition DOIT être propre au processus et à l’album, être libéré à la fermeture de la scène et ne pas survivre à une relance de l’application. |
+| `APP-012` | L’écran racine Bibliothèque DOIT proposer une commande visible « Info ». Son activation DOIT afficher la version marketing, le numéro de build et l’identifiant du commit source estampillé dans le candidat. Le commit DOIT être lisible, sélectionnable et annoncé par VoiceOver. |
 
 ---
 

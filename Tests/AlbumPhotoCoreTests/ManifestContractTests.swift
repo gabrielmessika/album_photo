@@ -151,6 +151,52 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertFalse(service.contains("after activePageID"))
     }
 
+    // 3:APP-001, 3:APP-012, 3:ACC-001, 3:ACC-002, 3:TST-013
+    func testLibraryExposesVersionAndStampedCommitInformation() throws {
+        let appModule = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
+        let library = try String(
+            contentsOf: appModule.appendingPathComponent("LibraryView.swift"),
+            encoding: .utf8
+        )
+        let information = try String(
+            contentsOf: appModule.appendingPathComponent("ApplicationInformationView.swift"),
+            encoding: .utf8
+        )
+        let package = try String(
+            contentsOf: repositoryRoot.appendingPathComponent("Albumzh.swiftpm/Package.swift"),
+            encoding: .utf8
+        )
+        let attributes = try String(
+            contentsOf: repositoryRoot.appendingPathComponent(".gitattributes"),
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(library.contains("Button(\"Info\", systemImage: \"info.circle\")"))
+        XCTAssertTrue(library.contains("showsApplicationInformation = true"))
+        XCTAssertTrue(library.contains(".sheet(isPresented: $showsApplicationInformation)"))
+        XCTAssertTrue(library.contains("ApplicationInformationView()"))
+        XCTAssertTrue(library.contains(
+            ".accessibilityHint(\"Affiche la version et le commit de l’application\")"
+        ))
+        XCTAssertTrue(information.contains("CFBundleShortVersionString"))
+        XCTAssertTrue(information.contains("CFBundleVersion"))
+        XCTAssertTrue(information.contains("AlbumGitCommit"))
+        XCTAssertTrue(information.contains(#"archivedGitCommit = "$Format:%H$""#))
+        XCTAssertTrue(information.contains("value.count == 40"))
+        XCTAssertTrue(information.contains("value.allSatisfy(\\.isHexDigit)"))
+        XCTAssertTrue(information.contains("?? \"Non estampillé\""))
+        XCTAssertTrue(information.contains("LabeledContent(\"Version\")"))
+        XCTAssertTrue(information.contains("Text(\"Commit\")"))
+        XCTAssertTrue(information.contains(".textSelection(.enabled)"))
+        XCTAssertTrue(information.contains(".accessibilityLabel("))
+        XCTAssertTrue(package.contains("displayVersion: \"0.1.0\""))
+        XCTAssertTrue(package.contains("bundleVersion: \"1\""))
+        XCTAssertTrue(attributes.contains(
+            "ApplicationInformationView.swift export-subst"
+        ))
+    }
+
     // 3:AUT-009...3:AUT-011, 3:EDT-001, 3:EDT-020
     func testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity() throws {
         let appModule = repositoryRoot
