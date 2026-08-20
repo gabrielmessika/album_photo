@@ -46,7 +46,12 @@ l’éditeur, conserve la sélection sans clavier, rend la palette défilable,
 explicite les trois portées de format et applique l’ordre visible Photos,
 Texte, séparation simple sans titre, Mise en page, Fonds. Après clarification,
 `EDT-001` fixe l’ordre complet Photos, Texte, Stickers, séparation simple sans
-titre, Mise en page, Fonds, Cadres et formes.
+titre, Mise en page, Fonds, Cadres et formes. La campagne du 20 août sur
+`cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` réussit `IPAD-L2-031…032` mais
+échoue `030` sur les trois motifs et `033` sur la faible distinction
+Système/Arrondie ainsi que l’italique Arrondie. Le correctif non figé attache le
+motif comme arrière-plan strict du `TextEditor`, renforce le profil arrondi et
+son inclinaison, puis matérialise tous les choix actifs selon `TBX-026`.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -72,7 +77,7 @@ multi-types appartiennent aux incréments suivants.
 | `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel`, `testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity` | `EDT-001`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017`, `AUT-009…011` | Vérifie le bouton compact, l’absence de groupe permanent, le dialogue interne, les trois densités, Annuler/Valider et le service de remplissage ; pas le rendu Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
 | `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, tests de service et de modèles | `TBX-001…020`, `TBX-023…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017` | Prouve les primitives de modèles, la conversion typographique 300/72, la marge ascente/descente, les styles persistants, le contraste initial, la limite, la hauteur/débordement, la géométrie et l’atomicité dans le Core ; pas l’éditeur Apple ni les exigences intégrées complètes |
-| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `AlbumPageBackground`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024`, `TBX-025`, `TXA-001`, `TXA-002` | Le contrat source vérifie la portée métier imbriquée, une contrainte par `AttributeKey`, l’ordre et la séparation des panneaux visibles, le fond borné sous l’éditeur, l’échelle, la sélection conservée, les trois portées, la palette défilable et l’opacité ; le parse reste syntaxique et le rendu/accessibilité doivent être testés sur Apple |
+| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `AlbumPageBackground`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024` à `TBX-026`, `TXA-001`, `TXA-002` | Le contrat source vérifie la portée métier imbriquée, une contrainte par `AttributeKey`, l’ordre des panneaux, le fond comme arrière-plan strict de l’éditeur, l’échelle, le profil arrondi incliné, la sélection conservée, les trois portées, la palette défilable, l’opacité et les choix actifs dans l’éditeur et l’inspecteur ; le parse reste syntaxique et le rendu/accessibilité doivent être testés sur Apple |
 
 La suite WSL complète compte 147 tests sans échec après la correction typographique,
 du cadrage couvrant et du dialogue compact. Les
@@ -112,10 +117,10 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-027` | Sélections, paragraphes et limite | `TBX-006…011`, `TBX-013`, `TBX-017`, `TBX-023`, `TXA-001`, `TXA-002`, `TXA-004` | 🔴 `ÉCHOUÉ` — Système/Arrondie identiques et Italique sans effet perceptible ; étapes 2 à 4 déclarées conformes |
 | `IPAD-L2-028` | Géométrie, débordement et modèle texte | `TBX-018…021`, `TPL-012`, `TPL-013`, `TPL-017` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-029` | Profondeur, persistance et accessibilité | `TBX-001`, `TBX-004`, `TBX-023`, `TBX-024`, `UND-001`, `SAV-001`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
-| `IPAD-L2-030` | Compilation, descendantes et motifs intégrés | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-002…005`, `TBX-019`, `TBX-020`, `TBX-024`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
-| `IPAD-L2-031` | Ordre et séparation sans titre des panneaux | `DEC-32`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
-| `IPAD-L2-032` | Sélection, palette et portées en paysage | `TBX-005`, `TBX-010…012`, `TBX-015`, `TBX-016`, `ACC-002`, `ACC-006`, `ACC-021` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
-| `IPAD-L2-033` | Polices, italique et persistance de la sélection | `TBX-010`, `TBX-013`, `TBX-023`, `TBX-024`, `SAV-001`, `ACC-002` | ⚪ `NON TESTÉ` — candidat `cb77862…` |
+| `IPAD-L2-030` | Compilation, descendantes et motifs intégrés | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-002…005`, `TBX-019`, `TBX-020`, `TBX-024`, `TBX-025`, `DONE-005` | 🔴 `ÉCHOUÉ` — étapes 1 à 3 réussies ; les trois motifs recouvrent encore l’éditeur, couleurs unies conformes |
+| `IPAD-L2-031` | Ordre et séparation sans titre des panneaux | `DEC-32`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-032` | Sélection, palette et portées en paysage | `TBX-005`, `TBX-010…012`, `TBX-015`, `TBX-016`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-033` | Polices, italique et persistance de la sélection | `TBX-010`, `TBX-013`, `TBX-023`, `TBX-024`, `SAV-001`, `ACC-002` | 🔴 `ÉCHOUÉ` — Système/Arrondie trop proches et Italique absent sur Arrondie ; étapes 3 et 4 déclarées conformes |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne

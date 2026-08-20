@@ -195,7 +195,8 @@ final class ManifestContractTests: XCTestCase {
     }
 
     // 3:EDT-008, 3:EDT-014, 3:TPL-012, 3:TBX-002...006,
-    // 3:TBX-009...017, 3:TBX-020, 3:TBX-021, 3:TBX-024, 3:TXA-001...004
+    // 3:TBX-009...017, 3:TBX-020, 3:TBX-021, 3:TBX-024...026,
+    // 3:TXA-001...004
     func testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates() throws {
         let appModule = repositoryRoot
             .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
@@ -265,13 +266,16 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("selection: request.pageBackground"))
         XCTAssertTrue(textEditor.contains(".scrollContentBackground(.hidden)"))
         XCTAssertTrue(textEditor.contains(".allowsHitTesting(false)"))
-        XCTAssertTrue(textEditor.contains(".zIndex(0)"))
-        XCTAssertTrue(textEditor.contains(".zIndex(1)"))
+        XCTAssertTrue(textEditor.contains(".background {"))
+        XCTAssertFalse(textEditor.contains(".zIndex("))
         XCTAssertTrue(pageBackground.contains(
             ".frame(maxWidth: .infinity, maxHeight: .infinity)\n        .clipped()"
         ))
         XCTAssertTrue(textEditor.contains("pageHeight: request.previewPageHeight"))
         XCTAssertTrue(textEditor.contains("TextPrototypeEngine.renderedFontSize("))
+        XCTAssertTrue(textEditor.contains("roundedDescriptor.withMatrix(matrix)"))
+        XCTAssertTrue(textEditor.contains("a: 1.12"))
+        XCTAssertTrue(textEditor.contains("c: style.isItalic ? 0.22 : 0"))
         XCTAssertTrue(textEditor.contains("return .normal"))
         XCTAssertFalse(textEditor.contains(
             "pageHeight: AlbumPhotoConstants.canonicalPageHeight"
@@ -289,12 +293,39 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Paragraphe\""))
         XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Zone\""))
         XCTAssertTrue(textEditor.contains("Masquer le clavier"))
+        XCTAssertTrue(textEditor.contains("struct AlbumTextMenuChoiceLabel"))
+        XCTAssertTrue(textEditor.contains("isSelected: currentStyle.fontID == font.id"))
+        XCTAssertTrue(textEditor.contains("isSelected: currentFontSize == points"))
+        XCTAssertTrue(textEditor.contains("isSelected: currentStyle.weight == .bold"))
+        XCTAssertTrue(textEditor.contains("isSelected: currentStyle.isItalic"))
+        XCTAssertTrue(textEditor.contains("isSelected: currentStyle.color == option.color"))
+        XCTAssertTrue(textEditor.contains(
+            "isSelected: currentParagraphStyle.alignment == choice.value"
+        ))
+        XCTAssertTrue(textEditor.contains(
+            "isSelected: abs(currentParagraphStyle.lineSpacing - spacing)"
+        ))
+        XCTAssertTrue(textEditor.contains("isSelected: abs(opacity - value) < 0.000_001"))
+        XCTAssertTrue(textPanel.contains("isSelected: text.typingDefaults.fontID == font.id"))
+        XCTAssertTrue(textPanel.contains("isSelected: currentPoints == points"))
+        XCTAssertTrue(textPanel.contains("isSelected: text.typingDefaults.weight == .bold"))
+        XCTAssertTrue(textPanel.contains("isSelected: text.typingDefaults.isItalic"))
+        XCTAssertTrue(textPanel.contains(
+            "let isSelected = text.typingDefaults.color == option.color"
+        ))
+        XCTAssertTrue(textPanel.contains(
+            "isSelected: text.typingDefaults.alignment == choice.value"
+        ))
+        XCTAssertTrue(textPanel.contains(
+            "isSelected: abs(text.typingDefaults.lineSpacing - spacing)"
+        ))
+        XCTAssertTrue(textPanel.contains("isSelected: abs(text.opacity - value) < 0.000_001"))
         XCTAssertTrue(textEditor.contains("newValue.characters.count > 1_000"))
         XCTAssertTrue(textEditor.contains("acceptedInsertedCount"))
         XCTAssertTrue(textEditor.contains("result.removeSubrange"))
         XCTAssertTrue(textEditor.contains("static let runBoundaries"))
         let orderedCommands = [
-            "fontMenu", "sizeMenu", "Button(\"Gras\"", "Button(\"Italique\"",
+            "fontMenu", "sizeMenu", "title: \"Gras\"", "title: \"Italique\"",
             "colorMenu", "alignmentMenu", "lineSpacingMenu", "opacityMenu"
         ]
         var commandOffset = textEditor.startIndex

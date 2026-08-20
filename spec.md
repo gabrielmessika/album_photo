@@ -1,7 +1,7 @@
 # Spécification fonctionnelle et technique — Application iOS d’albums photo
 
 > **Version :** 3.0<br>
-> **Date :** 19 août 2026<br>
+> **Date :** 20 août 2026<br>
 > **Statut :** projet consolidé — retours des campagnes iPad Lot 2 intégrés<br>
 > **Plateformes :** iPhone et iPad  
 > **Version minimale :** iOS 26 et iPadOS 26  
@@ -1010,6 +1010,7 @@ l'élément ni modifier le cadrage.
 | `TBX-015` | Une couleur DOIT être stockée en RGBA sRGB, avec quatre composantes finies bornées entre `0` et `1`. |
 | `TBX-016` | Les boutons DOIVENT utiliser des icônes natives équivalentes à `textformat`, `textformat.size`, `bold`, `italic`, `paintpalette`, `text.alignleft` et `line.3.horizontal`, avec un libellé VoiceOver explicite. Chaque choix de couleur DOIT afficher une pastille de sa couleur sRGB réelle, avec un contour conservant la visibilité du blanc et du noir, sans dépendre de la teinte monochrome d’un menu système. |
 | `TBX-017` | Listes, cases à cocher, tableaux, retraits, surlignage, pièces jointes, dessin, audio et styles Notes NE DOIVENT PAS être proposés. |
+| `TBX-026` | Dans la fenêtre de modification et dans l’inspecteur, chaque menu, palette ou bouton de formatage DOIT matérialiser sa valeur active par une coche ou un état sélectionné visible et par une valeur accessible. Cette indication NE DOIT PAS dépendre uniquement de la couleur et couvre Police, Taille, Gras, Italique, Couleur, Alignement, Interligne et Opacité. |
 
 ## 12.3 Géométrie, débordement et persistance
 

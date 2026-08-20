@@ -84,7 +84,7 @@ struct TextElementInspectorView: View {
             sizeMenu(text)
 
             HStack(spacing: 8) {
-                Button("Gras", systemImage: "bold") {
+                Button {
                     Task {
                         await model.applySelectedTextCharacterStyle(
                             TextCharacterStylePatch(
@@ -93,10 +93,16 @@ struct TextElementInspectorView: View {
                             )
                         )
                     }
+                } label: {
+                    AlbumTextToggleLabel(
+                        title: "Gras",
+                        systemImage: "bold",
+                        isSelected: text.typingDefaults.weight == .bold
+                    )
                 }
                 .tint(text.typingDefaults.weight == .bold ? Color.accentColor : nil)
 
-                Button("Italique", systemImage: "italic") {
+                Button {
                     Task {
                         await model.applySelectedTextCharacterStyle(
                             TextCharacterStylePatch(
@@ -104,13 +110,19 @@ struct TextElementInspectorView: View {
                             )
                         )
                     }
+                } label: {
+                    AlbumTextToggleLabel(
+                        title: "Italique",
+                        systemImage: "italic",
+                        isSelected: text.typingDefaults.isItalic
+                    )
                 }
                 .tint(text.typingDefaults.isItalic ? Color.accentColor : nil)
             }
 
             colorControls
-            alignmentMenu
-            lineSpacingMenu
+            alignmentMenu(text)
+            lineSpacingMenu(text)
             opacityMenu(text)
 
             Text(
@@ -127,12 +139,17 @@ struct TextElementInspectorView: View {
     private func fontMenu(_ text: TextBoxElement) -> some View {
         Menu {
             ForEach(BuiltInTextFontCatalog.manifest) { font in
-                Button(font.localizedName) {
+                Button {
                     Task {
                         await model.applySelectedTextCharacterStyle(
                             TextCharacterStylePatch(fontID: font.id)
                         )
                     }
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: font.localizedName,
+                        isSelected: text.typingDefaults.fontID == font.id
+                    )
                 }
             }
         } label: {
@@ -150,7 +167,7 @@ struct TextElementInspectorView: View {
         )
         return Menu {
             ForEach([8, 12, 18, 24, 36, 48, 72, 96], id: \.self) { points in
-                Button("\(points) points") {
+                Button {
                     Task {
                         await model.applySelectedTextCharacterStyle(
                             TextCharacterStylePatch(
@@ -159,6 +176,11 @@ struct TextElementInspectorView: View {
                             )
                         )
                     }
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: "\(points) points",
+                        isSelected: currentPoints == points
+                    )
                 }
             }
         } label: {
@@ -172,6 +194,7 @@ struct TextElementInspectorView: View {
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 76))], spacing: 8) {
                 ForEach(AlbumTextColorOption.all) { option in
+                    let isSelected = text.typingDefaults.color == option.color
                     Button {
                         Task {
                             await model.applySelectedTextCharacterStyle(
@@ -189,45 +212,79 @@ struct TextElementInspectorView: View {
                                 }
                             Text(option.title)
                                 .font(.caption)
+                            if isSelected {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(.tint)
+                            }
                         }
                         .frame(maxWidth: .infinity, minHeight: 52)
+                        .padding(4)
+                        .background(
+                            isSelected ? Color.accentColor.opacity(0.12) : Color.clear,
+                            in: RoundedRectangle(cornerRadius: 8)
+                        )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Couleur \(option.title)")
+                    .accessibilityValue(isSelected ? "Sélectionnée" : "")
                 }
             }
         }
     }
 
-    private var alignmentMenu: some View {
-        Menu("Alignement", systemImage: "text.alignleft") {
-            Button("Gauche", systemImage: "text.alignleft") {
-                applyParagraph(TextParagraphStylePatch(alignment: .leading))
+    private func alignmentMenu(_ text: TextBoxElement) -> some View {
+        Menu {
+            ForEach(AlbumTextAlignmentChoice.all) { choice in
+                Button {
+                    applyParagraph(TextParagraphStylePatch(alignment: choice.value))
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: choice.title,
+                        isSelected: text.typingDefaults.alignment == choice.value
+                    )
+                }
             }
-            Button("Centré", systemImage: "text.aligncenter") {
-                applyParagraph(TextParagraphStylePatch(alignment: .center))
-            }
-            Button("Droite", systemImage: "text.alignright") {
-                applyParagraph(TextParagraphStylePatch(alignment: .trailing))
-            }
+        } label: {
+            Label(
+                "Alignement : \(alignmentName(text.typingDefaults.alignment))",
+                systemImage: "text.alignleft"
+            )
         }
     }
 
-    private var lineSpacingMenu: some View {
-        Menu("Interligne", systemImage: "line.3.horizontal") {
+    private func lineSpacingMenu(_ text: TextBoxElement) -> some View {
+        Menu {
             ForEach([0.8, 1, 1.2, 1.5, 2], id: \.self) { spacing in
-                Button(spacing.formatted(.number.precision(.fractionLength(1)))) {
+                let title = spacing.formatted(.number.precision(.fractionLength(1)))
+                Button {
                     applyParagraph(TextParagraphStylePatch(lineSpacing: spacing))
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: title,
+                        isSelected: abs(text.typingDefaults.lineSpacing - spacing)
+                            < 0.000_001
+                    )
                 }
             }
+        } label: {
+            Label(
+                "Interligne : \(text.typingDefaults.lineSpacing.formatted(.number.precision(.fractionLength(1))))",
+                systemImage: "line.3.horizontal"
+            )
         }
     }
 
     private func opacityMenu(_ text: TextBoxElement) -> some View {
         Menu {
             ForEach([0.1, 0.25, 0.5, 0.75, 1], id: \.self) { value in
-                Button(value.formatted(.percent.precision(.fractionLength(0)))) {
+                let title = value.formatted(.percent.precision(.fractionLength(0)))
+                Button {
                     Task { await model.setSelectedTextOpacity(value) }
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: title,
+                        isSelected: abs(text.opacity - value) < 0.000_001
+                    )
                 }
             }
         } label: {
@@ -244,5 +301,10 @@ struct TextElementInspectorView: View {
 
     private func fontName(_ id: String) -> String {
         BuiltInTextFontCatalog.definition(id: id)?.localizedName ?? "Système"
+    }
+
+    private func alignmentName(_ alignment: TextAlignmentValue) -> String {
+        AlbumTextAlignmentChoice.all.first { $0.value == alignment }?.title
+            ?? "Justifié"
     }
 }

@@ -18,7 +18,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
 
 ## État du projet
 
-- Spécification : projet 3.0 mis à jour le 19 août 2026 après les retours des
+- Spécification : projet 3.0 mis à jour le 20 août 2026 après les retours des
   campagnes iPad Lot 2 ; le repère canonique
   `2 400 × 3 000`, la taille native à `1×`, le cadrage initial couvrant centré
   et la borne basse de zoom dynamique sont confirmés. La frontière des lots est également figée :
@@ -123,7 +123,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   séparation avant Mise en page et Fonds ; Stickers rejoindra le premier
   groupe lorsqu’il sera livré. Ce correctif est figé dans
   `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` et reçoit les régressions
-  `IPAD-L2-030…033`.
+  `IPAD-L2-030…033`. Leur campagne du 20 août confirme les descendantes,
+  l’ordre des panneaux, la sélection conservée, la palette et les portées :
+  `031` et `032` réussissent. `030` échoue encore sur les trois motifs qui
+  recouvrent l’éditeur, malgré les couleurs unies conformes ; `033` échoue sur
+  une différence Système/Arrondie trop faible et l’absence d’italique visible
+  avec Arrondie. Le correctif en cours transforme le motif en arrière-plan
+  strict du `TextEditor`, élargit légèrement le dessin système arrondi, lui
+  applique un italique synthétique et matérialise les valeurs actives de tous
+  les formats conformément à `TBX-026`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -167,9 +175,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   retour demande surtout de distinguer visuellement les formats de caractères,
   de paragraphes et de zone. `EDT-001` fixe désormais l’ordre Photos, Texte,
   Stickers, une séparation simple sans titre, Mise en page, Fonds, puis Cadres
-  et formes ; le nouveau code applique l’ordre de l’incrément visible, mais sa
-  compilation et son rendu Apple restent à requalifier sous
-  `IPAD-L2-030…033`. Les photos de diagnostic restent hors de Git.
+  et formes. Sur `cb77862…`, `IPAD-L2-031…032` réussissent tandis que `030`
+  et `033` échouent sur les motifs, la distinction Arrondie et son italique.
+  Le correctif suivant est présent dans le dépôt mais sa compilation et son
+  rendu Apple ne sont pas encore qualifiés ; son candidat et ses nouvelles
+  fiches restent à figer. Les photos de diagnostic restent hors de Git.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.

@@ -1,6 +1,7 @@
 import AlbumPhotoCore
 import Foundation
 import SwiftUI
+import UIKit
 
 struct TextEditingRequest: Identifiable, Equatable {
     let pageID: UUID
@@ -46,6 +47,7 @@ struct AlbumTextColorOption: Identifiable {
 
 struct AlbumTextColorLabel: View {
     let option: AlbumTextColorOption
+    var isSelected = false
 
     var body: some View {
         HStack(spacing: 10) {
@@ -57,9 +59,67 @@ struct AlbumTextColorLabel: View {
                         .stroke(.primary.opacity(0.35), lineWidth: 1)
                 }
             Text(option.title)
+            Spacer(minLength: 8)
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .foregroundStyle(.tint)
+            }
+        }
+        .padding(.horizontal, 8)
+        .background(
+            isSelected ? Color.accentColor.opacity(0.12) : Color.clear,
+            in: RoundedRectangle(cornerRadius: 8)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityValue(isSelected ? "Sélectionné" : "")
+    }
+}
+
+struct AlbumTextMenuChoiceLabel: View {
+    let title: String
+    let isSelected: Bool
+
+    var body: some View {
+        HStack {
+            Text(title)
+            Spacer()
+            if isSelected {
+                Image(systemName: "checkmark")
+            }
         }
         .accessibilityElement(children: .combine)
+        .accessibilityValue(isSelected ? "Sélectionné" : "")
     }
+}
+
+struct AlbumTextToggleLabel: View {
+    let title: String
+    let systemImage: String
+    let isSelected: Bool
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Label(title, systemImage: systemImage)
+            if isSelected {
+                Image(systemName: "checkmark.circle.fill")
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityValue(isSelected ? "Sélectionné" : "Non sélectionné")
+    }
+}
+
+struct AlbumTextAlignmentChoice: Identifiable {
+    let title: String
+    let value: TextAlignmentValue
+
+    var id: TextAlignmentValue { value }
+
+    static let all = [
+        AlbumTextAlignmentChoice(title: "Gauche", value: .leading),
+        AlbumTextAlignmentChoice(title: "Centré", value: .center),
+        AlbumTextAlignmentChoice(title: "Droite", value: .trailing)
+    ]
 }
 
 private struct AlbumParagraphStyleValue: Codable, Sendable, Equatable, Hashable {
@@ -267,21 +327,47 @@ enum AlbumTextAttributedBridge {
     }
 
     static func font(for style: TextStyleDefaults, pageHeight: Double) -> Font {
+        let pointSize = CGFloat(max(
+            1,
+            TextPrototypeEngine.renderedFontSize(
+                relativeFontSize: style.relativeFontSize,
+                pageHeight: pageHeight
+            )
+        ))
+        let fontDesign = BuiltInTextFontCatalog.definition(id: style.fontID)?.design
+            ?? .standard
         let design: Font.Design
-        switch BuiltInTextFontCatalog.definition(id: style.fontID)?.design ?? .standard {
+        switch fontDesign {
         case .standard: design = .default
         case .serif: design = .serif
         case .rounded: design = .rounded
         case .monospaced: design = .monospaced
         }
+
+        if fontDesign == .rounded {
+            let weight: UIFont.Weight = style.weight == .bold ? .bold : .regular
+            let systemDescriptor = UIFont.systemFont(
+                ofSize: pointSize,
+                weight: weight
+            ).fontDescriptor
+            let roundedDescriptor = systemDescriptor.withDesign(.rounded)
+                ?? systemDescriptor
+            let matrix = CGAffineTransform(
+                a: 1.12,
+                b: 0,
+                c: style.isItalic ? 0.22 : 0,
+                d: 1,
+                tx: 0,
+                ty: 0
+            )
+            return Font(UIFont(
+                descriptor: roundedDescriptor.withMatrix(matrix),
+                size: pointSize
+            ))
+        }
+
         return Font.system(
-            size: CGFloat(max(
-                1,
-                TextPrototypeEngine.renderedFontSize(
-                    relativeFontSize: style.relativeFontSize,
-                    pageHeight: pageHeight
-                )
-            )),
+            size: pointSize,
             weight: style.weight == .bold ? .bold : .regular,
             design: design
         )
@@ -407,62 +493,61 @@ struct AlbumTextEditorView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                ZStack {
-                    AlbumPageBackground(
-                        selection: request.pageBackground,
-                        imageCache: imageCache,
-                        maximumPixelSize: 1_200
+                TextEditor(text: $text, selection: $selection)
+                    .attributedTextFormattingDefinition(
+                        AlbumTextFormattingDefinition(
+                            pageHeight: request.previewPageHeight
+                        )
                     )
+                    .textInputFormattingControlVisibility(.hidden, for: .all)
+                    .scrollContentBackground(.hidden)
+                    .focused($editorIsFocused)
+                    .scrollDismissesKeyboard(.interactively)
+                    .padding(12)
+                    .opacity(opacity)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background {
+                        AlbumPageBackground(
+                            selection: request.pageBackground,
+                            imageCache: imageCache,
+                            maximumPixelSize: 1_200
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                        .allowsHitTesting(false)
+                    }
                     .clipped()
-                    .allowsHitTesting(false)
-                    .zIndex(0)
-
-                    TextEditor(text: $text, selection: $selection)
-                        .attributedTextFormattingDefinition(
-                            AlbumTextFormattingDefinition(
+                    .accessibilityLabel("Contenu de la zone de texte")
+                    .onChange(of: text) { oldValue, newValue in
+                        if String(oldValue.characters) != String(newValue.characters) {
+                            retainedSelection = nil
+                            retainedSelectionText = nil
+                        }
+                        guard newValue.characters.count > 1_000 else { return }
+                        let limited = limitedText(oldValue: oldValue, newValue: newValue)
+                        text = limited.value
+                        selection = AttributedTextSelection(
+                            insertionPoint: text.characters.index(
+                                text.startIndex,
+                                offsetBy: limited.insertionOffset
+                            ),
+                            typingAttributes: AlbumTextAttributedBridge.typingAttributes(
+                                for: typingDefaults,
                                 pageHeight: request.previewPageHeight
                             )
                         )
-                        .textInputFormattingControlVisibility(.hidden, for: .all)
-                        .scrollContentBackground(.hidden)
-                        .focused($editorIsFocused)
-                        .scrollDismissesKeyboard(.interactively)
-                        .padding(12)
-                        .opacity(opacity)
-                        .zIndex(1)
-                        .accessibilityLabel("Contenu de la zone de texte")
-                        .onChange(of: text) { oldValue, newValue in
-                            if String(oldValue.characters) != String(newValue.characters) {
+                        showsCharacterLimit = true
+                    }
+                    .onChange(of: selection) { _, newValue in
+                        if isInsertionPoint(newValue) {
+                            if editorIsFocused {
                                 retainedSelection = nil
                                 retainedSelectionText = nil
                             }
-                            guard newValue.characters.count > 1_000 else { return }
-                            let limited = limitedText(oldValue: oldValue, newValue: newValue)
-                            text = limited.value
-                            selection = AttributedTextSelection(
-                                insertionPoint: text.characters.index(
-                                    text.startIndex,
-                                    offsetBy: limited.insertionOffset
-                                ),
-                                typingAttributes: AlbumTextAttributedBridge.typingAttributes(
-                                    for: typingDefaults,
-                                    pageHeight: request.previewPageHeight
-                                )
-                            )
-                            showsCharacterLimit = true
+                        } else {
+                            retainSelection(newValue)
                         }
-                        .onChange(of: selection) { _, newValue in
-                            if isInsertionPoint(newValue) {
-                                if editorIsFocused {
-                                    retainedSelection = nil
-                                    retainedSelectionText = nil
-                                }
-                            } else {
-                                retainSelection(newValue)
-                            }
-                        }
-                }
+                    }
 
                 Divider()
 
@@ -537,13 +622,25 @@ struct AlbumTextEditorView: View {
                 fontMenu
                 sizeMenu
 
-                Button("Gras", systemImage: "bold") {
+                Button {
                     applyCharacterStyle { $0.weight = $0.weight == .bold ? .regular : .bold }
+                } label: {
+                    AlbumTextToggleLabel(
+                        title: "Gras",
+                        systemImage: "bold",
+                        isSelected: currentStyle.weight == .bold
+                    )
                 }
                 .tint(currentStyle.weight == .bold ? Color.accentColor : nil)
 
-                Button("Italique", systemImage: "italic") {
+                Button {
                     applyCharacterStyle { $0.isItalic.toggle() }
+                } label: {
+                    AlbumTextToggleLabel(
+                        title: "Italique",
+                        systemImage: "italic",
+                        isSelected: currentStyle.isItalic
+                    )
                 }
                 .tint(currentStyle.isItalic ? Color.accentColor : nil)
 
@@ -588,34 +685,52 @@ struct AlbumTextEditorView: View {
     }
 
     private var fontMenu: some View {
-        Menu("Police", systemImage: "textformat") {
+        Menu {
             ForEach(BuiltInTextFontCatalog.manifest) { font in
-                Button(font.localizedName) {
+                Button {
                     applyCharacterStyle { $0.fontID = font.id }
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: font.localizedName,
+                        isSelected: currentStyle.fontID == font.id
+                    )
                 }
             }
+        } label: {
+            Label("Police : \(currentFontName)", systemImage: "textformat")
         }
         .accessibilityLabel("Police du texte")
+        .accessibilityValue(currentFontName)
     }
 
     private var sizeMenu: some View {
-        Menu("Taille", systemImage: "textformat.size") {
+        Menu {
             ForEach([8, 12, 18, 24, 36, 48, 72, 96], id: \.self) { points in
-                Button("\(points) points") {
+                Button {
                     applyCharacterStyle {
                         $0.relativeFontSize = Double(points)
                             / AlbumPhotoConstants.canonicalPageHeight
                     }
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: "\(points) points",
+                        isSelected: currentFontSize == points
+                    )
                 }
             }
+        } label: {
+            Label("Taille : \(currentFontSize) points", systemImage: "textformat.size")
         }
         .accessibilityLabel("Taille du texte")
+        .accessibilityValue("\(currentFontSize) points")
     }
 
     private var colorMenu: some View {
-        Button("Couleur", systemImage: "paintpalette") {
+        Button {
             retainSelectionForFormatting()
             showsColorPalette = true
+        } label: {
+            Label("Couleur : \(currentColorName)", systemImage: "paintpalette")
         }
         .popover(isPresented: $showsColorPalette) {
             VStack(alignment: .leading, spacing: 6) {
@@ -630,7 +745,10 @@ struct AlbumTextEditorView: View {
                                 applyCharacterStyle { $0.color = option.color }
                                 showsColorPalette = false
                             } label: {
-                                AlbumTextColorLabel(option: option)
+                                AlbumTextColorLabel(
+                                    option: option,
+                                    isSelected: currentStyle.color == option.color
+                                )
                                     .frame(
                                         maxWidth: .infinity,
                                         minHeight: 44,
@@ -648,44 +766,107 @@ struct AlbumTextEditorView: View {
             .presentationCompactAdaptation(.popover)
         }
         .accessibilityLabel("Couleur du texte")
+        .accessibilityValue(currentColorName)
     }
 
     private var alignmentMenu: some View {
-        Menu("Alignement", systemImage: "text.alignleft") {
-            Button("Gauche", systemImage: "text.alignleft") {
-                applyParagraphStyle(alignment: .leading)
+        Menu {
+            ForEach(AlbumTextAlignmentChoice.all) { choice in
+                Button {
+                    applyParagraphStyle(alignment: choice.value)
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: choice.title,
+                        isSelected: currentParagraphStyle.alignment == choice.value
+                    )
+                }
             }
-            Button("Centré", systemImage: "text.aligncenter") {
-                applyParagraphStyle(alignment: .center)
-            }
-            Button("Droite", systemImage: "text.alignright") {
-                applyParagraphStyle(alignment: .trailing)
-            }
+        } label: {
+            Label("Alignement : \(currentAlignmentName)", systemImage: "text.alignleft")
         }
         .accessibilityLabel("Alignement des paragraphes")
+        .accessibilityValue(currentAlignmentName)
     }
 
     private var lineSpacingMenu: some View {
-        Menu("Interligne", systemImage: "line.3.horizontal") {
+        Menu {
             ForEach([0.8, 1, 1.2, 1.5, 2], id: \.self) { spacing in
-                Button(spacing.formatted(.number.precision(.fractionLength(1)))) {
+                let title = spacing.formatted(.number.precision(.fractionLength(1)))
+                Button {
                     applyParagraphStyle(lineSpacing: spacing)
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: title,
+                        isSelected: abs(currentParagraphStyle.lineSpacing - spacing)
+                            < 0.000_001
+                    )
                 }
             }
+        } label: {
+            Label("Interligne : \(currentLineSpacingName)", systemImage: "line.3.horizontal")
         }
         .accessibilityLabel("Interligne des paragraphes")
+        .accessibilityValue(currentLineSpacingName)
     }
 
     private var opacityMenu: some View {
-        Menu("Opacité", systemImage: "circle.lefthalf.filled") {
+        Menu {
             ForEach([0.1, 0.25, 0.5, 0.75, 1], id: \.self) { value in
-                Button(value.formatted(.percent.precision(.fractionLength(0)))) {
+                let title = value.formatted(.percent.precision(.fractionLength(0)))
+                Button {
                     opacity = value
+                } label: {
+                    AlbumTextMenuChoiceLabel(
+                        title: title,
+                        isSelected: abs(opacity - value) < 0.000_001
+                    )
                 }
             }
+        } label: {
+            Label("Opacité : \(currentOpacityName)", systemImage: "circle.lefthalf.filled")
         }
         .accessibilityLabel("Opacité de la zone de texte")
-        .accessibilityValue(opacity.formatted(.percent.precision(.fractionLength(0))))
+        .accessibilityValue(currentOpacityName)
+    }
+
+    private var currentFontName: String {
+        BuiltInTextFontCatalog.definition(id: currentStyle.fontID)?.localizedName
+            ?? "Système"
+    }
+
+    private var currentFontSize: Int {
+        Int((currentStyle.relativeFontSize
+            * AlbumPhotoConstants.canonicalPageHeight).rounded())
+    }
+
+    private var currentColorName: String {
+        AlbumTextColorOption.all.first { $0.color == currentStyle.color }?.title
+            ?? "Personnalisée"
+    }
+
+    private var currentParagraphStyle: AlbumParagraphStyleValue {
+        formattingSelection.typingAttributes(in: text)[AlbumParagraphStyleAttribute.self]
+            ?? AlbumParagraphStyleValue(
+                alignment: typingDefaults.alignment,
+                lineSpacing: typingDefaults.lineSpacing
+            )
+    }
+
+    private var currentAlignmentName: String {
+        AlbumTextAlignmentChoice.all.first {
+            $0.value == currentParagraphStyle.alignment
+        }?.title
+            ?? "Justifié"
+    }
+
+    private var currentLineSpacingName: String {
+        currentParagraphStyle.lineSpacing.formatted(
+            .number.precision(.fractionLength(1))
+        )
+    }
+
+    private var currentOpacityName: String {
+        opacity.formatted(.percent.precision(.fractionLength(0)))
     }
 
     private var currentStyle: TextStyleDefaults {

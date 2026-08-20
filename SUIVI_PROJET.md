@@ -15,8 +15,8 @@ résultats du prototype 2.1.
 | Information | Valeur |
 |---|---|
 | Produit | Album Photo 3.0 |
-| Date du suivi | 2026-08-19 |
-| Phase courante | Lot 2 — campagne texte courte exécutée : `IPAD-L2-028…029` réussis, `023…027` échoués ; nouvel ordre des panneaux arbitré, correctif à préparer |
+| Date du suivi | 2026-08-20 |
+| Phase courante | Lot 2 — campagne Texte-B exécutée : `IPAD-L2-031…032` réussis, `030` et `033` échoués ; second correctif motifs/police/états actifs validé sous WSL, à figer et qualifier sur Apple |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
@@ -38,6 +38,7 @@ résultats du prototype 2.1.
 | Correctif de compilation texte Lot 2 testé | `0f4b16c6c6435c29ca44da4e2726fac210add520` : compilation et lancement Apple réussis indirectement, mais `IPAD-L2-021` échoue sur l’ajout superposé, le fond noir de l’éditeur, les pastilles blanches, l’échelle et l’opacité ; `IMG_4191.jpg` conservée hors Git |
 | Correctif panneau et rendu texte Lot 2 testé | `7bc495ec623e5b12301569d0108fbccadb978630` : compilation et ouverture de l’éditeur réussies indirectement, mais `IPAD-L2-022` échoue à l’étape 4 car la saisie est pratiquement invisible |
 | Correctif typographique Lot 2 testé | `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` : compilation et saisie visible confirmées ; `IPAD-L2-028…029` réussis, mais `023…027` échouent sur les descendantes, la superposition des motifs, l’organisation des panneaux, la sélection/palette en paysage et Police/Italique |
+| Correctif groupé Texte-B testé | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` : `IPAD-L2-031…032` réussis ; `030` échoue uniquement sur les trois motifs intégrés et `033` sur la faible distinction Système/Arrondie ainsi que l’italique Arrondie ; les autres étapes sont déclarées conformes |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du correctif Lot 2 | `spec.md` dans `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` précise `EDT-002`, `ELM-014` et `RND-001` conformément aux retours utilisateur du 17 août 2026 |
@@ -46,8 +47,8 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Exécuter `IPAD-L2-030…033` sur le candidat exact `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` ; couvrir `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode |
-| État global | 🟡 **Lot 1 viable sur l’iPad 8 ; la conversion typographique, la géométrie/modèle et la persistance/profondeur du texte sont confirmées ; les cinq écarts texte sont corrigés en code mais restent à requalifier sur Apple** |
+| Validation indispensable restante | Figer le second correctif texte puis créer ses régressions ciblées pour les trois motifs, Arrondie/Italique et les états actifs `TBX-026` ; couvrir `EDT-004` et la navigation compacte avec `APPLE-L2-001` sur iPhone/Xcode |
+| État global | 🟡 **Lot 1 viable sur l’iPad 8 ; panneaux, sélection, palette et portées du texte sont maintenant confirmés ; les motifs et Arrondie restent en échec sur `cb77862…`, avec un nouveau correctif présent mais non testé sur Apple** |
 
 ## Légende
 
@@ -85,11 +86,12 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 | Navigation locale et gestion des pages | Retours utilisateur du 17 août 2026 : la barre sous le canevas privilégie Ajouter une page, l’ajout photo reste dans Photos ou les cadres, et le mode Organiser est renommé Gérer les pages. Les deux commandes ajoutent à la fin de l’album après confirmation ; « Ne plus demander » est un réglage de session modifiable dans Gérer les pages et réinitialisé à la fermeture (`EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-014`, `PAG-017`). |
 | Présentation de la confirmation d’ajout | Retours `IPAD-L2-014…016` : le formulaire défilant est trop large/bas, fitted comprime le contenu et la feuille à cadre explicite fige l’app. La confirmation devient donc un dialogue interne centré, sans feuille système, large de 400 points maximum avec 16 points de marge par côté ; l’éditeur assombri est non interactif et tout le texte reste déployé (`PAG-017`). |
 | Remplissage déterministe de l’album | `AUT-009…011` : le panneau Photos ne conserve qu’un bouton compact sous Ajouter des photos ; sa fenêtre porte les trois densités, le nombre de photos inutilisées, l’impact et Annuler/Valider. Les photos sont ordonnées par date, index d’album puis UUID, réparties par capacités 2/4/8, sur les premières pages sans photo puis sur de nouvelles pages en fin d’album, en une commande sans supprimer d’asset. |
-| Éditeur de texte SwiftUI | `TXA-001…004`, `TBX-001…025` : le domaine conserve paragraphes et runs sans SwiftUI ; l’adaptateur iOS 26 emploie `TextEditor`, `AttributedTextSelection` et une définition d’attributs bornée. L’ADR-003 maintient l’alignement justifié hors interface tant qu’aucune solution SwiftUI publique n’est disponible ; `TBX-011` reste partiel. |
+| Éditeur de texte SwiftUI | `TXA-001…004`, `TBX-001…026` : le domaine conserve paragraphes et runs sans SwiftUI ; l’adaptateur iOS 26 emploie `TextEditor`, `AttributedTextSelection` et une définition d’attributs bornée. L’ADR-003 maintient l’alignement justifié hors interface tant qu’aucune solution SwiftUI publique n’est disponible ; `TBX-011` reste partiel. |
 | Panneau et aperçu du texte | Retour `IPAD-L2-021` : Ajouter un texte quitte le canevas pour un panneau Texte placé entre Mise en page et Fonds, tandis que le menu `+` conserve Ajouter un cadre photo et Ajouter du texte. L’inspecteur expose le contenu et les formats de toute la zone ; la fenêtre reprend le fond réel et la hauteur affichée de la page, affiche ses propres pastilles colorées et prévisualise l’opacité (`EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002`, `TBX-009`, `TBX-012`, `TBX-014`, `TBX-016`, `TBX-025`). |
 | Conversion typographique | Retour `IPAD-L2-022` : une taille canonique `N / 3000` ne peut pas être projetée directement sur la hauteur d’écran. Le rendu et la mesure appliquent `300 / 72` unités par point, soit `N × H / 720`, sans modifier les valeurs déjà persistées (`TBX-003`, `TBX-014`, `TBX-019`, `TBX-020`, `TBX-024`, `TBX-025`). |
 | Campagnes manuelles incrémentales | À partir de `IPAD-L2-023`, une fonction cohérente reçoit une fiche courte et un verdict propre. Les fiches successives réutilisent explicitement l’état final du jeu Texte-A ; une reconstruction complète n’est demandée que pour isolation, migration ou risque d’intégrité. |
 | Portée des formats de texte | Retour `IPAD-L2-025` : `TBX-010` reste une portée caractères, `TBX-011` une portée paragraphes et `TBX-012` une portée zone entière. L’opacité observée sur tout le texte est donc conforme ; l’interface doit rendre ces trois portées explicites et conserver une sélection utile quand le clavier est fermé. |
+| État actif des formats de texte | Retour du 20 août 2026 : dans la fenêtre de modification comme dans l’inspecteur, Police, Taille, Gras, Italique, Couleur, Alignement, Interligne et Opacité matérialisent leur valeur courante par une coche ou un état visible et accessible, sans dépendre de la seule couleur (`TBX-026`, `ACC-004`). |
 | Regroupement des panneaux | Clarification utilisateur du 19 août 2026 : ordre Photos, Texte, Stickers, séparation visuelle simple sans titre, Mise en page, Fonds, Cadres et formes. Photos/Texte/Stickers sont contigus comme éléments ajoutables ; Mise en page et Fonds restent deux panneaux distincts (`EDT-001`). |
 
 ## Synthèse
@@ -99,7 +101,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 | Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core ; intégration App Playground compilée | Prouver les capacités Apple encore bloquées et corriger les écarts fonctionnels du premier incrément Lot 2 |
 | Lot 1 — Création locale | 🟡 | Parcours métier validés et adaptation finale confirmée par `143…144` sur `101e294…` | Conserver le jalon iPad ; qualifications iPhone/Xcode et Apple différées empêchent encore l’état 🟢 |
-| Lot 2 — Parité de composition | 🟡 | Le dialogue interne, Remplir l’album, l’action compacte et le cadrage couvrant sont validés jusqu’à `IPAD-L2-019`. Sur `f0a0cca…`, la compilation/saisie, la géométrie/modèle (`028`) et la profondeur/persistance/accessibilité (`029`) sont confirmées ; `023…027` documentent cinq écarts. `cb77862…` corrige ces écarts et applique l’ordre visible de `EDT-001` sous contrats WSL | Exécuter `IPAD-L2-030…033` sur iPad ; couvrir la largeur compacte et compléter stickers, cadres et presse-papiers commun avant `ACPT-123`, `125`, `126`, `128`, `130` |
+| Lot 2 — Parité de composition | 🟡 | Le dialogue interne, Remplir l’album, l’action compacte et le cadrage couvrant sont validés jusqu’à `IPAD-L2-019`. La campagne Texte-B sur `cb77862…` confirme compilation/descendantes, panneaux (`031`), sélection/palette/portées (`032`) et persistance/accessibilité, mais échoue `030` sur les motifs et `033` sur Arrondie/Italique. Le second correctif borne le fond par construction, renforce Arrondie et ajoute les états actifs `TBX-026` | Figer puis qualifier le second correctif sur iPad ; couvrir la largeur compacte et compléter stickers, cadres et presse-papiers commun avant `ACPT-123`, `125`, `126`, `128`, `130` |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
 
@@ -153,6 +155,16 @@ réussites (`IPAD-L2-028…029`) et cinq échecs (`023…027`) : la compilation 
 la frappe visible sont acquises, tandis que descendantes, motif de fond,
 organisation des panneaux, sélection/palette en paysage et certains styles
 restent à corriger. L’ordre des panneaux est désormais arbitré dans `EDT-001`.
+La campagne Texte-B sur `cb77862…` réussit ensuite `IPAD-L2-031…032` et les
+trois premières étapes de `030` : compilation, descendantes, ordre des panneaux,
+sélection conservée, palette défilable et portées sont acquis. `030` reste
+rouge parce que chacun des trois motifs recouvre encore l’éditeur, alors que
+les couleurs unies fonctionnent. `033` reste rouge : Arrondie est trop proche
+de Système et son italique n’est pas perceptible, bien que persistance et
+VoiceOver soient déclarés conformes. Le correctif suivant remplace la
+superposition par un arrière-plan strict du `TextEditor`, donne à Arrondie un
+profil visuel et une inclinaison explicites, et ajoute les états actifs demandés
+par `TBX-026`; il n’a pas encore de preuve Apple.
 
 ## Première campagne iPad du 16 août 2026
 
@@ -256,7 +268,7 @@ extrapolé.
 | Domaine indépendant de SwiftUI | 🟡 | Nouveau `AlbumPhotoCore` : albums, pages, éléments, assets, index, validation et service d’application ; tests WSL inclus et intégration compilée dans l’App Playground (`ARC-001` à `ARC-005`, `DAT-001` à `DAT-043`) | Qualifications Apple différées et sorties de lots complètes |
 | Canevas multiélément | 🟡 | Moteurs purs de géométrie, profondeur, hit-testing, poignées, magnétisme, rotation et cadrage dynamique testés (`CAN-001` à `CAN-009`, `ELM-001` à `ELM-014`, `CRP-001` à `CRP-007`) | Valider les gestes, cibles tactiles et retours haptiques sur iPad |
 | Zoom de fenêtre et navigation | 🟡 | États purs de zoom ancré, centre normalisé et navigation testés (`ZOM-001` à `ZOM-008`, `NAV-001` à `NAV-007`) | Valider la priorité réelle des reconnaisseurs SwiftUI |
-| Texte Photoweb | 🟡 | Domaine pur et adaptateur SwiftUI iOS 26 : conversion 300/72, limite, géométrie, débordement, modèle, profondeur, persistance et accessibilité partielle. `IPAD-L2-028…029` réussissent ; `023…027` isolent les écarts de rendu, composition, adaptation et styles (`TXA-001…005`, `TBX-001…025`, `TPL-012`, `TPL-013`, `TPL-017`) | Corriger et rejouer les cinq échecs avec de nouveaux IDs ; justifié `TBX-011`, frappe groupée `TBX-022` et export `TBX-021` restent ouverts |
+| Texte Photoweb | 🟡 | Domaine pur et adaptateur SwiftUI iOS 26 : conversion 300/72, limite, géométrie, débordement, modèle, profondeur, persistance et accessibilité partielle. `IPAD-L2-031…032` confirment panneaux, sélection, palette et portées sur `cb77862…`; `030` et `033` isolent encore motifs et Arrondie. Le second correctif ajoute l’arrière-plan strict, le profil arrondi incliné et les états actifs (`TXA-001…005`, `TBX-001…026`) | Figer et rejouer les deux échecs avec de nouveaux IDs incluant `TBX-026`; justifié `TBX-011`, frappe groupée `TBX-022` et export `TBX-021` restent ouverts |
 | Modèles, dé et automatisme | 🟡 | Les 32 modèles canoniques sont embarqués byte à byte ; résolution active/inactive, bijection photo de `DAT-042`, ordre UUID/lecture, commandes atomiques, dé de session et recomposition Auto sont testés puis exposés. Remplir l’album ajoute son plan pur et sa commande transactionnelle (`AUT-009…011`) ; les variantes texte sont actives et leur géométrie/modèle réussit `IPAD-L2-028` | Conserver la preuve `028` et la rejouer seulement si le correctif touche ce parcours |
 | Animation de page | 🟡 | Machine d’état interactive prototypée et testée (`ANI-001` à `ANI-009`) | Animation SwiftUI finale et Réduire les animations au Lot 3 |
 | Sérialisation canonique | 🟡 | JSON canonique, empreinte logique SHA-256, exclusion explicite des dérivés locaux régénérables et golden tests du noyau (`DAT-020` à `DAT-028`, `PKG-008`, `PKG-021`) | Reconfirmer les fixtures avec le commit candidat |
@@ -265,7 +277,7 @@ extrapolé.
 | Contrats de catalogue | 🟡 | Schéma extensible aux stickers/cadres futurs mais registre runtime limité à 3 fonds et 6 formes ; rendu Swift pur des formes, 6 masques golden 64 × 48, 32 modèles et 10 empreintes validés (`CAT-001` à `CAT-009`, `TPL-019`) | Reconfirmer chargement depuis le bundle Apple et repli hors ligne ; figer les payloads Lot 2 avant de les publier |
 | Package `.photoalbum` | 🟡 | Schéma v1, documentation, exemple minimal et exemples invalides présents (`PKG-001` à `PKG-022`, `IMP-001` à `IMP-025`) | 🟠 Déclaration UTType, ouverture Fichiers et partage non testées dans Swift Playgrounds |
 | CloudKit page par page | 🟠 | Planificateur pur et note de prototype présents (`SYN-001` à `SYN-003`) | Entitlements, zone et opérations CloudKit exigent un environnement Apple compatible |
-| Traçabilité | 🟡 | Matrices Lot 0/1 et Lot 2, méthodes automatisées, 111 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` ; `020…027` sont 🔴, `028…029` sont 🟢 et le jeu partagé conserve une preuve par fiche | Créer les régressions du prochain candidat et conserver `008` bloqué jusqu’à une largeur compacte réelle |
+| Traçabilité | 🟡 | Matrices Lot 0/1 et Lot 2, méthodes automatisées, 111 contrôles iPad, 13 validations Apple différées et 24 scénarios `ACPT` ; `031…032` sont 🟢, `030`/`033` 🔴 et chaque retour Texte-B est attribué par étape | Figer le prochain candidat, créer ses régressions motifs/formats et conserver `008` bloqué jusqu’à une largeur compacte réelle |
 
 ### Sortie du lot 0
 
@@ -315,13 +327,13 @@ qualifications différées exigées par `DONE-001` à `DONE-005`.
 
 | Fonction | État | Réalisation candidate | Validation ou suite restante |
 |---|---|---|---|
-| Catalogue de modèles | 🟡 | `docs/layout-templates-v1.json` est généré dans le Core sans divergence ; les 32 définitions sont compilées et parcourues sur iPad, puis l’interface corrigée est requalifiée par `IPAD-L2-010` (`TPL-002`, `TPL-003`, `TPL-019`, `TPL-020`, `DAT-042`) | Variantes texte actives et à qualifier sous `IPAD-L2-028` |
-| Panneaux de création | 🟡 | Les marges, la largeur droite à 324 points et les replis de `024a60b…` sont validés par `IPAD-L2-010`. Le rail régulier et la barre compacte de `cb77862…` ordonnent Photos, Texte, séparation sans titre, Mise en page, Fonds ; Stickers s’insérera avant la séparation (`EDT-001`) | Exécuter `IPAD-L2-031` ; largeur compacte iPhone/Xcode différée |
-| Application des modèles | 🟡 | Modèle plus grand validé sous `IPAD-L2-003` ; requête capturée et `pageID` du modèle plus petit validés par `IPAD-L2-011`, Annuler/Rétablir et relance inclus. Les slots texte créent maintenant une zone vide éditable et absente des sorties finales (`TPL-004…023`) | Qualifier les modèles Avec texte sous `IPAD-L2-028` |
+| Catalogue de modèles | 🟡 | `docs/layout-templates-v1.json` est généré dans le Core sans divergence ; les 32 définitions sont compilées et parcourues sur iPad, l’interface est requalifiée par `IPAD-L2-010` et les variantes texte par `IPAD-L2-028` (`TPL-002`, `TPL-003`, `TPL-019`, `TPL-020`, `DAT-042`) | Conserver ces preuves ; sortie complète du Lot 2 encore restante |
+| Panneaux de création | 🟡 | Les marges, la largeur droite à 324 points et les replis de `024a60b…` sont validés par `IPAD-L2-010`. Le rail régulier de `cb77862…` ordonne Photos, Texte, séparation sans titre, Mise en page, Fonds et réussit `IPAD-L2-031`; Stickers s’insérera avant la séparation (`EDT-001`) | Conserver la preuve iPad ; largeur compacte iPhone/Xcode différée |
+| Application des modèles | 🟡 | Modèle plus grand validé sous `IPAD-L2-003` ; requête capturée et `pageID` du modèle plus petit validés par `IPAD-L2-011`, Annuler/Rétablir et relance inclus. Les slots texte et leur géométrie/débordement réussissent `IPAD-L2-028` (`TPL-004…023`) | Conserver la preuve ; sorties finales du Lot 2 encore restantes |
 | Dé | 🟡 | Compatibilité, sac sans répétition, Annuler/Rétablir et persistance réussis sous `IPAD-L2-005` ; nouvel emplacement, libellé visible, icône `die.face.5.fill` et absence dans la barre locale validés par `IPAD-L2-012` (`RND-001…006`) | Qualification compacte iPhone/Xcode encore différée |
 | Mise en page auto | 🟡 | Interrupteur, densités et recomposition réussis sous `IPAD-L2-006…007` ; `IPAD-L2-018` valide les capacités 2/4/8, le tri stable, les groupes, les pages et la commande unique. `IPAD-L2-019` valide le dialogue compact et le cadrage couvrant de `3944fae…` (`AUT-001…019`, `PHO-014`, `FRM-009`, `TPL-005`, `UND-001`) | Sortie complète du Lot 2 et largeur compacte encore restantes |
 | Navigation locale et pages | 🟡 | Après les échecs de présentation `IPAD-L2-014…016`, le dialogue interne de `57afa71…` bloque l’éditeur sous-jacent et réussit `IPAD-L2-017` (`EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013` à `PAG-017`) | Retour global sans capture ni détail ; largeur compacte iPhone/Xcode restante |
-| Zones de texte | 🟡 | Éditeur riche, styles, limite 1 000, hauteur, débordement, persistance et rendu commun. Après `023…027`, `cb77862…` utilise la métrique normale et une marge ascente/descente, borne le motif sous l’éditeur, conserve et signale la sélection, ajoute un bouton clavier, rend la palette défilable et distingue Sélection/Paragraphe/Zone (`TBX-001…025`, `TXA-001…005`) | Exécuter `IPAD-L2-030`, `032` et `033` ; justifié, délai 750 ms, export et finition du collage restent ouverts |
+| Zones de texte | 🟡 | Éditeur riche, styles, limite 1 000, hauteur, débordement, persistance et rendu commun. `030.1…3` et `032` valident compilation, descendantes, sélection, palette et portées sur `cb77862…`; `030.4` et `033.1…2` échouent. Le second correctif attache le fond au `TextEditor`, renforce Arrondie/Italique et coche chaque valeur active dans l’éditeur et l’inspecteur (`TBX-001…026`, `TXA-001…005`) | Figer puis qualifier motifs, Arrondie/Italique et `TBX-026`; justifié, délai 750 ms, export et finition du collage restent ouverts |
 | Stickers et cadres décoratifs | ⬜ | Aucun sticker ni cadre décoratif Lot 2 persisté | Figer assets/licences `CAT-009` avant implémentation |
 
 Ce premier incrément reste 🟡 : le candidat initial compte cinq réussites, deux
@@ -353,7 +365,12 @@ projection typographique trop petite. Sur le correctif `f0a0cca…`, les fiches
 localisés (`023…027`) en conservant le même jeu Texte-A. Le candidat
 `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` regroupe leurs corrections ; les
 quatre régressions `030…033` couvrent séparément rendu/motifs, panneaux,
-sélection/palette/portées et polices/italique.
+sélection/palette/portées et polices/italique. `031` et `032` réussissent ;
+`030` échoue à la seule étape des trois motifs et `033` aux étapes Arrondie et
+Italique. Le correctif non figé retire le motif de la pile de mise en page au
+profit d’un arrière-plan strict, applique à Arrondie une largeur et une
+inclinaison synthétiques publiques, et matérialise chaque choix actif selon
+`TBX-026` dans la fenêtre et l’inspecteur.
 L’incrément ne prétend satisfaire aucune autre sortie finale du Lot 2.
 
 ## Arbitrage normatif appliqué
@@ -393,6 +410,9 @@ Lot 3 n’est rendu public.
 
 | Environnement | Commande ou contrôle | Résultat connu | Portée et limite |
 |---|---|---|---|
+| WSL, Swift 6.3.3 et frontend Swift, 2026-08-20 | `swift test --parallel`, contrat UI texte ciblé, parse AppModule, validation des contrats et des empreintes | **147 tests, 0 échec** ; ciblé **1, 0 échec** ; parse **OK** ; contrats **OK** ; empreintes **10/10** | Prouve le Core et les contrats source de l’arrière-plan strict, du profil Arrondie/Italique et des états actifs `TBX-026`; sans type-check ni rendu Apple |
+| iPad 8 déclaré, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-20 | `IPAD-L2-030…033` sur `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` | **2 réussites (`031`, `032`) et 2 échecs (`030`, `033`)** ; `030.1…3` et `033.3…4` conformes | Retour sans capture : les trois motifs restent devant l’éditeur ; Système/Arrondie trop proches et italique Arrondie absent ; aucun `APPLE-*` extrapolé |
+| Dépôt, registre Texte-B, 2026-08-20 | Enregistrement des quatre verdicts, preuves, environnements et nouvelle exigence `TBX-026` | **OK documentaire** : 33/33 IDs Lot 2 conservent une synthèse et une fiche ; `030`/`033` 🔴, `031`/`032` 🟢 | Le second correctif n’a pas encore de commit candidat ni de fiche Apple ; sources modifiées donc preuves historiques non extrapolées |
 | Dépôt, registre Texte-B, 2026-08-19 | Contrôle des synthèses et fiches `IPAD-L2-001…033`, candidat et colonnes des étapes | **OK** : 33/33 IDs Lot 2 ; `030…033` à ⚪ avec candidat exact et tableaux `ID`/`Description`/`Résultat attendu` | Contrôle documentaire ; ne prouve ni compilation ni rendu Apple de `cb77862…` |
 | WSL, Swift 6.3.3 et frontend Swift, 2026-08-19 | `swift test --parallel`, test ciblé texte/contrat, parse AppModule, validation des contrats et des empreintes | **147 tests, 0 échec** ; ciblés **11 + 1, 0 échec** ; parse **OK** ; contrats **OK** ; empreintes **10/10** | Prouve la mesure avec ascente/descente et les contrats source du fond, de la sélection/palette, des portées et du rail ; sans type-check ni rendu Apple |
 | iPad 8 déclaré, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-19 | `IPAD-L2-023…029` sur `f0a0ccaa4f580a5d602dfc9432228fdf5115ce59` | **2 réussites (`028`, `029`) et 5 échecs (`023…027`)** ; compilation et frappe visible confirmées | Retours par fiche/étape sans capture ; `023` rogne les descendantes et compose mal les motifs, `024` demande un autre regroupement, `025…026` révèlent portée/sélection/palette en paysage, `027` les polices/italique ; aucun contrôle `APPLE-*` extrapolé |
@@ -493,6 +513,7 @@ Lot 3 n’est rendu public.
 | `IPAD-L2-022`, panneau et rendu texte `7bc495e…` | 🔴 Échec fonctionnel sur Apple | Compilation et ouverture de l’éditeur réussies indirectement ; étape 4 échouée car la saisie est pratiquement invisible, suite non exécutée |
 | `IPAD-L2-023…027`, jeu Texte-A `f0a0cca…` | 🔴 Échecs fonctionnels sur Apple | Retours détaillés enregistrés le 19 août : descendantes, motif superposé, organisation des panneaux, sélection/palette en paysage et styles Police/Italique ; nouveaux IDs nécessaires après correction |
 | `IPAD-L2-028…029`, jeu Texte-A `f0a0cca…` | 🟢 Réussis sur l’iPad déclaré | Retours globaux « ok » propres à chaque fiche, sans capture ni détail par étape ; portée limitée à géométrie/modèle puis profondeur/persistance/accessibilité |
+| `IPAD-L2-030…033`, jeu Texte-A `cb77862…` | 2 réussites (`031`, `032`) et 2 échecs (`030`, `033`) sur l’iPad déclaré | `030.1…3` conformes mais les trois motifs échouent ; panneaux, sélection, palette et portées réussis ; Arrondie trop proche de Système et sans italique perceptible, étapes 3/4 de `033` conformes ; retour du 20 août sans capture |
 | `APPLE-L2-001`, largeur compacte de `57afa71…` | 🟠 Bloqué sur cet iPad | Swift Playgrounds ne permet pas de réduire suffisamment la fenêtre ; reprendre le dialogue, la barre, Gérer les pages et le menu Plus sur iPhone ou environnement Xcode réellement compact |
 | iPhone réel | ⚪ Non testé | Aucun appareil ni build TestFlight qualifié dans cette remise |
 | Xcode/macOS et simulateurs | ⚪ Non testés | SDK Apple absent de WSL ; campagne différée selon `ENV-006` à `ENV-009` |
@@ -536,17 +557,21 @@ Lot 3 n’est rendu public.
 | `RSK-3.0-028` | Moyen | Le premier incrément valide une session d’édition comme une commande, mais ne publie pas encore chaque séquence après 750 ms ; la conservation fine des styles provenant d’un collage externe reste aussi à compléter. | `IPAD-L2-027` est exécuté mais son échec de styles ne clôt pas `TBX-007`/`TBX-022`; ajouter des tests Apple ciblés dans l’incrément suivant. |
 | `RSK-3.0-029` | Partiellement levé | `IPAD-L2-021` révèle le fond, la palette, l’échelle et l’opacité ; `022` montre ensuite que projeter `N / 3000` directement sur la hauteur affichée rend la saisie pratiquement invisible. | `IPAD-L2-023` confirme la conversion et la frappe visible, et `025` la cohérence principale de taille ; les nouveaux défauts de rognage et d’adaptation restent suivis séparément. |
 | `RSK-3.0-030` | Levé dans la méthode et appliqué | Une fiche texte de seize étapes imposait un jeu initial lourd et un défaut précoce empêchait d’attribuer un verdict utile aux fonctions suivantes. | Les sept fiches ont reçu des verdicts propres : deux réussites et cinq échecs localisés, sans masquer les étapes non exécutées. |
-| `RSK-3.0-031` | Corrigé en code, Apple à confirmer | La hauteur automatique d’une zone d’une seule ligne rogne le bas des glyphes à descendante ; une deuxième ligne masque le défaut. | La valeur neutre utilise désormais la métrique `.normal` et la mesure réserve 1,2 ligne aux ascente/descente ; régression `j`, `p`, `g`, `q` requise avant de requalifier `TBX-019`, `TBX-020` et `TBX-024`. |
-| `RSK-3.0-032` | Corrigé en code, Apple à confirmer | Avec un motif intégré, la couche de fond peut passer devant le texte et les outils de l’éditeur, parfois sous forme blanche, alors qu’une couleur unie fonctionne. | Le fond reçoit sa taille avant rognage, ne capte aucun toucher et reste à `zIndex(0)` sous l’éditeur à `zIndex(1)` ; rejouer les trois motifs (`CAN-003`, `BG-007`, `TBX-025`). |
-| `RSK-3.0-033` | Corrigé en code, Apple à confirmer | Le clavier réduit la fenêtre, la palette ne défile pas et fermer le clavier détruit la sélection ; la mise en forme d’un mot devient impossible (`TBX-005`, `TBX-010`, `ACC-021`). | La dernière sélection est retenue et signalée par « Sélection conservée », un bouton masque/réaffiche le clavier et la palette défile dans 320 points maximum ; rejouer en paysage avec chaque couleur visible. |
-| `RSK-3.0-034` | Corrigé par la portée, Apple à confirmer | Système et Arrondie ont le même rendu et Italique ne produit aucun changement perceptible sur la sélection (`TBX-010`, `TBX-013`). | Le manifeste et la résolution `.rounded` étaient corrects ; les commandes ciblent maintenant la sélection retenue et réécrivent la police native. Vérifier visuellement Arrondie et Italique sur Apple. |
-| `RSK-3.0-035` | Corrigé en code, Apple à confirmer | L’ancien `EDT-001` séparait Photos et Texte par Mise en page ; `IPAD-L2-024` rejette cette organisation. | Le code visible ordonne Photos, Texte, séparation sans titre, Mise en page, Fonds dans les rails régulier et compact ; Stickers rejoindra le premier groupe lors de sa livraison. Nouvelle régression requise. |
+| `RSK-3.0-031` | Levé sur l’iPad déclaré | La hauteur automatique d’une zone d’une seule ligne rognait le bas des glyphes à descendante ; une deuxième ligne masquait le défaut. | La métrique `.normal` et la réserve ascente/descente sont confirmées par `IPAD-L2-030.2…3` avec une et deux lignes (`TBX-019`, `TBX-020`, `TBX-024`). |
+| `RSK-3.0-032` | Échec confirmé, nouveau correctif Apple à tester | Avec chacun des trois motifs intégrés, la couche de fond passe encore devant le texte et les outils de l’éditeur, alors qu’une couleur unie fonctionne. | `IPAD-L2-030.4` invalide le seul `zIndex`; le second correctif attache désormais le motif avec `.background` au cadre exact du `TextEditor` et rogne ce cadre. Rejouer les trois motifs (`CAN-003`, `BG-007`, `TBX-025`). |
+| `RSK-3.0-033` | Levé sur l’iPad déclaré | Le clavier réduisait la fenêtre, la palette ne défilait pas et fermer le clavier détruisait la sélection ; la mise en forme d’un mot devenait impossible (`TBX-005`, `TBX-010`, `ACC-021`). | `IPAD-L2-032` réussit en paysage : sélection conservée, palette défilable, six couleurs accessibles et portées correctes. |
+| `RSK-3.0-034` | Échec confirmé, nouveau correctif Apple à tester | La différence Système/Arrondie reste trop faible et Italique ne produit aucun changement perceptible avec Arrondie, contrairement aux trois autres polices (`TBX-010`, `TBX-013`). | `IPAD-L2-033.1…2` confirme l’écart ; le second correctif conserve le dessin système arrondi hors ligne, l’élargit de 12 % et applique une matrice d’inclinaison publique de `0,22` lorsque l’italique est actif. Vérifier rendu et métrique sur Apple. |
+| `RSK-3.0-035` | Levé sur l’iPad déclaré | L’ancien `EDT-001` séparait Photos et Texte par Mise en page ; `IPAD-L2-024` rejetait cette organisation. | `IPAD-L2-031` confirme Photos, Texte, séparation sans titre, Mise en page et Fonds en portrait/paysage, sans perte de sélection. |
+| `RSK-3.0-036` | Corrigé en code, Apple à confirmer | Les menus et palettes de format ne matérialisaient pas systématiquement leur valeur active ; une teinte seule restait insuffisante pour comprendre Police, Couleur, Taille et les autres choix. | `TBX-026` impose une coche ou un état visible et accessible. Le second correctif l’applique à Police, Taille, Gras, Italique, Couleur, Alignement, Interligne et Opacité dans l’éditeur et l’inspecteur ; régression Apple à créer après gel du candidat. |
 
 ## Prochaines actions
 
-1. Exécuter `IPAD-L2-030…033` dans l’ordre sur
-   `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa`, en réutilisant Texte-A.
-2. Enregistrer chaque verdict sans extrapoler une réussite aux fiches suivantes.
+1. Figer le second correctif texte après validations WSL, puis créer deux
+   fiches courtes : trois motifs bornés ; Arrondie/Italique et états actifs
+   `TBX-026` dans l’éditeur et l’inspecteur.
+2. Rejouer ces fiches sur l’iPad en réutilisant Texte-A, sans redemander les
+   parcours `IPAD-L2-031…032` déjà réussis si les surfaces concernées restent
+   inchangées.
 3. Compléter ensuite `TBX-007`, `TBX-011`, `TBX-021` et `TBX-022` sans moteur
    parallèle ni faux contrôle d’interface.
 4. Reprendre séparément `APPLE-L2-001` sur un iPhone ou un environnement Xcode
@@ -564,6 +589,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-20 | Codex | Enregistrement de `IPAD-L2-030…033` (réussites `031…032`, échecs `030`/`033`) puis second correctif : motif attaché comme arrière-plan strict du `TextEditor`, profil système Arrondie élargi et incliné, coches/états actifs dans tous les formats de l’éditeur et de l’inspecteur | `AlbumTextEditorView.swift`, `TextPanelView.swift`, `ManifestContractTests.swift`, `spec.md`, `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `CAN-003`, `BG-007`, `TBX-009…016`, `TBX-024…026`, `ACC-002`, `ACC-004`, `TST-004`, `TST-013` | Retour iPad sans capture ; WSL : 147 tests Core, contrat UI ciblé, parse AppModule, contrats et 10/10 empreintes OK ; compilation/type-check/rendu Apple du second correctif NON TESTÉS ; candidat et nouvelles fiches à figer |
 | 2026-08-19 | Codex | Gel du correctif Texte-B `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` et préparation des quatre régressions courtes `IPAD-L2-030…033` | `README.md`, `suivi_tests.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `TST-001…005`, `TST-013`, `DEC-32`, `EDT-001`, `CAN-003`, `BG-007`, `TBX-005`, `TBX-010…016`, `TBX-019`, `TBX-020`, `TBX-023…025`, `ACC-002`, `ACC-006`, `ACC-021` | Candidat exact enregistré ; quatre fiches au format `ID`/`Description`/`Résultat attendu`, initialisées à ⚪ ; registre 33/33 synthèses et fiches ; Apple NON TESTÉ |
 | 2026-08-19 | Codex | Correctif groupé des retours `IPAD-L2-023…027` : métrique et mesure des descendantes, motif borné sous l’éditeur, sélection conservée et signalée avec commande clavier, palette défilable, portées explicites et ordre/séparation des panneaux visibles | `PrototypeEngines.swift`, `AlbumTextEditorView.swift`, `AlbumPageBackground.swift`, `EditorViewModel.swift`, `AlbumEditorView.swift`, tests et suivi ; `DEC-32`, `EDT-001`, `CAN-003`, `BG-007`, `TBX-005`, `TBX-010…016`, `TBX-019`, `TBX-020`, `TBX-024`, `TBX-025`, `ACC-021` | WSL : 147 tests Core, 11 tests texte et 1 contrat UI ciblé réussis ; parse AppModule, contrats et 10/10 empreintes OK ; compilation et rendu Apple NON TESTÉS ; candidat et nouvelles fiches à figer |
 | 2026-08-19 | Codex | Arbitrage de l’organisation des panneaux après `IPAD-L2-024` : Photos, Texte et Stickers contigus, séparation simple sans titre, puis Mise en page, Fonds et Cadres et formes comme entrées distinctes | `spec.md`, `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `EDT-001`, `EDT-010`, `EDT-012`, `ACPT-123`, `TST-004`, `TST-013` | Décision utilisateur explicite ; procédure `024` et suivi réalignés ; contrats OK, registre 29/29 et `git diff --check` OK ; sources applicatives inchangées, donc tests Core/parse non relancés |
