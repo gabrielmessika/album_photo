@@ -49,9 +49,11 @@ Texte, séparation simple sans titre, Mise en page, Fonds. Après clarification,
 titre, Mise en page, Fonds, Cadres et formes. La campagne du 20 août sur
 `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` réussit `IPAD-L2-031…032` mais
 échoue `030` sur les trois motifs et `033` sur la faible distinction
-Système/Arrondie ainsi que l’italique Arrondie. Le correctif non figé attache le
-motif comme arrière-plan strict du `TextEditor`, renforce le profil arrondi et
-son inclinaison, puis matérialise tous les choix actifs selon `TBX-026`.
+Système/Arrondie ainsi que l’italique Arrondie. Le second correctif, figé au
+commit `3102cda0e6b2c483576585ec2f97fc947f87c96f`, attache le motif comme
+arrière-plan strict du `TextEditor`, renforce le profil arrondi et son
+inclinaison, puis matérialise tous les choix actifs selon `TBX-026`.
+`IPAD-L2-034…035` doivent maintenant qualifier ces surfaces sur l’iPad déclaré.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -121,6 +123,8 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-031` | Ordre et séparation sans titre des panneaux | `DEC-32`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-032` | Sélection, palette et portées en paysage | `TBX-005`, `TBX-010…012`, `TBX-015`, `TBX-016`, `ACC-002`, `ACC-006`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-033` | Polices, italique et persistance de la sélection | `TBX-010`, `TBX-013`, `TBX-023`, `TBX-024`, `SAV-001`, `ACC-002` | 🔴 `ÉCHOUÉ` — Système/Arrondie trop proches et Italique absent sur Arrondie ; étapes 3 et 4 déclarées conformes |
+| `IPAD-L2-034` | Motifs strictement bornés dans l’éditeur | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-024`, `TBX-025`, `DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-035` | Arrondie, italique et choix actifs | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne

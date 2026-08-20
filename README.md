@@ -128,10 +128,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `031` et `032` réussissent. `030` échoue encore sur les trois motifs qui
   recouvrent l’éditeur, malgré les couleurs unies conformes ; `033` échoue sur
   une différence Système/Arrondie trop faible et l’absence d’italique visible
-  avec Arrondie. Le correctif en cours transforme le motif en arrière-plan
-  strict du `TextEditor`, élargit légèrement le dessin système arrondi, lui
-  applique un italique synthétique et matérialise les valeurs actives de tous
-  les formats conformément à `TBX-026`.
+  avec Arrondie. Le second correctif, figé dans
+  `3102cda0e6b2c483576585ec2f97fc947f87c96f`, transforme le motif en
+  arrière-plan strict du `TextEditor`, élargit légèrement le dessin système
+  arrondi, lui applique un italique synthétique et matérialise les valeurs
+  actives de tous les formats conformément à `TBX-026`. Les régressions
+  `IPAD-L2-034…035` sont prêtes dans `suivi_tests.md`.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
@@ -177,9 +179,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   Stickers, une séparation simple sans titre, Mise en page, Fonds, puis Cadres
   et formes. Sur `cb77862…`, `IPAD-L2-031…032` réussissent tandis que `030`
   et `033` échouent sur les motifs, la distinction Arrondie et son italique.
-  Le correctif suivant est présent dans le dépôt mais sa compilation et son
-  rendu Apple ne sont pas encore qualifiés ; son candidat et ses nouvelles
-  fiches restent à figer. Les photos de diagnostic restent hors de Git.
+  Le correctif suivant est figé dans `3102cda…` et passe les 147 tests Core,
+  le contrat UI ciblé, l’analyse syntaxique, les contrats du dépôt et les dix
+  empreintes sous WSL. `IPAD-L2-034…035` restent ⚪ `NON TESTÉ` sur Apple et
+  doivent être exécutés dans cet ordre. Les photos de diagnostic restent hors
+  de Git.
   L’alignement justifié, le regroupement de frappe à 750 ms,
   l’export bloqué et la conservation fine des attributs d’un collage externe
   restent explicitement partiels.
