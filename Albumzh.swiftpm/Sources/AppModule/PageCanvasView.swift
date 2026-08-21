@@ -1,5 +1,6 @@
 import AlbumPhotoCore
 import SwiftUI
+import UIKit
 
 enum PageRenderPurpose: Equatable {
     case editor
@@ -119,23 +120,72 @@ struct PageCompositionView: View {
                     y: elementGeometry.centerY * pageSize.height
                 )
             }
-        case .sticker:
-            if purpose == .editor {
-                Image(systemName: "face.smiling")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(.secondary)
-                    .frame(
-                        width: elementGeometry.width * pageSize.width,
-                        height: elementGeometry.height * pageSize.height
-                    )
-                    .rotationEffect(.radians(elementGeometry.rotationRadians))
-                    .position(
-                        x: elementGeometry.centerX * pageSize.width,
-                        y: elementGeometry.centerY * pageSize.height
-                    )
+        case let .sticker(sticker):
+            if let definition = BuiltInStickerCatalog.definition(
+                id: sticker.resource.catalogID,
+                version: sticker.resource.catalogVersion
+            ), definition.reference == sticker.resource {
+                StickerRenderView(
+                    sticker: sticker,
+                    definition: definition,
+                    geometry: elementGeometry,
+                    imageCache: imageCache,
+                    purpose: purpose,
+                    pageNumber: pageNumber,
+                    visualIndex: visualIndex,
+                    visualCount: visualCount
+                )
+                .frame(
+                    width: max(1, elementGeometry.width * pageSize.width),
+                    height: max(1, elementGeometry.height * pageSize.height)
+                )
+                .rotationEffect(.radians(elementGeometry.rotationRadians))
+                .position(
+                    x: elementGeometry.centerX * pageSize.width,
+                    y: elementGeometry.centerY * pageSize.height
+                )
             }
         }
+    }
+}
+
+private struct StickerRenderView: View {
+    let sticker: StickerElement
+    let definition: StickerCatalogDefinition
+    let geometry: ElementGeometry
+    let imageCache: PhotoImageCache
+    let purpose: PageRenderPurpose
+    let pageNumber: Int?
+    let visualIndex: Int
+    let visualCount: Int
+
+    var body: some View {
+        BundledCatalogImage(
+            dataAssetName: definition.dataAssetName,
+            contentHash: definition.contentHash,
+            cache: imageCache,
+            maximumPixelSize: purpose == .thumbnail ? 320 : 1_024
+        )
+        .scaledToFit()
+        .scaleEffect(x: sticker.flippedHorizontally ? -1 : 1, y: 1)
+        .opacity(sticker.opacity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private var accessibilityLabel: String {
+        let page = pageNumber.map { ", page \($0)" } ?? ""
+        let depth = visualCount > 1 ? ", plan \(visualIndex) sur \(visualCount)" : ""
+        return "Sticker \(definition.localizedName)\(page), \(approximatePosition)\(depth)"
+    }
+
+    private var approximatePosition: String {
+        let horizontal = geometry.centerX < 1.0 / 3.0
+            ? "à gauche" : geometry.centerX > 2.0 / 3.0 ? "à droite" : "au centre"
+        let vertical = geometry.centerY < 1.0 / 3.0
+            ? "en haut" : geometry.centerY > 2.0 / 3.0 ? "en bas" : "au milieu"
+        if horizontal == "au centre", vertical == "au milieu" { return "au centre" }
+        return "\(vertical), \(horizontal)"
     }
 }
 
@@ -161,11 +211,11 @@ private struct TextBoxRenderView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(.secondary.opacity(0.08))
             } else {
-                Text(AlbumTextAttributedBridge.attributedString(
-                    from: text.content,
+                AlbumRenderedTextView(
+                    content: text.content,
                     defaults: text.typingDefaults,
                     pageHeight: Double(pageSize.height)
-                ))
+                )
                 .opacity(text.opacity)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
@@ -201,6 +251,114 @@ private struct TextBoxRenderView: View {
         }
         let warning = overflows ? ", alerte : le texte déborde de sa zone" : ""
         return "Texte\(page), \(text.content.plainText)\(depth)\(warning)"
+    }
+}
+
+/// TextKit supplies the public justified paragraph style that SwiftUI's
+/// editable AttributedString surface does not expose on iOS 26. The same view
+/// is used by editor, thumbnail and preview compositions (3:TBX-011/024).
+private struct AlbumRenderedTextView: UIViewRepresentable {
+    let content: TextBoxContent
+    let defaults: TextStyleDefaults
+    let pageHeight: Double
+
+    func makeUIView(context: Context) -> UITextView {
+        let view = UITextView()
+        view.isEditable = false
+        view.isSelectable = false
+        view.isScrollEnabled = false
+        view.backgroundColor = .clear
+        view.textContainerInset = .zero
+        view.textContainer.lineFragmentPadding = 0
+        view.adjustsFontForContentSizeCategory = false
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        return view
+    }
+
+    func updateUIView(_ view: UITextView, context: Context) {
+        view.attributedText = attributedText
+    }
+
+    private var attributedText: NSAttributedString {
+        let result = NSMutableAttributedString(string: "")
+        for paragraphIndex in content.paragraphs.indices {
+            let paragraph = content.paragraphs[paragraphIndex]
+            for run in paragraph.runs {
+                result.append(NSAttributedString(
+                    string: run.text,
+                    attributes: attributes(run: run, paragraph: paragraph)
+                ))
+            }
+            if paragraphIndex < content.paragraphs.count - 1 {
+                let fallbackRun = paragraph.runs.last ?? TextRun(text: "", style: defaults)
+                result.append(NSAttributedString(
+                    string: "\n",
+                    attributes: attributes(run: fallbackRun, paragraph: paragraph)
+                ))
+            }
+        }
+        return result
+    }
+
+    private func attributes(
+        run: TextRun,
+        paragraph: TextParagraph
+    ) -> [NSAttributedString.Key: Any] {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = switch paragraph.alignment {
+        case .leading: .left
+        case .center: .center
+        case .trailing: .right
+        case .justified: .justified
+        }
+        paragraphStyle.lineHeightMultiple = CGFloat(paragraph.lineSpacing)
+        return [
+            .font: uiFont(for: run),
+            .foregroundColor: UIColor(
+                red: CGFloat(run.color.red),
+                green: CGFloat(run.color.green),
+                blue: CGFloat(run.color.blue),
+                alpha: CGFloat(run.color.alpha)
+            ),
+            .paragraphStyle: paragraphStyle
+        ]
+    }
+
+    private func uiFont(for run: TextRun) -> UIFont {
+        let pointSize = CGFloat(max(
+            1,
+            TextPrototypeEngine.renderedFontSize(
+                relativeFontSize: run.relativeFontSize,
+                pageHeight: pageHeight
+            )
+        ))
+        let weight: UIFont.Weight = run.weight == .bold ? .bold : .regular
+        let design = BuiltInTextFontCatalog.definition(id: run.fontID)?.design
+            ?? .standard
+        var descriptor = UIFont.systemFont(ofSize: pointSize, weight: weight).fontDescriptor
+        let systemDesign: UIFontDescriptor.SystemDesign = switch design {
+        case .standard: .default
+        case .serif: .serif
+        case .rounded: .rounded
+        case .monospaced: .monospaced
+        }
+        descriptor = descriptor.withDesign(systemDesign) ?? descriptor
+        if run.isItalic, design != .rounded,
+           let italic = descriptor.withSymbolicTraits(.traitItalic) {
+            descriptor = italic
+        }
+        if design == .rounded {
+            descriptor = descriptor.withMatrix(CGAffineTransform(
+                a: 1.12,
+                b: 0,
+                c: run.isItalic ? 0.22 : 0,
+                d: 1,
+                tx: 0,
+                ty: 0
+            ))
+        }
+        return UIFont(descriptor: descriptor, size: pointSize)
     }
 }
 
@@ -255,18 +413,38 @@ private struct PhotoFrameRenderView: View {
                 }
             }
             .frame(width: frameGeometry.size.width, height: frameGeometry.size.height)
-            .clipShape(Rectangle())
+            .clipShape(AlbumCatalogShape(catalogID: frame.mask.shape.catalogID))
             .overlay {
                 if frame.border.width > 0 {
-                    Rectangle()
+                    AlbumCatalogShape(catalogID: frame.mask.shape.catalogID)
                         .strokeBorder(
                             frame.border.color.swiftUIColor,
-                            lineWidth: max(
-                                1,
-                                frame.border.width
-                                    * min(frameGeometry.size.width, frameGeometry.size.height)
+                            style: StrokeStyle(
+                                lineWidth: max(
+                                    1,
+                                    frame.border.width
+                                        * min(
+                                            frameGeometry.size.width,
+                                            frameGeometry.size.height
+                                        )
+                                ),
+                                lineCap: .round,
+                                lineJoin: .round
                             )
                         )
+                }
+            }
+            .overlay {
+                if let reference = frame.decorativeFrame,
+                   let definition = BuiltInDecorativeFrameCatalog.definition(
+                       id: reference.catalogID,
+                       version: reference.catalogVersion
+                   ), definition.reference == reference {
+                    NineSliceDecorativeFrameView(
+                        definition: definition,
+                        imageCache: imageCache,
+                        maximumPixelSize: 1_024
+                    )
                 }
             }
         }
@@ -300,6 +478,109 @@ private struct PhotoFrameRenderView: View {
             ? "en haut" : geometry.centerY > 2.0 / 3.0 ? "en bas" : "au milieu"
         if horizontal == "au centre", vertical == "au milieu" { return "au centre" }
         return "\(vertical), \(horizontal)"
+    }
+}
+
+/// SHR-013 — deterministic nine-slice rendering with destination insets that
+/// remain proportional to the unrotated element at every output resolution.
+private struct NineSliceDecorativeFrameView: View {
+    let definition: DecorativeFrameCatalogDefinition
+    let imageCache: PhotoImageCache
+    let maximumPixelSize: Int
+
+    @State private var image: UIImage?
+    @State private var didFinishLoading = false
+
+    var body: some View {
+        GeometryReader { geometry in
+            if let image {
+                Canvas { context, _ in
+                    draw(image: image, in: geometry.size, context: &context)
+                }
+            } else if didFinishLoading {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel("Cadre décoratif indisponible")
+            }
+        }
+        .task(id: "\(definition.catalogID)|\(maximumPixelSize)") {
+            image = await CatalogAssetImageLoader.image(
+                dataAssetName: definition.dataAssetName,
+                contentHash: definition.contentHash,
+                cache: imageCache,
+                maximumPixelSize: maximumPixelSize
+            )
+            didFinishLoading = true
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func draw(
+        image: UIImage,
+        in destinationSize: CGSize,
+        context: inout GraphicsContext
+    ) {
+        let sourceSize = image.size
+        guard sourceSize.width > 0, sourceSize.height > 0,
+              destinationSize.width > 0, destinationSize.height > 0 else { return }
+        let sourceInsets = definition.sourceCapInsetsPixels
+        let destinationInsets = definition.destinationCapInsets
+        let sourceX = [
+            0,
+            CGFloat(sourceInsets.left),
+            sourceSize.width - CGFloat(sourceInsets.right),
+            sourceSize.width
+        ]
+        let sourceY = [
+            0,
+            CGFloat(sourceInsets.top),
+            sourceSize.height - CGFloat(sourceInsets.bottom),
+            sourceSize.height
+        ]
+        let destinationX = [
+            0,
+            destinationSize.width * CGFloat(destinationInsets.left),
+            destinationSize.width * CGFloat(1 - destinationInsets.right),
+            destinationSize.width
+        ]
+        let destinationY = [
+            0,
+            destinationSize.height * CGFloat(destinationInsets.top),
+            destinationSize.height * CGFloat(1 - destinationInsets.bottom),
+            destinationSize.height
+        ]
+        let rendered = Image(uiImage: image)
+        for row in 0..<3 {
+            for column in 0..<3 {
+                let source = CGRect(
+                    x: sourceX[column],
+                    y: sourceY[row],
+                    width: sourceX[column + 1] - sourceX[column],
+                    height: sourceY[row + 1] - sourceY[row]
+                )
+                let destination = CGRect(
+                    x: destinationX[column],
+                    y: destinationY[row],
+                    width: destinationX[column + 1] - destinationX[column],
+                    height: destinationY[row + 1] - destinationY[row]
+                )
+                guard source.width > 0, source.height > 0,
+                      destination.width > 0, destination.height > 0 else { continue }
+                let scaleX = destination.width / source.width
+                let scaleY = destination.height / source.height
+                let fullImageRect = CGRect(
+                    x: destination.minX - source.minX * scaleX,
+                    y: destination.minY - source.minY * scaleY,
+                    width: sourceSize.width * scaleX,
+                    height: sourceSize.height * scaleY
+                )
+                context.drawLayer { layer in
+                    layer.clip(to: Path(destination))
+                    layer.draw(rendered, in: fullImageRect)
+                }
+            }
+        }
     }
 }
 
@@ -486,6 +767,17 @@ struct EditablePageCanvas: View {
                     ).compactMap(\.photoFrame).first
                     model.select(elementID: targetFrame?.id)
                     Task { await model.placePhoto(payload.assetID, center: point) }
+                    return true
+                }
+                .dropDestination(for: StickerDragPayload.self) { payloads, location in
+                    guard let payload = payloads.first,
+                          !model.isReadOnly,
+                          let definition = BuiltInStickerCatalog.definition(
+                              id: payload.catalogID,
+                              version: payload.catalogVersion
+                          ) else { return false }
+                    let point = normalizedPoint(location, pageSize: pageSize)
+                    Task { await model.addSticker(definition, center: point) }
                     return true
                 }
         } else {

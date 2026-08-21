@@ -1,7 +1,7 @@
 # ADR-003 — Alignement du texte riche avec SwiftUI iOS 26
 
-- Statut : accepté pour l’incrément texte du Lot 2
-- Date : 2026-08-17
+- Statut : amendé — rendu justifié public intégré, qualification Apple restante
+- Date : 2026-08-20
 - Exigences : `TXA-001` à `TXA-004`, `TBX-011`, `TBX-023`, `TBX-024`
 
 ## Contexte
@@ -13,25 +13,30 @@ et droit, mais pas l’alignement justifié exigé par `TBX-011`.
 
 ## Décision
 
-L’incrément utilise `TextEditor`, `AttributedTextSelection`,
-`transformAttributes` et un `AttributedTextFormattingDefinition` SwiftUI. Il
-n’introduit ni moteur TextKit parallèle, ni API Apple privée, ni dépendance
-externe.
+L’édition continue d’utiliser `TextEditor`, `AttributedTextSelection`,
+`transformAttributes` et un `AttributedTextFormattingDefinition` SwiftUI. Elle
+n’introduit ni API Apple privée ni dépendance externe.
 
-Les commandes gauche, centré et droit sont exposées. La valeur métier
-`justified` reste décodable et sérialisable pour préserver le contrat de
-données, mais elle est rendue à gauche dans cette première intégration et
-n’est pas proposée dans l’interface. `TBX-011` reste donc partiellement ouvert
-et aucune validation ne doit revendiquer l’alignement justifié.
+Les commandes gauche, centré, droit et justifié sont exposées. Pour les pages
+persistées, l’éditeur, les miniatures et Prévisualiser partagent
+`AlbumRenderedTextView`, un adaptateur ponctuel `UIViewRepresentable` fondé sur
+`UILabel`/TextKit public et `NSMutableParagraphStyle.alignment = .justified`.
+L’élément reste mesuré, positionné, tourné et composé par le renderer commun de
+page ; aucune seconde représentation métier n’est créée.
+
+La surface de saisie SwiftUI conserve un aperçu gauche lorsque la valeur métier
+est `justified`, car l’API `AttributedString.TextAlignment` d’iOS 26 ne propose
+toujours pas ce cas. La boîte de dialogue n’est donc pas une preuve visuelle de
+la justification ; la page située derrière elle et Prévisualiser le sont après
+qualification Apple.
 
 ## Conséquences
 
 - le modèle et les tests Core restent indépendants de SwiftUI ;
 - l’éditeur bénéficie de la sélection et des attributs de saisie natifs
   d’iOS 26 ;
-- une intégration UIKit ponctuelle ne pourra être envisagée qu’après un
-  prototype séparé et une nouvelle décision d’architecture conformément à
-  `TXA-003` ;
+- l’intégration UIKit est isolée au rendu de page et n’écrit jamais dans le
+  domaine, conformément à `TXA-003` ;
 - la compilation et le comportement des API iOS 26 doivent être qualifiés dans
   Swift Playgrounds ou Xcode, l’analyse syntaxique WSL n’étant pas un
   type-check Apple.

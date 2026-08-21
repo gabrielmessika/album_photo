@@ -75,6 +75,13 @@ final class TextEditingPrototypeTests: XCTestCase {
         XCTAssertEqual(pasted.plainText, "https://example.test\nFin")
         XCTAssertEqual(pasted.paragraphs.count, 2)
         XCTAssertTrue(pasted.paragraphs.allSatisfy { $0.runs[0].weight == .bold })
+        XCTAssertEqual(
+            TextEditingPrototype.sanitizedPlainText("A\u{fffc}\u{0007}\tB\nC"),
+            "A\tB\nC"
+        )
+        XCTAssertThrowsError(try DomainValidator.validate(TextBoxElement(
+            content: content("Pièce\u{fffc}jointe")
+        )))
     }
 
     // Lot 0, 3:TXA-005, 3:TBX-018...3:TBX-021

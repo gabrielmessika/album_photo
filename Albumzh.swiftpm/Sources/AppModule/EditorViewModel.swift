@@ -52,8 +52,10 @@ enum DefaultPhotoQualityPolicy {
 enum EditorPanel: String, CaseIterable, Identifiable {
     case photos
     case text
+    case stickers
     case layouts
     case backgrounds
+    case frames
 
     var id: String { rawValue }
 
@@ -62,7 +64,9 @@ enum EditorPanel: String, CaseIterable, Identifiable {
         case .photos: "Photos"
         case .layouts: "Mise en page"
         case .text: "Texte"
+        case .stickers: "Stickers"
         case .backgrounds: "Fonds"
+        case .frames: "Cadres et formes"
         }
     }
 
@@ -71,7 +75,9 @@ enum EditorPanel: String, CaseIterable, Identifiable {
         case .photos: "photo.on.rectangle"
         case .layouts: "rectangle.3.group"
         case .text: "textformat"
+        case .stickers: "face.smiling"
         case .backgrounds: "paintpalette"
+        case .frames: "square.on.circle"
         }
     }
 }
@@ -253,6 +259,7 @@ final class EditorViewModel: ObservableObject {
     @Published var activePanel: EditorPanel = .photos {
         didSet {
             if activePanel != .photos { cancelPhotoChoice() }
+            if activePanel != .stickers { stickerReplacementTargetID = nil }
         }
     }
     @Published var presentationMode: EditorPresentationMode = .page
@@ -286,6 +293,7 @@ final class EditorViewModel: ObservableObject {
     @Published var showsPageAdditionConfirmation = false
     @Published var pageAdditionDoNotAskAgainDraft = false
     @Published var textEditingRequest: TextEditingRequest?
+    @Published private(set) var stickerReplacementTargetID: UUID?
 
     init(albumID: UUID, appModel: AppModel) {
         self.albumID = albumID
@@ -325,6 +333,163 @@ final class EditorViewModel: ObservableObject {
 
     var selectedTextBox: TextBoxElement? {
         selectedElement?.textBox
+    }
+
+    var selectedSticker: StickerElement? {
+        selectedElement?.sticker
+    }
+
+    var stickerCountOnActivePage: Int {
+        activePage?.elements.lazy.filter { $0.sticker != nil }.count ?? 0
+    }
+
+    func photoFrameStyleScopeDescription(
+        _ scope: PhotoFrameStyleApplicationScope
+    ) -> String {
+        let pageCount = activePage?.elements.compactMap(\.photoFrame).count ?? 0
+        let albumCount = album?.pages.flatMap(\.elements).compactMap(\.photoFrame).count ?? 0
+        switch scope {
+        case .selection: return "1 cadre photo sélectionné"
+        case .page: return "\(pageCount) cadre(s) photo sur cette page"
+        case .album: return "\(albumCount) cadre(s) photo dans l’album"
+        }
+    }
+
+    func applySelectedPhotoMask(
+        _ mask: CatalogResourceReference,
+        scope: PhotoFrameStyleApplicationScope
+    ) async {
+        guard let pageID = activePageID, let elementID = selectedPhotoFrame?.id else { return }
+        await mutate("Impossible de changer la forme des photos.") {
+            try await self.service.applyPhotoMask(
+                mask,
+                scope: scope,
+                selectedElementID: elementID,
+                on: pageID,
+                in: self.albumID
+            )
+        }
+    }
+
+    func applySelectedPhotoBorder(
+        _ border: PhotoBorder,
+        scope: PhotoFrameStyleApplicationScope
+    ) async {
+        guard let pageID = activePageID, let elementID = selectedPhotoFrame?.id else { return }
+        await mutate("Impossible de changer le contour des photos.") {
+            try await self.service.applyPhotoBorder(
+                border,
+                scope: scope,
+                selectedElementID: elementID,
+                on: pageID,
+                in: self.albumID
+            )
+        }
+    }
+
+    func applySelectedDecorativeFrame(
+        _ decorativeFrame: CatalogResourceReference?,
+        scope: PhotoFrameStyleApplicationScope
+    ) async {
+        guard let pageID = activePageID, let elementID = selectedPhotoFrame?.id else { return }
+        await appModel.waitForCatalogBootstrap()
+        await mutate("Impossible de changer le cadre décoratif.") {
+            try await self.service.applyDecorativeFrame(
+                decorativeFrame,
+                scope: scope,
+                selectedElementID: elementID,
+                on: pageID,
+                in: self.albumID
+            )
+        }
+    }
+
+    func beginReplacingSelectedSticker() {
+        guard let sticker = selectedSticker, !isReadOnly else { return }
+        stickerReplacementTargetID = sticker.id
+        activePanel = .stickers
+    }
+
+    @discardableResult
+    func placeSticker(_ definition: StickerCatalogDefinition) async -> Bool {
+        guard let pageID = activePageID else { return false }
+        await appModel.waitForCatalogBootstrap()
+        let replacementID = stickerReplacementTargetID.flatMap { targetID in
+            activePage?.element(id: targetID)?.sticker == nil ? nil : targetID
+        }
+        let succeeded: Bool
+        if let replacementID {
+            succeeded = await mutate("Impossible de remplacer le sticker.") {
+                try await self.service.replaceSticker(
+                    replacementID,
+                    with: definition.reference,
+                    on: pageID,
+                    in: self.albumID
+                )
+            }
+            if succeeded { recordRecentSticker(definition.catalogID) }
+        } else {
+            succeeded = await addSticker(definition, center: GeometryPoint(x: 0.5, y: 0.5))
+        }
+        if succeeded { stickerReplacementTargetID = nil }
+        return succeeded
+    }
+
+    @discardableResult
+    func addSticker(
+        _ definition: StickerCatalogDefinition,
+        center: GeometryPoint
+    ) async -> Bool {
+        guard let pageID = activePageID else { return false }
+        await appModel.waitForCatalogBootstrap()
+        let elementID = UUID()
+        let succeeded = await mutate("Impossible d’ajouter le sticker.") {
+            try await self.service.addSticker(
+                definition.reference,
+                to: pageID,
+                in: self.albumID,
+                center: center,
+                elementID: elementID
+            )
+        }
+        if succeeded {
+            selectedElementID = elementID
+            stickerReplacementTargetID = nil
+            recordRecentSticker(definition.catalogID)
+        }
+        return succeeded
+    }
+
+    private func recordRecentSticker(_ catalogID: String) {
+        let key = "albumPhoto.recentStickerCatalogIDs.v1"
+        let existing = UserDefaults.standard.string(forKey: key) ?? ""
+        var ids = existing.split(separator: "\n").map(String.init)
+            .filter { $0 != catalogID && BuiltInStickerCatalog.definition(id: $0) != nil }
+        ids.insert(catalogID, at: 0)
+        UserDefaults.standard.set(ids.prefix(50).joined(separator: "\n"), forKey: key)
+    }
+
+    func setSelectedStickerOpacity(_ opacity: Double) async {
+        guard let pageID = activePageID, let sticker = selectedSticker else { return }
+        await mutate("Impossible de changer l’opacité du sticker.") {
+            try await self.service.setStickerOpacity(
+                opacity,
+                elementID: sticker.id,
+                on: pageID,
+                in: self.albumID
+            )
+        }
+    }
+
+    func flipSelectedStickerHorizontally() async {
+        guard let pageID = activePageID, let sticker = selectedSticker else { return }
+        await mutate("Impossible de retourner le sticker.") {
+            try await self.service.flipStickerHorizontally(
+                sticker.id,
+                on: pageID,
+                in: self.albumID
+            )
+        }
     }
 
     var selectedPhotoMetadata: PhotoAssetMetadata? {
@@ -701,6 +866,9 @@ final class EditorViewModel: ObservableObject {
 
     func select(elementID: UUID?) {
         guard cropDraft == nil else { return }
+        if elementID != stickerReplacementTargetID {
+            stickerReplacementTargetID = nil
+        }
         selectedElementID = elementID
     }
 
@@ -721,6 +889,7 @@ final class EditorViewModel: ObservableObject {
         defaults.color = TextInitialStyleEngine.color(for: page.background)
         let text = TextBoxElement(id: UUID(), typingDefaults: defaults)
         textEditingRequest = TextEditingRequest(
+            sessionID: UUID(),
             pageID: page.id,
             original: text,
             isNew: true,
@@ -740,6 +909,7 @@ final class EditorViewModel: ObservableObject {
               let text = activePage?.element(id: elementID)?.textBox else { return }
         selectedElementID = elementID
         textEditingRequest = TextEditingRequest(
+            sessionID: UUID(),
             pageID: pageID,
             original: text,
             isNew: false,
@@ -811,8 +981,39 @@ final class EditorViewModel: ObservableObject {
         )
     }
 
-    func cancelTextEditing() {
-        textEditingRequest = nil
+    func checkpointTextEditing(
+        _ request: TextEditingRequest,
+        content: TextBoxContent,
+        typingDefaults: TextStyleDefaults,
+        opacity: Double
+    ) async {
+        guard textEditingRequest?.id == request.id else { return }
+        _ = await mutate("Impossible d’enregistrer la séquence de frappe.") {
+            try await self.service.persistTextEditingSequence(
+                sessionID: request.sessionID,
+                original: request.original,
+                isNew: request.isNew,
+                on: request.pageID,
+                in: self.albumID,
+                content: content,
+                typingDefaults: typingDefaults,
+                opacity: opacity
+            )
+        }
+    }
+
+    func cancelTextEditing(_ request: TextEditingRequest) async {
+        guard textEditingRequest?.id == request.id else { return }
+        let succeeded = await mutate("Impossible d’annuler la modification du texte.") {
+            try await self.service.cancelTextEditingSession(
+                request.sessionID,
+                fallbackOriginal: request.original,
+                isNew: request.isNew,
+                on: request.pageID,
+                in: self.albumID
+            )
+        }
+        if succeeded { textEditingRequest = nil }
     }
 
     func commitTextEditing(
@@ -822,29 +1023,17 @@ final class EditorViewModel: ObservableObject {
         opacity: Double
     ) async {
         guard textEditingRequest?.id == request.id else { return }
-        textEditingRequest = nil
-        if request.isNew {
-            guard !content.plainText.isEmpty else { return }
-            let succeeded = await mutate("Impossible d’ajouter le texte.") {
-                try await self.service.addTextBox(
-                    to: request.pageID,
-                    in: self.albumID,
-                    content: content,
-                    typingDefaults: typingDefaults,
-                    opacity: opacity,
-                    elementID: request.id
-                )
-            }
-            if succeeded { selectedElementID = request.id }
+        if request.isNew, content.plainText.isEmpty {
+            await cancelTextEditing(request)
             return
         }
-
-        guard content != request.original.content
-                || typingDefaults != request.original.typingDefaults
-                || opacity != request.original.opacity else { return }
-        let succeeded = await mutate("Impossible de modifier le texte.") {
-            try await self.service.updateTextBox(
-                request.id,
+        let succeeded = await mutate(
+            request.isNew ? "Impossible d’ajouter le texte." : "Impossible de modifier le texte."
+        ) {
+            try await self.service.persistTextEditingSequence(
+                sessionID: request.sessionID,
+                original: request.original,
+                isNew: request.isNew,
                 on: request.pageID,
                 in: self.albumID,
                 content: content,
@@ -852,7 +1041,11 @@ final class EditorViewModel: ObservableObject {
                 opacity: opacity
             )
         }
-        if succeeded { selectedElementID = request.id }
+        if succeeded {
+            await service.finishTextEditingSession(request.sessionID)
+            textEditingRequest = nil
+            selectedElementID = request.original.id
+        }
     }
 
     private func updateSelectedTextBox(
@@ -1785,14 +1978,34 @@ final class EditorViewModel: ObservableObject {
         let localY = Double(translation.width) * sine
             + Double(translation.height) * cosine
         var value = start
-        value.width = max(
+        let proposedWidth = max(
             0.05,
             start.width + horizontalSign * 2 * localX / Double(pageSize.width)
         )
-        value.height = max(
+        let proposedHeight = max(
             0.05,
             start.height + verticalSign * 2 * localY / Double(pageSize.height)
         )
+        if selectedSticker != nil {
+            let widthScale = proposedWidth / start.width
+            let heightScale = proposedHeight / start.height
+            let scale: Double
+            if horizontalSign == 0 {
+                scale = heightScale
+            } else if verticalSign == 0 {
+                scale = widthScale
+            } else {
+                scale = abs(widthScale - 1) >= abs(heightScale - 1)
+                    ? widthScale : heightScale
+            }
+            let minimumScale = max(0.05 / start.width, 0.05 / start.height)
+            let safeScale = max(minimumScale, scale)
+            value.width = start.width * safeScale
+            value.height = start.height * safeScale
+        } else {
+            value.width = proposedWidth
+            value.height = proposedHeight
+        }
         geometryDraft = value
     }
 
@@ -1896,8 +2109,19 @@ final class EditorViewModel: ObservableObject {
             && selectedPhotoFrame != nil
         geometry.centerX = min(1, max(0, geometry.centerX + deltaX))
         geometry.centerY = min(1, max(0, geometry.centerY + deltaY))
-        geometry.width = max(0.05, geometry.width + deltaWidth)
-        geometry.height = max(0.05, geometry.height + deltaHeight)
+        if selectedSticker != nil, deltaWidth != 0 || deltaHeight != 0 {
+            let widthScale = (geometry.width + deltaWidth) / geometry.width
+            let heightScale = (geometry.height + deltaHeight) / geometry.height
+            let requestedScale = abs(deltaWidth) >= abs(deltaHeight)
+                ? widthScale : heightScale
+            let minimumScale = max(0.05 / geometry.width, 0.05 / geometry.height)
+            let safeScale = max(minimumScale, requestedScale)
+            geometry.width *= safeScale
+            geometry.height *= safeScale
+        } else {
+            geometry.width = max(0.05, geometry.width + deltaWidth)
+            geometry.height = max(0.05, geometry.height + deltaHeight)
+        }
         geometry.rotationRadians += deltaDegrees * .pi / 180
         let succeeded = await mutate("Impossible d’enregistrer la transformation.") {
             try await self.service.updateElementGeometry(
@@ -1918,7 +2142,7 @@ final class EditorViewModel: ObservableObject {
               let selectedElement else { return }
         let disablesAutomaticLayout = activePage?.layout.isAutoLayoutEnabled == true
             && selectedElement.photoFrame != nil
-        let geometry = ElementGeometry(
+        var geometry = ElementGeometry(
             centerX: 0.5,
             centerY: 0.5,
             width: 1,
@@ -1926,6 +2150,16 @@ final class EditorViewModel: ObservableObject {
             rotationRadians: 0,
             order: selectedElement.geometry.order
         )
+        if let sticker = selectedElement.sticker,
+           let definition = BuiltInStickerCatalog.definition(
+               id: sticker.resource.catalogID,
+               version: sticker.resource.catalogVersion
+           ), let fitted = try? StickerGeometryEngine.replacementGeometry(
+               from: geometry,
+               intrinsicAspectRatio: definition.intrinsicAspectRatio
+           ) {
+            geometry = fitted
+        }
         let succeeded = await mutate("Impossible d’adapter le cadre à la page.") {
             try await self.service.updateElementGeometry(
                 geometry,

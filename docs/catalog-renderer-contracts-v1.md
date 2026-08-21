@@ -2,11 +2,10 @@
 
 Ce document complète `catalog-resources-v1.json` et son schéma JSON. Il est
 normatif pour les lecteurs indépendants du code Swift (`CAT-009`, `SHR-012`,
-`SHR-013`). Le registre actuellement figé pour les lots 0 et 1 contient
-exactement trois fonds `asset` et six formes `nativeVector`. Le schéma décrit
-déjà les métadonnées obligatoires des stickers et cadres décoratifs, mais ces
-entrées et leurs licences ne seront publiées qu'avant la première build du lot
-2 qui les persiste.
+`SHR-013`). Le registre version 1 contient maintenant exactement trois fonds
+`asset`, six formes `nativeVector`, quarante stickers `asset` et six cadres
+décoratifs `asset`. Leurs métadonnées, octets, licences et contrats de rendu
+sont figés avant la première build du lot 2 qui les persiste.
 
 ## Coordonnées et remplissage des formes
 
@@ -52,7 +51,7 @@ et dans `catalog-checksums-v1.sha256`. Ils sont régénérés par
 goldens. Le maillage déterministe des courbes utilisé pour cet oracle raster ne
 remplace pas le chemin vectoriel exact publié dans le manifeste.
 
-## Métadonnées des futurs stickers
+## Métadonnées des stickers
 
 Une entrée `category = sticker` est un payload `asset` et publie en plus :
 
@@ -63,11 +62,11 @@ Une entrée `category = sticker` est un payload `asset` et publie en plus :
 
 Le rapport est exact :
 `intrinsicAspectRatio.width × pixelHeight == intrinsicAspectRatio.height × pixelWidth`.
-Le validateur vérifie aussi, sur le registre complet du lot 2, au moins quarante
-stickers, au moins six par catégorie et au moins trois tags français distincts
-par catégorie.
+Le validateur vérifie aussi les quarante entrées publiées, huit par catégorie,
+au moins trois tags français distincts par entrée, le rapport intrinsèque, le
+PNG RGBA et sa transparence effective.
 
-## Métadonnées et rendu des futurs cadres décoratifs
+## Métadonnées et rendu des cadres décoratifs
 
 Une entrée `category = decorativeFrame` est un payload `asset`, publie ses
 dimensions orientées `pixelWidth` et `pixelHeight`, puis :
@@ -96,6 +95,12 @@ axes, avec interpolation bilinéaire. L'alpha est conservé. Le résultat rempli
 les limites de l'élément, est composé en source-over au-dessus de la photo
 masquée et du contour intérieur, puis suit la rotation et le rognage de
 l'élément.
+
+Les six sorties de référence 64 × 48 sont versionnées sous
+`docs/golden/frame-nine-slice-v1/`. Leurs empreintes figurent dans
+`catalog-checksums-v1.sha256`; `tools/normalize_catalog_png.pl --validate-only`
+contrôle aussi que les payloads source restent des PNG RGBA réellement
+transparents.
 
 ## Résolution des chemins
 

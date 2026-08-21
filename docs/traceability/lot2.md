@@ -60,19 +60,28 @@ libellé court, une valeur abrégée ou un indicateur compact.
 L'ajout du bouton Info à la Bibliothèque produit ensuite le candidat combiné
 `60930587da16707dbb57eada9881f6fefcedd51e`. Son archive Git embarque son hash
 exact et les fiches `IPAD-L2-036…038` remplacent les deux fiches historiques
-pour qualifier Info, motifs et formats sur ce nouveau package.
+pour qualifier Info, motifs et formats sur ce nouveau package. La campagne du
+20 août 2026 réussit `037…038`, mais `036` échoue : Info affiche
+`Non estampillé` au lieu du commit exact, dont la sélection et la copie ne sont
+donc pas prouvées. La révision de travail suivante ajoute un producteur de ZIP
+qui refuse toute archive non estampillée, ainsi que l’action GitHub **Paquet
+candidat iPad**. Elle termine aussi le périmètre de code du lot 2 : boutons de
+texte compacts, justification dans le renderer commun de page, commandes de
+saisie regroupées à 750 ms, quarante stickers originaux, six cadres décoratifs,
+formes/contours à portée multiple et presse-papiers photo/texte/sticker. Cette
+révision n’est pas encore un candidat Apple : aucun nouveau verdict manuel ne
+lui est attribué avant son gel dans un commit exact.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
-Elle ne déclare pas `ACPT-125` réussi : Remplir l’album, son dialogue compact et
-le cadrage couvrant sont qualifiés jusqu’à `IPAD-L2-019`, mais les zones de
-texte et les autres sorties du lot restent à valider ; `IPAD-L2-008` reste
-bloqué pour la seule largeur compacte. Les échecs
+Elle ne déclare aucun scénario de sortie réussi : Remplir l’album, son dialogue
+compact et le cadrage couvrant sont qualifiés jusqu’à `IPAD-L2-019`, mais la
+révision qui rassemble les autres sorties du lot reste à valider ;
+`IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
-`010` et `011`. Les stickers, cadres décoratifs et le presse-papiers
-multi-types appartiennent aux incréments suivants.
+`010` et `011`.
 
 ## Contrôles automatisés
 
@@ -85,13 +94,18 @@ multi-types appartiennent aux incréments suivants.
 | `A-L2-UI-PARSE` | `swiftc -frontend -parse Albumzh.swiftpm/Sources/AppModule/*.swift` | structure de `EDT-001…004`, `EDT-019`, `RND-001`, `AUT-001` | Syntaxe seulement, sans type-check SwiftUI ni disponibilité des SF Symbols |
 | `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel`, `testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity` | `EDT-001`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017`, `AUT-009…011` | Vérifie le bouton compact, l’absence de groupe permanent, le dialogue interne, les trois densités, Annuler/Valider et le service de remplissage ; pas le rendu Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
-| `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, tests de service et de modèles | `TBX-001…020`, `TBX-023…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017` | Prouve les primitives de modèles, la conversion typographique 300/72, la marge ascente/descente, les styles persistants, le contraste initial, la limite, la hauteur/débordement, la géométrie et l’atomicité dans le Core ; pas l’éditeur Apple ni les exigences intégrées complètes |
-| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `AlbumPageBackground`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020`, `TBX-021`, `TBX-024` à `TBX-026`, `TXA-001`, `TXA-002` | Le contrat source vérifie la portée métier imbriquée, une contrainte par `AttributeKey`, l’ordre des panneaux, le fond comme arrière-plan strict de l’éditeur, l’échelle, le profil arrondi incliné, la sélection conservée, les trois portées, la palette défilable, l’opacité et les choix actifs dans l’éditeur et l’inspecteur ; le parse reste syntaxique et le rendu/accessibilité doivent être testés sur Apple |
+| `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, `AlbumApplicationServiceTests.testTextEditingSequencesAreIndividuallyUndoableAndCancelRestoresBaseline` | `TBX-001…020`, `TBX-022…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017`, `UND-008` | Prouve les primitives, styles persistants, limite, hauteur/débordement et checkpoints durables à 750 ms/perte de focus dans le Core ; pas l’éditeur Apple ni le collage riche externe complet |
+| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020…027`, `TXA-001…003` | Vérifie structurellement les libellés compacts, le menu Justifié, le délai 750 ms, le blocage de Prévisualiser et le renderer TextKit partagé ; parse seulement, sans type-check ni rendu Apple |
+| `A-L2-CATALOG` | `BuiltInAssetCatalogs`, `catalog-resources-v1.json`, `CatalogContractTests`, `ManifestContractTests.testPublishedCatalogMatchesRuntimePayloadContractsExactly`, `tools/validate_contracts.pl` | `CAT-001…009`, `STK-009…013`, `SHR-005`, `SHR-010…013` | Prouve 40 stickers/5 catégories, 6 cadres, 6 formes, hashes, PNG RGBA transparents, insets et goldens ; chargement du bundle Apple non prouvé |
+| `A-L2-STICKERS` | `StickerGeometryEngine`, `StickerPanelView`, `PageCanvasView`, tests de géométrie, validation et service | `STK-001…016`, `STK-021…024`, `DAT-041` | Prouve recherche/catalogue, récents, transactions, rapport intrinsèque, remplacement, opacité/retournement, ordre et avertissement structurel ; glisser-déposer, rendu et fluidité Apple manuels |
+| `A-L2-SHAPES-FRAMES` | `FrameAndShapePanelView`, `NineSliceDecorativeFrameView`, `AlbumApplicationServiceTests.testPhotoStyleScopesAreAtomicValidatedAndUndoable` | `SHR-001…014` | Prouve les trois portées et leur commande atomique, le contour canonique et les références ; masques/contours/neuf zones doivent être comparés sur Apple |
+| `A-L2-CLIPBOARD` | `AlbumApplicationServiceTests.testClipboardPreservesLot2TextAndStickerPayloads` et tests photo existants | `CLP-001…006`, `UND-001…012` | Prouve type, style, transform, nouveaux IDs, ordre, couper/coller et portée session/album pour photo, texte et sticker dans le Core ; commandes SwiftUI Apple à requalifier |
+| `A-L2-CANDIDATE` | `tools/create_ipad_candidate.sh`, `.github/workflows/ipad-candidate.yml`, `ManifestContractTests.testLibraryExposesVersionAndStampedCommitInformation` | `APP-012`, `ENV-001…005`, `DONE-005` | L’archive contrôlée contient le hash exact et refuse le marqueur brut ; téléchargement et exécution du nouvel artefact iPad non testés |
 
-La suite WSL complète compte 147 tests sans échec après la correction typographique,
-du cadrage couvrant et du dialogue compact. Les
-contrats publiés et leurs dix empreintes sont également valides. Ces résultats
-ne remplacent aucune fiche iPad.
+La suite WSL complète compte 157 tests sans échec. Les contrats publiés des
+55 ressources et leurs seize empreintes sont également valides, et toutes les
+sources AppModule passent l’analyse syntaxique. Ces résultats ne remplacent
+aucune fiche iPad.
 
 ## Contrôles manuels du candidat
 
@@ -132,9 +146,9 @@ ne remplacent aucune fiche iPad.
 | `IPAD-L2-033` | Polices, italique et persistance de la sélection | `TBX-010`, `TBX-013`, `TBX-023`, `TBX-024`, `SAV-001`, `ACC-002` | 🔴 `ÉCHOUÉ` — Système/Arrondie trop proches et Italique absent sur Arrondie ; étapes 3 et 4 déclarées conformes |
 | `IPAD-L2-034` | Motifs strictement bornés dans l'éditeur | `ENV-001…005`, `CAN-003`, `BG-007`, `TBX-024`, `TBX-025`, `DONE-005` | 🟢 `RÉUSSI` — retour global sur `3102cda…`, sans capture ni détail par étape |
 | `IPAD-L2-035` | Arrondie, italique et choix actifs | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sur `3102cda…` ; compacité des boutons reprise sous `TBX-027` |
-| `IPAD-L2-036` | Info, version et commit exact du candidat | `ENV-001…005`, `APP-001`, `APP-012`, `ACC-001…004`, `ACC-008`, `DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-036` | Info, version et commit exact du candidat | `ENV-001…005`, `APP-001`, `APP-012`, `ACC-001…004`, `ACC-008`, `DONE-005` | 🔴 `ÉCHOUÉ` — Commit affiche `Non estampillé` ; hash exact et copie non prouvés |
+| `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -171,17 +185,22 @@ suppression du formulaire défilant et de la hauteur fixe.
   valident globalement modèle, profondeur, persistance et accessibilité. Les
   correctifs suivants ferment sur `3102cda…` les écarts de motifs,
   Arrondie/Italique et d'états actifs par les réussites globales `034…035`.
-  Le package combiné `6093058…` reste à qualifier sous `036…038`; la nouvelle
-  demande de compacité des boutons reste ouverte sous `TBX-027`.
+  Le package combiné `6093058…` réussit `037…038`, ce qui confirme les motifs,
+  Arrondie/Italique et les états actifs sur ce candidat. `036` échoue sur la
+  valeur Commit `Non estampillé`. Le producteur d’artefact contrôlé corrige le
+  transport et `TBX-027` est implémenté, mais les deux attendent un nouveau
+  candidat et de nouveaux IDs de régression.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure
   incomplet jusqu’aux autres sorties et qualifications Apple applicables.
-- L’ADR-003 documente l’absence d’alignement justifié dans l’API SwiftUI
-  publique utilisée : `TBX-011` reste partiel, comme `TBX-007`, `TBX-021` et
-  le regroupement de frappe `TBX-022`.
-- Aucun sticker ni cadre décoratif n’est persisté avant le gel des assets,
-  licences et goldens exigé par `CAT-009`.
+- L’ADR-003 isole la limite SwiftUI : la saisie prévisualise Justifié à gauche,
+  tandis que le renderer de page TextKit public le compose réellement. Le
+  collage riche externe de `TBX-007` et la partie Exporter de `TBX-021`, prévue
+  au Lot 3, restent partiels ; le regroupement `TBX-022` est implémenté.
+- Les 40 stickers et 6 cadres décoratifs sont persistables après validation des
+  payloads, licences, insets et goldens de `CAT-009`; leur première build Apple
+  reste non compilée et non testée.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
 - Le candidat initial gardait un rail et un inspecteur légèrement rognés en

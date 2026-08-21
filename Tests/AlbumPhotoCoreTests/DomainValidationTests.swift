@@ -111,6 +111,38 @@ final class DomainValidationTests: XCTestCase {
         XCTAssertEqual(try DomainValidator.normalizedRotation(3 * .pi), -.pi, accuracy: 0.000_001)
     }
 
+    // 3:STK-015, 3:STK-023, 3:STK-024
+    func testStickerValidationRejectsDistortedPersistedGeometry() throws {
+        let definition = try XCTUnwrap(BuiltInStickerCatalog.definitions.first)
+        let geometry = try StickerGeometryEngine.initialGeometry(
+            intrinsicAspectRatio: definition.intrinsicAspectRatio
+        )
+        XCTAssertNoThrow(try DomainValidator.validate(StickerElement(
+            geometry: geometry,
+            resource: definition.reference
+        )))
+        var distorted = geometry
+        distorted.height *= 1.1
+        XCTAssertThrowsError(try DomainValidator.validate(StickerElement(
+            geometry: distorted,
+            resource: definition.reference
+        )))
+    }
+
+    // 3:SHR-004 — Aucun possède une unique sérialisation canonique.
+    func testZeroWidthPhotoBorderRequiresOpaqueBlack() throws {
+        var frame = PhotoFrameElement()
+        frame.border = PhotoBorder(width: 0, color: .white)
+        XCTAssertThrowsError(
+            try DomainValidator.validate(frame, validAssetIDs: Set<UUID>())
+        )
+
+        frame.border = PhotoBorder()
+        XCTAssertNoThrow(
+            try DomainValidator.validate(frame, validAssetIDs: Set<UUID>())
+        )
+    }
+
     // 3:DAT-006...3:DAT-009
     func testPhotoPlacementRejectsNonFiniteOutOfRangeAndTooLongDescription() throws {
         XCTAssertNoThrow(try DomainValidator.validate(PhotoPlacement(assetID: TestFixtures.assetID)))
@@ -233,10 +265,27 @@ final class DomainValidationTests: XCTestCase {
 
     // 3:CAT-001...3:CAT-006, 3:DAT-039, 3:DAT-041
     func testCatalogReferencesResolveExactVersionPayloadAndHash() throws {
-        XCTAssertEqual(BuiltInCatalogRegistry.entries.count, 9)
+        XCTAssertEqual(BuiltInCatalogRegistry.entries.count, 55)
+        XCTAssertEqual(
+            Dictionary(grouping: BuiltInCatalogRegistry.entries, by: \.category)
+                .mapValues(\.count),
+            [.background: 3, .shape: 6, .sticker: 40, .decorativeFrame: 6]
+        )
+        XCTAssertEqual(
+            Set(BuiltInCatalogRegistry.entries.map {
+                "\($0.catalogID)@\($0.catalogVersion)"
+            }).count,
+            55
+        )
         XCTAssertNoThrow(try DomainValidator.validate(BackgroundSelection.classicSpiral))
         XCTAssertNoThrow(try DomainValidator.validate(
             CatalogResourceReference(catalogID: "shape.circle", catalogVersion: 1)
+        ))
+        XCTAssertNoThrow(try DomainValidator.validate(
+            try XCTUnwrap(BuiltInStickerCatalog.definitions.first).reference
+        ))
+        XCTAssertNoThrow(try DomainValidator.validate(
+            try XCTUnwrap(BuiltInDecorativeFrameCatalog.definitions.first).reference
         ))
         XCTAssertThrowsError(try DomainValidator.validate(
             CatalogResourceReference(catalogID: "album.unknown", catalogVersion: 1)

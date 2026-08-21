@@ -355,6 +355,9 @@ public enum DomainValidator {
             throw DomainValidationError.invalidGeometry
         }
         try validate(frame.border.color, requiresOpaque: true)
+        if frame.border.width == 0, frame.border.color != .black {
+            throw DomainValidationError.invalidGeometry
+        }
         if let decorativeFrame = frame.decorativeFrame {
             try validate(decorativeFrame)
             guard BuiltInCatalogRegistry.descriptor(
@@ -422,7 +425,9 @@ public enum DomainValidator {
     public static func validate(_ text: TextBoxElement) throws {
         let allowedFontSize = (8.0 / AlbumPhotoConstants.canonicalPageHeight)...(96.0 / AlbumPhotoConstants.canonicalPageHeight)
         guard text.opacity.isFinite, (0.1...1).contains(text.opacity),
-              text.content.plainText.count <= 1_000 else {
+              text.content.plainText.count <= 1_000,
+              TextEditingPrototype.sanitizedPlainText(text.content.plainText)
+                == text.content.plainText else {
             throw DomainValidationError.invalidText
         }
         try validate(text.typingDefaults)
@@ -454,12 +459,20 @@ public enum DomainValidator {
     }
 
     public static func validate(_ sticker: StickerElement) throws {
+        try validate(sticker.geometry)
         try validate(sticker.resource)
-        guard BuiltInCatalogRegistry.descriptor(
+        guard let definition = BuiltInStickerCatalog.definition(
             id: sticker.resource.catalogID,
             version: sticker.resource.catalogVersion
-        )?.category == .sticker,
+        ), definition.reference == sticker.resource,
               sticker.opacity.isFinite, (0.1...1).contains(sticker.opacity) else {
+            throw DomainValidationError.invalidSticker
+        }
+        let renderedRatio = sticker.geometry.width
+            * AlbumPhotoConstants.canonicalPageWidth
+            / (sticker.geometry.height * AlbumPhotoConstants.canonicalPageHeight)
+        let tolerance = 1e-9 * max(1, definition.intrinsicAspectRatio)
+        guard abs(renderedRatio - definition.intrinsicAspectRatio) <= tolerance else {
             throw DomainValidationError.invalidSticker
         }
     }

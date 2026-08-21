@@ -57,12 +57,22 @@ enum BundledCatalogResourceError: LocalizedError {
 /// Charge les octets source exacts : ils sont validés par taille et SHA-256
 /// dans AlbumPhotoCore avant d’être ajoutés à l’index local du catalogue.
 @MainActor
-enum BundledBackgroundResources {
-    private static let resources: [(String, String, String)] = [
+enum BundledCatalogResources {
+    private static let backgroundResources: [(String, String, String)] = [
         ("album.classicSpiral", "album-classic-spiral-v1", "AlbumClassicSpiralData"),
         ("album.travelKraft", "album-travel-kraft-v1", "AlbumTravelKraftData"),
         ("album.minimalDark", "album-minimal-dark-v1", "AlbumMinimalDarkData")
     ]
+
+    private static var resources: [(String, String, String)] {
+        backgroundResources
+            + BuiltInStickerCatalog.definitions.map {
+                ($0.catalogID, "", $0.dataAssetName)
+            }
+            + BuiltInDecorativeFrameCatalog.definitions.map {
+                ($0.catalogID, "", $0.dataAssetName)
+            }
+    }
 
     static func bootstrapInputs(
         catalogIDs: Set<String>? = nil,
@@ -71,7 +81,8 @@ enum BundledBackgroundResources {
         resources.compactMap { catalogID, filename, dataAssetName in
             guard catalogIDs?.contains(catalogID) ?? true else { return nil }
             let data: Data?
-            if let url = bundle.url(forResource: filename, withExtension: "png") {
+            if !filename.isEmpty,
+               let url = bundle.url(forResource: filename, withExtension: "png") {
                 data = try? Data(contentsOf: url, options: [.mappedIfSafe])
             } else if let asset = NSDataAsset(name: dataAssetName, bundle: bundle) {
                 data = asset.data
@@ -85,6 +96,100 @@ enum BundledBackgroundResources {
                 detectedContentType: "image/png"
             )
         }
+    }
+}
+
+@MainActor
+enum CatalogAssetImageLoader {
+    private static let validatedDataCache = NSCache<NSString, NSData>()
+
+    static func image(
+        dataAssetName: String,
+        contentHash: String,
+        cache: PhotoImageCache?,
+        maximumPixelSize: Int
+    ) async -> UIImage? {
+        if let cache,
+           let stored = await cache.catalogImage(
+               for: contentHash,
+               maximumPixelSize: maximumPixelSize
+           ) {
+            return stored
+        }
+        let key = "\(dataAssetName)-\(contentHash)" as NSString
+        let data: Data
+        if let cached = validatedDataCache.object(forKey: key) {
+            data = cached as Data
+        } else {
+            guard let asset = NSDataAsset(
+                name: dataAssetName,
+                bundle: AppModuleResources.bundle
+            ), let descriptor = BuiltInCatalogRegistry.entries.first(where: {
+                guard case let .asset(hash, mimeType, byteCount) = $0.payload else {
+                    return false
+                }
+                return hash == contentHash
+                    && mimeType == "image/png"
+                    && byteCount == Int64(asset.data.count)
+            }) else { return nil }
+            guard case let .asset(expectedHash, _, _) = descriptor.payload else {
+                return nil
+            }
+            let candidate = asset.data
+            let digest = await Task.detached(priority: .utility) {
+                SHA256.hexDigest(candidate)
+            }.value
+            guard digest == expectedHash else { return nil }
+            validatedDataCache.setObject(candidate as NSData, forKey: key)
+            data = candidate
+        }
+        guard let image = UIImage(data: data) else { return nil }
+        let longest = max(image.size.width, image.size.height)
+        guard longest > CGFloat(maximumPixelSize) else { return image }
+        let ratio = CGFloat(maximumPixelSize) / longest
+        return image.preparingThumbnail(of: CGSize(
+            width: max(1, image.size.width * ratio),
+            height: max(1, image.size.height * ratio)
+        ))
+    }
+}
+
+struct BundledCatalogImage: View {
+    let dataAssetName: String
+    let contentHash: String
+    let cache: PhotoImageCache?
+    var maximumPixelSize = 1_024
+
+    @State private var renderedImage: UIImage?
+    @State private var didFinishLoading = false
+
+    var body: some View {
+        Group {
+            if let renderedImage {
+                Image(uiImage: renderedImage)
+                    .resizable()
+                    .interpolation(.high)
+            } else if didFinishLoading {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(.red)
+                    .padding(8)
+            } else {
+                Color.clear
+            }
+        }
+        .task(id: "\(dataAssetName)|\(contentHash)|\(maximumPixelSize)") {
+            didFinishLoading = false
+            renderedImage = await CatalogAssetImageLoader.image(
+                dataAssetName: dataAssetName,
+                contentHash: contentHash,
+                cache: cache,
+                maximumPixelSize: maximumPixelSize
+            )
+            didFinishLoading = true
+        }
+        .accessibilityHidden(true)
     }
 }
 

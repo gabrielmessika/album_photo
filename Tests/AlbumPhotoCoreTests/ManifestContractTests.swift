@@ -171,6 +171,18 @@ final class ManifestContractTests: XCTestCase {
             contentsOf: repositoryRoot.appendingPathComponent(".gitattributes"),
             encoding: .utf8
         )
+        let candidateScript = try String(
+            contentsOf: repositoryRoot.appendingPathComponent(
+                "tools/create_ipad_candidate.sh"
+            ),
+            encoding: .utf8
+        )
+        let candidateWorkflow = try String(
+            contentsOf: repositoryRoot.appendingPathComponent(
+                ".github/workflows/ipad-candidate.yml"
+            ),
+            encoding: .utf8
+        )
 
         XCTAssertTrue(library.contains("Button(\"Info\", systemImage: \"info.circle\")"))
         XCTAssertTrue(library.contains("showsApplicationInformation = true"))
@@ -195,6 +207,12 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(attributes.contains(
             "ApplicationInformationView.swift export-subst"
         ))
+        XCTAssertTrue(candidateScript.contains("git -C \"$repository_root\" archive"))
+        XCTAssertTrue(candidateScript.contains("archivedGitCommit = \\\"${commit}\\\""))
+        XCTAssertTrue(candidateScript.contains("'$Format:%H$'"))
+        XCTAssertTrue(candidateWorkflow.contains("workflow_dispatch:"))
+        XCTAssertTrue(candidateWorkflow.contains("./tools/create_ipad_candidate.sh"))
+        XCTAssertTrue(candidateWorkflow.contains("actions/upload-artifact@v4"))
     }
 
     // 3:AUT-009...3:AUT-011, 3:EDT-001, 3:EDT-020
@@ -241,7 +259,7 @@ final class ManifestContractTests: XCTestCase {
     }
 
     // 3:EDT-008, 3:EDT-014, 3:TPL-012, 3:TBX-002...006,
-    // 3:TBX-009...017, 3:TBX-020, 3:TBX-021, 3:TBX-024...026,
+    // 3:TBX-009...017, 3:TBX-020...022, 3:TBX-024...027,
     // 3:TXA-001...004
     func testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates() throws {
         let appModule = repositoryRoot
@@ -309,6 +327,13 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains(
             ".textInputFormattingControlVisibility(.hidden, for: .all)"
         ))
+        XCTAssertTrue(textEditor.contains("Label(\"Police\", systemImage: \"textformat\")"))
+        XCTAssertTrue(textEditor.contains("Label(\"Taille\", systemImage: \"textformat.size\")"))
+        XCTAssertTrue(textEditor.contains("Label(\"Couleur\", systemImage: \"paintpalette\")"))
+        XCTAssertTrue(textEditor.contains(".accessibilityValue(currentFontName)"))
+        XCTAssertFalse(textEditor.contains("Label(\"Police : "))
+        XCTAssertFalse(textEditor.contains("Label(\"Taille : "))
+        XCTAssertFalse(textEditor.contains("Label(\"Couleur : "))
         XCTAssertTrue(textEditor.contains("selection: request.pageBackground"))
         XCTAssertTrue(textEditor.contains(".scrollContentBackground(.hidden)"))
         XCTAssertTrue(textEditor.contains(".allowsHitTesting(false)"))
@@ -370,6 +395,10 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("acceptedInsertedCount"))
         XCTAssertTrue(textEditor.contains("result.removeSubrange"))
         XCTAssertTrue(textEditor.contains("static let runBoundaries"))
+        XCTAssertTrue(textEditor.contains("750_000_000"))
+        XCTAssertTrue(textEditor.contains("scheduleCheckpoint()"))
+        XCTAssertTrue(textEditor.contains("flushCheckpoint()"))
+        XCTAssertTrue(textEditor.contains("await onCheckpoint("))
         let orderedCommands = [
             "fontMenu", "sizeMenu", "title: \"Gras\"", "title: \"Italique\"",
             "colorMenu", "alignmentMenu", "lineSpacingMenu", "opacityMenu"
@@ -409,12 +438,12 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textPanel.contains("setSelectedTextOpacity"))
         XCTAssertTrue(viewModel.contains("case text"))
         XCTAssertTrue(viewModel.contains(
-            "case photos\n    case text\n    case layouts\n    case backgrounds"
+            "case photos\n    case text\n    case stickers\n    case layouts\n    case backgrounds\n    case frames"
         ))
         XCTAssertEqual(
-            editor.components(separatedBy: "if panel == .text {").count - 1,
+            editor.components(separatedBy: "if panel == .stickers {").count - 1,
             2,
-            "Les rails régulier et compact doivent séparer les ajouts de la page"
+            "Les rails régulier et compact doivent séparer les contenus des styles"
         )
         XCTAssertTrue(viewModel.contains("previewPageHeight: textPreviewPageHeight"))
         XCTAssertTrue(viewModel.contains("func beginAddingText()"))
@@ -427,8 +456,100 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertFalse(layouts.contains("prochain incrément"))
         XCTAssertTrue(service.contains("public func addTextBox("))
         XCTAssertTrue(service.contains("public func updateTextBox("))
+        XCTAssertTrue(service.contains("public func persistTextEditingSequence("))
+        XCTAssertTrue(service.contains("public func cancelTextEditingSession("))
         XCTAssertTrue(service.contains("label: \"Ajouter du texte\""))
         XCTAssertTrue(service.contains("label: \"Modifier le texte\""))
+    }
+
+    // 3:EDT-001, 3:EDT-010...014, 3:STK-001...024, 3:SHR-001...014
+    func testLot2StickerAndFramePanelsUsePublishedCatalogAndSharedRenderer() throws {
+        let appModule = repositoryRoot
+            .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
+        let stickerPanel = try String(
+            contentsOf: appModule.appendingPathComponent("StickerPanelView.swift"),
+            encoding: .utf8
+        )
+        let framePanel = try String(
+            contentsOf: appModule.appendingPathComponent("FrameAndShapePanelView.swift"),
+            encoding: .utf8
+        )
+        let canvas = try String(
+            contentsOf: appModule.appendingPathComponent("PageCanvasView.swift"),
+            encoding: .utf8
+        )
+        let editor = try String(
+            contentsOf: appModule.appendingPathComponent("AlbumEditorView.swift"),
+            encoding: .utf8
+        )
+        let viewModel = try String(
+            contentsOf: appModule.appendingPathComponent("EditorViewModel.swift"),
+            encoding: .utf8
+        )
+        let appModel = try String(
+            contentsOf: appModule.appendingPathComponent("AppModel.swift"),
+            encoding: .utf8
+        )
+        let help = try String(
+            contentsOf: appModule.appendingPathComponent("HelpView.swift"),
+            encoding: .utf8
+        )
+
+        XCTAssertFalse(stickerPanel.contains("Catalogue en préparation"))
+        XCTAssertTrue(stickerPanel.contains("Récents"))
+        XCTAssertTrue(stickerPanel.contains("StickerCatalogCategory.allCases"))
+        XCTAssertTrue(stickerPanel.contains("Rechercher par nom ou tag"))
+        XCTAssertTrue(stickerPanel.contains("ids.prefix(50)"))
+        XCTAssertTrue(stickerPanel.contains(".draggable(StickerDragPayload("))
+        XCTAssertTrue(stickerPanel.contains("await model.placeSticker(definition)"))
+        XCTAssertFalse(stickerPanel.contains("Mes stickers"))
+
+        XCTAssertTrue(framePanel.contains("Text(\"Forme\")"))
+        XCTAssertTrue(framePanel.contains("Text(\"Contour\")"))
+        XCTAssertTrue(framePanel.contains("Text(\"Cadre décoratif\")"))
+        XCTAssertTrue(framePanel.contains("title: \"Aucun (rectangle)\""))
+        XCTAssertTrue(framePanel.contains("Button(\"Aucun\")"))
+        XCTAssertTrue(framePanel.contains("BuiltInDecorativeFrameCatalog.definitions"))
+        XCTAssertTrue(framePanel.contains("applySelectedDecorativeFrame"))
+        XCTAssertTrue(framePanel.contains("PhotoFrameStyleApplicationScope.album"))
+        XCTAssertTrue(editor.contains("case .stickers: .stickers"))
+        XCTAssertTrue(editor.contains("case .frames: .frames"))
+        XCTAssertTrue(help.contains("case stickers"))
+        XCTAssertTrue(help.contains("case frames"))
+        XCTAssertTrue(help.contains("title: \"Panneau Stickers\""))
+        XCTAssertTrue(help.contains("title: \"Panneau Cadres et formes\""))
+
+        XCTAssertTrue(canvas.contains("StickerRenderView("))
+        XCTAssertTrue(canvas.contains("NineSliceDecorativeFrameView("))
+        XCTAssertTrue(canvas.contains("sourceCapInsetsPixels"))
+        XCTAssertTrue(canvas.contains("destinationCapInsets"))
+        XCTAssertTrue(canvas.contains(".dropDestination(for: StickerDragPayload.self)"))
+        XCTAssertTrue(canvas.contains(".scaleEffect(x: sticker.flippedHorizontally"))
+        XCTAssertTrue(canvas.contains(".opacity(sticker.opacity)"))
+
+        let stickerCommands = [
+            "\"Remplacer\"",
+            "stickerOpacityMenu(sticker)",
+            "\"Retourner horizontalement\"",
+            "Button(\"Rotation…\"",
+            "Button(\"Dupliquer\""
+        ]
+        var commandOffset = editor.startIndex
+        for command in stickerCommands {
+            let range = try XCTUnwrap(editor.range(
+                of: command,
+                range: commandOffset..<editor.endIndex
+            ), command)
+            commandOffset = range.upperBound
+        }
+        XCTAssertTrue(viewModel.contains("func beginReplacingSelectedSticker()"))
+        XCTAssertTrue(viewModel.contains("func setSelectedStickerOpacity("))
+        XCTAssertTrue(viewModel.contains("func flipSelectedStickerHorizontally()"))
+        XCTAssertTrue(viewModel.contains("stickerCountOnActivePage"))
+        XCTAssertTrue(appModel.contains("catalog-bootstrap:\\(catalogID)"))
+        XCTAssertFalse(appModel.contains(
+            "default:\n            return UUID(uuidString: \"8d156ffa"
+        ))
     }
 
     // Lot 0, 3:PKG-003, 3:PKG-005...3:PKG-007

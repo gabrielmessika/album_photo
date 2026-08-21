@@ -5,7 +5,9 @@ enum HelpContext: String, Identifiable {
     case photos
     case layouts
     case text
+    case stickers
     case backgrounds
+    case frames
     case crop
     case globalPages
 
@@ -50,9 +52,19 @@ struct HelpView: View {
                 text: "Le panneau Texte ajoute une zone centrée. L’inspecteur affiche le texte sélectionné et les formats applicables à toute la zone. Modifier le texte et le format ouvre l’éditeur pour agir sur une sélection de caractères. La fenêtre reprend le fond et l’échelle de la page ; Terminer enregistre une seule action et Annuler restaure le contenu initial."
             ),
             HelpSection(
+                title: "Stickers",
+                symbol: "face.smiling",
+                text: "Le panneau Stickers propose les récents, cinq catégories et une recherche par nom ou tag. Touchez pour ajouter au centre ou faites glisser sur la page. Remplacer conserve la transformation ; l’opacité et le retournement restent annulables."
+            ),
+            HelpSection(
                 title: "Fonds",
                 symbol: "paintpalette",
                 text: "Un fond s’applique immédiatement à la page active. Appliquer à toutes les pages est une commande distincte et annulable."
+            ),
+            HelpSection(
+                title: "Cadres et formes",
+                symbol: "square.on.circle",
+                text: "Sélectionnez un cadre photo pour choisir son masque, son contour ou un cadre décoratif. La portée Sélection, Page ou Album annonce le nombre de cadres concernés et s’annule en une seule action."
             ),
             HelpSection(
                 title: "Ajouter et gérer les pages",
@@ -126,11 +138,23 @@ private struct HelpSection: Identifiable {
                 symbol: "textformat",
                 text: "Ajoutez une zone sans recouvrir le canevas. Son contenu et les réglages de toute la zone apparaissent dans l’inspecteur de l’élément ; ouvrez Modifier le texte et le format pour cibler seulement certains caractères ou paragraphes."
             )
+        case .stickers:
+            return HelpSection(
+                title: "Panneau Stickers",
+                symbol: "face.smiling",
+                text: "Parcourez Récents ou une catégorie, recherchez un nom ou un tag, puis touchez un sticker pour l’ajouter au centre. Sur iPad, vous pouvez aussi le déposer à l’endroit voulu."
+            )
         case .backgrounds:
             return HelpSection(
                 title: "Panneau Fonds",
                 symbol: "paintpalette",
                 text: "Chaque page possède son propre fond et reste indépendante des autres pages."
+            )
+        case .frames:
+            return HelpSection(
+                title: "Panneau Cadres et formes",
+                symbol: "square.on.circle",
+                text: "Ce panneau s’active pour un cadre photo sélectionné. Choisissez d’abord la portée, puis une forme, un contour ou un cadre décoratif ; chaque application multiple reste une seule commande."
             )
         case .crop:
             return HelpSection(

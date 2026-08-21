@@ -120,6 +120,69 @@ final class CatalogContractTests: XCTestCase {
         }
     }
 
+    // 3:STK-009...3:STK-012, 3:SHR-005, 3:SHR-011, 3:SHR-013
+    func testPublishedLot2CatalogHasRequiredLocalizedStickerAndFrameMetadata() throws {
+        XCTAssertEqual(BuiltInStickerCatalog.definitions.count, 40)
+        let stickersByCategory = Dictionary(
+            grouping: BuiltInStickerCatalog.definitions,
+            by: \.category
+        )
+        XCTAssertEqual(Set(stickersByCategory.keys), Set(StickerCatalogCategory.allCases))
+        for category in StickerCatalogCategory.allCases {
+            let stickers = try XCTUnwrap(stickersByCategory[category])
+            XCTAssertEqual(stickers.count, 8, category.rawValue)
+            XCTAssertTrue(stickers.allSatisfy {
+                !$0.localizedName.isEmpty
+                    && $0.localizedTags.count >= 3
+                    && Set($0.localizedTags).count == $0.localizedTags.count
+                    && max($0.pixelWidth, $0.pixelHeight) <= 512
+                    && min($0.pixelWidth, $0.pixelHeight) > 0
+            }, category.rawValue)
+        }
+        XCTAssertGreaterThan(
+            Set(BuiltInStickerCatalog.definitions.map {
+                "\($0.pixelWidth)x\($0.pixelHeight)"
+            }).count,
+            1,
+            "STK-007 doit pouvoir remplacer par un rapport intrinsèque différent"
+        )
+
+        let frames = BuiltInDecorativeFrameCatalog.definitions
+        XCTAssertEqual(frames.count, 6)
+        XCTAssertEqual(
+            frames.map(\.catalogID),
+            [
+                "frame.whiteBorder",
+                "frame.blackBorder",
+                "frame.kraftTape",
+                "frame.travelStamp",
+                "frame.botanical",
+                "frame.instantPhoto"
+            ]
+        )
+        XCTAssertEqual(
+            frames.map(\.localizedName),
+            [
+                "Bord blanc",
+                "Bord noir",
+                "Ruban kraft",
+                "Tampon voyage",
+                "Feuillage",
+                "Photo instantanée"
+            ]
+        )
+        for frame in frames {
+            XCTAssertEqual(
+                frame.sourceCapInsetsPixels,
+                CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128)
+            )
+            XCTAssertEqual(
+                frame.destinationCapInsets,
+                CatalogFractionalInsets(top: 0.2, left: 0.2, bottom: 0.2, right: 0.2)
+            )
+        }
+    }
+
     private func jsonObject(_ relativePath: String) throws -> [String: Any] {
         let data = try Data(contentsOf: repositoryRoot.appendingPathComponent(relativePath))
         return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])

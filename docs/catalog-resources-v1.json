@@ -1,253 +1,1591 @@
 {
-  "registryVersion": 1,
-  "resources": [
-    {
-      "catalogID": "album.classicSpiral",
-      "catalogVersion": 1,
-      "category": "background",
-      "localizedNameKey": "background.classicSpiral",
-      "payloadKind": "asset",
-      "relativePath": "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumClassicSpiralData.dataset/album-classic-spiral-v1.png",
-      "mimeType": "image/png",
-      "byteCount": 2466104,
-      "pixelWidth": 1120,
-      "pixelHeight": 1400,
-      "sha256": "b27bf6c33ea7bb7efc22a29ec12960f04276bd868f2ed8b6cf43a879009613a8",
-      "textContrastHint": "darkText",
-      "license": "project-generated-original",
-      "source": "docs/assets/background-prompts-v1.md"
-    },
-    {
-      "catalogID": "album.travelKraft",
-      "catalogVersion": 1,
-      "category": "background",
-      "localizedNameKey": "background.travelKraft",
-      "payloadKind": "asset",
-      "relativePath": "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumTravelKraftData.dataset/album-travel-kraft-v1.png",
-      "mimeType": "image/png",
-      "byteCount": 3179776,
-      "pixelWidth": 1120,
-      "pixelHeight": 1400,
-      "sha256": "ab81aea2a31595bef6827a86d62656165fab901982aca415beb9c49d2aa73e41",
-      "textContrastHint": "darkText",
-      "license": "project-generated-original",
-      "source": "docs/assets/background-prompts-v1.md"
-    },
-    {
-      "catalogID": "album.minimalDark",
-      "catalogVersion": 1,
-      "category": "background",
-      "localizedNameKey": "background.minimalDark",
-      "payloadKind": "asset",
-      "relativePath": "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumMinimalDarkData.dataset/album-minimal-dark-v1.png",
-      "mimeType": "image/png",
-      "byteCount": 1978753,
-      "pixelWidth": 1120,
-      "pixelHeight": 1400,
-      "sha256": "44244ccc379b566d5b3b27e3d67255eaf52d8ea5362221bb7633b1f5f3ea86b9",
-      "textContrastHint": "lightText",
-      "license": "project-generated-original",
-      "source": "docs/assets/background-prompts-v1.md"
-    },
-    {
-      "catalogID": "shape.rectangle",
-      "catalogVersion": 1,
-      "category": "shape",
-      "localizedNameKey": "shape.rectangle",
-      "payloadKind": "nativeVector",
-      "rendererID": "shape.rectangle",
-      "rendererContract": {
-        "coordinateSpace": "unitBoundingBoxTopLeft",
-        "primitive": "rectangle",
-        "parameters": {
-          "kind": "bounds",
-          "x": 0,
-          "y": 0,
-          "width": 1,
-          "height": 1
-        },
-        "pathClosure": "closed",
-        "fillRule": "nonzero",
-        "intrinsicStroke": "none",
-        "clipToElementBounds": true,
-        "goldenMask": {
-          "relativePath": "golden/shape-masks-v1/shape-rectangle.pbm",
-          "format": "pbm-p1",
-          "sampleLocation": "pixelCenter",
-          "width": 64,
-          "height": 48,
-          "byteCount": 6153,
-          "sha256": "2690338ccd22e03a38e6d80c6b21c9ef5dbdf0ba14ea888df47089d56ee1b8f1"
-        }
+   "registryVersion" : 1,
+   "resources" : [
+      {
+         "byteCount" : 2466104,
+         "catalogID" : "album.classicSpiral",
+         "catalogVersion" : 1,
+         "category" : "background",
+         "license" : "project-generated-original",
+         "localizedNameKey" : "background.classicSpiral",
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 1400,
+         "pixelWidth" : 1120,
+         "relativePath" : "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumClassicSpiralData.dataset/album-classic-spiral-v1.png",
+         "sha256" : "b27bf6c33ea7bb7efc22a29ec12960f04276bd868f2ed8b6cf43a879009613a8",
+         "source" : "docs/assets/background-prompts-v1.md",
+         "textContrastHint" : "darkText"
       },
-      "license": "project-code"
-    },
-    {
-      "catalogID": "shape.roundedRectangle",
-      "catalogVersion": 1,
-      "category": "shape",
-      "localizedNameKey": "shape.roundedRectangle",
-      "payloadKind": "nativeVector",
-      "rendererID": "shape.roundedRectangle",
-      "rendererContract": {
-        "coordinateSpace": "unitBoundingBoxTopLeft",
-        "primitive": "roundedRectangle",
-        "parameters": {
-          "kind": "roundedBounds",
-          "x": 0,
-          "y": 0,
-          "width": 1,
-          "height": 1,
-          "cornerRadiusFactor": 0.12,
-          "cornerRadiusRelativeTo": "minElementDimension"
-        },
-        "pathClosure": "closed",
-        "fillRule": "nonzero",
-        "intrinsicStroke": "none",
-        "clipToElementBounds": true,
-        "goldenMask": {
-          "relativePath": "golden/shape-masks-v1/shape-roundedRectangle.pbm",
-          "format": "pbm-p1",
-          "sampleLocation": "pixelCenter",
-          "width": 64,
-          "height": 48,
-          "byteCount": 6153,
-          "sha256": "822ff8d71f44121bc84b4e0d5d4451ebece3317557f3751045156b971312aca1"
-        }
+      {
+         "byteCount" : 3179776,
+         "catalogID" : "album.travelKraft",
+         "catalogVersion" : 1,
+         "category" : "background",
+         "license" : "project-generated-original",
+         "localizedNameKey" : "background.travelKraft",
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 1400,
+         "pixelWidth" : 1120,
+         "relativePath" : "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumTravelKraftData.dataset/album-travel-kraft-v1.png",
+         "sha256" : "ab81aea2a31595bef6827a86d62656165fab901982aca415beb9c49d2aa73e41",
+         "source" : "docs/assets/background-prompts-v1.md",
+         "textContrastHint" : "darkText"
       },
-      "license": "project-code"
-    },
-    {
-      "catalogID": "shape.circle",
-      "catalogVersion": 1,
-      "category": "shape",
-      "localizedNameKey": "shape.circle",
-      "payloadKind": "nativeVector",
-      "rendererID": "shape.circle",
-      "rendererContract": {
-        "coordinateSpace": "unitBoundingBoxTopLeft",
-        "primitive": "circle",
-        "parameters": {
-          "kind": "centeredCircle",
-          "centerX": 0.5,
-          "centerY": 0.5,
-          "radiusFactor": 0.5,
-          "radiusRelativeTo": "minElementDimension"
-        },
-        "pathClosure": "closed",
-        "fillRule": "nonzero",
-        "intrinsicStroke": "none",
-        "clipToElementBounds": true,
-        "goldenMask": {
-          "relativePath": "golden/shape-masks-v1/shape-circle.pbm",
-          "format": "pbm-p1",
-          "sampleLocation": "pixelCenter",
-          "width": 64,
-          "height": 48,
-          "byteCount": 6153,
-          "sha256": "b1ea230295decfdd14b04d51a5e22274ae89180a6c993d75d6869f9000a1081b"
-        }
+      {
+         "byteCount" : 1978753,
+         "catalogID" : "album.minimalDark",
+         "catalogVersion" : 1,
+         "category" : "background",
+         "license" : "project-generated-original",
+         "localizedNameKey" : "background.minimalDark",
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 1400,
+         "pixelWidth" : 1120,
+         "relativePath" : "Sources/AppModule/Resources/Backgrounds.xcassets/AlbumMinimalDarkData.dataset/album-minimal-dark-v1.png",
+         "sha256" : "44244ccc379b566d5b3b27e3d67255eaf52d8ea5362221bb7633b1f5f3ea86b9",
+         "source" : "docs/assets/background-prompts-v1.md",
+         "textContrastHint" : "lightText"
       },
-      "license": "project-code"
-    },
-    {
-      "catalogID": "shape.oval",
-      "catalogVersion": 1,
-      "category": "shape",
-      "localizedNameKey": "shape.oval",
-      "payloadKind": "nativeVector",
-      "rendererID": "shape.oval",
-      "rendererContract": {
-        "coordinateSpace": "unitBoundingBoxTopLeft",
-        "primitive": "ellipse",
-        "parameters": {
-          "kind": "ellipseInBounds",
-          "centerX": 0.5,
-          "centerY": 0.5,
-          "radiusX": 0.5,
-          "radiusY": 0.5
-        },
-        "pathClosure": "closed",
-        "fillRule": "nonzero",
-        "intrinsicStroke": "none",
-        "clipToElementBounds": true,
-        "goldenMask": {
-          "relativePath": "golden/shape-masks-v1/shape-oval.pbm",
-          "format": "pbm-p1",
-          "sampleLocation": "pixelCenter",
-          "width": 64,
-          "height": 48,
-          "byteCount": 6153,
-          "sha256": "1c22fbeb1c0030e72ea731536adcbb1575ad503a49a39f7a8d2a880de64dafd9"
-        }
+      {
+         "catalogID" : "shape.rectangle",
+         "catalogVersion" : 1,
+         "category" : "shape",
+         "license" : "project-code",
+         "localizedNameKey" : "shape.rectangle",
+         "payloadKind" : "nativeVector",
+         "rendererContract" : {
+            "clipToElementBounds" : true,
+            "coordinateSpace" : "unitBoundingBoxTopLeft",
+            "fillRule" : "nonzero",
+            "goldenMask" : {
+               "byteCount" : 6153,
+               "format" : "pbm-p1",
+               "height" : 48,
+               "relativePath" : "golden/shape-masks-v1/shape-rectangle.pbm",
+               "sampleLocation" : "pixelCenter",
+               "sha256" : "2690338ccd22e03a38e6d80c6b21c9ef5dbdf0ba14ea888df47089d56ee1b8f1",
+               "width" : 64
+            },
+            "intrinsicStroke" : "none",
+            "parameters" : {
+               "height" : 1,
+               "kind" : "bounds",
+               "width" : 1,
+               "x" : 0,
+               "y" : 0
+            },
+            "pathClosure" : "closed",
+            "primitive" : "rectangle"
+         },
+         "rendererID" : "shape.rectangle"
       },
-      "license": "project-code"
-    },
-    {
-      "catalogID": "shape.heart",
-      "catalogVersion": 1,
-      "category": "shape",
-      "localizedNameKey": "shape.heart",
-      "payloadKind": "nativeVector",
-      "rendererID": "shape.heart",
-      "rendererContract": {
-        "coordinateSpace": "unitBoundingBoxTopLeft",
-        "primitive": "cubicBezierPath",
-        "parameters": {
-          "kind": "svgCubicPath",
-          "path": "M .50 .95 C .44 .88 .08 .65 .08 .34 C .08 .15 .21 .05 .36 .05 C .44 .05 .49 .10 .50 .17 C .51 .10 .56 .05 .64 .05 C .79 .05 .92 .15 .92 .34 C .92 .65 .56 .88 .50 .95 Z"
-        },
-        "pathClosure": "closed",
-        "fillRule": "nonzero",
-        "intrinsicStroke": "none",
-        "clipToElementBounds": true,
-        "goldenMask": {
-          "relativePath": "golden/shape-masks-v1/shape-heart.pbm",
-          "format": "pbm-p1",
-          "sampleLocation": "pixelCenter",
-          "width": 64,
-          "height": 48,
-          "byteCount": 6153,
-          "sha256": "fda470ca05a0e8bfc923d726f9035df62b1673d743d8438de6bd58a8cdb116cd"
-        }
+      {
+         "catalogID" : "shape.roundedRectangle",
+         "catalogVersion" : 1,
+         "category" : "shape",
+         "license" : "project-code",
+         "localizedNameKey" : "shape.roundedRectangle",
+         "payloadKind" : "nativeVector",
+         "rendererContract" : {
+            "clipToElementBounds" : true,
+            "coordinateSpace" : "unitBoundingBoxTopLeft",
+            "fillRule" : "nonzero",
+            "goldenMask" : {
+               "byteCount" : 6153,
+               "format" : "pbm-p1",
+               "height" : 48,
+               "relativePath" : "golden/shape-masks-v1/shape-roundedRectangle.pbm",
+               "sampleLocation" : "pixelCenter",
+               "sha256" : "822ff8d71f44121bc84b4e0d5d4451ebece3317557f3751045156b971312aca1",
+               "width" : 64
+            },
+            "intrinsicStroke" : "none",
+            "parameters" : {
+               "cornerRadiusFactor" : 0.12,
+               "cornerRadiusRelativeTo" : "minElementDimension",
+               "height" : 1,
+               "kind" : "roundedBounds",
+               "width" : 1,
+               "x" : 0,
+               "y" : 0
+            },
+            "pathClosure" : "closed",
+            "primitive" : "roundedRectangle"
+         },
+         "rendererID" : "shape.roundedRectangle"
       },
-      "license": "project-code"
-    },
-    {
-      "catalogID": "shape.star",
-      "catalogVersion": 1,
-      "category": "shape",
-      "localizedNameKey": "shape.star",
-      "payloadKind": "nativeVector",
-      "rendererID": "shape.star",
-      "rendererContract": {
-        "coordinateSpace": "unitBoundingBoxTopLeft",
-        "primitive": "alternatingRadialPolygon",
-        "parameters": {
-          "kind": "alternatingRadialPolygon",
-          "centerX": 0.5,
-          "centerY": 0.5,
-          "vertexCount": 10,
-          "startAnglePi": -0.5,
-          "angularStepPi": 0.2,
-          "evenVertexRadius": 0.5,
-          "oddVertexRadius": 0.22
-        },
-        "pathClosure": "closed",
-        "fillRule": "nonzero",
-        "intrinsicStroke": "none",
-        "clipToElementBounds": true,
-        "goldenMask": {
-          "relativePath": "golden/shape-masks-v1/shape-star.pbm",
-          "format": "pbm-p1",
-          "sampleLocation": "pixelCenter",
-          "width": 64,
-          "height": 48,
-          "byteCount": 6153,
-          "sha256": "518a5fbb66784e12362ad264212651cd6284d1b0ff6284f846e9e8362afb8599"
-        }
+      {
+         "catalogID" : "shape.circle",
+         "catalogVersion" : 1,
+         "category" : "shape",
+         "license" : "project-code",
+         "localizedNameKey" : "shape.circle",
+         "payloadKind" : "nativeVector",
+         "rendererContract" : {
+            "clipToElementBounds" : true,
+            "coordinateSpace" : "unitBoundingBoxTopLeft",
+            "fillRule" : "nonzero",
+            "goldenMask" : {
+               "byteCount" : 6153,
+               "format" : "pbm-p1",
+               "height" : 48,
+               "relativePath" : "golden/shape-masks-v1/shape-circle.pbm",
+               "sampleLocation" : "pixelCenter",
+               "sha256" : "b1ea230295decfdd14b04d51a5e22274ae89180a6c993d75d6869f9000a1081b",
+               "width" : 64
+            },
+            "intrinsicStroke" : "none",
+            "parameters" : {
+               "centerX" : 0.5,
+               "centerY" : 0.5,
+               "kind" : "centeredCircle",
+               "radiusFactor" : 0.5,
+               "radiusRelativeTo" : "minElementDimension"
+            },
+            "pathClosure" : "closed",
+            "primitive" : "circle"
+         },
+         "rendererID" : "shape.circle"
       },
-      "license": "project-code"
-    }
-  ]
+      {
+         "catalogID" : "shape.oval",
+         "catalogVersion" : 1,
+         "category" : "shape",
+         "license" : "project-code",
+         "localizedNameKey" : "shape.oval",
+         "payloadKind" : "nativeVector",
+         "rendererContract" : {
+            "clipToElementBounds" : true,
+            "coordinateSpace" : "unitBoundingBoxTopLeft",
+            "fillRule" : "nonzero",
+            "goldenMask" : {
+               "byteCount" : 6153,
+               "format" : "pbm-p1",
+               "height" : 48,
+               "relativePath" : "golden/shape-masks-v1/shape-oval.pbm",
+               "sampleLocation" : "pixelCenter",
+               "sha256" : "1c22fbeb1c0030e72ea731536adcbb1575ad503a49a39f7a8d2a880de64dafd9",
+               "width" : 64
+            },
+            "intrinsicStroke" : "none",
+            "parameters" : {
+               "centerX" : 0.5,
+               "centerY" : 0.5,
+               "kind" : "ellipseInBounds",
+               "radiusX" : 0.5,
+               "radiusY" : 0.5
+            },
+            "pathClosure" : "closed",
+            "primitive" : "ellipse"
+         },
+         "rendererID" : "shape.oval"
+      },
+      {
+         "catalogID" : "shape.heart",
+         "catalogVersion" : 1,
+         "category" : "shape",
+         "license" : "project-code",
+         "localizedNameKey" : "shape.heart",
+         "payloadKind" : "nativeVector",
+         "rendererContract" : {
+            "clipToElementBounds" : true,
+            "coordinateSpace" : "unitBoundingBoxTopLeft",
+            "fillRule" : "nonzero",
+            "goldenMask" : {
+               "byteCount" : 6153,
+               "format" : "pbm-p1",
+               "height" : 48,
+               "relativePath" : "golden/shape-masks-v1/shape-heart.pbm",
+               "sampleLocation" : "pixelCenter",
+               "sha256" : "fda470ca05a0e8bfc923d726f9035df62b1673d743d8438de6bd58a8cdb116cd",
+               "width" : 64
+            },
+            "intrinsicStroke" : "none",
+            "parameters" : {
+               "kind" : "svgCubicPath",
+               "path" : "M .50 .95 C .44 .88 .08 .65 .08 .34 C .08 .15 .21 .05 .36 .05 C .44 .05 .49 .10 .50 .17 C .51 .10 .56 .05 .64 .05 C .79 .05 .92 .15 .92 .34 C .92 .65 .56 .88 .50 .95 Z"
+            },
+            "pathClosure" : "closed",
+            "primitive" : "cubicBezierPath"
+         },
+         "rendererID" : "shape.heart"
+      },
+      {
+         "catalogID" : "shape.star",
+         "catalogVersion" : 1,
+         "category" : "shape",
+         "license" : "project-code",
+         "localizedNameKey" : "shape.star",
+         "payloadKind" : "nativeVector",
+         "rendererContract" : {
+            "clipToElementBounds" : true,
+            "coordinateSpace" : "unitBoundingBoxTopLeft",
+            "fillRule" : "nonzero",
+            "goldenMask" : {
+               "byteCount" : 6153,
+               "format" : "pbm-p1",
+               "height" : 48,
+               "relativePath" : "golden/shape-masks-v1/shape-star.pbm",
+               "sampleLocation" : "pixelCenter",
+               "sha256" : "518a5fbb66784e12362ad264212651cd6284d1b0ff6284f846e9e8362afb8599",
+               "width" : 64
+            },
+            "intrinsicStroke" : "none",
+            "parameters" : {
+               "angularStepPi" : 0.2,
+               "centerX" : 0.5,
+               "centerY" : 0.5,
+               "evenVertexRadius" : 0.5,
+               "kind" : "alternatingRadialPolygon",
+               "oddVertexRadius" : 0.22,
+               "startAnglePi" : -0.5,
+               "vertexCount" : 10
+            },
+            "pathClosure" : "closed",
+            "primitive" : "alternatingRadialPolygon"
+         },
+         "rendererID" : "shape.star"
+      },
+      {
+         "byteCount" : 349763,
+         "catalogID" : "sticker.travel.compass",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 502,
+            "width" : 406
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.compass",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "boussole",
+               "orientation"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 502,
+         "pixelWidth" : 406,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelCompassData.dataset/sticker-travel-compass-v1.png",
+         "sha256" : "6418c4bc9fa96b5fd380bfa303a5b11ca89bca10dc4fa360cd9304c6a0091dc0",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 510243,
+         "catalogID" : "sticker.travel.suitcase",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 486,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.suitcase",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "valise",
+               "bagage"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 486,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelSuitcaseData.dataset/sticker-travel-suitcase-v1.png",
+         "sha256" : "c1cb2535e6425838ad479da29a7d066d4a842226277bb656cf3475c8eb5bccad",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 392876,
+         "catalogID" : "sticker.travel.passport",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 454
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.passport",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "carnet",
+               "passeport"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 454,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelPassportData.dataset/sticker-travel-passport-v1.png",
+         "sha256" : "d121470a8ffbde1314331ce6b85df76f05a5087331821e07303ba16f0732b886",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 310895,
+         "catalogID" : "sticker.travel.mapPin",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 483,
+            "width" : 477
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.mapPin",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "carte",
+               "destination"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 483,
+         "pixelWidth" : 477,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelMapPinData.dataset/sticker-travel-map-pin-v1.png",
+         "sha256" : "b38a2b4b78a49b1299718fb6a6d24bda7023685f8135b87948b5850a0827b5f0",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 427111,
+         "catalogID" : "sticker.travel.camera",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 461,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.camera",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "photo",
+               "souvenir"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 461,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelCameraData.dataset/sticker-travel-camera-v1.png",
+         "sha256" : "d66d9ef902caeba1b2ce27986642b5ab567c98b4a7dad5f84e4fd2211ccdafeb",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 396136,
+         "catalogID" : "sticker.travel.globe",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 408
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.globe",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "globe",
+               "monde"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 408,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelGlobeData.dataset/sticker-travel-globe-v1.png",
+         "sha256" : "3f629389f94c5cac3124c65f2aabe4a57ed474e334f4dcf2ff78d5518600b00b",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 322699,
+         "catalogID" : "sticker.travel.tent",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 424,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.tent",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "camping",
+               "tente"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 424,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelTentData.dataset/sticker-travel-tent-v1.png",
+         "sha256" : "8e96e19a2cef63e445be6bccac8adb1c1120cc92102af6fd4341974492e51c1a",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 506360,
+         "catalogID" : "sticker.travel.mountains",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 496,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.travel.mountains",
+         "localizedTags" : {
+            "fr" : [
+               "voyage",
+               "montagne",
+               "paysage"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 496,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTravelMountainsData.dataset/sticker-travel-mountains-v1.png",
+         "sha256" : "21e169896bbc6f0eddea6324fd3beb08de4b62a861981e9d721aebf236865ac2",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "travel"
+      },
+      {
+         "byteCount" : 332669,
+         "catalogID" : "sticker.transport.bicycle",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 430,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.bicycle",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "vélo",
+               "bicyclette"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 430,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportBicycleData.dataset/sticker-transport-bicycle-v1.png",
+         "sha256" : "3eb4a8490fbf14a79a13dc64caf13999ad318727f7bafbf2083a11b7b977b1f7",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 460619,
+         "catalogID" : "sticker.transport.train",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 458,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.train",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "train",
+               "rail"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 458,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportTrainData.dataset/sticker-transport-train-v1.png",
+         "sha256" : "fd71b09741edbe03f707e28fe5d4c450d3d836d82e547c2608d4d23b4c31b2c0",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 309734,
+         "catalogID" : "sticker.transport.sailboat",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 431
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.sailboat",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "bateau",
+               "voilier"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 431,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportSailboatData.dataset/sticker-transport-sailboat-v1.png",
+         "sha256" : "441967d8d8802909c2d1cc217cf82b27f4239371be94dc07bb38c19e3f2e0fa4",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 226622,
+         "catalogID" : "sticker.transport.airplane",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 420,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.airplane",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "avion",
+               "vol"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 420,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportAirplaneData.dataset/sticker-transport-airplane-v1.png",
+         "sha256" : "16e263a340b26cc8cf96b8156f409265d8e9c5e5e90513394fad8680c8d8c3d8",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 449985,
+         "catalogID" : "sticker.transport.camper",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 450,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.camper",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "camping-car",
+               "route"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 450,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportCamperData.dataset/sticker-transport-camper-v1.png",
+         "sha256" : "698f15be2639cb6813920c18133ec30a14ae334a6e605d084ffb3f72da81fbab",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 332204,
+         "catalogID" : "sticker.transport.car",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 386,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.car",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "voiture",
+               "route"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 386,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportCarData.dataset/sticker-transport-car-v1.png",
+         "sha256" : "06dffde1a2a300fd05fa59c1c81de86a228df5db160aa6b2fd9d6cb150424045",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 295803,
+         "catalogID" : "sticker.transport.balloon",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 376
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.balloon",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "montgolfière",
+               "ciel"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 376,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportBalloonData.dataset/sticker-transport-balloon-v1.png",
+         "sha256" : "03317fb774869e1afc226648c7b2a2d1220f42aa909d6f70ee70dbb77e245e03",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 314148,
+         "catalogID" : "sticker.transport.scooter",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 497,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.transport.scooter",
+         "localizedTags" : {
+            "fr" : [
+               "transport",
+               "scooter",
+               "deux-roues"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 497,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerTransportScooterData.dataset/sticker-transport-scooter-v1.png",
+         "sha256" : "9c8ca83e3bb6fb2c7374407e712cc584e1958e21c752a043c2abdbe506473311",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "transport"
+      },
+      {
+         "byteCount" : 322389,
+         "catalogID" : "sticker.nature.leaf",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 495,
+            "width" : 447
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.leaf",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "feuille",
+               "végétal"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 495,
+         "pixelWidth" : 447,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNatureLeafData.dataset/sticker-nature-leaf-v1.png",
+         "sha256" : "d7b45e757453150eb27e909e5e9e3f0b889845494ec70ebf093363b782c2ff03",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 342177,
+         "catalogID" : "sticker.nature.flower",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 407
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.flower",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "fleur",
+               "jardin"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 407,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNatureFlowerData.dataset/sticker-nature-flower-v1.png",
+         "sha256" : "db852c242dcf650a7db339c5c2035b469dc7eb988e25700234af01993d2758ee",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 256768,
+         "catalogID" : "sticker.nature.pine",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 385
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.pine",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "sapin",
+               "forêt"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 385,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNaturePineData.dataset/sticker-nature-pine-v1.png",
+         "sha256" : "e19b2d4e9ea4dfa74511e72651afaade4dd3714e0de89c5c320ceebba64cb12d",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 338395,
+         "catalogID" : "sticker.nature.seashell",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 432
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.seashell",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "coquillage",
+               "mer"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 432,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNatureSeashellData.dataset/sticker-nature-seashell-v1.png",
+         "sha256" : "05ee6ec1894947723e81c4272df1a23dfa93d415fc6d8c61f0c7cf99b4bba37c",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 456838,
+         "catalogID" : "sticker.nature.mountains",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 434,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.mountains",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "montagne",
+               "rivière"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 434,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNatureMountainsData.dataset/sticker-nature-mountains-v1.png",
+         "sha256" : "68e0a0b271f17b248994e6133142622e8b181de57732507bf5e16ac2633670cc",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 411330,
+         "catalogID" : "sticker.nature.mushroom",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 425
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.mushroom",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "champignon",
+               "forêt"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 425,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNatureMushroomData.dataset/sticker-nature-mushroom-v1.png",
+         "sha256" : "4e2a452f0afcc53ebf6f8513380614a8368f3fe5e6876a9b988e9f2975502429",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 431131,
+         "catalogID" : "sticker.nature.butterfly",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 437,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.butterfly",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "papillon",
+               "insecte"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 437,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNatureButterflyData.dataset/sticker-nature-butterfly-v1.png",
+         "sha256" : "a9c645fa16aa6c7e935472c8dad313f124b3ae6d1e661ccd23cc6e6caa7fb4ac",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 328780,
+         "catalogID" : "sticker.nature.cactus",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 370
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.nature.cactus",
+         "localizedTags" : {
+            "fr" : [
+               "nature",
+               "cactus",
+               "désert"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 370,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerNatureCactusData.dataset/sticker-nature-cactus-v1.png",
+         "sha256" : "0a2cfb14a5e7ddd3451bcb2f1b0b4078ee49fc04a02ab59f64c0a564414e7f71",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "nature"
+      },
+      {
+         "byteCount" : 421613,
+         "catalogID" : "sticker.weather.sun",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.sun",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "soleil",
+               "beau temps"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherSunData.dataset/sticker-weather-sun-v1.png",
+         "sha256" : "0649e3961e2a74fb16cfe754f3d7aa8b1ebde8b3ec44deb41385c8dab1a273c2",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 211594,
+         "catalogID" : "sticker.weather.cloud",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 338,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.cloud",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "nuage",
+               "ciel"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 338,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherCloudData.dataset/sticker-weather-cloud-v1.png",
+         "sha256" : "ee65c047282702756b427267a2c73093273cb3db061010d0ac22aec024ff167d",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 280213,
+         "catalogID" : "sticker.weather.rain",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 502,
+            "width" : 477
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.rain",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "pluie",
+               "averse"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 502,
+         "pixelWidth" : 477,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherRainData.dataset/sticker-weather-rain-v1.png",
+         "sha256" : "946e5459e8586965735b3e1693304fb0d0128261ac4a1d93ea218f2a0976aade",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 264218,
+         "catalogID" : "sticker.weather.rainbow",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 351,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.rainbow",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "arc-en-ciel",
+               "couleurs"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 351,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherRainbowData.dataset/sticker-weather-rainbow-v1.png",
+         "sha256" : "5ccf8a22ffb4e972617283d4f2e691794b874a43617aadf9e9da2addb8a2c598",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 265637,
+         "catalogID" : "sticker.weather.snowflake",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 466
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.snowflake",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "neige",
+               "hiver"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 466,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherSnowflakeData.dataset/sticker-weather-snowflake-v1.png",
+         "sha256" : "4f1080f4f4766d726f6ec0b13a57ec381f0d7e83e8f481672194ea32e5c1c5fe",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 297193,
+         "catalogID" : "sticker.weather.lightning",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 486,
+            "width" : 482
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.lightning",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "orage",
+               "éclair"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 486,
+         "pixelWidth" : 482,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherLightningData.dataset/sticker-weather-lightning-v1.png",
+         "sha256" : "d52b39a3a2c5802253f17352e506dbfadcd72b7d2503b188cc75089f58d35088",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 194975,
+         "catalogID" : "sticker.weather.moon",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 470,
+            "width" : 435
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.moon",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "lune",
+               "nuit"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 470,
+         "pixelWidth" : 435,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherMoonData.dataset/sticker-weather-moon-v1.png",
+         "sha256" : "34b9a781ac7aa30b8ce6b31d582d792f2284af4c061b4c1b53f8866797926960",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 282281,
+         "catalogID" : "sticker.weather.wind",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 466,
+            "width" : 488
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.weather.wind",
+         "localizedTags" : {
+            "fr" : [
+               "météo",
+               "vent",
+               "brise"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 466,
+         "pixelWidth" : 488,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerWeatherWindData.dataset/sticker-weather-wind-v1.png",
+         "sha256" : "770577882daa63224c7ac03ab9c4bcc2fa5a4dca91a5bc68c262531166ad1c0f",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "weather"
+      },
+      {
+         "byteCount" : 337918,
+         "catalogID" : "sticker.symbols.heart",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 482,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.heart",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "cœur",
+               "amour"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 482,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsHeartData.dataset/sticker-symbols-heart-v1.png",
+         "sha256" : "b6548ff505d1ec0191fecd13e9470f825bc760ea93cfe7391e2d913e4c231f28",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 331579,
+         "catalogID" : "sticker.symbols.star",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.star",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "étoile",
+               "favori"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsStarData.dataset/sticker-symbols-star-v1.png",
+         "sha256" : "af5c1e11a9788a5daf04828df0b5435cdad65f3f84fbeb6c2cfedb47c8acb799",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 264019,
+         "catalogID" : "sticker.symbols.confetti",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 449
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.confetti",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "confettis",
+               "fête"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 449,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsConfettiData.dataset/sticker-symbols-confetti-v1.png",
+         "sha256" : "1d790023ed4227bce4b135ea018a80248715e91b1542b41ae21ee8b26d784acb",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 183153,
+         "catalogID" : "sticker.symbols.music",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 489,
+            "width" : 406
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.music",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "musique",
+               "note"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 489,
+         "pixelWidth" : 406,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsMusicData.dataset/sticker-symbols-music-v1.png",
+         "sha256" : "e762014b8a54b3d6d92e30c2625c5a25114523f9d363abd25edc41a9fce2d1b8",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 432796,
+         "catalogID" : "sticker.symbols.check",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 512,
+            "width" : 512
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.check",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "validation",
+               "coche"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsCheckData.dataset/sticker-symbols-check-v1.png",
+         "sha256" : "ab710939f9bcf9e106dd13ec4f5b2b804a8f28c51b7c84807e5ef97da7403bc1",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 397424,
+         "catalogID" : "sticker.symbols.gift",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 496,
+            "width" : 467
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.gift",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "cadeau",
+               "anniversaire"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 496,
+         "pixelWidth" : 467,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsGiftData.dataset/sticker-symbols-gift-v1.png",
+         "sha256" : "3ad459db9eb5055228c94c0e8a5c647f02d813f07c58e167786ab4a99d99f35f",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 252655,
+         "catalogID" : "sticker.symbols.speech",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 392,
+            "width" : 438
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.speech",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "bulle",
+               "message"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 392,
+         "pixelWidth" : 438,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsSpeechData.dataset/sticker-symbols-speech-v1.png",
+         "sha256" : "4bdeb378362b642c7b44dab4ec6f6c88f4fe14136387fdc6a397815984731547",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 383574,
+         "catalogID" : "sticker.symbols.paw",
+         "catalogVersion" : 1,
+         "category" : "sticker",
+         "intrinsicAspectRatio" : {
+            "height" : 462,
+            "width" : 505
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "sticker.symbols.paw",
+         "localizedTags" : {
+            "fr" : [
+               "symbole",
+               "patte",
+               "animal"
+            ]
+         },
+         "mimeType" : "image/png",
+         "payloadKind" : "asset",
+         "pixelHeight" : 462,
+         "pixelWidth" : 505,
+         "relativePath" : "Sources/AppModule/Resources/Stickers.xcassets/StickerSymbolsPawData.dataset/sticker-symbols-paw-v1.png",
+         "sha256" : "238b4c7cd8b97d3447fbd580c01b1b587e5631228f40ffd5c63cad7b12664411",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "stickerCategory" : "symbols"
+      },
+      {
+         "byteCount" : 109207,
+         "catalogID" : "frame.whiteBorder",
+         "catalogVersion" : 1,
+         "category" : "decorativeFrame",
+         "destinationCapInsets" : {
+            "bottom" : 0.2,
+            "left" : 0.2,
+            "right" : 0.2,
+            "top" : 0.2
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "frame.whiteBorder",
+         "mimeType" : "image/png",
+         "nineSliceContract" : {
+            "algorithm" : "nineSliceStretch",
+            "composition" : "sourceOverAboveMaskedPhotoAndStroke",
+            "destinationCoordinates" : "fractionOfUnrotatedElementBounds",
+            "followsElementTransformAndClip" : true,
+            "goldenImage" : {
+               "byteCount" : 1659,
+               "mimeType" : "image/png",
+               "pixelHeight" : 48,
+               "pixelWidth" : 64,
+               "relativePath" : "golden/frame-nine-slice-v1/frame-white-border.png",
+               "sha256" : "a3e5c12189b48014bdc91a93890b4a6febb9636fb36100a695d85c750fa36321"
+            },
+            "interpolation" : "bilinear",
+            "sourceCoordinates" : "orientedPixels"
+         },
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Frames.xcassets/FrameWhiteBorderData.dataset/frame-white-border-v1.png",
+         "sha256" : "d860107656a6006308885ee32e2394efdd06cdab0a08b57b664faee83b70a85b",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "sourceCapInsetsPixels" : {
+            "bottom" : 128,
+            "left" : 128,
+            "right" : 128,
+            "top" : 128
+         }
+      },
+      {
+         "byteCount" : 97667,
+         "catalogID" : "frame.blackBorder",
+         "catalogVersion" : 1,
+         "category" : "decorativeFrame",
+         "destinationCapInsets" : {
+            "bottom" : 0.2,
+            "left" : 0.2,
+            "right" : 0.2,
+            "top" : 0.2
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "frame.blackBorder",
+         "mimeType" : "image/png",
+         "nineSliceContract" : {
+            "algorithm" : "nineSliceStretch",
+            "composition" : "sourceOverAboveMaskedPhotoAndStroke",
+            "destinationCoordinates" : "fractionOfUnrotatedElementBounds",
+            "followsElementTransformAndClip" : true,
+            "goldenImage" : {
+               "byteCount" : 1477,
+               "mimeType" : "image/png",
+               "pixelHeight" : 48,
+               "pixelWidth" : 64,
+               "relativePath" : "golden/frame-nine-slice-v1/frame-black-border.png",
+               "sha256" : "7b1bc4a750c08c18ce4978bc070441f681bb7ca71cb4e83f9f44961a8290ffde"
+            },
+            "interpolation" : "bilinear",
+            "sourceCoordinates" : "orientedPixels"
+         },
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Frames.xcassets/FrameBlackBorderData.dataset/frame-black-border-v1.png",
+         "sha256" : "7d569d8954ed4b6a79f2da3c0983c7e5aef75207108dd910f8b8fe0aee1a2a2d",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "sourceCapInsetsPixels" : {
+            "bottom" : 128,
+            "left" : 128,
+            "right" : 128,
+            "top" : 128
+         }
+      },
+      {
+         "byteCount" : 272142,
+         "catalogID" : "frame.kraftTape",
+         "catalogVersion" : 1,
+         "category" : "decorativeFrame",
+         "destinationCapInsets" : {
+            "bottom" : 0.2,
+            "left" : 0.2,
+            "right" : 0.2,
+            "top" : 0.2
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "frame.kraftTape",
+         "mimeType" : "image/png",
+         "nineSliceContract" : {
+            "algorithm" : "nineSliceStretch",
+            "composition" : "sourceOverAboveMaskedPhotoAndStroke",
+            "destinationCoordinates" : "fractionOfUnrotatedElementBounds",
+            "followsElementTransformAndClip" : true,
+            "goldenImage" : {
+               "byteCount" : 3386,
+               "mimeType" : "image/png",
+               "pixelHeight" : 48,
+               "pixelWidth" : 64,
+               "relativePath" : "golden/frame-nine-slice-v1/frame-kraft-tape.png",
+               "sha256" : "1ad14cfd71ff4e13b1d79ddf96e1bb0ffa5a19c549898f246a08cc2e0ebdb90c"
+            },
+            "interpolation" : "bilinear",
+            "sourceCoordinates" : "orientedPixels"
+         },
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Frames.xcassets/FrameKraftTapeData.dataset/frame-kraft-tape-v1.png",
+         "sha256" : "03f7508cf6fad8784720f99cf54655e3acf94c88cd8cbe8178440c94b106db9a",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "sourceCapInsetsPixels" : {
+            "bottom" : 128,
+            "left" : 128,
+            "right" : 128,
+            "top" : 128
+         }
+      },
+      {
+         "byteCount" : 243510,
+         "catalogID" : "frame.travelStamp",
+         "catalogVersion" : 1,
+         "category" : "decorativeFrame",
+         "destinationCapInsets" : {
+            "bottom" : 0.2,
+            "left" : 0.2,
+            "right" : 0.2,
+            "top" : 0.2
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "frame.travelStamp",
+         "mimeType" : "image/png",
+         "nineSliceContract" : {
+            "algorithm" : "nineSliceStretch",
+            "composition" : "sourceOverAboveMaskedPhotoAndStroke",
+            "destinationCoordinates" : "fractionOfUnrotatedElementBounds",
+            "followsElementTransformAndClip" : true,
+            "goldenImage" : {
+               "byteCount" : 2886,
+               "mimeType" : "image/png",
+               "pixelHeight" : 48,
+               "pixelWidth" : 64,
+               "relativePath" : "golden/frame-nine-slice-v1/frame-travel-stamp.png",
+               "sha256" : "af295daf8bba5d29de8f549eb0506b2c1337afea34d366b8cfcd7dbc1bb8965e"
+            },
+            "interpolation" : "bilinear",
+            "sourceCoordinates" : "orientedPixels"
+         },
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Frames.xcassets/FrameTravelStampData.dataset/frame-travel-stamp-v1.png",
+         "sha256" : "b538e43249d95cf2c8a49aae6f2b109887ca60b2efcd22e496ef2477d98efa6b",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "sourceCapInsetsPixels" : {
+            "bottom" : 128,
+            "left" : 128,
+            "right" : 128,
+            "top" : 128
+         }
+      },
+      {
+         "byteCount" : 336018,
+         "catalogID" : "frame.botanical",
+         "catalogVersion" : 1,
+         "category" : "decorativeFrame",
+         "destinationCapInsets" : {
+            "bottom" : 0.2,
+            "left" : 0.2,
+            "right" : 0.2,
+            "top" : 0.2
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "frame.botanical",
+         "mimeType" : "image/png",
+         "nineSliceContract" : {
+            "algorithm" : "nineSliceStretch",
+            "composition" : "sourceOverAboveMaskedPhotoAndStroke",
+            "destinationCoordinates" : "fractionOfUnrotatedElementBounds",
+            "followsElementTransformAndClip" : true,
+            "goldenImage" : {
+               "byteCount" : 3665,
+               "mimeType" : "image/png",
+               "pixelHeight" : 48,
+               "pixelWidth" : 64,
+               "relativePath" : "golden/frame-nine-slice-v1/frame-botanical.png",
+               "sha256" : "2a703d731a34cee8293ef1d6f9c39915f45ae22a328159da9ff3e06e0ad36b8b"
+            },
+            "interpolation" : "bilinear",
+            "sourceCoordinates" : "orientedPixels"
+         },
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Frames.xcassets/FrameBotanicalData.dataset/frame-botanical-v1.png",
+         "sha256" : "681830fec16c90fa19d92e3d7e3d58c0c9dd64aa8a758e9f5a60263dc14cbd90",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "sourceCapInsetsPixels" : {
+            "bottom" : 128,
+            "left" : 128,
+            "right" : 128,
+            "top" : 128
+         }
+      },
+      {
+         "byteCount" : 139477,
+         "catalogID" : "frame.instantPhoto",
+         "catalogVersion" : 1,
+         "category" : "decorativeFrame",
+         "destinationCapInsets" : {
+            "bottom" : 0.2,
+            "left" : 0.2,
+            "right" : 0.2,
+            "top" : 0.2
+         },
+         "license" : "project-generated-original",
+         "localizedNameKey" : "frame.instantPhoto",
+         "mimeType" : "image/png",
+         "nineSliceContract" : {
+            "algorithm" : "nineSliceStretch",
+            "composition" : "sourceOverAboveMaskedPhotoAndStroke",
+            "destinationCoordinates" : "fractionOfUnrotatedElementBounds",
+            "followsElementTransformAndClip" : true,
+            "goldenImage" : {
+               "byteCount" : 2159,
+               "mimeType" : "image/png",
+               "pixelHeight" : 48,
+               "pixelWidth" : 64,
+               "relativePath" : "golden/frame-nine-slice-v1/frame-instant-photo.png",
+               "sha256" : "5ae254a86b15b43f3cc5b9749cf7cf1ef694d044e2f2dc0b77c9ca09e3c5a676"
+            },
+            "interpolation" : "bilinear",
+            "sourceCoordinates" : "orientedPixels"
+         },
+         "payloadKind" : "asset",
+         "pixelHeight" : 512,
+         "pixelWidth" : 512,
+         "relativePath" : "Sources/AppModule/Resources/Frames.xcassets/FrameInstantPhotoData.dataset/frame-instant-photo-v1.png",
+         "sha256" : "51d7992db7ef3f9793cc1fa83a8ffec03ea0dbf6aef1631aec61d1daa26209ce",
+         "source" : "docs/assets/sticker-prompts-v1.md",
+         "sourceCapInsetsPixels" : {
+            "bottom" : 128,
+            "left" : 128,
+            "right" : 128,
+            "top" : 128
+         }
+      }
+   ]
 }

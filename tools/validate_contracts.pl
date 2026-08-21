@@ -639,6 +639,16 @@ for my $resource (@{$catalog->{resources}}) {
             $width == $resource->{pixelWidth} && $height == $resource->{pixelHeight},
             "Dimensions mismatch for $key"
         );
+        if ($resource->{category} eq 'sticker'
+            || $resource->{category} eq 'decorativeFrame') {
+            my $normalizer = File::Spec->catfile(
+                $root, 'tools', 'normalize_catalog_png.pl'
+            );
+            assert_true(
+                system($^X, $normalizer, '--validate-only', $path) == 0,
+                "$key must be a non-empty RGBA PNG with real transparency"
+            );
+        }
     } else {
         for my $forbidden (qw(relativePath mimeType byteCount pixelWidth pixelHeight sha256 source)) {
             assert_true(!exists $resource->{$forbidden}, "$key nativeVector forbids $forbidden");
@@ -751,7 +761,13 @@ my @frozen_catalog_paths = (
     'golden/shape-masks-v1/shape-circle.pbm',
     'golden/shape-masks-v1/shape-oval.pbm',
     'golden/shape-masks-v1/shape-heart.pbm',
-    'golden/shape-masks-v1/shape-star.pbm'
+    'golden/shape-masks-v1/shape-star.pbm',
+    'golden/frame-nine-slice-v1/frame-white-border.png',
+    'golden/frame-nine-slice-v1/frame-black-border.png',
+    'golden/frame-nine-slice-v1/frame-kraft-tape.png',
+    'golden/frame-nine-slice-v1/frame-travel-stamp.png',
+    'golden/frame-nine-slice-v1/frame-botanical.png',
+    'golden/frame-nine-slice-v1/frame-instant-photo.png'
 );
 assert_true(
     json_equal([sort keys %expected_catalog_hashes], [sort @frozen_catalog_paths]),
@@ -770,4 +786,5 @@ for my $entry (@{$checksums->{files}}) {
     assert_true(sha256_hex($data) eq $entry->{sha256}, "Example SHA mismatch for $entry->{relativePath}");
 }
 
-print "Contracts OK: 32 templates, 3 backgrounds, 6 shapes, schemas and package fixture.\n";
+print "Contracts OK: 32 templates, 3 backgrounds, 6 shapes, 40 stickers, "
+    . "6 decorative frames, schemas and package fixture.\n";

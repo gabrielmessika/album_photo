@@ -134,10 +134,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   arrondi, lui applique un italique synthétique et matérialise les valeurs
   actives de tous les formats conformément à `TBX-026`. Les régressions
   `IPAD-L2-034…035`, liées à `3102cda…`, sont réussies globalement sur l'iPad
-  déclaré, sans capture ni détail par étape. Le prochain développement devra
-  toutefois réduire la largeur des boutons de format : selon `TBX-027`, leur
-  libellé principal reste court et la valeur active demeure visible dans le
-  bouton sous une forme abrégée ou compacte, dans le menu et via l'accessibilité.
+  déclaré, sans capture ni détail par étape. Les boutons de format ont depuis
+  reçu les libellés courts de `TBX-027`; la valeur active reste visible dans le
+  menu et dans la valeur accessible.
   La Bibliothèque expose aussi un bouton `Info` dans sa barre principale. Sa
   fiche affiche la version marketing, le numéro de build et le hash Git complet
   du candidat, sélectionnable. Le hash est estampillé automatiquement dans les
@@ -147,19 +146,28 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   Le candidat combiné est figé dans
   `60930587da16707dbb57eada9881f6fefcedd51e`; les fiches
   `IPAD-L2-036…038` couvrent désormais Info, les motifs puis les formats sur
-  ce package exact.
+  ce package exact. Leur campagne réussit globalement `037` et `038`, mais
+  `036` échoue : Info affiche `Non estampillé` au lieu du commit attendu. Le
+  reste de cette fiche est déclaré conforme globalement, sans que la sélection
+  ni la copie du hash absent puissent être tenues pour prouvées. Le correctif
+  fournit maintenant `tools/create_ipad_candidate.sh` et l’action GitHub
+  **Paquet candidat iPad** : ils construisent une archive depuis un commit exact,
+  vérifient que son hash complet est réellement estampillé, puis publient le ZIP
+  contrôlé. Une copie directe depuis Working Copy reste volontairement
+  `Non estampillé` et ne doit plus servir aux tests qui vérifient le commit.
   Le candidat et le canevas multiélément restent reconstruits from scratch,
   en conservant uniquement l’enveloppe de l’App Playground. Le prototype 2.1 reste
   historique. La nouvelle app utilise une
   génération et une racine de stockage distinctes : les anciennes données
   locales restent intactes mais sont ignorées, sans lecture, import ni
-  migration. Les panneaux publics sont maintenant `Photos`, `Texte`, une
-  séparation sans titre, `Mise en page` et `Fonds`. Les variantes avec texte
-  sont actives dans le candidat en cours ;
-  stickers, cadres décoratifs et presse-papiers
-  multi-types restent à livrer au Lot 2. Lecture, diaporama,
-  package et PDF relèvent du Lot 3.
-- Validation actuelle : 147 tests du noyau multiplateforme, les contrats et la
+  migration. Le périmètre de code du Lot 2 expose maintenant les six panneaux
+  dans l’ordre `Photos`, `Texte`, `Stickers`, séparation sans titre,
+  `Mise en page`, `Fonds`, `Cadres et formes`. Il comprend 40 stickers statiques
+  originaux, 6 formes natives, 6 cadres décoratifs à rendu neuf zones, le
+  presse-papiers commun photo/texte/sticker, le regroupement de frappe à 750 ms,
+  le rendu de page justifié et le blocage de la prévisualisation en cas de
+  débordement. Lecture, diaporama, package et PDF relèvent du Lot 3.
+- Validation actuelle : 157 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
@@ -201,10 +209,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   échec ; son contrat ciblé, l'analyse syntaxique, les contrats et les dix
   empreintes réussissent également sous WSL. L'archive du candidat
   `6093058…` a été contrôlée : son marqueur est remplacé par le hash complet
-  exact. `IPAD-L2-036…038` restent ⚪ `NON TESTÉ` sur Apple.
-  L’alignement justifié, le regroupement de frappe à 750 ms,
-  l’export bloqué et la conservation fine des attributs d’un collage externe
-  restent explicitement partiels.
+  exact. Sur iPad, `IPAD-L2-037…038` sont 🟢 `RÉUSSI` globalement, tandis que
+  `IPAD-L2-036` est 🔴 `ÉCHOUÉ` parce que le package exécuté affiche
+  `Non estampillé`. Le transport est désormais corrigé par la fabrication et la
+  vérification automatisées du paquet, mais ce nouveau chemin reste à qualifier
+  sur iPad avec un nouvel identifiant après gel du prochain commit. Les contrats
+  de 55 ressources et leurs 16 empreintes sont valides. La compilation et le
+  rendu Apple du nouveau périmètre stickers/cadres/texte restent non testés ;
+  `TBX-007` reste partiel pour les styles provenant d’un collage externe et la
+  partie Exporter de `TBX-021` ne devient publique qu’au Lot 3.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
@@ -722,9 +735,24 @@ accidentel.
 
 ### Étape D — récupérer la version sur l’iPad
 
-Deux méthodes sont prévues.
+Trois méthodes sont prévues. Pour une campagne qui contrôle le commit affiché,
+utiliser obligatoirement la première.
 
-#### Méthode recommandée : Working Copy
+#### Méthode recommandée : artefact GitHub estampillé
+
+1. dans GitHub, ouvrir **Actions**, puis **Paquet candidat iPad** ;
+2. lancer **Run workflow** sur le commit ou la branche à qualifier ;
+3. attendre la réussite de l’étape **Estampiller et contrôler le paquet** ;
+4. télécharger l’artefact `album-photo-<hash court>` sur l’iPad ;
+5. décompresser l’archive d’artefact, puis le ZIP candidat qu’elle contient ;
+6. ouvrir `Albumzh.swiftpm` dans Swift Playgrounds et vérifier dans `Info` que
+   le hash complet correspond au commit choisi.
+
+L’action appelle `tools/create_ipad_candidate.sh`, qui utilise `git archive`,
+applique `export-subst` et refuse de publier le ZIP si le hash exact n’est pas
+présent. L’artefact est conservé quatorze jours.
+
+#### Méthode de développement : Working Copy
 
 1. fermer `AlbumPhoto` dans Swift Playgrounds ;
 2. ouvrir Working Copy et sélectionner le dépôt ;
@@ -737,13 +765,18 @@ Deux méthodes sont prévues.
    réglages ou changements utiles de celle-ci sont déjà dans Git ;
 8. ouvrir la nouvelle copie dans Swift Playgrounds.
 
+Un checkout Working Copy transporte les fichiers Git bruts : le marqueur
+`export-subst` n’y est pas remplacé et `Info` affiche donc `Non estampillé`.
+Cette méthode convient au développement courant, mais pas à une fiche comme
+`IPAD-L2-036` qui exige le commit exact à l’exécution.
+
 Si le document est lié en tant que dépôt externe avec Working Copy Pro, le pull
 peut écrire directement dans le package. Swift Playgrounds doit être fermé
 pendant l’opération. La documentation Working Copy avertit que certaines apps
 peuvent être perturbées si leurs documents changent pendant qu’elles sont
 ouvertes.
 
-#### Méthode gratuite : ZIP GitHub
+#### Méthode de secours : ZIP GitHub
 
 Cette méthode convient très bien si le code est toujours modifié sur le PC.
 
@@ -760,8 +793,10 @@ Cette méthode convient très bien si le code est toujours modifié sur le PC.
    au commit téléchargé ;
 10. supprimer les anciennes copies uniquement après validation de la nouvelle.
 
-Le ZIP GitHub est un transport, pas une nouvelle source de vérité. Ne jamais
-réinjecter l’ensemble du ZIP dans le dépôt.
+Le ZIP GitHub est un transport, pas une nouvelle source de vérité. Son
+estampillage dépend du chemin d’archive de GitHub ; préférer l’artefact contrôlé
+ci-dessus pour une campagne formelle. Ne jamais réinjecter l’ensemble du ZIP
+dans le dépôt.
 
 ### Étape E — compiler et tester sur l’iPad
 

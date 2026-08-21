@@ -153,11 +153,10 @@ struct TextElementInspectorView: View {
                 }
             }
         } label: {
-            Label(
-                "Police : \(fontName(text.typingDefaults.fontID))",
-                systemImage: "textformat"
-            )
+            Label("Police", systemImage: "textformat")
         }
+        .accessibilityLabel("Police du texte")
+        .accessibilityValue(fontName(text.typingDefaults.fontID))
     }
 
     private func sizeMenu(_ text: TextBoxElement) -> some View {
@@ -184,8 +183,10 @@ struct TextElementInspectorView: View {
                 }
             }
         } label: {
-            Label("Taille : \(currentPoints) points", systemImage: "textformat.size")
+            Label("Taille", systemImage: "textformat.size")
         }
+        .accessibilityLabel("Taille du texte")
+        .accessibilityValue("\(currentPoints) points")
     }
 
     private var colorControls: some View {
@@ -245,11 +246,10 @@ struct TextElementInspectorView: View {
                 }
             }
         } label: {
-            Label(
-                "Alignement : \(alignmentName(text.typingDefaults.alignment))",
-                systemImage: "text.alignleft"
-            )
+            Label("Alignement", systemImage: "text.alignleft")
         }
+        .accessibilityLabel("Alignement des paragraphes")
+        .accessibilityValue(alignmentName(text.typingDefaults.alignment))
     }
 
     private func lineSpacingMenu(_ text: TextBoxElement) -> some View {
@@ -267,11 +267,14 @@ struct TextElementInspectorView: View {
                 }
             }
         } label: {
-            Label(
-                "Interligne : \(text.typingDefaults.lineSpacing.formatted(.number.precision(.fractionLength(1))))",
-                systemImage: "line.3.horizontal"
-            )
+            Label("Interligne", systemImage: "line.3.horizontal")
         }
+        .accessibilityLabel("Interligne des paragraphes")
+        .accessibilityValue(
+            text.typingDefaults.lineSpacing.formatted(
+                .number.precision(.fractionLength(1))
+            )
+        )
     }
 
     private func opacityMenu(_ text: TextBoxElement) -> some View {
@@ -288,11 +291,12 @@ struct TextElementInspectorView: View {
                 }
             }
         } label: {
-            Label(
-                "Opacité : \(text.opacity.formatted(.percent.precision(.fractionLength(0))))",
-                systemImage: "circle.lefthalf.filled"
-            )
+            Label("Opacité", systemImage: "circle.lefthalf.filled")
         }
+        .accessibilityLabel("Opacité de la zone de texte")
+        .accessibilityValue(
+            text.opacity.formatted(.percent.precision(.fractionLength(0)))
+        )
     }
 
     private func applyParagraph(_ patch: TextParagraphStylePatch) {

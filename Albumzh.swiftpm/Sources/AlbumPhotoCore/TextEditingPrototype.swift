@@ -65,6 +65,23 @@ public struct TextPastePrototypePayload: Codable, Sendable, Equatable, Hashable 
 }
 
 public enum TextEditingPrototype {
+    /// 3:TBX-007 — shared allow-list used by platform paste adapters and the
+    /// durable model boundary. Tabs and line feeds are the only controls kept.
+    public static func sanitizedPlainText(
+        _ text: String,
+        maximumCharacters: Int = 1_000
+    ) -> String {
+        var scalars = String.UnicodeScalarView()
+        for scalar in text.unicodeScalars {
+            if scalar.value == 0xfffc { continue }
+            if scalar.value < 0x20 && scalar.value != 0x09 && scalar.value != 0x0a {
+                continue
+            }
+            scalars.append(scalar)
+        }
+        return String(String(scalars).prefix(maximumCharacters))
+    }
+
     /// Applies character attributes to a partial Swift-Character selection and
     /// splits runs only at the selection boundaries.
     public static func applying(
@@ -160,13 +177,10 @@ public enum TextEditingPrototype {
         typingDefaults: TextStyleDefaults,
         maximumCharacters: Int = 1_000
     ) throws -> TextBoxContent {
-        var scalars = String.UnicodeScalarView()
-        for scalar in payload.text.unicodeScalars {
-            if scalar.value == 0xfffc { continue }
-            if scalar.value < 0x20 && scalar.value != 0x09 && scalar.value != 0x0a { continue }
-            scalars.append(scalar)
-        }
-        let sanitized = String(String(scalars).prefix(maximumCharacters))
+        let sanitized = sanitizedPlainText(
+            payload.text,
+            maximumCharacters: maximumCharacters
+        )
         let style = try self.typingDefaults(applying: payload.supportedStyle, to: typingDefaults)
         let paragraphs = sanitized.split(separator: "\n", omittingEmptySubsequences: false).map {
             TextParagraph(

@@ -98,6 +98,15 @@ private struct ReversibleAlbumCommand: Sendable, Equatable {
     let after: AlbumStateBundle
 }
 
+private struct ActiveTextEditingSession: Sendable {
+    let albumID: UUID
+    let pageID: UUID
+    let original: TextBoxElement
+    let isNew: Bool
+    let undoBaseline: [ReversibleAlbumCommand]
+    let redoBaseline: [ReversibleAlbumCommand]
+}
+
 /// `LibraryRepository.load()` and `commit()` intentionally expose optimistic
 /// revisions. Swift actor reentrancy may otherwise let two UI commands load
 /// the same revision before either commits. This FIFO gate covers the complete
@@ -226,6 +235,7 @@ public actor AlbumApplicationService {
     private let durableMutationSerialiser = DurableMutationSerialiser()
     private var undoStacks: [UUID: [ReversibleAlbumCommand]] = [:]
     private var redoStacks: [UUID: [ReversibleAlbumCommand]] = [:]
+    private var activeTextEditingSessions: [UUID: ActiveTextEditingSession] = [:]
     private var libraryUndoStack: [ReversibleAlbumCommand] = []
     private var libraryRedoStack: [ReversibleAlbumCommand] = []
     private var libraryReplayAlbumIDs: [UUID: UUID] = [:]
@@ -1189,6 +1199,256 @@ public actor AlbumApplicationService {
         }
     }
 
+    /// 3:TBX-022 — each checkpoint emitted after 750 ms of inactivity or a
+    /// focus loss is persisted as one command. The opening history baseline
+    /// is retained so Annuler can restore the original without keeping any of
+    /// the provisional commands in the session history.
+    @discardableResult
+    public func persistTextEditingSequence(
+        sessionID: UUID,
+        original: TextBoxElement,
+        isNew: Bool,
+        on pageID: UUID,
+        in albumID: UUID,
+        content: TextBoxContent,
+        typingDefaults: TextStyleDefaults,
+        opacity: Double,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        if let session = activeTextEditingSessions[sessionID] {
+            guard session.albumID == albumID,
+                  session.pageID == pageID,
+                  session.original.id == original.id,
+                  session.isNew == isNew else {
+                throw DomainValidationError.invalidText
+            }
+        } else {
+            activeTextEditingSessions[sessionID] = ActiveTextEditingSession(
+                albumID: albumID,
+                pageID: pageID,
+                original: original,
+                isNew: isNew,
+                undoBaseline: undoStacks[albumID] ?? [],
+                redoBaseline: redoStacks[albumID] ?? []
+            )
+        }
+
+        let current = try await album(id: albumID)
+        if current.page(id: pageID)?.element(id: original.id)?.textBox != nil {
+            return try await updateTextBox(
+                original.id,
+                on: pageID,
+                in: albumID,
+                content: content,
+                typingDefaults: typingDefaults,
+                opacity: opacity,
+                now: now,
+                commandID: commandID
+            )
+        }
+        guard isNew else { throw DomainValidationError.elementNotFound(original.id) }
+        guard !content.plainText.isEmpty else { return current }
+        return try await addTextBox(
+            to: pageID,
+            in: albumID,
+            content: content,
+            typingDefaults: typingDefaults,
+            opacity: opacity,
+            elementID: original.id,
+            now: now,
+            commandID: commandID
+        )
+    }
+
+    public func finishTextEditingSession(_ sessionID: UUID) {
+        activeTextEditingSessions[sessionID] = nil
+    }
+
+    @discardableResult
+    public func cancelTextEditingSession(
+        _ sessionID: UUID,
+        fallbackOriginal: TextBoxElement,
+        isNew: Bool,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        guard let session = activeTextEditingSessions[sessionID] else {
+            return try await album(id: albumID)
+        }
+        guard session.albumID == albumID,
+              session.pageID == pageID,
+              session.original == fallbackOriginal,
+              session.isNew == isNew else {
+            throw DomainValidationError.invalidText
+        }
+        let restored = try await mutateAlbum(
+            albumID,
+            label: "Annuler la modification du texte",
+            history: .none,
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            if isNew {
+                album.pages[page].elements.removeAll { $0.id == fallbackOriginal.id }
+                album.pages[page].accessibilityOrder.removeAll {
+                    $0 == fallbackOriginal.id
+                }
+            } else {
+                let element = try elementIndex(
+                    fallbackOriginal.id,
+                    in: album.pages[page]
+                )
+                guard album.pages[page].elements[element].textBox != nil else {
+                    throw DomainValidationError.elementNotFound(fallbackOriginal.id)
+                }
+                album.pages[page].elements[element] = .text(fallbackOriginal)
+            }
+        }
+        undoStacks[albumID] = session.undoBaseline
+        redoStacks[albumID] = session.redoBaseline
+        activeTextEditingSessions[sessionID] = nil
+        return restored
+    }
+
+    // MARK: Stickers
+
+    @discardableResult
+    public func addSticker(
+        _ reference: CatalogResourceReference,
+        to pageID: UUID,
+        in albumID: UUID,
+        center: GeometryPoint = GeometryPoint(x: 0.5, y: 0.5),
+        elementID: UUID = UUID(),
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try DomainValidator.validate(reference)
+        guard let definition = BuiltInStickerCatalog.definition(
+            id: reference.catalogID,
+            version: reference.catalogVersion
+        ), definition.reference == reference else {
+            throw DomainValidationError.invalidSticker
+        }
+        // CAT-005/CAT-006: a logical sticker reference is never committed
+        // before its exact fallback payload is available in the immutable
+        // content-addressed catalog store.
+        _ = try await catalogBlob(for: reference)
+        return try await mutateAlbum(
+            albumID,
+            label: "Ajouter un sticker",
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            let sticker = StickerElement(
+                id: elementID,
+                geometry: try StickerGeometryEngine.initialGeometry(
+                    intrinsicAspectRatio: definition.intrinsicAspectRatio,
+                    center: center,
+                    order: nextOrder(in: album.pages[page])
+                ),
+                resource: reference,
+                opacity: 1,
+                flippedHorizontally: false
+            )
+            try DomainValidator.validate(sticker)
+            album.pages[page].elements.append(.sticker(sticker))
+            album.pages[page].accessibilityOrder.append(elementID)
+        }
+    }
+
+    @discardableResult
+    public func replaceSticker(
+        _ elementID: UUID,
+        with reference: CatalogResourceReference,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try DomainValidator.validate(reference)
+        guard let definition = BuiltInStickerCatalog.definition(
+            id: reference.catalogID,
+            version: reference.catalogVersion
+        ), definition.reference == reference else {
+            throw DomainValidationError.invalidSticker
+        }
+        _ = try await catalogBlob(for: reference)
+        return try await mutateAlbum(
+            albumID,
+            label: "Remplacer le sticker",
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            let element = try elementIndex(elementID, in: album.pages[page])
+            guard var sticker = album.pages[page].elements[element].sticker else {
+                throw DomainValidationError.elementNotFound(elementID)
+            }
+            sticker.geometry = try StickerGeometryEngine.replacementGeometry(
+                from: sticker.geometry,
+                intrinsicAspectRatio: definition.intrinsicAspectRatio
+            )
+            sticker.resource = reference
+            try DomainValidator.validate(sticker)
+            album.pages[page].elements[element] = .sticker(sticker)
+        }
+    }
+
+    @discardableResult
+    public func setStickerOpacity(
+        _ opacity: Double,
+        elementID: UUID,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try await mutateAlbum(
+            albumID,
+            label: "Changer l’opacité du sticker",
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            let element = try elementIndex(elementID, in: album.pages[page])
+            guard var sticker = album.pages[page].elements[element].sticker else {
+                throw DomainValidationError.elementNotFound(elementID)
+            }
+            sticker.opacity = opacity
+            try DomainValidator.validate(sticker)
+            album.pages[page].elements[element] = .sticker(sticker)
+        }
+    }
+
+    @discardableResult
+    public func flipStickerHorizontally(
+        _ elementID: UUID,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try await mutateAlbum(
+            albumID,
+            label: "Retourner le sticker",
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let page = try pageIndex(pageID, in: album)
+            let element = try elementIndex(elementID, in: album.pages[page])
+            guard var sticker = album.pages[page].elements[element].sticker else {
+                throw DomainValidationError.elementNotFound(elementID)
+            }
+            sticker.flippedHorizontally.toggle()
+            album.pages[page].elements[element] = .sticker(sticker)
+        }
+    }
+
     // MARK: Layout templates and automatic composition
 
     public func planAlbumFill(
@@ -1354,6 +1614,148 @@ public actor AlbumApplicationService {
             }
             frame.content = placement
             album.pages[page].elements[element] = .photo(frame)
+        }
+    }
+
+    // MARK: Photo masks, borders and decorative frames
+
+    /// 3:SHR-001...014 — applies one visual photo-frame property to the
+    /// requested scope as one durable, undoable command. The selected frame is
+    /// always required as the explicit anchor, including for page/album scope.
+    @discardableResult
+    public func applyPhotoMask(
+        _ mask: CatalogResourceReference,
+        scope: PhotoFrameStyleApplicationScope,
+        selectedElementID: UUID,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        try DomainValidator.validate(mask)
+        guard BuiltInCatalogRegistry.descriptor(
+            id: mask.catalogID,
+            version: mask.catalogVersion
+        )?.category == .shape else {
+            throw DomainValidationError.invalidCatalogReference(mask.catalogID)
+        }
+        return try await updatePhotoFrameStyle(
+            scope: scope,
+            selectedElementID: selectedElementID,
+            pageID: pageID,
+            albumID: albumID,
+            label: "Changer la forme des photos",
+            now: now,
+            commandID: commandID
+        ) { frame in
+            frame.mask = PhotoMask(shape: mask)
+        }
+    }
+
+    @discardableResult
+    public func applyPhotoBorder(
+        _ border: PhotoBorder,
+        scope: PhotoFrameStyleApplicationScope,
+        selectedElementID: UUID,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        guard border.width.isFinite, (0...0.03).contains(border.width) else {
+            throw DomainValidationError.invalidGeometry
+        }
+        try DomainValidator.validate(border.color, requiresOpaque: true)
+        let canonicalBorder = border.width == 0 ? PhotoBorder() : border
+        return try await updatePhotoFrameStyle(
+            scope: scope,
+            selectedElementID: selectedElementID,
+            pageID: pageID,
+            albumID: albumID,
+            label: "Changer le contour des photos",
+            now: now,
+            commandID: commandID
+        ) { frame in
+            frame.border = canonicalBorder
+        }
+    }
+
+    @discardableResult
+    public func applyDecorativeFrame(
+        _ decorativeFrame: CatalogResourceReference?,
+        scope: PhotoFrameStyleApplicationScope,
+        selectedElementID: UUID,
+        on pageID: UUID,
+        in albumID: UUID,
+        now: Date = Date(),
+        commandID: UUID = UUID()
+    ) async throws -> AlbumSnapshot {
+        if let decorativeFrame {
+            try DomainValidator.validate(decorativeFrame)
+            guard BuiltInCatalogRegistry.descriptor(
+                id: decorativeFrame.catalogID,
+                version: decorativeFrame.catalogVersion
+            )?.category == .decorativeFrame else {
+                throw DomainValidationError.invalidCatalogReference(
+                    decorativeFrame.catalogID
+                )
+            }
+            _ = try await catalogBlob(for: decorativeFrame)
+        }
+        return try await updatePhotoFrameStyle(
+            scope: scope,
+            selectedElementID: selectedElementID,
+            pageID: pageID,
+            albumID: albumID,
+            label: "Changer le cadre décoratif",
+            now: now,
+            commandID: commandID
+        ) { frame in
+            frame.decorativeFrame = decorativeFrame
+        }
+    }
+
+    private func updatePhotoFrameStyle(
+        scope: PhotoFrameStyleApplicationScope,
+        selectedElementID: UUID,
+        pageID: UUID,
+        albumID: UUID,
+        label: String,
+        now: Date,
+        commandID: UUID,
+        update: @escaping @Sendable (inout PhotoFrameElement) -> Void
+    ) async throws -> AlbumSnapshot {
+        try await mutateAlbum(
+            albumID,
+            label: label,
+            now: now,
+            commandID: commandID
+        ) { album, _ in
+            let selectedPageIndex = try pageIndex(pageID, in: album)
+            let selectedIndex = try elementIndex(
+                selectedElementID,
+                in: album.pages[selectedPageIndex]
+            )
+            guard album.pages[selectedPageIndex].elements[selectedIndex].photoFrame != nil else {
+                throw DomainValidationError.elementNotFound(selectedElementID)
+            }
+
+            let pageIndices: [Int]
+            switch scope {
+            case .selection, .page:
+                pageIndices = [selectedPageIndex]
+            case .album:
+                pageIndices = Array(album.pages.indices)
+            }
+            for targetPageIndex in pageIndices {
+                for targetElementIndex in album.pages[targetPageIndex].elements.indices {
+                    guard var frame = album.pages[targetPageIndex]
+                        .elements[targetElementIndex].photoFrame else { continue }
+                    if scope == .selection, frame.id != selectedElementID { continue }
+                    update(&frame)
+                    album.pages[targetPageIndex].elements[targetElementIndex] = .photo(frame)
+                }
+            }
         }
     }
 
@@ -1978,6 +2380,9 @@ public actor AlbumApplicationService {
             try await repository.flush()
             undoStacks[albumID] = nil
             redoStacks[albumID] = nil
+            activeTextEditingSessions = activeTextEditingSessions.filter {
+                $0.value.albumID != albumID
+            }
             if clipboard?.sourceAlbumID == albumID { replaceClipboard(with: nil) }
             await editLeases.completeClosing(albumID: albumID, sceneID: sceneID)
             return true
@@ -2230,6 +2635,9 @@ public actor AlbumApplicationService {
     private func clearHistories(albumID: UUID) {
         undoStacks[albumID] = nil
         redoStacks[albumID] = nil
+        activeTextEditingSessions = activeTextEditingSessions.filter {
+            $0.value.albumID != albumID
+        }
         libraryUndoStack.removeAll { $0.before.album.id == albumID }
         libraryRedoStack.removeAll { $0.before.album.id == albumID }
         if clipboard?.sourceAlbumID == albumID { replaceClipboard(with: nil) }

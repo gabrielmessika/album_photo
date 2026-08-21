@@ -3,6 +3,54 @@ import XCTest
 @testable import AlbumPhotoCore
 
 final class GeometryEngineTests: XCTestCase {
+    // 3:STK-005, 3:STK-007, 3:STK-015, 3:STK-023
+    func testStickerGeometryPreservesIntrinsicRatioAndReplacementState() throws {
+        let initial = try StickerGeometryEngine.initialGeometry(
+            intrinsicAspectRatio: 2,
+            center: GeometryPoint(x: 0.25, y: 0.75),
+            order: 2_048
+        )
+        XCTAssertEqual(initial.centerX, 0.25, accuracy: 1e-12)
+        XCTAssertEqual(initial.centerY, 0.75, accuracy: 1e-12)
+        XCTAssertEqual(initial.width, 0.20, accuracy: 1e-12)
+        XCTAssertEqual(initial.height, 0.08, accuracy: 1e-12)
+        XCTAssertEqual(initial.rotationRadians, 0, accuracy: 1e-12)
+        XCTAssertEqual(initial.order, 2_048)
+
+        let original = ElementGeometry(
+            centerX: 0.3,
+            centerY: 0.4,
+            width: 0.2,
+            height: 0.16,
+            rotationRadians: 0.7,
+            order: 4_096
+        )
+        let replaced = try StickerGeometryEngine.replacementGeometry(
+            from: original,
+            intrinsicAspectRatio: 0.5
+        )
+        XCTAssertEqual(replaced.centerX, original.centerX, accuracy: 1e-12)
+        XCTAssertEqual(replaced.centerY, original.centerY, accuracy: 1e-12)
+        XCTAssertEqual(replaced.rotationRadians, original.rotationRadians, accuracy: 1e-12)
+        XCTAssertEqual(replaced.order, original.order)
+        XCTAssertLessThanOrEqual(replaced.width, original.width)
+        XCTAssertLessThanOrEqual(replaced.height, original.height)
+        XCTAssertEqual(
+            replaced.width * AlbumPhotoConstants.canonicalPageWidth
+                / (replaced.height * AlbumPhotoConstants.canonicalPageHeight),
+            0.5,
+            accuracy: 1e-12
+        )
+
+        let tiny = ElementGeometry(width: 0.01, height: 0.01)
+        let enlarged = try StickerGeometryEngine.replacementGeometry(
+            from: tiny,
+            intrinsicAspectRatio: 1
+        )
+        XCTAssertGreaterThanOrEqual(enlarged.width, 0.05)
+        XCTAssertGreaterThanOrEqual(enlarged.height, 0.05)
+    }
+
     // 3:CRP-001, 3:TST-006 fixture 600×400 in 1200×900.
     func testSmallPhotoAtOneXIsCenteredWithExpectedTransparentMargins() throws {
         let metadata = TestFixtures.metadata(width: 600, height: 400)

@@ -237,7 +237,8 @@ public enum BuiltInCatalogRegistry {
             payload: .nativeVector(rendererID: "shape.star"),
             sourceLicense: "Native geometry"
         )
-    ]
+    ] + BuiltInStickerCatalog.definitions.map(\.descriptor)
+        + BuiltInDecorativeFrameCatalog.definitions.map(\.descriptor)
 
     public static func descriptor(
         id: String,
@@ -656,6 +657,13 @@ public struct PhotoFrameStyleDefaults: Codable, Sendable, Equatable, Hashable {
         self.border = border
         self.decorativeFrame = decorativeFrame
     }
+}
+
+public enum PhotoFrameStyleApplicationScope: String, Codable, Sendable, Equatable,
+    Hashable, CaseIterable {
+    case selection
+    case page
+    case album
 }
 
 public struct PhotoFrameElement: Codable, Sendable, Equatable, Hashable, Identifiable {

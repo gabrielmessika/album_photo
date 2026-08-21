@@ -298,16 +298,22 @@ private struct AlbumEditorScene: View {
             AlbumTextEditorView(
                 request: request,
                 imageCache: model.imageCache,
-                onCancel: { model.cancelTextEditing() },
+                onCancel: { await model.cancelTextEditing(request) },
+                onCheckpoint: { content, defaults, opacity in
+                    await model.checkpointTextEditing(
+                        request,
+                        content: content,
+                        typingDefaults: defaults,
+                        opacity: opacity
+                    )
+                },
                 onCommit: { content, defaults, opacity in
-                    Task {
-                        await model.commitTextEditing(
-                            request,
-                            content: content,
-                            typingDefaults: defaults,
-                            opacity: opacity
-                        )
-                    }
+                    await model.commitTextEditing(
+                        request,
+                        content: content,
+                        typingDefaults: defaults,
+                        opacity: opacity
+                    )
                 }
             )
         }
@@ -573,9 +579,12 @@ private struct AlbumEditorScene: View {
                     )
                 }
                 .buttonStyle(.plain)
-                .disabled(model.cropDraft != nil)
+                .disabled(
+                    model.cropDraft != nil
+                        || panel == .frames && model.selectedPhotoFrame == nil
+                )
 
-                if panel == .text {
+                if panel == .stickers {
                     Divider()
                         .padding(.horizontal, 8)
                         .accessibilityHidden(true)
@@ -619,8 +628,12 @@ private struct AlbumEditorScene: View {
             LayoutPanelView(model: model)
         case .text:
             TextPanelView(model: model)
+        case .stickers:
+            StickerPanelView(model: model)
         case .backgrounds:
             BackgroundPickerView(model: model)
+        case .frames:
+            FrameAndShapePanelView(model: model)
         }
     }
 
@@ -784,6 +797,35 @@ private struct AlbumEditorScene: View {
                 Text("Zone de texte")
                     .font(.headline)
                 TextElementInspectorView(model: model, text: text)
+                Divider()
+            }
+
+            if let sticker = model.selectedSticker {
+                Text("Sticker")
+                    .font(.headline)
+                Text(
+                    BuiltInStickerCatalog.definition(
+                        id: sticker.resource.catalogID,
+                        version: sticker.resource.catalogVersion
+                    )?.localizedName ?? sticker.resource.catalogID
+                )
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+                inspectorButton(
+                    "Remplacer",
+                    systemImage: "arrow.triangle.2.circlepath"
+                ) {
+                    model.beginReplacingSelectedSticker()
+                    openStickersPanel()
+                }
+                StickerOpacityInspectorView(model: model, sticker: sticker)
+                inspectorButton(
+                    "Retourner horizontalement",
+                    systemImage: "arrow.left.and.right"
+                ) {
+                    Task { await model.flipSelectedStickerHorizontally() }
+                }
                 Divider()
             }
 
@@ -1075,8 +1117,12 @@ private struct AlbumEditorScene: View {
                             mobilePanel = panel
                         }
                         .labelStyle(.iconOnly)
+                        .disabled(
+                            model.cropDraft != nil
+                                || panel == .frames && model.selectedPhotoFrame == nil
+                        )
 
-                        if panel == .text {
+                        if panel == .stickers {
                             Divider()
                                 .frame(height: 24)
                                 .accessibilityHidden(true)
@@ -1166,6 +1212,23 @@ private struct AlbumEditorScene: View {
                     }
                 }
 
+                if let sticker = model.selectedSticker {
+                    Button(
+                        "Remplacer",
+                        systemImage: "arrow.triangle.2.circlepath"
+                    ) {
+                        model.beginReplacingSelectedSticker()
+                        openStickersPanel()
+                    }
+                    stickerOpacityMenu(sticker)
+                    Button(
+                        "Retourner horizontalement",
+                        systemImage: "arrow.left.and.right"
+                    ) {
+                        Task { await model.flipSelectedStickerHorizontally() }
+                    }
+                }
+
                 Button("Rotation…", systemImage: "rotate.right") {
                     presentRotationEditor()
                 }
@@ -1226,6 +1289,26 @@ private struct AlbumEditorScene: View {
             }
             .disabled(!canMoveDepthBackward)
         }
+    }
+
+    private func stickerOpacityMenu(_ sticker: StickerElement) -> some View {
+        Menu("Opacité", systemImage: "circle.lefthalf.filled") {
+            ForEach(Array(stride(from: 100, through: 10, by: -10)), id: \.self) { percent in
+                let opacity = Double(percent) / 100
+                Button {
+                    Task { await model.setSelectedStickerOpacity(opacity) }
+                } label: {
+                    if abs(sticker.opacity - opacity) < 0.001 {
+                        Label("\(percent) %", systemImage: "checkmark")
+                    } else {
+                        Text("\(percent) %")
+                    }
+                }
+            }
+        }
+        .accessibilityValue(
+            sticker.opacity.formatted(.percent.precision(.fractionLength(0)))
+        )
     }
 
     private var geometryMenu: some View {
@@ -1453,6 +1536,22 @@ private struct AlbumEditorScene: View {
         }
     }
 
+    private func openStickersPanel() {
+        if horizontalSizeClass == .regular {
+            model.activePanel = .stickers
+            if reduceMotion {
+                showsInspector = true
+            } else {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showsInspector = true
+                }
+            }
+        } else {
+            model.activePanel = .stickers
+            mobilePanel = .stickers
+        }
+    }
+
     private func presentRotationEditor() {
         guard let element = model.selectedElement else { return }
         model.beginElementRotationPreview(elementID: element.id)
@@ -1465,9 +1564,17 @@ private struct AlbumEditorScene: View {
     private func openContextHelp() {
         if model.cropDraft != nil {
             model.helpContext = .crop
+        } else if model.presentationMode == .global {
+            model.helpContext = .globalPages
         } else {
-            model.helpContext = model.presentationMode == .global
-                ? .globalPages : .editor
+            model.helpContext = switch model.activePanel {
+            case .photos: .photos
+            case .text: .text
+            case .stickers: .stickers
+            case .layouts: .layouts
+            case .backgrounds: .backgrounds
+            case .frames: .frames
+            }
         }
     }
 
@@ -1516,6 +1623,44 @@ private struct AlbumEditorScene: View {
                 await model.load()
             }
         }
+    }
+}
+
+private struct StickerOpacityInspectorView: View {
+    @ObservedObject var model: EditorViewModel
+    let sticker: StickerElement
+
+    @State private var opacity: Double
+
+    init(model: EditorViewModel, sticker: StickerElement) {
+        self.model = model
+        self.sticker = sticker
+        _opacity = State(initialValue: sticker.opacity)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack {
+                Label("Opacité", systemImage: "circle.lefthalf.filled")
+                Spacer()
+                Text(opacity, format: .percent.precision(.fractionLength(0)))
+                    .font(.caption.monospacedDigit())
+            }
+            Slider(
+                value: $opacity,
+                in: 0.1...1,
+                step: 0.01,
+                onEditingChanged: { isEditing in
+                    guard !isEditing else { return }
+                    Task { await model.setSelectedStickerOpacity(opacity) }
+                }
+            )
+            .accessibilityLabel("Opacité")
+            .accessibilityValue(
+                opacity.formatted(.percent.precision(.fractionLength(0)))
+            )
+        }
+        .onChange(of: sticker.opacity) { _, value in opacity = value }
     }
 }
 

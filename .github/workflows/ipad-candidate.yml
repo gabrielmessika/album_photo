@@ -1,0 +1,33 @@
+name: Paquet candidat iPad
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    name: Estampiller et contrôler le paquet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le commit demandé
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fabriquer le ZIP candidat
+        id: candidate
+        run: |
+          output_directory="${RUNNER_TEMP}/ipad-candidate"
+          archive_path="$(./tools/create_ipad_candidate.sh "${GITHUB_SHA}" "$output_directory" | head -n 1)"
+          echo "archive_path=${archive_path}" >> "$GITHUB_OUTPUT"
+          echo "archive_name=$(basename "$archive_path" .zip)" >> "$GITHUB_OUTPUT"
+
+      - name: Publier le ZIP contrôlé
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.candidate.outputs.archive_name }}
+          path: ${{ steps.candidate.outputs.archive_path }}
+          if-no-files-found: error
+          retention-days: 14

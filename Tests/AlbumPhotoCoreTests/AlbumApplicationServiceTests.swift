@@ -32,6 +32,432 @@ private actor FailingOnceLibraryRepository: LibraryRepository {
 }
 
 final class AlbumApplicationServiceTests: XCTestCase {
+    // 3:SHR-001...3:SHR-014, 3:UND-001...3:UND-004
+    func testPhotoStyleScopesAreAtomicValidatedAndUndoable() async throws {
+        let service = TestFixtures.service()
+        var album = try await service.createAlbum(named: "Cadres")
+        let firstPageID = album.pages[0].id
+        let firstFrameID = UUID()
+        let secondFrameID = UUID()
+        album = try await service.addPhotoFrame(
+            to: firstPageID,
+            in: album.id,
+            elementID: firstFrameID
+        )
+        album = try await service.addPhotoFrame(
+            to: firstPageID,
+            in: album.id,
+            elementID: secondFrameID
+        )
+        album = try await service.addPage(to: album.id)
+        let secondPageID = album.pages[1].id
+        let thirdFrameID = UUID()
+        album = try await service.addPhotoFrame(
+            to: secondPageID,
+            in: album.id,
+            elementID: thirdFrameID
+        )
+
+        let circle = CatalogResourceReference(catalogID: "shape.circle")
+        album = try await service.applyPhotoMask(
+            circle,
+            scope: .selection,
+            selectedElementID: firstFrameID,
+            on: firstPageID,
+            in: album.id
+        )
+        XCTAssertEqual(album.pages[0].element(id: firstFrameID)?.photoFrame?.mask.shape, circle)
+        XCTAssertEqual(
+            album.pages[0].element(id: secondFrameID)?.photoFrame?.mask.shape,
+            .rectangleShape
+        )
+
+        let border = PhotoBorder(
+            width: 0.02,
+            color: SRGBAColor(red: 0.2, green: 0.3, blue: 0.4)
+        )
+        album = try await service.applyPhotoBorder(
+            border,
+            scope: .album,
+            selectedElementID: firstFrameID,
+            on: firstPageID,
+            in: album.id
+        )
+        XCTAssertEqual(
+            album.pages.flatMap(\.elements).compactMap(\.photoFrame).map(\.border),
+            [border, border, border]
+        )
+        let botanical = try XCTUnwrap(BuiltInDecorativeFrameCatalog.definition(
+            id: "frame.botanical"
+        ))
+        album = try await service.applyDecorativeFrame(
+            botanical.reference,
+            scope: .page,
+            selectedElementID: firstFrameID,
+            on: firstPageID,
+            in: album.id
+        )
+        XCTAssertEqual(
+            album.pages[0].elements.compactMap(\.photoFrame).map(\.decorativeFrame),
+            [botanical.reference, botanical.reference]
+        )
+        XCTAssertNil(album.pages[1].element(id: thirdFrameID)?.photoFrame?.decorativeFrame)
+        album = try await service.undo(albumID: album.id)
+        XCTAssertTrue(
+            album.pages.flatMap(\.elements).compactMap(\.photoFrame)
+                .allSatisfy { $0.decorativeFrame == nil }
+        )
+
+        let nonCanonicalNone = PhotoBorder(
+            width: 0,
+            color: SRGBAColor(red: 1, green: 0, blue: 0)
+        )
+        album = try await service.applyPhotoBorder(
+            nonCanonicalNone,
+            scope: .selection,
+            selectedElementID: firstFrameID,
+            on: firstPageID,
+            in: album.id
+        )
+        XCTAssertEqual(
+            album.pages[0].element(id: firstFrameID)?.photoFrame?.border,
+            PhotoBorder()
+        )
+        album = try await service.undo(albumID: album.id)
+        XCTAssertEqual(
+            album.pages[0].element(id: firstFrameID)?.photoFrame?.border,
+            border
+        )
+
+        let undone = try await service.undo(albumID: album.id)
+        XCTAssertTrue(
+            undone.pages.flatMap(\.elements).compactMap(\.photoFrame)
+                .allSatisfy { $0.border.width == 0 }
+        )
+
+        await XCTAssertThrowsDomainError({
+            try await service.applyPhotoBorder(
+                PhotoBorder(width: 0.031),
+                scope: .page,
+                selectedElementID: firstFrameID,
+                on: firstPageID,
+                in: album.id
+            )
+        }, matching: { $0 == .invalidGeometry })
+    }
+
+    // 3:STK-004...3:STK-007, 3:STK-014...3:STK-016, 3:STK-023
+    func testStickerAddReplaceOpacityFlipAndUndoPreserveTransformState() async throws {
+        let service = TestFixtures.service()
+        var album = try await service.createAlbum(named: "Stickers")
+        let pageID = album.pages[0].id
+        let stickerID = UUID()
+        let compass = try XCTUnwrap(BuiltInStickerCatalog.definition(
+            id: "sticker.travel.compass"
+        ))
+        let leaf = try XCTUnwrap(BuiltInStickerCatalog.definition(
+            id: "sticker.nature.leaf"
+        ))
+
+        album = try await service.addSticker(
+            compass.reference,
+            to: pageID,
+            in: album.id,
+            center: GeometryPoint(x: 0.3, y: 0.7),
+            elementID: stickerID
+        )
+        var sticker = try XCTUnwrap(album.pages[0].element(id: stickerID)?.sticker)
+        XCTAssertEqual(sticker.geometry.centerX, 0.3, accuracy: 1e-12)
+        XCTAssertEqual(sticker.geometry.centerY, 0.7, accuracy: 1e-12)
+        let initialPhysicalWidth = sticker.geometry.width
+            * AlbumPhotoConstants.canonicalPageWidth
+        let initialPhysicalHeight = sticker.geometry.height
+            * AlbumPhotoConstants.canonicalPageHeight
+        XCTAssertEqual(
+            max(initialPhysicalWidth, initialPhysicalHeight)
+                / min(
+                    AlbumPhotoConstants.canonicalPageWidth,
+                    AlbumPhotoConstants.canonicalPageHeight
+                ),
+            0.2,
+            accuracy: 1e-12
+        )
+        XCTAssertEqual(
+            initialPhysicalWidth / initialPhysicalHeight,
+            compass.intrinsicAspectRatio,
+            accuracy: 1e-12
+        )
+        XCTAssertEqual(sticker.geometry.rotationRadians, 0, accuracy: 1e-12)
+        XCTAssertEqual(sticker.opacity, 1, accuracy: 1e-12)
+        XCTAssertFalse(sticker.flippedHorizontally)
+
+        var transformed = sticker.geometry
+        transformed.rotationRadians = 0.8
+        album = try await service.updateElementGeometry(
+            transformed,
+            elementID: stickerID,
+            on: pageID,
+            in: album.id
+        )
+        album = try await service.setStickerOpacity(
+            0.5,
+            elementID: stickerID,
+            on: pageID,
+            in: album.id
+        )
+        album = try await service.flipStickerHorizontally(
+            stickerID,
+            on: pageID,
+            in: album.id
+        )
+        album = try await service.replaceSticker(
+            stickerID,
+            with: leaf.reference,
+            on: pageID,
+            in: album.id
+        )
+        sticker = try XCTUnwrap(album.pages[0].element(id: stickerID)?.sticker)
+        XCTAssertEqual(sticker.resource, leaf.reference)
+        XCTAssertEqual(sticker.geometry.centerX, 0.3, accuracy: 1e-12)
+        XCTAssertEqual(sticker.geometry.centerY, 0.7, accuracy: 1e-12)
+        XCTAssertEqual(sticker.geometry.rotationRadians, 0.8, accuracy: 1e-12)
+        XCTAssertEqual(
+            sticker.geometry.width * AlbumPhotoConstants.canonicalPageWidth
+                / (sticker.geometry.height * AlbumPhotoConstants.canonicalPageHeight),
+            leaf.intrinsicAspectRatio,
+            accuracy: 1e-12
+        )
+        XCTAssertEqual(sticker.opacity, 0.5, accuracy: 1e-12)
+        XCTAssertTrue(sticker.flippedHorizontally)
+
+        let undone = try await service.undo(albumID: album.id)
+        XCTAssertEqual(
+            undone.pages[0].element(id: stickerID)?.sticker?.resource,
+            compass.reference
+        )
+        await XCTAssertThrowsDomainError({
+            try await service.setStickerOpacity(
+                0.09,
+                elementID: stickerID,
+                on: pageID,
+                in: album.id
+            )
+        }, matching: { $0 == .invalidSticker })
+    }
+
+    // 3:CLP-001...3:CLP-006, 3:STK-014, 3:TBX-001
+    func testClipboardPreservesLot2TextAndStickerPayloads() async throws {
+        let service = TestFixtures.service()
+        var album = try await service.createAlbum(named: "Presse-papiers Lot 2")
+        let pageID = album.pages[0].id
+        let textID = UUID()
+        let style = TextStyleDefaults(
+            fontID: "system.serif",
+            relativeFontSize: 24 / AlbumPhotoConstants.canonicalPageHeight,
+            weight: .bold,
+            isItalic: true,
+            color: SRGBAColor(red: 0.2, green: 0.4, blue: 0.6),
+            alignment: .justified,
+            lineSpacing: 1.4
+        )
+        let content = TextBoxContent(paragraphs: [TextParagraph(
+            alignment: .justified,
+            lineSpacing: 1.4,
+            runs: [TextRun(text: "Texte riche", style: style)]
+        )])
+        album = try await service.addTextBox(
+            to: pageID,
+            in: album.id,
+            content: content,
+            typingDefaults: style,
+            opacity: 0.7,
+            elementID: textID
+        )
+        let sourceText = try XCTUnwrap(album.pages[0].element(id: textID)?.textBox)
+        try await service.copyElement(textID, on: pageID, in: album.id)
+        let clipboardPayload = await service.clipboardPayload()
+        let textPayload = try XCTUnwrap(clipboardPayload)
+        XCTAssertEqual(textPayload.version, 1)
+        XCTAssertEqual(textPayload.element.textBox, sourceText)
+        XCTAssertNil(textPayload.photoMetadata)
+
+        let pastedTextID = UUID()
+        album = try await service.pasteElement(
+            on: pageID,
+            in: album.id,
+            newElementID: pastedTextID,
+            offsetNormalized: GeometryPoint(x: 0, y: 0)
+        )
+        let pastedText = try XCTUnwrap(album.pages[0].element(id: pastedTextID)?.textBox)
+        XCTAssertEqual(pastedText.content, sourceText.content)
+        XCTAssertEqual(pastedText.typingDefaults, sourceText.typingDefaults)
+        XCTAssertEqual(pastedText.opacity, sourceText.opacity)
+        XCTAssertEqual(pastedText.geometry.centerX, sourceText.geometry.centerX)
+        XCTAssertEqual(pastedText.geometry.centerY, sourceText.geometry.centerY)
+
+        let stickerDefinition = try XCTUnwrap(BuiltInStickerCatalog.definitions.first)
+        let stickerID = UUID()
+        album = try await service.addSticker(
+            stickerDefinition.reference,
+            to: pageID,
+            in: album.id,
+            center: GeometryPoint(x: 0.25, y: 0.75),
+            elementID: stickerID
+        )
+        album = try await service.setStickerOpacity(
+            0.4,
+            elementID: stickerID,
+            on: pageID,
+            in: album.id
+        )
+        album = try await service.flipStickerHorizontally(
+            stickerID,
+            on: pageID,
+            in: album.id
+        )
+        let sourceSticker = try XCTUnwrap(album.pages[0].element(id: stickerID)?.sticker)
+        album = try await service.cutElement(stickerID, on: pageID, in: album.id)
+        XCTAssertNil(album.pages[0].element(id: stickerID))
+        album = try await service.undo(albumID: album.id)
+        XCTAssertEqual(album.pages[0].element(id: stickerID)?.sticker, sourceSticker)
+
+        let pastedStickerID = UUID()
+        album = try await service.pasteElement(
+            on: pageID,
+            in: album.id,
+            newElementID: pastedStickerID,
+            offsetNormalized: GeometryPoint(x: 0, y: 0)
+        )
+        let pastedSticker = try XCTUnwrap(
+            album.pages[0].element(id: pastedStickerID)?.sticker
+        )
+        XCTAssertEqual(pastedSticker.resource, sourceSticker.resource)
+        XCTAssertEqual(pastedSticker.geometry.centerX, sourceSticker.geometry.centerX)
+        XCTAssertEqual(pastedSticker.geometry.centerY, sourceSticker.geometry.centerY)
+        XCTAssertEqual(pastedSticker.geometry.width, sourceSticker.geometry.width)
+        XCTAssertEqual(pastedSticker.geometry.height, sourceSticker.geometry.height)
+        XCTAssertEqual(
+            pastedSticker.geometry.rotationRadians,
+            sourceSticker.geometry.rotationRadians
+        )
+        XCTAssertGreaterThan(pastedSticker.geometry.order, sourceSticker.geometry.order)
+        XCTAssertEqual(pastedSticker.opacity, sourceSticker.opacity)
+        XCTAssertEqual(
+            pastedSticker.flippedHorizontally,
+            sourceSticker.flippedHorizontally
+        )
+    }
+
+    // 3:TBX-004, 3:TBX-022, 3:UND-001...3:UND-004
+    func testTextEditingSequencesAreIndividuallyUndoableAndCancelRestoresBaseline() async throws {
+        let service = TestFixtures.service()
+        var album = try await service.createAlbum(named: "Séquences de frappe")
+        let pageID = album.pages[0].id
+        let textID = UUID()
+        let defaults = TextStyleDefaults()
+        let originalContent = TextBoxContent(paragraphs: [TextParagraph(
+            runs: [TextRun(text: "Départ", style: defaults)]
+        )])
+        album = try await service.addTextBox(
+            to: pageID,
+            in: album.id,
+            content: originalContent,
+            typingDefaults: defaults,
+            elementID: textID
+        )
+        let original = try XCTUnwrap(album.pages[0].element(id: textID)?.textBox)
+
+        func content(_ value: String) -> TextBoxContent {
+            TextBoxContent(paragraphs: [TextParagraph(
+                runs: [TextRun(text: value, style: defaults)]
+            )])
+        }
+
+        let finishedSessionID = UUID()
+        album = try await service.persistTextEditingSequence(
+            sessionID: finishedSessionID,
+            original: original,
+            isNew: false,
+            on: pageID,
+            in: album.id,
+            content: content("Première pause"),
+            typingDefaults: defaults,
+            opacity: 1
+        )
+        album = try await service.persistTextEditingSequence(
+            sessionID: finishedSessionID,
+            original: original,
+            isNew: false,
+            on: pageID,
+            in: album.id,
+            content: content("Deuxième pause"),
+            typingDefaults: defaults,
+            opacity: 1
+        )
+        await service.finishTextEditingSession(finishedSessionID)
+        XCTAssertEqual(
+            album.pages[0].element(id: textID)?.textBox?.content.plainText,
+            "Deuxième pause"
+        )
+        album = try await service.undo(albumID: album.id)
+        XCTAssertEqual(
+            album.pages[0].element(id: textID)?.textBox?.content.plainText,
+            "Première pause"
+        )
+
+        let cancelSessionID = UUID()
+        let cancelBaseline = try XCTUnwrap(album.pages[0].element(id: textID)?.textBox)
+        album = try await service.persistTextEditingSequence(
+            sessionID: cancelSessionID,
+            original: cancelBaseline,
+            isNew: false,
+            on: pageID,
+            in: album.id,
+            content: content("À annuler"),
+            typingDefaults: defaults,
+            opacity: 0.5
+        )
+        XCTAssertEqual(album.pages[0].element(id: textID)?.textBox?.opacity, 0.5)
+        album = try await service.cancelTextEditingSession(
+            cancelSessionID,
+            fallbackOriginal: cancelBaseline,
+            isNew: false,
+            on: pageID,
+            in: album.id
+        )
+        XCTAssertEqual(album.pages[0].element(id: textID)?.textBox, cancelBaseline)
+        // The cancelled provisional command was removed: undo continues with
+        // the command that preceded the cancelled editing session.
+        album = try await service.undo(albumID: album.id)
+        XCTAssertEqual(
+            album.pages[0].element(id: textID)?.textBox?.content,
+            originalContent
+        )
+
+        let newTextID = UUID()
+        let newOriginal = TextBoxElement(id: newTextID, typingDefaults: defaults)
+        let newSessionID = UUID()
+        album = try await service.persistTextEditingSequence(
+            sessionID: newSessionID,
+            original: newOriginal,
+            isNew: true,
+            on: pageID,
+            in: album.id,
+            content: content("Nouveau"),
+            typingDefaults: defaults,
+            opacity: 1
+        )
+        XCTAssertNotNil(album.pages[0].element(id: newTextID))
+        album = try await service.cancelTextEditingSession(
+            newSessionID,
+            fallbackOriginal: newOriginal,
+            isNew: true,
+            on: pageID,
+            in: album.id
+        )
+        XCTAssertNil(album.pages[0].element(id: newTextID))
+    }
+
     // 3:ACPT-100, 3:ALB-011...3:ALB-016
     func testCreateAlbumTrimsNameAllowsDuplicatesAndSortsByUpdatedAt() async throws {
         let service = TestFixtures.service()
@@ -984,6 +1410,7 @@ final class AlbumApplicationServiceTests: XCTestCase {
         let service = TestFixtures.service()
         let (source, metadata) = try await TestFixtures.albumWithRegisteredPhoto(service: service)
         let target = try await service.createAlbum(named: "Cible")
+        let blobCountBeforeReuse = try await service.snapshot().blobIndex.count
         let targetID = UUID()
         let reused = try await service.reusePhotos(
             assetIDs: [metadata.id],
@@ -1000,7 +1427,7 @@ final class AlbumApplicationServiceTests: XCTestCase {
         let storedSnapshot = try await service.snapshot()
         XCTAssertEqual(storedSource.photoAssetIDs, [metadata.id])
         XCTAssertEqual(storedTarget.photoAssetIDs, [targetID])
-        XCTAssertEqual(storedSnapshot.blobIndex.count, 4)
+        XCTAssertEqual(storedSnapshot.blobIndex.count, blobCountBeforeReuse)
     }
 
     // 3:LOC-011, 3:PHO-017, 3:PHO-018

@@ -4,13 +4,14 @@ import SwiftUI
 import UIKit
 
 struct TextEditingRequest: Identifiable, Equatable {
+    let sessionID: UUID
     let pageID: UUID
     let original: TextBoxElement
     let isNew: Bool
     let pageBackground: BackgroundSelection
     let previewPageHeight: Double
 
-    var id: UUID { original.id }
+    var id: UUID { sessionID }
 }
 
 enum AlbumTextPresentationMetrics {
@@ -118,7 +119,8 @@ struct AlbumTextAlignmentChoice: Identifiable {
     static let all = [
         AlbumTextAlignmentChoice(title: "Gauche", value: .leading),
         AlbumTextAlignmentChoice(title: "Centré", value: .center),
-        AlbumTextAlignmentChoice(title: "Droite", value: .trailing)
+        AlbumTextAlignmentChoice(title: "Droite", value: .trailing),
+        AlbumTextAlignmentChoice(title: "Justifié", value: .justified)
     ]
 }
 
@@ -287,7 +289,9 @@ enum AlbumTextAttributedBridge {
                     alignment: style.alignment,
                     lineSpacing: style.lineSpacing
                 )
-            let value = String(text.characters[run.range])
+            let value = TextEditingPrototype.sanitizedPlainText(
+                String(text.characters[run.range])
+            )
             let pieces = value.split(separator: "\n", omittingEmptySubsequences: false)
             for pieceIndex in pieces.indices {
                 current.alignment = paragraphStyle.alignment
@@ -425,9 +429,9 @@ enum AlbumTextAttributedBridge {
         case .leading: .left
         case .center: .center
         case .trailing: .right
-        // SwiftUI iOS 26 exposes no justified case. Existing persisted values
-        // stay intact in the domain and use a leading editing preview until a
-        // documented public rendering solution is available (3:TXA-001...003).
+        // SwiftUI iOS 26 exposes no justified case. The editable surface keeps
+        // a leading preview for this one value; the shared page renderer uses
+        // public TextKit and renders the persisted paragraph as justified.
         case .justified: .left
         }
     }
@@ -448,8 +452,9 @@ struct AlbumTextEditorView: View {
 
     let request: TextEditingRequest
     let imageCache: PhotoImageCache
-    let onCancel: () -> Void
-    let onCommit: (TextBoxContent, TextStyleDefaults, Double) -> Void
+    let onCancel: () async -> Void
+    let onCheckpoint: (TextBoxContent, TextStyleDefaults, Double) async -> Void
+    let onCommit: (TextBoxContent, TextStyleDefaults, Double) async -> Void
 
     @State private var text: AttributedString
     @State private var selection: AttributedTextSelection
@@ -459,17 +464,29 @@ struct AlbumTextEditorView: View {
     @State private var showsColorPalette = false
     @State private var retainedSelection: AttributedTextSelection?
     @State private var retainedSelectionText: String?
+    @State private var checkpointTask: Task<Void, Never>?
+    @State private var isResolving = false
     @FocusState private var editorIsFocused: Bool
 
     init(
         request: TextEditingRequest,
         imageCache: PhotoImageCache,
-        onCancel: @escaping () -> Void,
-        onCommit: @escaping (TextBoxContent, TextStyleDefaults, Double) -> Void
+        onCancel: @escaping () async -> Void,
+        onCheckpoint: @escaping (
+            TextBoxContent,
+            TextStyleDefaults,
+            Double
+        ) async -> Void,
+        onCommit: @escaping (
+            TextBoxContent,
+            TextStyleDefaults,
+            Double
+        ) async -> Void
     ) {
         self.request = request
         self.imageCache = imageCache
         self.onCancel = onCancel
+        self.onCheckpoint = onCheckpoint
         self.onCommit = onCommit
         let defaults = request.original.typingDefaults
         let source = request.original.content.plainText.isEmpty
@@ -523,7 +540,10 @@ struct AlbumTextEditorView: View {
                             retainedSelection = nil
                             retainedSelectionText = nil
                         }
-                        guard newValue.characters.count > 1_000 else { return }
+                        guard newValue.characters.count > 1_000 else {
+                            scheduleCheckpoint()
+                            return
+                        }
                         let limited = limitedText(oldValue: oldValue, newValue: newValue)
                         text = limited.value
                         selection = AttributedTextSelection(
@@ -538,6 +558,8 @@ struct AlbumTextEditorView: View {
                         )
                         showsCharacterLimit = true
                     }
+                    .onChange(of: typingDefaults) { _, _ in scheduleCheckpoint() }
+                    .onChange(of: opacity) { _, _ in scheduleCheckpoint() }
                     .onChange(of: selection) { _, newValue in
                         if isInsertionPoint(newValue) {
                             if editorIsFocused {
@@ -572,11 +594,13 @@ struct AlbumTextEditorView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler", action: onCancel)
+                    Button("Annuler") { cancel() }
+                        .disabled(isResolving)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminer") { commit() }
                         .buttonStyle(.borderedProminent)
+                        .disabled(isResolving)
                 }
             }
         }
@@ -598,10 +622,12 @@ struct AlbumTextEditorView: View {
         .onChange(of: editorIsFocused) { wasFocused, isFocused in
             if wasFocused, !isFocused {
                 retainSelectionForFormatting()
+                flushCheckpoint()
             } else if !wasFocused, isFocused, let retainedSelection = validRetainedSelection {
                 selection = retainedSelection
             }
         }
+        .onDisappear { checkpointTask?.cancel() }
         .alert("Limite atteinte", isPresented: $showsCharacterLimit) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -697,7 +723,7 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Police : \(currentFontName)", systemImage: "textformat")
+            Label("Police", systemImage: "textformat")
         }
         .accessibilityLabel("Police du texte")
         .accessibilityValue(currentFontName)
@@ -719,7 +745,7 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Taille : \(currentFontSize) points", systemImage: "textformat.size")
+            Label("Taille", systemImage: "textformat.size")
         }
         .accessibilityLabel("Taille du texte")
         .accessibilityValue("\(currentFontSize) points")
@@ -730,7 +756,7 @@ struct AlbumTextEditorView: View {
             retainSelectionForFormatting()
             showsColorPalette = true
         } label: {
-            Label("Couleur : \(currentColorName)", systemImage: "paintpalette")
+            Label("Couleur", systemImage: "paintpalette")
         }
         .popover(isPresented: $showsColorPalette) {
             VStack(alignment: .leading, spacing: 6) {
@@ -782,7 +808,7 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Alignement : \(currentAlignmentName)", systemImage: "text.alignleft")
+            Label("Alignement", systemImage: "text.alignleft")
         }
         .accessibilityLabel("Alignement des paragraphes")
         .accessibilityValue(currentAlignmentName)
@@ -803,7 +829,7 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Interligne : \(currentLineSpacingName)", systemImage: "line.3.horizontal")
+            Label("Interligne", systemImage: "line.3.horizontal")
         }
         .accessibilityLabel("Interligne des paragraphes")
         .accessibilityValue(currentLineSpacingName)
@@ -823,7 +849,7 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Opacité : \(currentOpacityName)", systemImage: "circle.lefthalf.filled")
+            Label("Opacité", systemImage: "circle.lefthalf.filled")
         }
         .accessibilityLabel("Opacité de la zone de texte")
         .accessibilityValue(currentOpacityName)
@@ -970,12 +996,68 @@ struct AlbumTextEditorView: View {
     }
 
     private func commit() {
+        guard !isResolving else { return }
+        isResolving = true
+        checkpointTask?.cancel()
+        let values = checkpointValues
+        Task { @MainActor in
+            await onCommit(values.content, values.defaults, values.opacity)
+            isResolving = false
+        }
+    }
+
+    private func cancel() {
+        guard !isResolving else { return }
+        isResolving = true
+        checkpointTask?.cancel()
+        Task { @MainActor in
+            await onCancel()
+            isResolving = false
+        }
+    }
+
+    /// The task is replaced on every local change, so exactly one checkpoint
+    /// survives 750 ms of inactivity (3:TBX-022).
+    private func scheduleCheckpoint() {
+        checkpointTask?.cancel()
+        checkpointTask = Task { @MainActor in
+            do {
+                try await Task.sleep(nanoseconds: 750_000_000)
+            } catch {
+                return
+            }
+            guard !Task.isCancelled, !isResolving else { return }
+            await persistCheckpoint()
+        }
+    }
+
+    private func flushCheckpoint() {
+        checkpointTask?.cancel()
+        checkpointTask = Task { @MainActor in
+            guard !isResolving else { return }
+            await persistCheckpoint()
+        }
+    }
+
+    private func persistCheckpoint() async {
+        let values = checkpointValues
+        await onCheckpoint(values.content, values.defaults, values.opacity)
+    }
+
+    private var checkpointValues: (
+        content: TextBoxContent,
+        defaults: TextStyleDefaults,
+        opacity: Double
+    ) {
         let keepsPlaceholder = request.original.content.plainText.isEmpty
             && String(text.characters) == Self.placeholder
-        let content = keepsPlaceholder
-            ? TextBoxContent()
-            : AlbumTextAttributedBridge.content(from: text, defaults: typingDefaults)
-        onCommit(content, typingDefaults, opacity)
+        return (
+            keepsPlaceholder
+                ? TextBoxContent()
+                : AlbumTextAttributedBridge.content(from: text, defaults: typingDefaults),
+            typingDefaults,
+            opacity
+        )
     }
 
     private func limitedText(

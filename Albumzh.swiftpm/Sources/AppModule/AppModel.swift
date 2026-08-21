@@ -248,7 +248,17 @@ final class AppModel: ObservableObject {
         case "album.minimalDark":
             return UUID(uuidString: "5d3ebbb0-ff12-4db2-8ff2-6899466341b9")!
         default:
-            return UUID(uuidString: "8d156ffa-9fb1-4b18-9ad4-ea22df2ce470")!
+            // Every asset needs its own stable replay key. Reusing one UUID
+            // would make the repository treat the second sticker/frame as an
+            // already-applied command and leave the rest of the catalog absent.
+            let digest = SHA256.hexDigest(Data("catalog-bootstrap:\(catalogID)".utf8))
+            let compact = String(digest.prefix(32))
+            let formatted = compact.prefix(8)
+                + "-" + compact.dropFirst(8).prefix(4)
+                + "-" + compact.dropFirst(12).prefix(4)
+                + "-" + compact.dropFirst(16).prefix(4)
+                + "-" + compact.dropFirst(20).prefix(12)
+            return UUID(uuidString: String(formatted))!
         }
     }
 
@@ -263,10 +273,10 @@ final class AppModel: ObservableObject {
                 .map(\.contentHash)
         )
         let missingCatalogIDs: Set<String> = Set(
-            BackgroundCatalog.themes.compactMap { theme -> String? in
-                guard let hash = theme.fallbackContentHash,
+            BuiltInCatalogRegistry.entries.compactMap { descriptor -> String? in
+                guard case let .asset(hash, _, _) = descriptor.payload,
                       !indexedHashes.contains(hash) else { return nil }
-                return theme.id
+                return descriptor.catalogID
             }
         )
         guard !missingCatalogIDs.isEmpty else { return }
@@ -311,7 +321,7 @@ final class AppModel: ObservableObject {
         refreshesLibrary: Bool
     ) async {
         guard !catalogIDs.isEmpty else { return }
-        for input in BundledBackgroundResources.bootstrapInputs(
+        for input in BundledCatalogResources.bootstrapInputs(
             catalogIDs: catalogIDs
         ) {
             guard !Task.isCancelled,
