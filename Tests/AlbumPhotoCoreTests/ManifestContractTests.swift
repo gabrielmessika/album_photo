@@ -304,6 +304,11 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("AlbumTextFormattingDefinition"))
         XCTAssertTrue(textEditor.contains("struct AlbumTextModelAttributes: AttributeScope"))
         XCTAssertTrue(textEditor.contains("private struct ApplyAlbumFont"))
+        XCTAssertTrue(textEditor.contains("private struct CapturePastedAlbumTextStyle"))
+        XCTAssertTrue(textEditor.contains("CapturePastedAlbumTextStyle(fallbackStyle:"))
+        XCTAssertTrue(textEditor.contains("AttributeScopes.UIKitAttributes.FontAttribute"))
+        XCTAssertTrue(textEditor.contains("intent.contains(.stronglyEmphasized)"))
+        XCTAssertTrue(textEditor.contains("intent.contains(.emphasized)"))
         XCTAssertTrue(textEditor.contains("ApplyAlbumFont(pageHeight: pageHeight)"))
         XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute"
@@ -318,7 +323,7 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AttributeScopes.CoreTextAttributes.LineHeightAttribute"
         ))
-        XCTAssertFalse(textEditor.contains(
+        XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AlbumTextStyleAttribute"
         ))
         XCTAssertFalse(textEditor.contains(
@@ -392,6 +397,9 @@ final class ManifestContractTests: XCTestCase {
         ))
         XCTAssertTrue(textPanel.contains("isSelected: abs(text.opacity - value) < 0.000_001"))
         XCTAssertTrue(textEditor.contains("newValue.characters.count > 1_000"))
+        XCTAssertTrue(textEditor.contains("characterLimitRollback = oldValue"))
+        XCTAssertTrue(textEditor.contains("restoreCharacterLimitRollback()"))
+        XCTAssertTrue(textEditor.contains("Button(\"Conserver 1 000 caractères\")"))
         XCTAssertTrue(textEditor.contains("acceptedInsertedCount"))
         XCTAssertTrue(textEditor.contains("result.removeSubrange"))
         XCTAssertTrue(textEditor.contains("static let runBoundaries"))
@@ -494,15 +502,35 @@ final class ManifestContractTests: XCTestCase {
             contentsOf: appModule.appendingPathComponent("HelpView.swift"),
             encoding: .utf8
         )
+        let photosPanel = try String(
+            contentsOf: appModule.appendingPathComponent("PhotosPanelView.swift"),
+            encoding: .utf8
+        )
+        let mediaStore = try String(
+            contentsOf: appModule.appendingPathComponent("MediaAssetStore.swift"),
+            encoding: .utf8
+        )
+        let albumCover = try String(
+            contentsOf: appModule.appendingPathComponent("AlbumCoverView.swift"),
+            encoding: .utf8
+        )
 
         XCTAssertFalse(stickerPanel.contains("Catalogue en préparation"))
         XCTAssertTrue(stickerPanel.contains("Récents"))
         XCTAssertTrue(stickerPanel.contains("StickerCatalogCategory.allCases"))
         XCTAssertTrue(stickerPanel.contains("Rechercher par nom ou tag"))
         XCTAssertTrue(stickerPanel.contains("ids.prefix(50)"))
-        XCTAssertTrue(stickerPanel.contains(".draggable(StickerDragPayload("))
+        XCTAssertTrue(stickerPanel.contains(".draggable(CanvasElementDragPayload.sticker("))
         XCTAssertTrue(stickerPanel.contains("await model.placeSticker(definition)"))
+        XCTAssertTrue(stickerPanel.contains("model.cancelStickerReplacement()"))
+        XCTAssertTrue(stickerPanel.contains("Color.orange.opacity(0.28)"))
         XCTAssertFalse(stickerPanel.contains("Mes stickers"))
+        XCTAssertTrue(photosPanel.contains(".draggable(CanvasElementDragPayload.photo("))
+        XCTAssertTrue(mediaStore.contains("enum CanvasElementDragPayload"))
+        XCTAssertTrue(mediaStore.contains("case photo(assetID: UUID)"))
+        XCTAssertTrue(mediaStore.contains("case sticker(catalogID: String"))
+        XCTAssertFalse(mediaStore.contains("PhotoAssetDragPayload"))
+        XCTAssertFalse(stickerPanel.contains("StickerDragPayload"))
 
         XCTAssertTrue(framePanel.contains("Text(\"Forme\")"))
         XCTAssertTrue(framePanel.contains("Text(\"Contour\")"))
@@ -523,9 +551,28 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(canvas.contains("NineSliceDecorativeFrameView("))
         XCTAssertTrue(canvas.contains("sourceCapInsetsPixels"))
         XCTAssertTrue(canvas.contains("destinationCapInsets"))
-        XCTAssertTrue(canvas.contains(".dropDestination(for: StickerDragPayload.self)"))
+        XCTAssertEqual(
+            canvas.components(
+                separatedBy: ".dropDestination(for: CanvasElementDragPayload.self)"
+            ).count - 1,
+            1
+        )
+        XCTAssertTrue(canvas.contains("case let .photo(assetID):"))
+        XCTAssertTrue(canvas.contains("case let .sticker(catalogID, catalogVersion):"))
         XCTAssertTrue(canvas.contains(".scaleEffect(x: sticker.flippedHorizontally"))
         XCTAssertTrue(canvas.contains(".opacity(sticker.opacity)"))
+        XCTAssertTrue(canvas.contains("resizeHandleVisualDiameter"))
+        XCTAssertTrue(canvas.contains("(44 - resizeHandleVisualDiameter) / 2"))
+        XCTAssertTrue(canvas.contains("(50 - rotationHandleVisualDiameter) / 2"))
+        XCTAssertTrue(canvas.contains("CatalogImageAlphaBounds.visibleBounds("))
+        XCTAssertTrue(canvas.contains("CGFloat(sourceInsets.left) * sourceScaleX"))
+        XCTAssertTrue(albumCover.contains("cover-480x360-v2-"))
+        XCTAssertTrue(albumCover.contains("BuiltInStickerCatalog.definition("))
+        XCTAssertTrue(albumCover.contains("BuiltInDecorativeFrameCatalog.definition("))
+        XCTAssertTrue(albumCover.contains("maximumPixelSize: 320"))
+        XCTAssertTrue(albumCover.contains("CatalogAssetImageLoader.image("))
+        XCTAssertTrue(mediaStore.contains("renderedImage ?? cache?.cachedCatalogImage("))
+        XCTAssertTrue(mediaStore.contains("cache?.storeCatalogImage("))
 
         let stickerCommands = [
             "\"Remplacer\"",
@@ -543,6 +590,12 @@ final class ManifestContractTests: XCTestCase {
             commandOffset = range.upperBound
         }
         XCTAssertTrue(viewModel.contains("func beginReplacingSelectedSticker()"))
+        XCTAssertTrue(viewModel.contains("func cancelStickerReplacement()"))
+        XCTAssertTrue(viewModel.contains(
+            "let requestedReplacementID = stickerReplacementTargetID"
+        ))
+        XCTAssertTrue(viewModel.contains("if let replacementID = requestedReplacementID"))
+        XCTAssertTrue(viewModel.contains("Le sticker à remplacer n’est plus présent"))
         XCTAssertTrue(viewModel.contains("func setSelectedStickerOpacity("))
         XCTAssertTrue(viewModel.contains("func flipSelectedStickerHorizontally()"))
         XCTAssertTrue(viewModel.contains("stickerCountOnActivePage"))

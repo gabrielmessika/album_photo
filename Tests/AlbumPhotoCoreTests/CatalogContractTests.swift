@@ -172,6 +172,8 @@ final class CatalogContractTests: XCTestCase {
             ]
         )
         for frame in frames {
+            XCTAssertEqual(frame.pixelWidth, 512)
+            XCTAssertEqual(frame.pixelHeight, 512)
             XCTAssertEqual(
                 frame.sourceCapInsetsPixels,
                 CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128)

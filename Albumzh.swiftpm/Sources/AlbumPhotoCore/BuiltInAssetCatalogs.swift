@@ -514,6 +514,8 @@ public struct DecorativeFrameCatalogDefinition: Sendable, Equatable, Hashable, I
     public let dataAssetName: String
     public let contentHash: String
     public let byteCount: Int64
+    public let pixelWidth: Int
+    public let pixelHeight: Int
     public let sourceCapInsetsPixels: CatalogPixelInsets
     public let destinationCapInsets: CatalogFractionalInsets
 
@@ -540,6 +542,8 @@ public enum BuiltInDecorativeFrameCatalog {
             dataAssetName: "FrameWhiteBorderData",
             contentHash: "d860107656a6006308885ee32e2394efdd06cdab0a08b57b664faee83b70a85b",
             byteCount: 109207,
+            pixelWidth: 512,
+            pixelHeight: 512,
             sourceCapInsetsPixels: CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128),
             destinationCapInsets: CatalogFractionalInsets(top: 0.2, left: 0.2, bottom: 0.2, right: 0.2)
         ),
@@ -549,6 +553,8 @@ public enum BuiltInDecorativeFrameCatalog {
             dataAssetName: "FrameBlackBorderData",
             contentHash: "7d569d8954ed4b6a79f2da3c0983c7e5aef75207108dd910f8b8fe0aee1a2a2d",
             byteCount: 97667,
+            pixelWidth: 512,
+            pixelHeight: 512,
             sourceCapInsetsPixels: CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128),
             destinationCapInsets: CatalogFractionalInsets(top: 0.2, left: 0.2, bottom: 0.2, right: 0.2)
         ),
@@ -558,6 +564,8 @@ public enum BuiltInDecorativeFrameCatalog {
             dataAssetName: "FrameKraftTapeData",
             contentHash: "03f7508cf6fad8784720f99cf54655e3acf94c88cd8cbe8178440c94b106db9a",
             byteCount: 272142,
+            pixelWidth: 512,
+            pixelHeight: 512,
             sourceCapInsetsPixels: CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128),
             destinationCapInsets: CatalogFractionalInsets(top: 0.2, left: 0.2, bottom: 0.2, right: 0.2)
         ),
@@ -567,6 +575,8 @@ public enum BuiltInDecorativeFrameCatalog {
             dataAssetName: "FrameTravelStampData",
             contentHash: "b538e43249d95cf2c8a49aae6f2b109887ca60b2efcd22e496ef2477d98efa6b",
             byteCount: 243510,
+            pixelWidth: 512,
+            pixelHeight: 512,
             sourceCapInsetsPixels: CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128),
             destinationCapInsets: CatalogFractionalInsets(top: 0.2, left: 0.2, bottom: 0.2, right: 0.2)
         ),
@@ -576,6 +586,8 @@ public enum BuiltInDecorativeFrameCatalog {
             dataAssetName: "FrameBotanicalData",
             contentHash: "681830fec16c90fa19d92e3d7e3d58c0c9dd64aa8a758e9f5a60263dc14cbd90",
             byteCount: 336018,
+            pixelWidth: 512,
+            pixelHeight: 512,
             sourceCapInsetsPixels: CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128),
             destinationCapInsets: CatalogFractionalInsets(top: 0.2, left: 0.2, bottom: 0.2, right: 0.2)
         ),
@@ -585,6 +597,8 @@ public enum BuiltInDecorativeFrameCatalog {
             dataAssetName: "FrameInstantPhotoData",
             contentHash: "51d7992db7ef3f9793cc1fa83a8ffec03ea0dbf6aef1631aec61d1daa26209ce",
             byteCount: 139477,
+            pixelWidth: 512,
+            pixelHeight: 512,
             sourceCapInsetsPixels: CatalogPixelInsets(top: 128, left: 128, bottom: 128, right: 128),
             destinationCapInsets: CatalogFractionalInsets(top: 0.2, left: 0.2, bottom: 0.2, right: 0.2)
         )

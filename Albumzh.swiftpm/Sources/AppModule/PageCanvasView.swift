@@ -443,7 +443,7 @@ private struct PhotoFrameRenderView: View {
                     NineSliceDecorativeFrameView(
                         definition: definition,
                         imageCache: imageCache,
-                        maximumPixelSize: 1_024
+                        maximumPixelSize: purpose == .thumbnail ? 480 : 1_024
                     )
                 }
             }
@@ -493,9 +493,21 @@ private struct NineSliceDecorativeFrameView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            if let image {
+            if let resolvedImage = image ?? imageCache.cachedCatalogImage(
+                for: definition.contentHash,
+                maximumPixelSize: maximumPixelSize
+            ) {
+                let visibleSource = CatalogImageAlphaBounds.visibleBounds(
+                    of: resolvedImage,
+                    cacheKey: definition.contentHash
+                )
                 Canvas { context, _ in
-                    draw(image: image, in: geometry.size, context: &context)
+                    draw(
+                        image: resolvedImage,
+                        visibleSource: visibleSource,
+                        in: geometry.size,
+                        context: &context
+                    )
                 }
             } else if didFinishLoading {
                 Image(systemName: "exclamationmark.triangle.fill")
@@ -518,25 +530,53 @@ private struct NineSliceDecorativeFrameView: View {
 
     private func draw(
         image: UIImage,
+        visibleSource: CGRect,
         in destinationSize: CGSize,
         context: inout GraphicsContext
     ) {
         let sourceSize = image.size
         guard sourceSize.width > 0, sourceSize.height > 0,
               destinationSize.width > 0, destinationSize.height > 0 else { return }
+        // Generated resources contain a visually transparent outer gutter. It is
+        // excluded from the source extent so the visible decoration, not that
+        // gutter, is aligned with the photo-frame bounds (3:SHR-013).
         let sourceInsets = definition.sourceCapInsetsPixels
         let destinationInsets = definition.destinationCapInsets
+        let sourceScaleX = sourceSize.width / CGFloat(definition.pixelWidth)
+        let sourceScaleY = sourceSize.height / CGFloat(definition.pixelHeight)
+        let centerMinX = min(
+            visibleSource.maxX,
+            max(visibleSource.minX, CGFloat(sourceInsets.left) * sourceScaleX)
+        )
+        let centerMaxX = max(
+            centerMinX,
+            min(
+                visibleSource.maxX,
+                sourceSize.width - CGFloat(sourceInsets.right) * sourceScaleX
+            )
+        )
+        let centerMinY = min(
+            visibleSource.maxY,
+            max(visibleSource.minY, CGFloat(sourceInsets.top) * sourceScaleY)
+        )
+        let centerMaxY = max(
+            centerMinY,
+            min(
+                visibleSource.maxY,
+                sourceSize.height - CGFloat(sourceInsets.bottom) * sourceScaleY
+            )
+        )
         let sourceX = [
-            0,
-            CGFloat(sourceInsets.left),
-            sourceSize.width - CGFloat(sourceInsets.right),
-            sourceSize.width
+            visibleSource.minX,
+            centerMinX,
+            centerMaxX,
+            visibleSource.maxX
         ]
         let sourceY = [
-            0,
-            CGFloat(sourceInsets.top),
-            sourceSize.height - CGFloat(sourceInsets.bottom),
-            sourceSize.height
+            visibleSource.minY,
+            centerMinY,
+            centerMaxY,
+            visibleSource.maxY
         ]
         let destinationX = [
             0,
@@ -581,6 +621,70 @@ private struct NineSliceDecorativeFrameView: View {
                 }
             }
         }
+    }
+}
+
+@MainActor
+private enum CatalogImageAlphaBounds {
+    private static let cache = NSCache<NSString, NSValue>()
+    // Same visibility threshold as normalize_catalog_png.pl --trim-alpha.
+    private static let minimumVisibleAlpha: UInt8 = 8
+
+    static func visibleBounds(of image: UIImage, cacheKey: String) -> CGRect {
+        let key = "\(cacheKey)|\(image.size.width)x\(image.size.height)" as NSString
+        if let cached = cache.object(forKey: key) { return cached.cgRectValue }
+        let fallback = CGRect(origin: .zero, size: image.size)
+        guard image.imageOrientation == .up, let source = image.cgImage else {
+            return fallback
+        }
+
+        let width = source.width
+        let height = source.height
+        let alphaThreshold = minimumVisibleAlpha
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        let pixelBounds = pixels.withUnsafeMutableBytes { bytes -> CGRect? in
+            guard let context = CGContext(
+                data: bytes.baseAddress,
+                width: width,
+                height: height,
+                bitsPerComponent: 8,
+                bytesPerRow: width * 4,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+                    | CGBitmapInfo.byteOrder32Big.rawValue
+            ) else { return nil }
+            context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
+            let values = bytes.bindMemory(to: UInt8.self)
+            var minimumX = width
+            var minimumY = height
+            var maximumX = -1
+            var maximumY = -1
+            for y in 0..<height {
+                for x in 0..<width
+                    where values[(y * width + x) * 4 + 3] > alphaThreshold {
+                    minimumX = min(minimumX, x)
+                    minimumY = min(minimumY, y)
+                    maximumX = max(maximumX, x)
+                    maximumY = max(maximumY, y)
+                }
+            }
+            guard maximumX >= minimumX, maximumY >= minimumY else { return nil }
+            return CGRect(
+                x: minimumX,
+                y: minimumY,
+                width: maximumX - minimumX + 1,
+                height: maximumY - minimumY + 1
+            )
+        }
+        guard let pixelBounds else { return fallback }
+        let pointBounds = CGRect(
+            x: pixelBounds.minX * image.size.width / CGFloat(width),
+            y: pixelBounds.minY * image.size.height / CGFloat(height),
+            width: pixelBounds.width * image.size.width / CGFloat(width),
+            height: pixelBounds.height * image.size.height / CGFloat(height)
+        )
+        cache.setObject(NSValue(cgRect: pointBounds), forKey: key)
+        return pointBounds
     }
 }
 
@@ -754,31 +858,13 @@ struct EditablePageCanvas: View {
                         }
                     }
                 }
-                .dropDestination(for: PhotoAssetDragPayload.self) { payloads, location in
-                    guard let payload = payloads.first,
-                          !model.isReadOnly,
-                          model.photos.contains(where: { $0.id == payload.assetID }) else {
-                        return false
-                    }
-                    let point = normalizedPoint(location, pageSize: pageSize)
-                    let targetFrame = CanvasHitTesting.overlappingElements(
-                        at: point,
-                        in: page
-                    ).compactMap(\.photoFrame).first
-                    model.select(elementID: targetFrame?.id)
-                    Task { await model.placePhoto(payload.assetID, center: point) }
-                    return true
-                }
-                .dropDestination(for: StickerDragPayload.self) { payloads, location in
-                    guard let payload = payloads.first,
-                          !model.isReadOnly,
-                          let definition = BuiltInStickerCatalog.definition(
-                              id: payload.catalogID,
-                              version: payload.catalogVersion
-                          ) else { return false }
-                    let point = normalizedPoint(location, pageSize: pageSize)
-                    Task { await model.addSticker(definition, center: point) }
-                    return true
+                .dropDestination(for: CanvasElementDragPayload.self) { payloads, location in
+                    handleCanvasDrop(
+                        payloads.first,
+                        at: location,
+                        page: page,
+                        pageSize: pageSize
+                    )
                 }
         } else {
             // Aucun recognizer de sélection, navigation, zoom canevas ou dépôt
@@ -875,6 +961,36 @@ struct EditablePageCanvas: View {
             x: min(1, max(0, location.x / pageSize.width)),
             y: min(1, max(0, location.y / pageSize.height))
         )
+    }
+
+    private func handleCanvasDrop(
+        _ payload: CanvasElementDragPayload?,
+        at location: CGPoint,
+        page: PageSnapshot,
+        pageSize: CGSize
+    ) -> Bool {
+        guard let payload, !model.isReadOnly else { return false }
+        let point = normalizedPoint(location, pageSize: pageSize)
+        switch payload {
+        case let .photo(assetID):
+            guard model.photos.contains(where: { $0.id == assetID }) else {
+                return false
+            }
+            let targetFrame = CanvasHitTesting.overlappingElements(
+                at: point,
+                in: page
+            ).compactMap(\.photoFrame).first
+            model.select(elementID: targetFrame?.id)
+            Task { await model.placePhoto(assetID, center: point) }
+            return true
+        case let .sticker(catalogID, catalogVersion):
+            guard let definition = BuiltInStickerCatalog.definition(
+                id: catalogID,
+                version: catalogVersion
+            ) else { return false }
+            Task { await model.addSticker(definition, center: point) }
+            return true
+        }
     }
 
     private func canTransformCanvas(
@@ -1070,7 +1186,10 @@ private struct SelectionOverlay: View {
                 Circle()
                     .fill(Color.white)
                     .overlay(Circle().stroke(Color.accentColor, lineWidth: 2))
-                    .frame(width: 22, height: 22)
+                    .frame(
+                        width: resizeHandleVisualDiameter,
+                        height: resizeHandleVisualDiameter
+                    )
                     .offset(desiredHandleOffset(handle))
                     .allowsHitTesting(false)
 
@@ -1084,8 +1203,11 @@ private struct SelectionOverlay: View {
                             )
                         }
                     }
-                    .frame(width: 22, height: 22)
-                    .contentShape(Rectangle().inset(by: -11))
+                    .frame(
+                        width: resizeHandleVisualDiameter,
+                        height: resizeHandleVisualDiameter
+                    )
+                    .contentShape(Rectangle().inset(by: -resizeHandleHitExpansion))
                     .gesture(resizeGesture(for: handle))
                     .offset(handleOffset(handle))
                     .accessibilityLabel(handle.accessibilityLabel)
@@ -1098,18 +1220,21 @@ private struct SelectionOverlay: View {
 
             Rectangle()
                 .fill(Color.accentColor)
-                .frame(width: 2, height: 18)
-                .offset(y: -overlaySize.height / 2 - 9)
+                .frame(width: 2, height: rotationStemLength)
+                .offset(y: -overlaySize.height / 2 - rotationStemLength / 2)
                 .allowsHitTesting(false)
 
             Circle()
                 .fill(Color.white)
                 .overlay {
                     Image(systemName: "rotate.right")
-                        .font(.caption.bold())
+                        .font(.system(size: rotationIconSize, weight: .bold))
                 }
                 .overlay(Circle().stroke(Color.accentColor, lineWidth: 2))
-                .frame(width: 34, height: 34)
+                .frame(
+                    width: rotationHandleVisualDiameter,
+                    height: rotationHandleVisualDiameter
+                )
                 .offset(desiredRotationHandleOffset)
                 .allowsHitTesting(false)
 
@@ -1118,15 +1243,18 @@ private struct SelectionOverlay: View {
                 .overlay {
                     if rotationHandleIsInset {
                         Image(systemName: "rotate.right")
-                            .font(.caption.bold())
+                            .font(.system(size: rotationIconSize, weight: .bold))
                         Circle().stroke(
                             Color.accentColor,
                             style: StrokeStyle(lineWidth: 2, dash: [3, 2])
                         )
                     }
                 }
-                .frame(width: 34, height: 34)
-                .contentShape(Rectangle().inset(by: -8))
+                .frame(
+                    width: rotationHandleVisualDiameter,
+                    height: rotationHandleVisualDiameter
+                )
+                .contentShape(Rectangle().inset(by: -rotationHandleHitExpansion))
                 .gesture(rotationGesture)
                 .offset(rotationHandleOffset)
                 .accessibilityLabel("Rotation du cadre")
@@ -1173,6 +1301,36 @@ private struct SelectionOverlay: View {
             width: max(1, geometry.width * pageSize.width),
             height: max(1, geometry.height * pageSize.height)
         )
+    }
+
+    /// Visual controls shrink with tiny elements, while their invisible touch
+    /// targets remain 44/50 points for accessibility (3:ELM-002, 3:ACC-003).
+    private var selectionControlReference: CGFloat {
+        min(overlaySize.width, overlaySize.height)
+    }
+
+    private var resizeHandleVisualDiameter: CGFloat {
+        min(22, max(6, selectionControlReference * 0.18))
+    }
+
+    private var resizeHandleHitExpansion: CGFloat {
+        (44 - resizeHandleVisualDiameter) / 2
+    }
+
+    private var rotationHandleVisualDiameter: CGFloat {
+        min(34, max(10, selectionControlReference * 0.28))
+    }
+
+    private var rotationHandleHitExpansion: CGFloat {
+        (50 - rotationHandleVisualDiameter) / 2
+    }
+
+    private var rotationIconSize: CGFloat {
+        max(5, rotationHandleVisualDiameter * 0.38)
+    }
+
+    private var rotationStemLength: CGFloat {
+        min(18, max(6, selectionControlReference * 0.20))
     }
 
     private var selectionAccessibilityLabel: String {

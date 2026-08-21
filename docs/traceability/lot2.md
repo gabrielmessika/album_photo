@@ -87,6 +87,12 @@ employé les anciens libellés par erreur : il est reporté par correspondance
 `+16` sur les nouvelles fiches. Il compte 12 réussites et 4 échecs (`058`,
 `061`, `062`, `065`) ; les sources applicatives du paquet documentaire
 `94deaf2…` sont identiques à celles de `64f5342…`.
+Une révision locale corrige maintenant les quatre anomalies sans réattribuer
+leurs verdicts : conversion des traits natifs autorisés et retour arrière de
+limite, dépôt unifié, remplacement à cible capturée, commandes adaptatives,
+préchargement du rendu de couverture et alignement alpha du neuf-zones. Elle
+passe 157 tests, le parse AppModule, les contrats et les seize empreintes sous
+WSL ; les nouvelles preuves iPad seront créées sur son commit exact.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -254,9 +260,11 @@ suppression du formulaire défilant et de la hauteur fixe.
   incomplet jusqu’aux autres sorties et qualifications Apple applicables.
 - L’ADR-003 isole la limite SwiftUI : la saisie prévisualise Justifié à gauche,
   tandis que le renderer de page TextKit public le compose réellement. Le
-  collage riche externe de `TBX-007` reste incomplet : `IPAD-L2-058` constate
+  collage riche externe de `TBX-007` échoue sous `IPAD-L2-058`, qui constate
   la perte du gras et de l’italique filtrés ainsi qu’une annulation sans retour
-  à l’état précédent au-delà de 1 000 caractères. La partie Exporter de
+  à l’état précédent au-delà de 1 000 caractères. Le correctif convertit les
+  traits natifs avant normalisation et mémorise l’ancienne valeur, mais sa
+  preuve Apple reste à créer. La partie Exporter de
   `TBX-021`, prévue au Lot 3, reste partielle ; le regroupement `TBX-022` est
   implémenté et validé globalement par `057`.
 - Les 40 stickers et 6 cadres décoratifs sont persistables après validation des
@@ -265,7 +273,10 @@ suppression du formulaire défilant et de la hauteur fixe.
   du glisser-déposer, des poignées qui masquent un petit sticker et l’absence du
   sticker dans la miniature d’album ; cette dernière n’est pas voulue selon
   `COV-007` et `CAN-008`. `062` constate un ajout à la place du remplacement,
-  et `065` un décor en retrait du bord laissant voir la photo.
+  et `065` un décor en retrait du bord laissant voir la photo. Les corrections
+  unifient la destination, réduisent seulement le dessin des commandes,
+  préchargent la couverture, conservent la cible de remplacement et alignent
+  le décor visible ; leur qualification iPad reste à exécuter.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
 - Le candidat initial gardait un rail et un inspecteur légèrement rognés en

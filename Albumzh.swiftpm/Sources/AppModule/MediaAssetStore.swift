@@ -145,12 +145,22 @@ enum CatalogAssetImageLoader {
         }
         guard let image = UIImage(data: data) else { return nil }
         let longest = max(image.size.width, image.size.height)
-        guard longest > CGFloat(maximumPixelSize) else { return image }
-        let ratio = CGFloat(maximumPixelSize) / longest
-        return image.preparingThumbnail(of: CGSize(
-            width: max(1, image.size.width * ratio),
-            height: max(1, image.size.height * ratio)
-        ))
+        let resolvedImage: UIImage
+        if longest > CGFloat(maximumPixelSize) {
+            let ratio = CGFloat(maximumPixelSize) / longest
+            resolvedImage = image.preparingThumbnail(of: CGSize(
+                width: max(1, image.size.width * ratio),
+                height: max(1, image.size.height * ratio)
+            )) ?? image
+        } else {
+            resolvedImage = image
+        }
+        cache?.storeCatalogImage(
+            resolvedImage,
+            for: contentHash,
+            maximumPixelSize: maximumPixelSize
+        )
+        return resolvedImage
     }
 }
 
@@ -165,8 +175,11 @@ struct BundledCatalogImage: View {
 
     var body: some View {
         Group {
-            if let renderedImage {
-                Image(uiImage: renderedImage)
+            if let resolvedImage = renderedImage ?? cache?.cachedCatalogImage(
+                for: contentHash,
+                maximumPixelSize: maximumPixelSize
+            ) {
+                Image(uiImage: resolvedImage)
                     .resizable()
                     .interpolation(.high)
             } else if didFinishLoading {
@@ -568,18 +581,19 @@ struct PickedPhotoFile: Transferable, Sendable {
 }
 
 extension UTType {
-    static let albumPhotoAsset = UTType(
-        exportedAs: "com.albumphoto.canvas.photo-asset"
+    static let albumCanvasElement = UTType(
+        exportedAs: "com.albumphoto.canvas.element"
     )
 }
 
-/// Payload local et typé : une chaîne arbitraire déposée depuis une autre app
-/// ne peut jamais être interprétée comme l’identifiant d’une photo de l’album.
-struct PhotoAssetDragPayload: Codable, Transferable, Sendable {
-    let assetID: UUID
+/// Payload local unique pour le canevas. Une destination SwiftUI commune évite
+/// que les dépôts photo et sticker se remplacent mutuellement (3:STK-004).
+enum CanvasElementDragPayload: Codable, Transferable, Sendable {
+    case photo(assetID: UUID)
+    case sticker(catalogID: String, catalogVersion: Int)
 
     static var transferRepresentation: some TransferRepresentation {
-        CodableRepresentation(contentType: .albumPhotoAsset)
+        CodableRepresentation(contentType: .albumCanvasElement)
     }
 }
 
@@ -873,6 +887,20 @@ final class PhotoImageCache {
     ) -> UIImage? {
         cache.object(
             forKey: "catalog-\(contentHash)-\(maximumPixelSize)" as NSString
+        )
+    }
+
+    func storeCatalogImage(
+        _ image: UIImage,
+        for contentHash: String,
+        maximumPixelSize: Int
+    ) {
+        let pixels = max(1, Int(image.size.width * image.scale))
+            * max(1, Int(image.size.height * image.scale))
+        cache.setObject(
+            image,
+            forKey: "catalog-\(contentHash)-\(maximumPixelSize)" as NSString,
+            cost: pixels * 4
         )
     }
 

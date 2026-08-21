@@ -1,24 +1,5 @@
 import AlbumPhotoCore
-import CoreTransferable
 import SwiftUI
-import UniformTypeIdentifiers
-
-extension UTType {
-    static let albumStickerCatalog = UTType(
-        exportedAs: "com.albumphoto.catalog.sticker"
-    )
-}
-
-/// A typed, local catalog payload. Arbitrary external drops cannot become a
-/// persisted sticker reference (3:STK-004/CAT-003).
-struct StickerDragPayload: Codable, Transferable, Sendable {
-    let catalogID: String
-    let catalogVersion: Int
-
-    static var transferRepresentation: some TransferRepresentation {
-        CodableRepresentation(contentType: .albumStickerCatalog)
-    }
-}
 
 struct StickerPanelView: View {
     @ObservedObject var model: EditorViewModel
@@ -35,13 +16,32 @@ struct StickerPanelView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if model.stickerReplacementTargetID != nil {
-                Label(
-                    "Choisissez le sticker de remplacement",
-                    systemImage: "arrow.triangle.2.circlepath"
+                HStack(alignment: .top, spacing: 8) {
+                    Label(
+                        "Choisissez le sticker de remplacement",
+                        systemImage: "arrow.triangle.2.circlepath"
+                    )
+                    .font(.subheadline.weight(.semibold))
+                    Spacer(minLength: 4)
+                    Button("Annuler le choix", systemImage: "xmark") {
+                        model.cancelStickerReplacement()
+                    }
+                    .labelStyle(.iconOnly)
+                    .accessibilityLabel("Annuler le remplacement du sticker")
+                }
+                .padding(11)
+                .background(
+                    Color.orange.opacity(0.28),
+                    in: RoundedRectangle(cornerRadius: 10)
                 )
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .accessibilityAddTraits(.isHeader)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.orange, lineWidth: 2)
+                }
+                .accessibilityLabel(
+                    "Mode de choix actif : choisissez le sticker de remplacement"
+                )
+                .accessibilityElement(children: .contain)
             }
 
             if model.stickerCountOnActivePage > 20 {
@@ -184,7 +184,7 @@ struct StickerPanelView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .draggable(StickerDragPayload(
+        .draggable(CanvasElementDragPayload.sticker(
             catalogID: definition.catalogID,
             catalogVersion: 1
         )) {

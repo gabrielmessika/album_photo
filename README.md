@@ -176,6 +176,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   iPad a ensuite été saisie avec les anciens libellés ; ses résultats sont
   reportés un pour un sur `IPAD-L2-055…070` : 12 réussites et 4 échecs
   (`058`, `061`, `062`, `065`), toujours sans retester Info.
+  La révision locale suivante corrige ces quatre écarts : conservation du
+  gras/italique collé et restauration après dépassement, destination de dépôt
+  photo/sticker unique, remplacement à cible stable, commandes adaptatives,
+  ressources de miniature préchargées et cadre décoratif aligné sur son alpha
+  visible. Elle passe les 157 tests WSL, le parse, les contrats et les seize
+  empreintes ; son commit exact et ses nouvelles fiches iPad restent à figer.
   Les validations compactes, Xcode/Release, Instruments et TestFlight sont
   remplacées par `APPLE-L2-006…009`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
@@ -236,7 +242,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   remplacement sticker (`062`) et l’alignement des cadres décoratifs (`065`).
   L’absence des stickers sur la miniature n’est pas voulue : `COV-007` et
   `CAN-008` imposent le même rendu composé. La partie Exporter de `TBX-021` ne
-  devient publique qu’au Lot 3.
+  devient publique qu’au Lot 3. Les quatre correctifs sont maintenant écrits
+  et validés structurellement sous WSL ; ils restent non qualifiés avec le SDK,
+  le rendu et les gestes Apple tant que leurs nouveaux tests iPad ne sont pas
+  exécutés.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-006` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,

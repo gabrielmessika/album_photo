@@ -66,7 +66,7 @@ final class TextEditingPrototypeTests: XCTestCase {
         let pasted = try TextEditingPrototype.filteredPaste(
             TextPastePrototypePayload(
                 text: "https://example.test\u{fffc}\u{0007}\nFin",
-                supportedStyle: TextCharacterStylePatch(weight: .bold),
+                supportedStyle: TextCharacterStylePatch(weight: .bold, isItalic: true),
                 discardedAttributeNames: ["link", "list", "table", "highlight"],
                 containsAttachment: true
             ),
@@ -75,6 +75,7 @@ final class TextEditingPrototypeTests: XCTestCase {
         XCTAssertEqual(pasted.plainText, "https://example.test\nFin")
         XCTAssertEqual(pasted.paragraphs.count, 2)
         XCTAssertTrue(pasted.paragraphs.allSatisfy { $0.runs[0].weight == .bold })
+        XCTAssertTrue(pasted.paragraphs.allSatisfy { $0.runs[0].isItalic })
         XCTAssertEqual(
             TextEditingPrototype.sanitizedPlainText("A\u{fffc}\u{0007}\tB\nC"),
             "A\tB\nC"

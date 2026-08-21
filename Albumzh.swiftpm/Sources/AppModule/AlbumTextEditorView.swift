@@ -150,6 +150,9 @@ private extension AttributeScopes {
 
     struct AlbumTextAttributes: AttributeScope {
         let model: AlbumTextModelAttributes
+        let pastedFont: AttributeScopes.UIKitAttributes.FontAttribute
+        let inlinePresentationIntent:
+            AttributeScopes.FoundationAttributes.InlinePresentationIntentAttribute
         let font: AttributeScopes.SwiftUIAttributes.FontAttribute
         let foregroundColor: AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute
         let alignment: AttributeScopes.CoreTextAttributes.TextAlignmentAttribute
@@ -168,12 +171,37 @@ private extension AttributeDynamicLookup {
 private struct AlbumTextFormattingDefinition: AttributedTextFormattingDefinition {
     typealias Scope = AttributeScopes.AlbumTextAttributes
     let pageHeight: Double
+    let fallbackStyle: TextStyleDefaults
 
     var body: some AttributedTextFormattingDefinition<Scope> {
+        CapturePastedAlbumTextStyle(fallbackStyle: fallbackStyle)
         ApplyAlbumFont(pageHeight: pageHeight)
         ApplyAlbumForegroundColor()
         ApplyAlbumAlignment()
         ApplyAlbumLineHeight()
+    }
+}
+
+/// Converts the two supported native emphasis traits into the persisted album
+/// style before the rendering constraints replace a pasted font (3:TBX-007).
+private struct CapturePastedAlbumTextStyle: AttributedTextValueConstraint {
+    typealias Scope = AlbumTextFormattingDefinition.Scope
+    typealias AttributeKey = AlbumTextStyleAttribute
+    let fallbackStyle: TextStyleDefaults
+
+    func constrain(_ container: inout Attributes) {
+        guard container.albumTextStyle == nil else { return }
+        var style = fallbackStyle
+        if let pastedFont = container.pastedFont {
+            let traits = pastedFont.fontDescriptor.symbolicTraits
+            style.weight = traits.contains(.traitBold) ? .bold : .regular
+            style.isItalic = traits.contains(.traitItalic)
+        }
+        if let intent = container.inlinePresentationIntent {
+            if intent.contains(.stronglyEmphasized) { style.weight = .bold }
+            if intent.contains(.emphasized) { style.isItalic = true }
+        }
+        container.albumTextStyle = style
     }
 }
 
@@ -461,6 +489,7 @@ struct AlbumTextEditorView: View {
     @State private var typingDefaults: TextStyleDefaults
     @State private var opacity: Double
     @State private var showsCharacterLimit = false
+    @State private var characterLimitRollback: AttributedString?
     @State private var showsColorPalette = false
     @State private var retainedSelection: AttributedTextSelection?
     @State private var retainedSelectionText: String?
@@ -513,7 +542,8 @@ struct AlbumTextEditorView: View {
                 TextEditor(text: $text, selection: $selection)
                     .attributedTextFormattingDefinition(
                         AlbumTextFormattingDefinition(
-                            pageHeight: request.previewPageHeight
+                            pageHeight: request.previewPageHeight,
+                            fallbackStyle: typingDefaults
                         )
                     )
                     .textInputFormattingControlVisibility(.hidden, for: .all)
@@ -543,6 +573,9 @@ struct AlbumTextEditorView: View {
                         guard newValue.characters.count > 1_000 else {
                             scheduleCheckpoint()
                             return
+                        }
+                        if characterLimitRollback == nil {
+                            characterLimitRollback = oldValue
                         }
                         let limited = limitedText(oldValue: oldValue, newValue: newValue)
                         text = limited.value
@@ -629,9 +662,18 @@ struct AlbumTextEditorView: View {
         }
         .onDisappear { checkpointTask?.cancel() }
         .alert("Limite atteinte", isPresented: $showsCharacterLimit) {
-            Button("OK", role: .cancel) {}
+            Button("Annuler", role: .cancel) {
+                restoreCharacterLimitRollback()
+            }
+            Button("Conserver 1 000 caractères") {
+                characterLimitRollback = nil
+                scheduleCheckpoint()
+            }
         } message: {
-            Text("Une zone de texte est limitée à 1 000 caractères.")
+            Text(
+                "Une zone de texte est limitée à 1 000 caractères. "
+                    + "Vous pouvez conserver le texte tronqué ou annuler la modification."
+            )
         }
     }
 
@@ -1014,6 +1056,20 @@ struct AlbumTextEditorView: View {
             await onCancel()
             isResolving = false
         }
+    }
+
+    private func restoreCharacterLimitRollback() {
+        guard let rollback = characterLimitRollback else { return }
+        checkpointTask?.cancel()
+        characterLimitRollback = nil
+        text = rollback
+        selection = AttributedTextSelection(
+            insertionPoint: text.endIndex,
+            typingAttributes: AlbumTextAttributedBridge.typingAttributes(
+                for: typingDefaults,
+                pageHeight: request.previewPageHeight
+            )
+        )
     }
 
     /// The task is replaced on every local change, so exactly one checkpoint

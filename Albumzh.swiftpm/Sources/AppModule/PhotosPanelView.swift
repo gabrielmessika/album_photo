@@ -404,7 +404,7 @@ private struct PhotoPanelTile: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .buttonStyle(.plain)
-        .draggable(PhotoAssetDragPayload(assetID: asset.id)) {
+        .draggable(CanvasElementDragPayload.photo(assetID: asset.id)) {
             StoredPhotoImage(
                 metadata: asset,
                 cache: cache,

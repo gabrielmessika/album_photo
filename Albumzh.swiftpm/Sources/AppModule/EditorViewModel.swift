@@ -410,15 +410,24 @@ final class EditorViewModel: ObservableObject {
         activePanel = .stickers
     }
 
+    func cancelStickerReplacement() {
+        stickerReplacementTargetID = nil
+    }
+
     @discardableResult
     func placeSticker(_ definition: StickerCatalogDefinition) async -> Bool {
         guard let pageID = activePageID else { return false }
+        // Capture the intent before suspension. A catalog bootstrap refresh may
+        // replace the active snapshot but must never turn Replace into Add.
+        let requestedReplacementID = stickerReplacementTargetID
         await appModel.waitForCatalogBootstrap()
-        let replacementID = stickerReplacementTargetID.flatMap { targetID in
-            activePage?.element(id: targetID)?.sticker == nil ? nil : targetID
-        }
         let succeeded: Bool
-        if let replacementID {
+        if let replacementID = requestedReplacementID {
+            guard activePage?.element(id: replacementID)?.sticker != nil else {
+                stickerReplacementTargetID = nil
+                errorMessage = "Le sticker à remplacer n’est plus présent sur la page."
+                return false
+            }
             succeeded = await mutate("Impossible de remplacer le sticker.") {
                 try await self.service.replaceSticker(
                     replacementID,

@@ -80,9 +80,9 @@ struct AlbumCoverView: View {
             album: album,
             photoAssets: Array(assetMap.values)
         ) {
-            return "cover-480x360-v1-\(fingerprint)"
+            return "cover-480x360-v2-\(fingerprint)"
         }
-        return "cover-480x360-v1-\(album.id.uuidString)-\(album.updatedAt.timeIntervalSince1970)"
+        return "cover-480x360-v2-\(album.id.uuidString)-\(album.updatedAt.timeIntervalSince1970)"
     }
 
     @MainActor
@@ -119,9 +119,39 @@ struct AlbumCoverView: View {
 
         if let page {
             for element in page.orderedElements {
-                guard let placement = element.photoFrame?.content,
-                      let metadata = assetMap[placement.assetID] else { continue }
-                _ = await imageCache.image(for: metadata, maximumPixelSize: 480)
+                switch element {
+                case let .photo(frame):
+                    if let placement = frame.content,
+                       let metadata = assetMap[placement.assetID] {
+                        _ = await imageCache.image(for: metadata, maximumPixelSize: 480)
+                    }
+                    if let reference = frame.decorativeFrame,
+                       let definition = BuiltInDecorativeFrameCatalog.definition(
+                           id: reference.catalogID,
+                           version: reference.catalogVersion
+                       ), definition.reference == reference {
+                        _ = await CatalogAssetImageLoader.image(
+                            dataAssetName: definition.dataAssetName,
+                            contentHash: definition.contentHash,
+                            cache: imageCache,
+                            maximumPixelSize: 480
+                        )
+                    }
+                case let .sticker(sticker):
+                    if let definition = BuiltInStickerCatalog.definition(
+                        id: sticker.resource.catalogID,
+                        version: sticker.resource.catalogVersion
+                    ), definition.reference == sticker.resource {
+                        _ = await CatalogAssetImageLoader.image(
+                            dataAssetName: definition.dataAssetName,
+                            contentHash: definition.contentHash,
+                            cache: imageCache,
+                            maximumPixelSize: 320
+                        )
+                    }
+                case .text:
+                    break
+                }
             }
             if case let .catalog(reference) = page.background,
                let hash = reference.fallbackContentHash {
