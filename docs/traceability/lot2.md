@@ -87,12 +87,12 @@ employé les anciens libellés par erreur : il est reporté par correspondance
 `+16` sur les nouvelles fiches. Il compte 12 réussites et 4 échecs (`058`,
 `061`, `062`, `065`) ; les sources applicatives du paquet documentaire
 `94deaf2…` sont identiques à celles de `64f5342…`.
-Une révision locale corrige maintenant les quatre anomalies sans réattribuer
-leurs verdicts : conversion des traits natifs autorisés et retour arrière de
+Le candidat exact `9bc11e7423178b66c48446c59abc5a912de5c26f` corrige les
+quatre anomalies sans réattribuer leurs verdicts : conversion des traits natifs autorisés et retour arrière de
 limite, dépôt unifié, remplacement à cible capturée, commandes adaptatives,
 préchargement du rendu de couverture et alignement alpha du neuf-zones. Elle
 passe 157 tests, le parse AppModule, les contrats et les seize empreintes sous
-WSL ; les nouvelles preuves iPad seront créées sur son commit exact.
+WSL ; `IPAD-L2-071…074` et `APPLE-L2-010…013` portent ses nouvelles preuves.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -100,8 +100,9 @@ La source normative reste
 
 Le candidat final possède désormais 12 scénarios iPad réussis sur les 16 fiches
 `055…070`. Les quatre écarts fonctionnels concernent le collage riche, les
-stickers et les cadres décoratifs ; les validations Apple `006…009` restent à
-exécuter. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
+stickers et les cadres décoratifs ; leurs régressions `071…074` restent à
+exécuter. Les validations Apple `006…009` restent attachées à `64f5342…` et
+leurs remplacements courants sont `010…013`. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
 
@@ -203,6 +204,10 @@ aucune fiche iPad.
 | `IPAD-L2-068` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-069` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-070` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-071` | Régression collage riche et annulation de limite | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `IPAD-L2-072` | Régression dépôt, petites commandes et miniature sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-002`, `ACC-003`, `COV-007`, `CAN-008` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `IPAD-L2-073` | Régression remplacement réel d’un sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `IPAD-L2-074` | Régression alignement des cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -215,7 +220,7 @@ sélecteur d’élément et déplace le dé dans Mise en page. Les contrôles
 `009…012` le qualifient désormais sur iPad par le retour global « tous les
 tests sont ok », sans capture ni détail par étape. Cette preuve est limitée à
 ces quatre fiches. Le menu Plus n’est pas demandé au plein écran iPad :
-`APPLE-L2-001` conserve cette dette historique ; `APPLE-L2-006` requalifiera
+`APPLE-L2-001` conserve cette dette historique ; `APPLE-L2-010` requalifiera
 l’interface finale complète sur iPhone ou dans un environnement Xcode
 réellement compact.
 
@@ -239,6 +244,10 @@ suppression du formulaire défilant et de la hauteur fixe.
 | `APPLE-L2-007` | Debug/Release et tests Apple du correctif | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` |
 | `APPLE-L2-008` | Instruments et enveloppe maximale du correctif | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` |
 | `APPLE-L2-009` | TestFlight distinct du correctif | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` |
+| `APPLE-L2-010` | Interface corrigée en largeur compacte et petites commandes | `EDT-001…004`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-016`, `EDT-020`, `EDT-021`, `TBX-005`, `TBX-027`, `ACC-002`, `ACC-003`, `ACC-021` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `APPLE-L2-011` | Debug/Release et tests Apple du candidat corrigé | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `APPLE-L2-012` | Instruments et enveloppe maximale du candidat corrigé | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `APPLE-L2-013` | TestFlight distinct du candidat corrigé | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
 
 ## Écarts connus de l’incrément
 
@@ -253,7 +262,8 @@ suppression du formulaire défilant et de la hauteur fixe.
   valeur Commit `Non estampillé`. Le producteur d’artefact contrôlé corrige le
   transport ; ce contrôle est différé sur décision utilisateur. `TBX-027` est
   implémenté dans `fce5d92…`, dont la compilation a échoué avant le contrôle ;
-  il attend `IPAD-L2-056` sur le correctif puis `APPLE-L2-006`.
+  `IPAD-L2-056` le confirme sur le correctif ; `APPLE-L2-010` garde la
+  qualification compacte.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure

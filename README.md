@@ -176,14 +176,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   iPad a ensuite été saisie avec les anciens libellés ; ses résultats sont
   reportés un pour un sur `IPAD-L2-055…070` : 12 réussites et 4 échecs
   (`058`, `061`, `062`, `065`), toujours sans retester Info.
-  La révision locale suivante corrige ces quatre écarts : conservation du
+  Le candidat exact
+  `9bc11e7423178b66c48446c59abc5a912de5c26f` corrige ces quatre écarts : conservation du
   gras/italique collé et restauration après dépassement, destination de dépôt
   photo/sticker unique, remplacement à cible stable, commandes adaptatives,
   ressources de miniature préchargées et cadre décoratif aligné sur son alpha
-  visible. Elle passe les 157 tests WSL, le parse, les contrats et les seize
-  empreintes ; son commit exact et ses nouvelles fiches iPad restent à figer.
-  Les validations compactes, Xcode/Release, Instruments et TestFlight sont
-  remplacées par `APPLE-L2-006…009`.
+  visible. Il passe les 157 tests WSL, le parse, les contrats et les seize
+  empreintes ; ses régressions ciblées sont `IPAD-L2-071…074`.
+  Les validations `APPLE-L2-006…009` restent attachées à `64f5342…` ; leurs
+  remplacements pour le candidat courant sont `APPLE-L2-010…013`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : 157 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
@@ -243,11 +244,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   L’absence des stickers sur la miniature n’est pas voulue : `COV-007` et
   `CAN-008` imposent le même rendu composé. La partie Exporter de `TBX-021` ne
   devient publique qu’au Lot 3. Les quatre correctifs sont maintenant écrits
-  et validés structurellement sous WSL ; ils restent non qualifiés avec le SDK,
-  le rendu et les gestes Apple tant que leurs nouveaux tests iPad ne sont pas
-  exécutés.
+  et figés dans `9bc11e7…`, validé structurellement sous WSL ; ils restent non
+  qualifiés avec le SDK, le rendu et les gestes Apple tant que
+  `IPAD-L2-071…074` ne sont pas exécutés.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
-  séparément par `APPLE-L2-006` sur iPhone ou Xcode. Les
+  séparément par `APPLE-L2-010` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur
