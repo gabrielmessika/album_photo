@@ -166,7 +166,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   originaux, 6 formes natives, 6 cadres décoratifs à rendu neuf zones, le
   presse-papiers commun photo/texte/sticker, le regroupement de frappe à 750 ms,
   le rendu de page justifié et le blocage de la prévisualisation en cas de
-  débordement. Lecture, diaporama, package et PDF relèvent du Lot 3.
+  débordement. Ce périmètre est figé dans le candidat
+  `fce5d92879a5a654778b02ec17a3707590554cd7`. La campagne finale
+  `IPAD-L2-039…054` couvre les autres fonctions du Lot 2 sans retester Info ;
+  les validations compactes, Xcode/Release, Instruments et TestFlight sont
+  détaillées sous `APPLE-L2-002…005`. Lecture, diaporama, package et PDF
+  relèvent du Lot 3.
 - Validation actuelle : 157 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
@@ -212,14 +217,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   exact. Sur iPad, `IPAD-L2-037…038` sont 🟢 `RÉUSSI` globalement, tandis que
   `IPAD-L2-036` est 🔴 `ÉCHOUÉ` parce que le package exécuté affiche
   `Non estampillé`. Le transport est désormais corrigé par la fabrication et la
-  vérification automatisées du paquet, mais ce nouveau chemin reste à qualifier
-  sur iPad avec un nouvel identifiant après gel du prochain commit. Les contrats
-  de 55 ressources et leurs 16 empreintes sont valides. La compilation et le
-  rendu Apple du nouveau périmètre stickers/cadres/texte restent non testés ;
+  vérification automatisées du paquet, mais sa régression est mise de côté à la
+  demande de l’utilisateur. Le candidat final `fce5d92…` passe les 157 tests
+  WSL ; les contrats de 55 ressources et leurs 16 empreintes sont valides. Les
+  seize fiches `039…054` sont toutes ⚪ `NON TESTÉ` : la compilation et le rendu
+  Apple du nouveau périmètre stickers/cadres/texte restent donc non prouvés ;
   `TBX-007` reste partiel pour les styles provenant d’un collage externe et la
   partie Exporter de `TBX-021` ne devient publique qu’au Lot 3.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
-  séparément par `APPLE-L2-001` sur iPhone ou Xcode. Les
+  séparément par `APPLE-L2-002` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur
@@ -769,6 +775,9 @@ Un checkout Working Copy transporte les fichiers Git bruts : le marqueur
 `export-subst` n’y est pas remplacé et `Info` affiche donc `Non estampillé`.
 Cette méthode convient au développement courant, mais pas à une fiche comme
 `IPAD-L2-036` qui exige le commit exact à l’exécution.
+Elle est explicitement autorisée pour `IPAD-L2-039…054`, puisque cette campagne
+vise le commit fonctionnel `fce5d92879a5a654778b02ec17a3707590554cd7` mais
+exclut le contrôle de la valeur Info.
 
 Si le document est lié en tant que dépôt externe avec Working Copy Pro, le pull
 peut écrire directement dans le package. Swift Playgrounds doit être fermé

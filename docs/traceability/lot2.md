@@ -69,16 +69,21 @@ candidat iPad**. Elle termine aussi le périmètre de code du lot 2 : boutons de
 texte compacts, justification dans le renderer commun de page, commandes de
 saisie regroupées à 750 ms, quarante stickers originaux, six cadres décoratifs,
 formes/contours à portée multiple et presse-papiers photo/texte/sticker. Cette
-révision n’est pas encore un candidat Apple : aucun nouveau verdict manuel ne
-lui est attribué avant son gel dans un commit exact.
+révision est figée dans le candidat fonctionnel
+`fce5d92879a5a654778b02ec17a3707590554cd7`. Les fiches
+`IPAD-L2-039…054` couvrent compilation, texte final, stickers, formes/cadres,
+presse-papiers, accessibilité et fluidité ; Info est volontairement exclu de
+cette campagne. `APPLE-L2-002…005` couvrent ensuite largeur compacte,
+Xcode/Release, Instruments et TestFlight. Aucun de ces nouveaux contrôles ne
+possède encore de verdict Apple.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
-Elle ne déclare aucun scénario de sortie réussi : Remplir l’album, son dialogue
+Le candidat final ne déclare encore aucun nouveau scénario de sortie réussi : Remplir l’album, son dialogue
 compact et le cadrage couvrant sont qualifiés jusqu’à `IPAD-L2-019`, mais la
-révision qui rassemble les autres sorties du lot reste à valider ;
+révision qui rassemble les autres sorties du lot reste à valider par `039…054` ;
 `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
@@ -149,6 +154,22 @@ aucune fiche iPad.
 | `IPAD-L2-036` | Info, version et commit exact du candidat | `ENV-001…005`, `APP-001`, `APP-012`, `ACC-001…004`, `ACC-008`, `DONE-005` | 🔴 `ÉCHOUÉ` — Commit affiche `Non estampillé` ; hash exact et copie non prouvés |
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-039` | Compilation, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | ⚪ `NON TESTÉ` sur `fce5d92…` |
+| `IPAD-L2-040` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-041` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-042` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-043` | Débordement et blocage Prévisualiser | `TBX-018…021`, `TBX-024`, `CAN-008`, `ACC-002`, `ACC-006` | ⚪ `NON TESTÉ` — Exporter reste Lot 3 |
+| `IPAD-L2-044` | Catalogue, recherche et récents | `STK-001…003`, `STK-006`, `STK-009…012`, `CAT-001`, `CAT-009` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-045` | Ajout, dépôt et géométrie sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-001…004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-046` | Remplacement et commandes sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-047` | Rendu, profondeur et persistance sticker | `STK-009`, `STK-024`, `CAN-008`, `SAV-001`, `ACC-006` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-048` | Six formes et conservation du cadrage | `SHR-001…003`, `SHR-006`, `SHR-010`, `SHR-012`, `CRP-001`, `CRP-007` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-049` | Contours et six cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-050` | Portées Sélection, Page et Album | `SHR-007`, `SHR-008`, `UND-001`, `SAV-001`, `ACC-002` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-051` | Copier/coller photo, texte et sticker | `CLP-001`, `CLP-003`, `CLP-004`, `ELM-009`, `FRM-007`, `SAV-001` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-052` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-053` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-054` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | ⚪ `NON TESTÉ` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -161,8 +182,9 @@ sélecteur d’élément et déplace le dé dans Mise en page. Les contrôles
 `009…012` le qualifient désormais sur iPad par le retour global « tous les
 tests sont ok », sans capture ni détail par étape. Cette preuve est limitée à
 ces quatre fiches. Le menu Plus n’est pas demandé au plein écran iPad :
-`APPLE-L2-001` reste ⚪ et vérifiera `EDT-004`, Ajouter une page et Gérer les
-pages sur iPhone ou dans un environnement Xcode réellement compact.
+`APPLE-L2-001` conserve cette dette historique ; `APPLE-L2-002` requalifiera
+l’interface finale complète sur iPhone ou dans un environnement Xcode
+réellement compact.
 
 Le candidat `b86c4b3…` modifie ensuite la barre sous le canevas et le libellé
 du mode pages. `IPAD-L2-013` réussit cette surface modifiée sur le retour
@@ -176,6 +198,10 @@ suppression du formulaire défilant et de la hauteur fixe.
 | ID Apple différé | Objet | Exigences principales | État |
 |---|---|---|---|
 | `APPLE-L2-001` | Barre compacte, Gérer les pages, confirmation et menu Plus sur iPhone/Xcode | `EDT-003`, `EDT-004`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-013`, `PAG-017`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` |
+| `APPLE-L2-002` | Interface finale en largeur compacte | `EDT-001…004`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-016`, `EDT-020`, `EDT-021`, `TBX-005`, `TBX-027`, `ACC-002`, `ACC-021` | ⚪ `NON TESTÉ` sur `fce5d92…` |
+| `APPLE-L2-003` | Debug/Release et tests Apple | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` |
+| `APPLE-L2-004` | Instruments et enveloppe maximale | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` |
+| `APPLE-L2-005` | TestFlight distinct | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` |
 
 ## Écarts connus de l’incrément
 
@@ -188,8 +214,8 @@ suppression du formulaire défilant et de la hauteur fixe.
   Le package combiné `6093058…` réussit `037…038`, ce qui confirme les motifs,
   Arrondie/Italique et les états actifs sur ce candidat. `036` échoue sur la
   valeur Commit `Non estampillé`. Le producteur d’artefact contrôlé corrige le
-  transport et `TBX-027` est implémenté, mais les deux attendent un nouveau
-  candidat et de nouveaux IDs de régression.
+  transport ; ce contrôle est différé sur décision utilisateur. `TBX-027` est
+  implémenté dans `fce5d92…` et attend `IPAD-L2-040` puis `APPLE-L2-002`.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure
@@ -199,8 +225,9 @@ suppression du formulaire défilant et de la hauteur fixe.
   collage riche externe de `TBX-007` et la partie Exporter de `TBX-021`, prévue
   au Lot 3, restent partiels ; le regroupement `TBX-022` est implémenté.
 - Les 40 stickers et 6 cadres décoratifs sont persistables après validation des
-  payloads, licences, insets et goldens de `CAT-009`; leur première build Apple
-  reste non compilée et non testée.
+  payloads, licences, insets et goldens de `CAT-009`; `IPAD-L2-039`, puis les
+  fiches `044…050`, doivent encore prouver leur première build et leur rendu
+  Apple.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
 - Le candidat initial gardait un rail et un inspecteur légèrement rognés en
