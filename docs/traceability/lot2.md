@@ -73,24 +73,29 @@ révision a été figée dans le candidat fonctionnel
 `fce5d92879a5a654778b02ec17a3707590554cd7`. `IPAD-L2-039` échoue toutefois
 dès la compilation : le type-checker de Swift Playgrounds ne résout pas dans
 un délai raisonnable la concaténation des segments UUID d’`AppModel` ligne 256.
-Les fiches `040…054` ne sont pas exécutées et restent attachées à ce candidat
-rejeté ; de nouveaux identifiants qualifieront le correctif. Info demeure
+Les fiches `040…054` n’ont pas été exécutées sur ce candidat et restent
+attachées au candidat rejeté ; de nouveaux identifiants qualifient le
+correctif. Info demeure
 volontairement exclu. `APPLE-L2-002…005` couvrent ensuite largeur compacte,
 Xcode/Release, Instruments et TestFlight.
 Le correctif `64f53424a0fc479c4fdea79c401d0b227d52eebd` découpe la
 construction UUID en cinq `String` explicites et passe 157 tests, le parse, les
 contrats de 55 ressources et les 16 empreintes sous WSL. Les remplacements
 `IPAD-L2-055…070` et `APPLE-L2-006…009` qualifient ce commit exact ; les
-anciens identifiants ne sont pas retargetés.
+anciens identifiants ne sont pas retargetés. Le retour iPad du 21 août a
+employé les anciens libellés par erreur : il est reporté par correspondance
+`+16` sur les nouvelles fiches. Il compte 12 réussites et 4 échecs (`058`,
+`061`, `062`, `065`) ; les sources applicatives du paquet documentaire
+`94deaf2…` sont identiques à celles de `64f5342…`.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
-Le candidat final ne déclare encore aucun nouveau scénario de sortie réussi : Remplir l’album, son dialogue
-compact et le cadrage couvrant sont qualifiés jusqu’à `IPAD-L2-019`, mais la
-révision qui rassemble les autres sorties du lot reste à valider par `055…070` ;
-`IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
+Le candidat final possède désormais 12 scénarios iPad réussis sur les 16 fiches
+`055…070`. Les quatre écarts fonctionnels concernent le collage riche, les
+stickers et les cadres décoratifs ; les validations Apple `006…009` restent à
+exécuter. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
 
@@ -161,37 +166,37 @@ aucune fiche iPad.
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-039` | Compilation, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | 🔴 `ÉCHOUÉ` à la compilation sur `fce5d92…` (`AppModel` ligne 256) |
-| `IPAD-L2-040` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-041` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-042` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-043` | Débordement et blocage Prévisualiser | `TBX-018…021`, `TBX-024`, `CAN-008`, `ACC-002`, `ACC-006` | ⚪ `NON TESTÉ` — Exporter reste Lot 3 |
-| `IPAD-L2-044` | Catalogue, recherche et récents | `STK-001…003`, `STK-006`, `STK-009…012`, `CAT-001`, `CAT-009` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-045` | Ajout, dépôt et géométrie sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-001…004` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-046` | Remplacement et commandes sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-047` | Rendu, profondeur et persistance sticker | `STK-009`, `STK-024`, `CAN-008`, `SAV-001`, `ACC-006` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-048` | Six formes et conservation du cadrage | `SHR-001…003`, `SHR-006`, `SHR-010`, `SHR-012`, `CRP-001`, `CRP-007` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-049` | Contours et six cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-050` | Portées Sélection, Page et Album | `SHR-007`, `SHR-008`, `UND-001`, `SAV-001`, `ACC-002` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-051` | Copier/coller photo, texte et sticker | `CLP-001`, `CLP-003`, `CLP-004`, `ELM-009`, `FRM-007`, `SAV-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-052` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-053` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-054` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-055` | Compilation corrigée, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | ⚪ `NON TESTÉ` sur `64f5342…` |
-| `IPAD-L2-056` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-057` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-058` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-059` | Débordement et blocage Prévisualiser | `TBX-018…021`, `TBX-024`, `CAN-008`, `ACC-002`, `ACC-006` | ⚪ `NON TESTÉ` — Exporter reste Lot 3 |
-| `IPAD-L2-060` | Catalogue, recherche et récents | `STK-001…003`, `STK-006`, `STK-009…012`, `CAT-001`, `CAT-009` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-061` | Ajout, dépôt et géométrie sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-001…004` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-062` | Remplacement et commandes sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-063` | Rendu, profondeur et persistance sticker | `STK-009`, `STK-024`, `CAN-008`, `SAV-001`, `ACC-006` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-064` | Six formes et conservation du cadrage | `SHR-001…003`, `SHR-006`, `SHR-010`, `SHR-012`, `CRP-001`, `CRP-007` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-065` | Contours et six cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-066` | Portées Sélection, Page et Album | `SHR-007`, `SHR-008`, `UND-001`, `SAV-001`, `ACC-002` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-067` | Copier/coller photo, texte et sticker | `CLP-001`, `CLP-003`, `CLP-004`, `ELM-009`, `FRM-007`, `SAV-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-068` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-069` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-070` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-040` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` — archive, remplacé par `056` |
+| `IPAD-L2-041` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | ⚪ `NON TESTÉ` — archive, remplacé par `057` |
+| `IPAD-L2-042` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | ⚪ `NON TESTÉ` — archive, remplacé par `058` |
+| `IPAD-L2-043` | Débordement et blocage Prévisualiser | `TBX-018…021`, `TBX-024`, `CAN-008`, `ACC-002`, `ACC-006` | ⚪ `NON TESTÉ` — archive, remplacé par `059` |
+| `IPAD-L2-044` | Catalogue, recherche et récents | `STK-001…003`, `STK-006`, `STK-009…012`, `CAT-001`, `CAT-009` | ⚪ `NON TESTÉ` — archive, remplacé par `060` |
+| `IPAD-L2-045` | Ajout, dépôt et géométrie sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-001…004` | ⚪ `NON TESTÉ` — archive, remplacé par `061` |
+| `IPAD-L2-046` | Remplacement et commandes sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚪ `NON TESTÉ` — archive, remplacé par `062` |
+| `IPAD-L2-047` | Rendu, profondeur et persistance sticker | `STK-009`, `STK-024`, `CAN-008`, `SAV-001`, `ACC-006` | ⚪ `NON TESTÉ` — archive, remplacé par `063` |
+| `IPAD-L2-048` | Six formes et conservation du cadrage | `SHR-001…003`, `SHR-006`, `SHR-010`, `SHR-012`, `CRP-001`, `CRP-007` | ⚪ `NON TESTÉ` — archive, remplacé par `064` |
+| `IPAD-L2-049` | Contours et six cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚪ `NON TESTÉ` — archive, remplacé par `065` |
+| `IPAD-L2-050` | Portées Sélection, Page et Album | `SHR-007`, `SHR-008`, `UND-001`, `SAV-001`, `ACC-002` | ⚪ `NON TESTÉ` — archive, remplacé par `066` |
+| `IPAD-L2-051` | Copier/coller photo, texte et sticker | `CLP-001`, `CLP-003`, `CLP-004`, `ELM-009`, `FRM-007`, `SAV-001` | ⚪ `NON TESTÉ` — archive, remplacé par `067` |
+| `IPAD-L2-052` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | ⚪ `NON TESTÉ` — archive, remplacé par `068` |
+| `IPAD-L2-053` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | ⚪ `NON TESTÉ` — archive, remplacé par `069` |
+| `IPAD-L2-054` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | ⚪ `NON TESTÉ` — archive, remplacé par `070` |
+| `IPAD-L2-055` | Compilation corrigée, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | 🟢 `RÉUSSI` — retour fourni sous le libellé `039` |
+| `IPAD-L2-056` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-057` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-058` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | 🔴 `ÉCHOUÉ` — Annuler sans restauration ; gras et italique perdus |
+| `IPAD-L2-059` | Débordement et blocage Prévisualiser | `TBX-018…021`, `TBX-024`, `CAN-008`, `ACC-002`, `ACC-006` | 🟢 `RÉUSSI` — Exporter reste Lot 3 |
+| `IPAD-L2-060` | Catalogue, recherche et récents | `STK-001…003`, `STK-006`, `STK-009…012`, `CAT-001`, `CAT-009` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-061` | Ajout, dépôt et géométrie sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-001…004`, `COV-007`, `CAN-008` | 🔴 `ÉCHOUÉ` — dépôt refusé, poignées envahissantes, sticker absent de la miniature |
+| `IPAD-L2-062` | Remplacement et commandes sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | 🔴 `ÉCHOUÉ` — ajout au lieu du remplacement et présentation incohérente |
+| `IPAD-L2-063` | Rendu, profondeur et persistance sticker | `STK-009`, `STK-024`, `CAN-008`, `SAV-001`, `ACC-006` | 🟢 `RÉUSSI` — miniature de couverture suivie séparément sous `061` |
+| `IPAD-L2-064` | Six formes et conservation du cadrage | `SHR-001…003`, `SHR-006`, `SHR-010`, `SHR-012`, `CRP-001`, `CRP-007` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-065` | Contours et six cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | 🔴 `ÉCHOUÉ` — décor décalé du bord, photo visible derrière |
+| `IPAD-L2-066` | Portées Sélection, Page et Album | `SHR-007`, `SHR-008`, `UND-001`, `SAV-001`, `ACC-002` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-067` | Copier/coller photo, texte et sticker | `CLP-001`, `CLP-003`, `CLP-004`, `ELM-009`, `FRM-007`, `SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-068` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-069` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans détail par étape |
+| `IPAD-L2-070` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -249,12 +254,18 @@ suppression du formulaire défilant et de la hauteur fixe.
   incomplet jusqu’aux autres sorties et qualifications Apple applicables.
 - L’ADR-003 isole la limite SwiftUI : la saisie prévisualise Justifié à gauche,
   tandis que le renderer de page TextKit public le compose réellement. Le
-  collage riche externe de `TBX-007` et la partie Exporter de `TBX-021`, prévue
-  au Lot 3, restent partiels ; le regroupement `TBX-022` est implémenté.
+  collage riche externe de `TBX-007` reste incomplet : `IPAD-L2-058` constate
+  la perte du gras et de l’italique filtrés ainsi qu’une annulation sans retour
+  à l’état précédent au-delà de 1 000 caractères. La partie Exporter de
+  `TBX-021`, prévue au Lot 3, reste partielle ; le regroupement `TBX-022` est
+  implémenté et validé globalement par `057`.
 - Les 40 stickers et 6 cadres décoratifs sont persistables après validation des
-  payloads, licences, insets et goldens de `CAT-009`; `IPAD-L2-039` a échoué
-  avant le lancement et de nouvelles fiches doivent encore prouver leur
-  première build et leur rendu Apple.
+  payloads, licences, insets et goldens de `CAT-009`. `IPAD-L2-060`, `063`,
+  `064`, `066` et `070` réussissent globalement, mais `061` constate le refus
+  du glisser-déposer, des poignées qui masquent un petit sticker et l’absence du
+  sticker dans la miniature d’album ; cette dernière n’est pas voulue selon
+  `COV-007` et `CAN-008`. `062` constate un ajout à la place du remplacement,
+  et `065` un décor en retrait du bord laissant voir la photo.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
 - Le candidat initial gardait un rail et un inspecteur légèrement rognés en

@@ -170,9 +170,12 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `fce5d92879a5a654778b02ec17a3707590554cd7`, mais `IPAD-L2-039` a échoué dès
   la compilation dans `AppModel` ligne 256 : l’expression de construction de
   l’UUID était trop complexe pour le type-checker de Swift Playgrounds. Les
-  fiches `040…054` n’ont pas été exécutées. Le correctif exact
-  `64f53424a0fc479c4fdea79c401d0b227d52eebd` est validé sous WSL et les
-  remplacements `IPAD-L2-055…070` le qualifient, toujours sans retester Info.
+  fiches `040…054` n’ont pas été exécutées sur ce candidat et restent une
+  archive. Le correctif exact
+  `64f53424a0fc479c4fdea79c401d0b227d52eebd` est validé sous WSL. La campagne
+  iPad a ensuite été saisie avec les anciens libellés ; ses résultats sont
+  reportés un pour un sur `IPAD-L2-055…070` : 12 réussites et 4 échecs
+  (`058`, `061`, `062`, `065`), toujours sans retester Info.
   Les validations compactes, Xcode/Release, Instruments et TestFlight sont
   remplacées par `APPLE-L2-006…009`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
@@ -225,11 +228,15 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   demande de l’utilisateur. Le candidat `fce5d92…` passe les 157 tests WSL ;
   les contrats de 55 ressources et leurs 16 empreintes sont valides, mais
   `IPAD-L2-039` est 🔴 `ÉCHOUÉ` à la compilation. Les fiches `040…054` n’ont
-  pas été exécutées. Le correctif `64f5342…` passe à nouveau les 157 tests, la
-  syntaxe, les contrats de 55 ressources et les 16 empreintes ; sa compilation
-  et son rendu Apple restent à prouver par `IPAD-L2-055…070` ;
-  `TBX-007` reste partiel pour les styles provenant d’un collage externe et la
-  partie Exporter de `TBX-021` ne devient publique qu’au Lot 3.
+  pas été exécutées sur ce candidat. Le correctif `64f5342…` passe à nouveau
+  les 157 tests, la syntaxe, les contrats de 55 ressources et les 16
+  empreintes. Sa campagne `055…070` prouve la compilation et 12 fiches
+  globalement ; elle échoue sur la restauration et les styles du collage riche
+  (`058`), le dépôt, les poignées et la miniature sticker (`061`), le
+  remplacement sticker (`062`) et l’alignement des cadres décoratifs (`065`).
+  L’absence des stickers sur la miniature n’est pas voulue : `COV-007` et
+  `CAN-008` imposent le même rendu composé. La partie Exporter de `TBX-021` ne
+  devient publique qu’au Lot 3.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-006` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
@@ -783,8 +790,10 @@ Cette méthode convient au développement courant, mais pas à une fiche comme
 `IPAD-L2-036` qui exige le commit exact à l’exécution.
 Elle est explicitement autorisée pour `IPAD-L2-055…070`, puisque cette campagne
 vise le correctif fonctionnel `64f53424a0fc479c4fdea79c401d0b227d52eebd` mais
-exclut le contrôle de la valeur Info. Les fiches historiques `039…054` restent
-attachées au candidat précédent et ne doivent plus être exécutées.
+exclut le contrôle de la valeur Info. Cette campagne est maintenant exécutée ;
+les réponses fournies avec les anciens libellés ont été reportées avec un
+décalage de `+16`. Les fiches historiques `039…054` restent attachées au
+candidat précédent et ne doivent plus être exécutées.
 
 Si le document est lié en tant que dépôt externe avec Working Copy Pro, le pull
 peut écrire directement dans le package. Swift Playgrounds doit être fermé
