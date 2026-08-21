@@ -170,9 +170,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `fce5d92879a5a654778b02ec17a3707590554cd7`, mais `IPAD-L2-039` a échoué dès
   la compilation dans `AppModel` ligne 256 : l’expression de construction de
   l’UUID était trop complexe pour le type-checker de Swift Playgrounds. Les
-  fiches `040…054` n’ont pas été exécutées et de nouveaux identifiants viseront
-  le correctif, toujours sans retester Info. Les validations compactes,
-  Xcode/Release, Instruments et TestFlight restent sous `APPLE-L2-002…005`.
+  fiches `040…054` n’ont pas été exécutées. Le correctif exact
+  `64f53424a0fc479c4fdea79c401d0b227d52eebd` est validé sous WSL et les
+  remplacements `IPAD-L2-055…070` le qualifient, toujours sans retester Info.
+  Les validations compactes, Xcode/Release, Instruments et TestFlight sont
+  remplacées par `APPLE-L2-006…009`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : 157 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
@@ -223,12 +225,13 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   demande de l’utilisateur. Le candidat `fce5d92…` passe les 157 tests WSL ;
   les contrats de 55 ressources et leurs 16 empreintes sont valides, mais
   `IPAD-L2-039` est 🔴 `ÉCHOUÉ` à la compilation. Les fiches `040…054` n’ont
-  pas été exécutées : le rendu Apple du nouveau périmètre
-  stickers/cadres/texte reste donc non prouvé ;
+  pas été exécutées. Le correctif `64f5342…` passe à nouveau les 157 tests, la
+  syntaxe, les contrats de 55 ressources et les 16 empreintes ; sa compilation
+  et son rendu Apple restent à prouver par `IPAD-L2-055…070` ;
   `TBX-007` reste partiel pour les styles provenant d’un collage externe et la
   partie Exporter de `TBX-021` ne devient publique qu’au Lot 3.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
-  séparément par `APPLE-L2-002` sur iPhone ou Xcode. Les
+  séparément par `APPLE-L2-006` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur
@@ -778,9 +781,10 @@ Un checkout Working Copy transporte les fichiers Git bruts : le marqueur
 `export-subst` n’y est pas remplacé et `Info` affiche donc `Non estampillé`.
 Cette méthode convient au développement courant, mais pas à une fiche comme
 `IPAD-L2-036` qui exige le commit exact à l’exécution.
-Elle est explicitement autorisée pour `IPAD-L2-039…054`, puisque cette campagne
-vise le commit fonctionnel `fce5d92879a5a654778b02ec17a3707590554cd7` mais
-exclut le contrôle de la valeur Info.
+Elle est explicitement autorisée pour `IPAD-L2-055…070`, puisque cette campagne
+vise le correctif fonctionnel `64f53424a0fc479c4fdea79c401d0b227d52eebd` mais
+exclut le contrôle de la valeur Info. Les fiches historiques `039…054` restent
+attachées au candidat précédent et ne doivent plus être exécutées.
 
 Si le document est lié en tant que dépôt externe avec Working Copy Pro, le pull
 peut écrire directement dans le package. Swift Playgrounds doit être fermé
