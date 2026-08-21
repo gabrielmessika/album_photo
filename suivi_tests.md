@@ -37,7 +37,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif groupé texte testé | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` — `IPAD-L2-031…032` réussissent ; `030` échoue uniquement sur les trois motifs intégrés et `033` sur la faible distinction Système/Arrondie ainsi que l’italique Arrondie ; les autres étapes déclarées conformes |
 | Second correctif texte testé | `3102cda0e6b2c483576585ec2f97fc947f87c96f` — `IPAD-L2-034…035` réussis globalement ; motifs, Arrondie/Italique, états actifs, persistance et VoiceOver déclarés conformes sans capture |
 | Candidat Info et correctifs texte testé | `60930587da16707dbb57eada9881f6fefcedd51e` — `IPAD-L2-037…038` réussis ; `IPAD-L2-036` échoue car Info affiche `Non estampillé` au lieu du commit exact |
-| Candidat de fin de développement Lot 2 à tester | `fce5d92879a5a654778b02ec17a3707590554cd7` — texte final, 40 stickers, 6 formes, contours, 6 cadres décoratifs et presse-papiers commun ; campagne `IPAD-L2-039…054` à exécuter |
+| Candidat de fin de développement Lot 2 rejeté à la compilation | `fce5d92879a5a654778b02ec17a3707590554cd7` — `IPAD-L2-039` échoue dans `AppModel` ligne 256, le type-checker ne résolvant pas la concaténation des cinq segments UUID ; `040…054` non exécutés |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -159,11 +159,13 @@ absents.
 
 La correction utilise désormais l’action GitHub **Paquet candidat iPad**, qui
 fabrique et vérifie l’archive estampillée depuis le commit choisi. Une copie
-directe Working Copy reste `Non estampillé`. Le candidat fonctionnel suivant
-est désormais figé dans `fce5d92879a5a654778b02ec17a3707590554cd7` : les
-régressions `IPAD-L2-039…054` qualifient texte, stickers, formes/cadres et
-presse-papiers sans contrôler Info. Les validations Apple hors Playgrounds sont
-décrites sous `APPLE-L2-002…005`.
+directe Working Copy reste `Non estampillé`. Le candidat fonctionnel suivant a
+été figé dans `fce5d92879a5a654778b02ec17a3707590554cd7`, mais `IPAD-L2-039`
+échoue dès la compilation : Swift Playgrounds ne parvient pas à type-checker la
+concaténation des cinq segments UUID dans `AppModel` ligne 256. Les fiches
+`040…054` n’ont donc pas été exécutées. Elles restent attachées à ce candidat
+rejeté et seront remplacées par de nouveaux identifiants sur le correctif. Les
+validations Apple hors Playgrounds sont décrites sous `APPLE-L2-002…005`.
 
 ## Mode de réponse
 
@@ -425,7 +427,7 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-036` | Info, version et commit exact du candidat | `3:ENV-001` à `3:ENV-005`, `3:APP-001`, `3:APP-012`, `3:ACC-001` à `3:ACC-004`, `3:ACC-008`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — Commit affiche `Non estampillé` ; le hash exact et sa copie ne sont pas prouvés, reste déclaré conforme globalement |
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `3:CAN-003`, `3:BG-007`, `3:TBX-024`, `3:TBX-025` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`, `3:TBX-026`, `3:SAV-001`, `3:ACC-002`, `3:ACC-004` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
-| `IPAD-L2-039` | Compilation, lancement et surface finale Lot 2 | `3:ENV-001` à `3:ENV-005`, `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:EDT-012`, `3:EDT-021`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-039` | Compilation, lancement et surface finale Lot 2 | `3:ENV-001` à `3:ENV-005`, `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:EDT-012`, `3:EDT-021`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — compilation impossible dans `AppModel` ligne 256 |
 | `IPAD-L2-040` | Boutons texte compacts et justification de page | `3:TBX-009` à `3:TBX-016`, `3:TBX-023` à `3:TBX-027`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-041` | Sessions de frappe, Annuler et historique à 750 ms | `3:TBX-002` à `3:TBX-005`, `3:TBX-022`, `3:TBX-025`, `3:UND-001`, `3:UND-008`, `3:SAV-001` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-042` | Limite et collage riche filtré | `3:TBX-006` à `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:ACC-002` | ⚪ `NON TESTÉ` |
@@ -3856,10 +3858,12 @@ atteignable.
 | 5 | Sélectionner successivement chaque panneau, puis une photo avant Cadres et formes. | Chaque panneau s’ouvre ; Stickers affiche des miniatures ; Cadres et formes devient utilisable pour le cadre photo sélectionné. |
 | 6 | Tourner en paysage puis revenir en portrait. | Le canevas, le rail, le panneau et l’inspecteur restent accessibles sans chevauchement bloquant ni sélection perdue. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — retour par étape et capture seulement en cas de défaut.
-- Environnement : à renseigner — appareil, iPadOS, Swift Playgrounds,
-  orientations et mode de transfert.
+- Résultat : 🔴 `ÉCHOUÉ` à l’étape 1 ; étapes 2 à 6 non exécutées.
+- Preuve : diagnostic transmis par l’utilisateur : « The compiler is unable to
+  type-check this expression in reasonable time; try breaking up the expression
+  into distinct sub-expressions », dans `AppModel` ligne 256 ; aucune capture.
+- Environnement : repris de la campagne — iPad 8e génération, iPadOS 26.5.2,
+  Swift Playgrounds 4.7 ; mode de transfert, orientation et lieu non redéclarés.
 
 ### `IPAD-L2-040` — Boutons texte compacts et justification de page
 
@@ -4450,6 +4454,7 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
+| `IPAD-L2-039` sur `fce5d92…` | 21 août 2026 | **Échec de compilation à l’étape 1** ; lancement et étapes 2 à 6 non exécutés | Diagnostic exact transmis par l’utilisateur, sans capture : le compilateur ne peut pas type-checker l’expression d’`AppModel` ligne 256 dans un délai raisonnable | Concaténation trop complexe de cinq `Substring` pour former l’UUID stable du catalogue ; découper en sous-expressions `String`, puis créer de nouveaux IDs pour le candidat corrigé | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; transfert et orientation non redéclarés |
 | `IPAD-L2-038` sur `6093058…` | 20 août 2026 | **Réussi globalement** : Arrondie, italique, choix actifs, persistance et VoiceOver déclarés conformes | Retour saisi avec un backtick parasite entre `03` et `8`, interprété comme `IPAD-L2-038`, sans capture ni détail par étape | Aucun défaut supplémentaire signalé ; la compacité distincte des boutons reste suivie sous `TBX-027` | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paysage puis VoiceOver selon la fiche, non redéclarés séparément |
 | `IPAD-L2-037` sur `6093058…` | 20 août 2026 | **Réussi globalement** : les trois motifs sont déclarés strictement bornés dans l’éditeur | Retour explicite « IPAD-L2-037 ok », sans capture ni détail par étape | Aucun défaut fonctionnel signalé sur les quatre étapes | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; portrait selon la fiche, non redéclaré séparément |
 | `IPAD-L2-036` sur le package présenté comme `6093058…` | 20 août 2026 | **Échec à l’étape 3** : Commit affiche `Non estampillé` ; reste déclaré conforme globalement | Retour explicite « le num du commit n'est pas indiqué, il y a écrit \"non estampillé\" ; sinon le reste est ok », sans capture ni détail par étape | Écart entre l’archive Git contrôlée et le package exécuté ; sélection/copie des 40 caractères non prouvées ; corriger puis créer un nouvel ID | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; orientations et VoiceOver non redéclarés séparément |

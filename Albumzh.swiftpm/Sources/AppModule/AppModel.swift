@@ -253,12 +253,15 @@ final class AppModel: ObservableObject {
             // already-applied command and leave the rest of the catalog absent.
             let digest = SHA256.hexDigest(Data("catalog-bootstrap:\(catalogID)".utf8))
             let compact = String(digest.prefix(32))
-            let formatted = compact.prefix(8)
-                + "-" + compact.dropFirst(8).prefix(4)
-                + "-" + compact.dropFirst(12).prefix(4)
-                + "-" + compact.dropFirst(16).prefix(4)
-                + "-" + compact.dropFirst(20).prefix(12)
-            return UUID(uuidString: String(formatted))!
+            let uuidComponents = [
+                String(compact.prefix(8)),
+                String(compact.dropFirst(8).prefix(4)),
+                String(compact.dropFirst(12).prefix(4)),
+                String(compact.dropFirst(16).prefix(4)),
+                String(compact.dropFirst(20).prefix(12))
+            ]
+            let formatted = uuidComponents.joined(separator: "-")
+            return UUID(uuidString: formatted)!
         }
     }
 

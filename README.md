@@ -166,12 +166,14 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   originaux, 6 formes natives, 6 cadres décoratifs à rendu neuf zones, le
   presse-papiers commun photo/texte/sticker, le regroupement de frappe à 750 ms,
   le rendu de page justifié et le blocage de la prévisualisation en cas de
-  débordement. Ce périmètre est figé dans le candidat
-  `fce5d92879a5a654778b02ec17a3707590554cd7`. La campagne finale
-  `IPAD-L2-039…054` couvre les autres fonctions du Lot 2 sans retester Info ;
-  les validations compactes, Xcode/Release, Instruments et TestFlight sont
-  détaillées sous `APPLE-L2-002…005`. Lecture, diaporama, package et PDF
-  relèvent du Lot 3.
+  débordement. Ce périmètre a été figé dans le candidat
+  `fce5d92879a5a654778b02ec17a3707590554cd7`, mais `IPAD-L2-039` a échoué dès
+  la compilation dans `AppModel` ligne 256 : l’expression de construction de
+  l’UUID était trop complexe pour le type-checker de Swift Playgrounds. Les
+  fiches `040…054` n’ont pas été exécutées et de nouveaux identifiants viseront
+  le correctif, toujours sans retester Info. Les validations compactes,
+  Xcode/Release, Instruments et TestFlight restent sous `APPLE-L2-002…005`.
+  Lecture, diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : 157 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
@@ -218,10 +220,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `IPAD-L2-036` est 🔴 `ÉCHOUÉ` parce que le package exécuté affiche
   `Non estampillé`. Le transport est désormais corrigé par la fabrication et la
   vérification automatisées du paquet, mais sa régression est mise de côté à la
-  demande de l’utilisateur. Le candidat final `fce5d92…` passe les 157 tests
-  WSL ; les contrats de 55 ressources et leurs 16 empreintes sont valides. Les
-  seize fiches `039…054` sont toutes ⚪ `NON TESTÉ` : la compilation et le rendu
-  Apple du nouveau périmètre stickers/cadres/texte restent donc non prouvés ;
+  demande de l’utilisateur. Le candidat `fce5d92…` passe les 157 tests WSL ;
+  les contrats de 55 ressources et leurs 16 empreintes sont valides, mais
+  `IPAD-L2-039` est 🔴 `ÉCHOUÉ` à la compilation. Les fiches `040…054` n’ont
+  pas été exécutées : le rendu Apple du nouveau périmètre
+  stickers/cadres/texte reste donc non prouvé ;
   `TBX-007` reste partiel pour les styles provenant d’un collage externe et la
   partie Exporter de `TBX-021` ne devient publique qu’au Lot 3.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris

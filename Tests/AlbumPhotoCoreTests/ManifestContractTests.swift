@@ -547,6 +547,9 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(viewModel.contains("func flipSelectedStickerHorizontally()"))
         XCTAssertTrue(viewModel.contains("stickerCountOnActivePage"))
         XCTAssertTrue(appModel.contains("catalog-bootstrap:\\(catalogID)"))
+        XCTAssertTrue(appModel.contains("let uuidComponents = ["))
+        XCTAssertTrue(appModel.contains("uuidComponents.joined(separator: \"-\")"))
+        XCTAssertFalse(appModel.contains("let formatted = compact.prefix(8)"))
         XCTAssertFalse(appModel.contains(
             "default:\n            return UUID(uuidString: \"8d156ffa"
         ))

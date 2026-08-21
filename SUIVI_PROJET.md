@@ -16,7 +16,7 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-21 |
-| Phase courante | Lot 2 — candidat fonctionnel figé ; campagne finale iPad `IPAD-L2-039…054` prête à exécuter |
+| Phase courante | Lot 2 — correctif de compilation Apple après l’échec de `IPAD-L2-039` ; nouvelle campagne à figer |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
@@ -41,7 +41,7 @@ résultats du prototype 2.1.
 | Correctif groupé Texte-B testé | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` : `IPAD-L2-031…032` réussis ; `030` échoue uniquement sur les trois motifs intégrés et `033` sur la faible distinction Système/Arrondie ainsi que l’italique Arrondie ; les autres étapes sont déclarées conformes |
 | Second correctif texte testé | `3102cda0e6b2c483576585ec2f97fc947f87c96f` : arrière-plan strict des motifs, profil Arrondie incliné et états actifs `TBX-026` ; `IPAD-L2-034…035` 🟢 `RÉUSSI` globalement, sans capture ni détail par étape |
 | Candidat Info et correctifs texte testé | `60930587da16707dbb57eada9881f6fefcedd51e` : `IPAD-L2-037…038` 🟢 `RÉUSSI` globalement ; `IPAD-L2-036` 🔴 `ÉCHOUÉ`, car Info affiche `Non estampillé` au lieu du commit exact |
-| Candidat de fin de développement Lot 2 | `fce5d92879a5a654778b02ec17a3707590554cd7` : boutons texte compacts, justification de page, frappe à 750 ms, 40 stickers, 6 cadres décoratifs, formes/contours et presse-papiers commun ; 157 tests WSL réussis, `IPAD-L2-039…054` ⚪ |
+| Candidat de fin de développement Lot 2 rejeté | `fce5d92879a5a654778b02ec17a3707590554cd7` : 157 tests WSL réussis, mais `IPAD-L2-039` 🔴 dès la compilation dans `AppModel` ligne 256 ; `040…054` non exécutés |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du correctif Lot 2 | `spec.md` dans `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` précise `EDT-002`, `ELM-014` et `RND-001` conformément aux retours utilisateur du 17 août 2026 |
@@ -50,7 +50,7 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Récupérer `fce5d92…` par Working Copy, compiler puis exécuter `IPAD-L2-039…054` ; qualifier ensuite largeur compacte, Xcode/Release, Instruments et TestFlight avec `APPLE-L2-002…005` |
+| Validation indispensable restante | Figer le correctif de compilation, créer les régressions iPad sur son commit exact, puis qualifier largeur compacte, Xcode/Release, Instruments et TestFlight avec `APPLE-L2-002…005` |
 | État global | 🟡 **Le périmètre de code du Lot 2 est figé et validé sous WSL ; le lot n’est pas terminé tant que les parcours texte/stickers/cadres/presse-papiers et les sorties Apple applicables ne sont pas qualifiés** |
 
 ## Légende
@@ -108,7 +108,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 | Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core ; intégration App Playground compilée | Prouver les capacités Apple encore bloquées et corriger les écarts fonctionnels du premier incrément Lot 2 |
 | Lot 1 — Création locale | 🟡 | Parcours métier validés et adaptation finale confirmée par `143…144` sur `101e294…` | Conserver le jalon iPad ; qualifications iPhone/Xcode et Apple différées empêchent encore l’état 🟢 |
-| Lot 2 — Parité de composition | 🟡 | Les fonctions de `ACPT-123`, `125`, `126`, `128` et `130` sont figées dans `fce5d92…` : six panneaux, modèles/Auto, texte, 40 stickers, 6 formes, 6 cadres et presse-papiers commun. Les 157 tests et les contrats de 55 ressources passent sous WSL | Exécuter `IPAD-L2-039…054` sur iPad, puis `APPLE-L2-002…005` pour largeur compacte, Xcode/Release, Instruments et TestFlight ; Info reste hors de cette campagne à la demande de l’utilisateur |
+| Lot 2 — Parité de composition | 🟡 | Les fonctions de `ACPT-123`, `125`, `126`, `128` et `130` restent implémentées ; les 157 tests et les contrats de 55 ressources passent sous WSL, mais `fce5d92…` est rejeté par `IPAD-L2-039` à la compilation Apple | Figer et compiler le correctif, exécuter ses nouvelles fiches iPad, puis `APPLE-L2-002…005` ; Info reste hors de cette campagne à la demande de l’utilisateur |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
 
@@ -430,6 +430,8 @@ Lot 3 n’est rendu public.
 
 | Environnement | Commande ou contrôle | Résultat connu | Portée et limite |
 |---|---|---|---|
+| WSL, Swift 6.3.3 et frontend Swift, 2026-08-21 | Correctif `AppModel` : `swift test --parallel`, parse AppModule, `perl tools/validate_contracts.pl`, puis 16 empreintes depuis `docs/` | **157 tests, 0 échec** ; parse **OK** ; contrats **OK** pour 32 modèles/55 ressources ; empreintes **16/16** | Prouve le Core et la structure source découpée ; le type-check et le lancement Swift Playgrounds restent à requalifier sur le commit corrigé |
+| iPad 8e génération repris, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-21 | `IPAD-L2-039` sur `fce5d92879a5a654778b02ec17a3707590554cd7` | **ÉCHEC** à la compilation : `AppModel` ligne 256, expression impossible à type-checker dans un délai raisonnable | Étape 1 arrêtée avant lancement ; étapes 2 à 6 et `040…054` non exécutées ; diagnostic utilisateur sans capture, mode de transfert non redéclaré |
 | Dépôt, registre final Lot 2, 2026-08-21 | Continuité et unicité des synthèses/fiches, colonnes obligatoires, résolution des références, contrats, 16 empreintes et `git diff --check` | **OK** : 54/54 IDs `IPAD-L2`, 5/5 IDs `APPLE-L2`, fiches `039…054` et `APPLE-L2-002…005` au format requis, 403 références résolues | Contrôle documentaire uniquement ; toutes les nouvelles fiches restent ⚪ `NON TESTÉ` |
 | WSL, Swift 6.3.3 et frontend Swift, 2026-08-21 | Validation avant gel de `fce5d92879a5a654778b02ec17a3707590554cd7` : `swift test --parallel`, parse AppModule, contrats, 16 empreintes et `git diff --check` | **157 tests, 0 échec** ; parse **OK** ; contrats **OK** pour 32 modèles/55 ressources ; empreintes **16/16** ; diff propre | Prouve le Core et les contrats du candidat fonctionnel ; aucun type-check ni rendu Apple |
 | WSL, Swift 6.3.3 et frontend Swift, 2026-08-20 | `swift test --parallel`, parse de toutes les sources AppModule, `perl tools/validate_contracts.pl`, contrôle des 16 empreintes et essai de `tools/create_ipad_candidate.sh` sur `6093058…` | **157 tests, 0 échec** ; parse **OK** ; contrats **OK** pour 32 modèles et 55 ressources ; empreintes **16/16** ; ZIP historique estampillé avec le hash exact | Prouve le Core, les contrats, PNG RGBA/transparence, goldens et producteur de paquet ; aucun type-check, rendu, geste, VoiceOver ni chargement de bundle Apple du nouveau périmètre |
@@ -536,7 +538,8 @@ Lot 3 n’est rendu public.
 
 | Validation | État | Motif |
 |---|---|---|
-| `IPAD-L2-039…054` sur `fce5d92…` | ⚪ Non testés | Seize fiches finales préparées ; compilation, texte, stickers, formes/cadres, presse-papiers, accessibilité et fluidité restent à exécuter sur iPad |
+| `IPAD-L2-039` sur `fce5d92…` | 🔴 Échec de compilation Apple | Type-checker en échec dans `AppModel` ligne 256 ; aucun parcours fonctionnel exécuté |
+| `IPAD-L2-040…054` sur `fce5d92…` | ⚪ Non exécutés | Le candidat n’a pas compilé ; ces fiches restent historiques et ne seront pas retargetées vers le correctif |
 | `APPLE-L2-002…005` sur `fce5d92…` | ⚪ Non testés | Largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
 | `IPAD-L2-018`, Remplir l’album sur `7815396…` | 🟢 Réussi sur l’iPad déclaré | Retour global « les tests sont ok » sans capture ni détail par étape ; ne couvre pas la nouvelle interface compacte ni le cadrage couvrant demandés avec ce retour |
 | `IPAD-L2-019`, action compacte et cadrage sur `3944fae…` | 🟢 Réussi sur l’iPad déclaré | Retour global « tout est ok » sans capture ni détail par étape ; limité à cette fiche et à ce candidat |
@@ -597,18 +600,17 @@ Lot 3 n’est rendu public.
 | `RSK-3.0-036` | Levé sur `6093058…` | Les menus et palettes de format ne matérialisaient pas systématiquement leur valeur active ; une teinte seule restait insuffisante pour comprendre Police, Couleur, Taille et les autres choix. | Après `IPAD-L2-035` sur `3102cda…`, `IPAD-L2-038` qualifie globalement les huit états visibles et VoiceOver selon `TBX-026` sur le candidat combiné. |
 | `RSK-3.0-037` | Corrigé dans l’outillage, qualification différée | Swift Playgrounds ne fournit pas spontanément le hash Git au runtime et Working Copy transporte le marqueur brut. | Le script et l’action GitHub produisent une archive `git archive` vérifiée ; à la demande de l’utilisateur, ce contrôle reste hors de `IPAD-L2-039…054` sans transformer `036` en réussite. |
 | `RSK-3.0-038` | Corrigé dans le code, Apple à requalifier | La concaténation de la valeur courante élargissait fortement les boutons de format. | `TBX-027` utilise maintenant des libellés principaux courts et conserve l’état dans les menus/valeurs accessibles ; `IPAD-L2-040` puis `APPLE-L2-002` vérifient largeur et VoiceOver. |
-| `RSK-3.0-039` | Élevé avant première compilation Apple | Les nouveaux ponts UIKit/SwiftUI, `Transferable`, `Canvas` neuf zones et bundles d’assets ne peuvent pas être type-checkés sous WSL. | `IPAD-L2-039` impose compilation propre et ouverture des panneaux avant les parcours ; `APPLE-L2-003` ajoute Debug/Release et validation d’archive. |
+| `RSK-3.0-039` | Matérialisé ; correctif en cours | `IPAD-L2-039` révèle que la concaténation de cinq `Substring` pour l’UUID du catalogue dépasse le temps raisonnable du type-checker Swift Playgrounds dans `AppModel` ligne 256. | Découper l’expression en composants `String` distincts, valider sous WSL, puis créer une nouvelle fiche de compilation sur le commit corrigé ; `APPLE-L2-003` garde Debug/Release et archive. |
 | `RSK-3.0-040` | Moyen | Les 46 nouveaux PNG augmentent le package et le rendu de plus de vingt stickers n’a pas de mesure appareil. | Les payloads restent à 512 px maximum ; `IPAD-L2-054` vérifie l’usage visible à vingt et l’avertissement à vingt-et-un, puis `APPLE-L2-004` mesure FPS/mémoire avec Instruments. |
 
 ## Prochaines actions
 
-1. Pousser le candidat fonctionnel `fce5d92879a5a654778b02ec17a3707590554cd7`
-   puis le récupérer par Working Copy ; Info et son estampillage restent hors
-   de cette campagne selon la décision utilisateur.
-2. Exécuter `IPAD-L2-039` seul ; ne poursuivre que si la compilation, le
-   lancement et les ressources des six panneaux sont utilisables.
-3. Exécuter ensuite `IPAD-L2-040…054` dans l’ordre, avec arrêt au premier défaut
-   de chaque fiche et réutilisation de l’album partagé `Lot2-Final`.
+1. Valider et commiter le découpage de l’expression UUID d’`AppModel` qui a
+   bloqué `IPAD-L2-039`.
+2. Figer le nouveau commit et créer des identifiants de remplacement pour la
+   compilation puis les quinze fiches fonctionnelles restées non exécutées.
+3. Récupérer ce candidat par Working Copy, exécuter d’abord sa compilation,
+   puis poursuivre dans l’ordre en réutilisant l’album `Lot2-Final`.
 4. Enregistrer chaque réponse sous la forme `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou
    `BUG : …`, sans extrapoler un résultat aux autres fiches.
 5. Qualifier séparément `APPLE-L2-002…005` : largeur compacte iPhone,
@@ -625,6 +627,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-21 | Codex | Enregistrement de l’échec de compilation `IPAD-L2-039` sur `fce5d92…` et découpage de la construction UUID du catalogue en sous-expressions `String` explicites | `AppModel.swift`, `ManifestContractTests.swift`, `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `ENV-001…005`, `CAT-001`, `CAT-009`, `DONE-005` | Retour iPad : échec avant lancement, `040…054` NON EXÉCUTÉS ; WSL : 157 tests, parse, 55 ressources et 16/16 empreintes OK ; recompilation Swift Playgrounds NON EXÉCUTÉE |
 | 2026-08-21 | Codex | Gel du candidat fonctionnel `fce5d92879a5a654778b02ec17a3707590554cd7` et préparation exhaustive des campagnes finales Lot 2 : seize fiches iPad `039…054` et quatre qualifications Apple `002…005`, en laissant Info hors du parcours immédiat sur décision utilisateur | `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `ENV`, `EDT`, `TBX`, `STK`, `SHR`, `CLP`, `UND`, `SAV`, `CAN`, `ACC`, `PERF`, `TST`, `DONE` applicables | Candidat : 157 tests, parse, 55 ressources et 16 empreintes OK ; registre 54/54 `IPAD-L2`, 5/5 `APPLE-L2`, 403 références résolues ; tests Swift non relancés après l’édition documentaire seule ; nouvelles fiches et validations Apple NON EXÉCUTÉES |
 | 2026-08-21 | Codex | Relecture et validation finale de la révision fonctionnelle Lot 2 avant gel demandé par l’utilisateur ; la régression d’estampillage est volontairement sortie de la campagne fonctionnelle immédiate | Ensemble Core/AppModule, ressources, tests, outils et documentation du périmètre Lot 2 ; `TBX-001…027`, `STK-001…016`, `STK-021…024`, `SHR-001…014`, `CLP-001…006`, `TST-001…005`, `TST-013` | WSL : 157 tests, 0 échec ; parse AppModule, contrats 32 modèles/55 ressources, 16/16 empreintes, 46 PNG et `git diff --check` OK ; compilation et qualification Apple NON TESTÉES |
 | 2026-08-20 | Codex | Fin du périmètre de code Lot 2 et correction du transport estampillé : producteur/Action GitHub, boutons texte compacts, justification de page, frappe à 750 ms, 40 stickers originaux, 6 cadres décoratifs, formes/contours multi-portées et presse-papiers photo/texte/sticker | Core/AppModule, 46 payloads PNG, 6 goldens neuf zones, registre/checksums, outils, workflow, README/ADR/traçabilité/suivi ; `APP-012`, `TBX-007`, `TBX-011`, `TBX-021`, `TBX-022`, `TBX-027`, `STK-001…016`, `STK-021…024`, `SHR-001…014`, `CAT-001…009`, `CLP-001…006`, `ACPT-123`, `125`, `126`, `128`, `130` | WSL : 157 tests, 0 échec ; parse AppModule OK ; contrats 32 modèles/55 ressources et 16/16 empreintes OK ; archive historique `6093058…` estampillée exactement ; compilation/rendu/gestes/VoiceOver/performance Apple NON TESTÉS, révision non figée donc aucune nouvelle fiche manuelle créée |

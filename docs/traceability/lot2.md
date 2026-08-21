@@ -69,13 +69,14 @@ candidat iPad**. Elle termine aussi le périmètre de code du lot 2 : boutons de
 texte compacts, justification dans le renderer commun de page, commandes de
 saisie regroupées à 750 ms, quarante stickers originaux, six cadres décoratifs,
 formes/contours à portée multiple et presse-papiers photo/texte/sticker. Cette
-révision est figée dans le candidat fonctionnel
-`fce5d92879a5a654778b02ec17a3707590554cd7`. Les fiches
-`IPAD-L2-039…054` couvrent compilation, texte final, stickers, formes/cadres,
-presse-papiers, accessibilité et fluidité ; Info est volontairement exclu de
-cette campagne. `APPLE-L2-002…005` couvrent ensuite largeur compacte,
-Xcode/Release, Instruments et TestFlight. Aucun de ces nouveaux contrôles ne
-possède encore de verdict Apple.
+révision a été figée dans le candidat fonctionnel
+`fce5d92879a5a654778b02ec17a3707590554cd7`. `IPAD-L2-039` échoue toutefois
+dès la compilation : le type-checker de Swift Playgrounds ne résout pas dans
+un délai raisonnable la concaténation des segments UUID d’`AppModel` ligne 256.
+Les fiches `040…054` ne sont pas exécutées et restent attachées à ce candidat
+rejeté ; de nouveaux identifiants qualifieront le correctif. Info demeure
+volontairement exclu. `APPLE-L2-002…005` couvrent ensuite largeur compacte,
+Xcode/Release, Instruments et TestFlight.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -154,7 +155,7 @@ aucune fiche iPad.
 | `IPAD-L2-036` | Info, version et commit exact du candidat | `ENV-001…005`, `APP-001`, `APP-012`, `ACC-001…004`, `ACC-008`, `DONE-005` | 🔴 `ÉCHOUÉ` — Commit affiche `Non estampillé` ; hash exact et copie non prouvés |
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
-| `IPAD-L2-039` | Compilation, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | ⚪ `NON TESTÉ` sur `fce5d92…` |
+| `IPAD-L2-039` | Compilation, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | 🔴 `ÉCHOUÉ` à la compilation sur `fce5d92…` (`AppModel` ligne 256) |
 | `IPAD-L2-040` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-041` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | ⚪ `NON TESTÉ` |
 | `IPAD-L2-042` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | ⚪ `NON TESTÉ` |
@@ -215,7 +216,8 @@ suppression du formulaire défilant et de la hauteur fixe.
   Arrondie/Italique et les états actifs sur ce candidat. `036` échoue sur la
   valeur Commit `Non estampillé`. Le producteur d’artefact contrôlé corrige le
   transport ; ce contrôle est différé sur décision utilisateur. `TBX-027` est
-  implémenté dans `fce5d92…` et attend `IPAD-L2-040` puis `APPLE-L2-002`.
+  implémenté dans `fce5d92…`, dont la compilation a échoué avant le contrôle ;
+  il attend une nouvelle fiche sur le correctif puis `APPLE-L2-002`.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure
@@ -225,9 +227,9 @@ suppression du formulaire défilant et de la hauteur fixe.
   collage riche externe de `TBX-007` et la partie Exporter de `TBX-021`, prévue
   au Lot 3, restent partiels ; le regroupement `TBX-022` est implémenté.
 - Les 40 stickers et 6 cadres décoratifs sont persistables après validation des
-  payloads, licences, insets et goldens de `CAT-009`; `IPAD-L2-039`, puis les
-  fiches `044…050`, doivent encore prouver leur première build et leur rendu
-  Apple.
+  payloads, licences, insets et goldens de `CAT-009`; `IPAD-L2-039` a échoué
+  avant le lancement et de nouvelles fiches doivent encore prouver leur
+  première build et leur rendu Apple.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
 - Le candidat initial gardait un rail et un inspecteur légèrement rognés en
