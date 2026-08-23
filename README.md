@@ -193,10 +193,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `075.3` perd toujours gras/italique et `076.4…5` révèle des libellés comprimés
   ainsi qu’une photo réduite avec Photo instantanée. Le troisième correctif lit
   la représentation riche publique du presse-papiers, dispose les épaisseurs
-  en grille 2 × 2 et agrandit seulement le décor autour de la photo inchangée ;
-  il reste à figer et à tester sur Apple.
-  Les validations `APPLE-L2-006…009` restent attachées à `64f5342…` ; leurs
-  remplacements pour le candidat courant sont `APPLE-L2-014…017`.
+  en grille 2 × 2 et agrandit seulement le décor autour de la photo inchangée.
+  Il est figé dans `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` et ses preuves
+  sont `IPAD-L2-078…079` puis `APPLE-L2-018…021`.
+  Les validations `APPLE-L2-006…017` restent attachées à leurs candidats
+  historiques ; les remplacements courants sont `APPLE-L2-018…021`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : 162 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
@@ -259,10 +260,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   parcours sticker `072…073` ; `071` et `074` restent échoués sur les écarts
   précités malgré leurs autres étapes conformes. Sur `855ae27…`, `077` réussit,
   tandis que `075` et `076` échouent uniquement sur les trois contrôles
-  résiduels décrits plus haut. Le troisième correctif passe 162 tests WSL et
-  l’analyse syntaxique ; de nouvelles fiches iPad doivent encore être figées.
+  résiduels décrits plus haut. Le troisième correctif `92df51d…` passe 162
+  tests WSL, l’analyse syntaxique, les contrats et les empreintes ; ses deux
+  fiches iPad `078…079` restent à exécuter.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
-  séparément par `APPLE-L2-014` sur iPhone ou Xcode. Les
+  séparément par `APPLE-L2-018` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur

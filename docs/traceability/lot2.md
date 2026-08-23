@@ -101,8 +101,9 @@ priorité tactile des panneaux à fort zoom. `IPAD-L2-077` réussit sur ce
 candidat ; `075.3` et `076.4…5` échouent encore. Le troisième correctif lit
 RTF/RTFD/HTML au moment de l’insertion, place les épaisseurs en grille 2 × 2 et
 agrandit seulement le décor pour aligner son ouverture aux limites inchangées
-de la photo. Ses nouvelles preuves restent à figer ; `APPLE-L2-010…017`
-restent attachés à leurs candidats historiques.
+de la photo. Il est figé dans `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` ;
+`IPAD-L2-078…079` et `APPLE-L2-018…021` portent ses nouvelles preuves, tandis
+que les anciens identifiants restent attachés à leurs candidats historiques.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -112,8 +113,9 @@ Le candidat final possède 12 scénarios iPad réussis sur les 16 fiches
 `055…070`, puis deux réussites (`072`, `073`) et deux échecs (`071`, `074`)
 dans la première campagne corrective. `077` ajoute la réussite du chevauchement
 tactile sur `855ae27…`, tandis que collage riche et Photo instantanée attendent
-la preuve du troisième correctif. Les validations Apple `006…009` restent attachées à `64f5342…` et
-leurs remplacements courants sont `014…017`. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
+la preuve du troisième correctif. Les validations Apple `006…017` restent
+attachées à leurs candidats historiques et leurs remplacements courants sont
+`018…021`. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
 
@@ -222,6 +224,8 @@ aucune fiche iPad.
 | `IPAD-L2-075` | Seconde régression collage riche | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | 🔴 `ÉCHOUÉ` sur `855ae27…` — étape 3 seulement ; cinq autres étapes conformes |
 | `IPAD-L2-076` | Ouvertures alpha, contours et trois épaisseurs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008`, `ACC-002`, `ACC-004` | 🔴 `ÉCHOUÉ` sur `855ae27…` — étapes 4 et 5 seulement ; quatre autres étapes conformes |
 | `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `EDT-001`, `EDT-002`, `EDT-012`, `ZOM-001`, `ZOM-004`, `ZOM-005`, `ACC-002`, `ACC-003` | 🟢 `RÉUSSI` sur `855ae27…` — retour global sans capture ni détail par étape |
+| `IPAD-L2-078` | Troisième régression collage riche Notes | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | ⚪ `NON TESTÉ` sur `92df51d…` |
+| `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-007`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` sur `92df51d…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -266,6 +270,10 @@ suppression du formulaire défilant et de la hauteur fixe.
 | `APPLE-L2-015` | Debug/Release et tests Apple du second correctif | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `855ae27…` |
 | `APPLE-L2-016` | Instruments et enveloppe maximale du second correctif | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `855ae27…` |
 | `APPLE-L2-017` | TestFlight distinct du second correctif | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `855ae27…` |
+| `APPLE-L2-018` | Interface résiduelle et cadres en largeur compacte | `EDT-001…004`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-016`, `EDT-020`, `EDT-021`, `TBX-005`, `TBX-027`, `SHR-004`, `SHR-013`, `ZOM-005`, `ACC-002`, `ACC-003`, `ACC-021` | ⚪ `NON TESTÉ` sur `92df51d…` |
+| `APPLE-L2-019` | Debug/Release et tests Apple du troisième correctif | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `92df51d…` |
+| `APPLE-L2-020` | Instruments et enveloppe maximale du troisième correctif | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `92df51d…` |
+| `APPLE-L2-021` | TestFlight distinct du troisième correctif | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `92df51d…` |
 
 ## Écarts connus de l’incrément
 
