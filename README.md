@@ -189,12 +189,16 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   fusionne les attributs natifs malgré le style hérité du point d’insertion,
   masque photo et contour dans l’ouverture alpha centrale,
   remplace le pourcentage par Aucun/Fin/Moyen/Épais et protège les panneaux des
-  touches destinées à une page zoomée sous eux. Ses régressions sont
-  `IPAD-L2-075…077`.
+  touches destinées à une page zoomée sous eux. `IPAD-L2-077` réussit, mais
+  `075.3` perd toujours gras/italique et `076.4…5` révèle des libellés comprimés
+  ainsi qu’une photo réduite avec Photo instantanée. Le troisième correctif lit
+  la représentation riche publique du presse-papiers, dispose les épaisseurs
+  en grille 2 × 2 et agrandit seulement le décor autour de la photo inchangée ;
+  il reste à figer et à tester sur Apple.
   Les validations `APPLE-L2-006…009` restent attachées à `64f5342…` ; leurs
   remplacements pour le candidat courant sont `APPLE-L2-014…017`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
-- Validation actuelle : 159 tests du noyau multiplateforme, les contrats et la
+- Validation actuelle : 162 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
   `d427d4e…` est exécutée : 5 réussites, 2 échecs et 1 blocage. Les
   quatre contrôles correctifs `IPAD-L2-009…012` sont 🟢 `RÉUSSI` sur
@@ -253,9 +257,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `CAN-008` imposent le même rendu composé. La partie Exporter de `TBX-021` ne
   devient publique qu’au Lot 3. Le candidat `9bc11e7…` réussit désormais les
   parcours sticker `072…073` ; `071` et `074` restent échoués sur les écarts
-  précités malgré leurs autres étapes conformes. Leur second correctif et celui
-  du chevauchement tactile à fort zoom sont figés dans `855ae27…`; les fiches
-  `IPAD-L2-075…077` et `APPLE-L2-014…017` portent les nouvelles preuves.
+  précités malgré leurs autres étapes conformes. Sur `855ae27…`, `077` réussit,
+  tandis que `075` et `076` échouent uniquement sur les trois contrôles
+  résiduels décrits plus haut. Le troisième correctif passe 162 tests WSL et
+  l’analyse syntaxique ; de nouvelles fiches iPad doivent encore être figées.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-014` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,

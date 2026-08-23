@@ -12,6 +12,20 @@ public struct TextSelectionRange: Codable, Sendable, Equatable, Hashable {
     public var isInsertionPoint: Bool { lowerBound == upperBound }
 }
 
+public struct TextReplacementChange: Sendable, Equatable, Hashable {
+    public let prefixCount: Int
+    public let replacedCount: Int
+    public let insertedText: String
+
+    public init(prefixCount: Int, replacedCount: Int, insertedText: String) {
+        self.prefixCount = prefixCount
+        self.replacedCount = replacedCount
+        self.insertedText = insertedText
+    }
+
+    public var insertedCount: Int { insertedText.count }
+}
+
 public struct TextCharacterStylePatch: Codable, Sendable, Equatable, Hashable {
     public var fontID: String?
     public var relativeFontSize: Double?
@@ -65,6 +79,39 @@ public struct TextPastePrototypePayload: Codable, Sendable, Equatable, Hashable 
 }
 
 public enum TextEditingPrototype {
+    /// Locates one replacement using Swift Character boundaries. Platform
+    /// adapters use it to associate a user-initiated paste with the rich
+    /// representation still available on the system pasteboard (3:TBX-007).
+    public static func replacementChange(
+        from oldText: String,
+        to newText: String
+    ) -> TextReplacementChange? {
+        guard oldText != newText else { return nil }
+        let oldCharacters = Array(oldText)
+        let newCharacters = Array(newText)
+        var prefixCount = 0
+        while prefixCount < min(oldCharacters.count, newCharacters.count),
+              oldCharacters[prefixCount] == newCharacters[prefixCount] {
+            prefixCount += 1
+        }
+
+        var suffixCount = 0
+        while suffixCount < oldCharacters.count - prefixCount,
+              suffixCount < newCharacters.count - prefixCount,
+              oldCharacters[oldCharacters.count - 1 - suffixCount]
+                == newCharacters[newCharacters.count - 1 - suffixCount] {
+            suffixCount += 1
+        }
+
+        return TextReplacementChange(
+            prefixCount: prefixCount,
+            replacedCount: oldCharacters.count - prefixCount - suffixCount,
+            insertedText: String(
+                newCharacters[prefixCount..<(newCharacters.count - suffixCount)]
+            )
+        )
+    }
+
     /// 3:TBX-007 — shared allow-list used by platform paste adapters and the
     /// durable model boundary. Tabs and line feeds are the only controls kept.
     public static func sanitizedPlainText(

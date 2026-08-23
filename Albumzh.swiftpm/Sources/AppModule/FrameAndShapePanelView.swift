@@ -141,29 +141,26 @@ struct FrameAndShapePanelView: View {
             Text("Épaisseur")
                 .font(.subheadline.weight(.semibold))
 
-            HStack(spacing: 8) {
-                Button("Aucun") {
-                    applyBorder(width: 0, color: frame.border.color)
-                }
-                .disabled(borderWidth == 0)
-                .accessibilityValue(borderWidth == 0 ? "Sélectionné" : "")
-
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(minimum: 100), spacing: 8),
+                    GridItem(.flexible(minimum: 100), spacing: 8)
+                ],
+                spacing: 8
+            ) {
+                borderThicknessButton(
+                    title: "Aucun",
+                    width: 0,
+                    color: frame.border.color
+                )
                 ForEach(PhotoBorderThicknessChoice.all) { choice in
-                    let selected = abs(borderWidth - choice.width) < 0.000_001
-                    Button {
-                        applyBorder(width: choice.width, color: frame.border.color)
-                    } label: {
-                        Label(
-                            choice.title,
-                            systemImage: selected ? "checkmark.circle.fill" : "circle"
-                        )
-                    }
-                    .labelStyle(.titleAndIcon)
-                    .accessibilityLabel("Contour \(choice.title)")
-                    .accessibilityValue(selected ? "Sélectionné" : "")
+                    borderThicknessButton(
+                        title: choice.title,
+                        width: choice.width,
+                        color: frame.border.color
+                    )
                 }
             }
-            .buttonStyle(.bordered)
 
             Text("Couleur")
                 .font(.subheadline.weight(.semibold))
@@ -213,6 +210,28 @@ struct FrameAndShapePanelView: View {
                 scope: scope
             )
         }
+    }
+
+    private func borderThicknessButton(
+        title: String,
+        width: Double,
+        color: SRGBAColor
+    ) -> some View {
+        let selected = abs(borderWidth - width) < 0.000_001
+        return Button {
+            applyBorder(width: width, color: color)
+        } label: {
+            Label(
+                title,
+                systemImage: selected ? "checkmark.circle.fill" : "circle"
+            )
+            .lineLimit(1)
+            .minimumScaleFactor(0.85)
+            .frame(maxWidth: .infinity, minHeight: 32)
+        }
+        .buttonStyle(.bordered)
+        .accessibilityLabel("Contour \(title)")
+        .accessibilityValue(selected ? "Sélectionné" : "")
     }
 
     private var decorativeFrameSection: some View {

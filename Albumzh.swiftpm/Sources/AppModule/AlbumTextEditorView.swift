@@ -361,6 +361,63 @@ enum AlbumTextAttributedBridge {
         return attributes
     }
 
+    /// Converts the system rich representation to the album allow-list. Font
+    /// family, size, links, lists, attachments and metadata are discarded;
+    /// only native bold and italic traits augment the insertion style
+    /// (3:TBX-007).
+    static func pastedAttributedString(
+        from source: NSAttributedString,
+        baseStyle: TextStyleDefaults,
+        pageHeight: Double
+    ) -> (value: AttributedString, containsEmphasis: Bool) {
+        var result = AttributedString()
+        var containsEmphasis = false
+        source.enumerateAttributes(
+            in: NSRange(location: 0, length: source.length),
+            options: []
+        ) { attributes, range, _ in
+            let rawText = source.attributedSubstring(from: range).string
+                .replacingOccurrences(of: "\r\n", with: "\n")
+                .replacingOccurrences(of: "\r", with: "\n")
+            let sanitized = TextEditingPrototype.sanitizedPlainText(
+                rawText,
+                maximumCharacters: Int.max
+            )
+            guard !sanitized.isEmpty else { return }
+
+            var style = baseStyle
+            if let font = attributes[.font] as? UIFont {
+                let traits = font.fontDescriptor.symbolicTraits
+                if traits.contains(.traitBold) {
+                    style.weight = .bold
+                    containsEmphasis = true
+                }
+                if traits.contains(.traitItalic) {
+                    style.isItalic = true
+                    containsEmphasis = true
+                }
+            }
+            if let obliqueness = attributes[.obliqueness] as? NSNumber,
+               abs(obliqueness.doubleValue) > 0.000_001 {
+                style.isItalic = true
+                containsEmphasis = true
+            }
+            result += styledRun(sanitized, style: style, pageHeight: pageHeight)
+        }
+
+        if result.startIndex < result.endIndex {
+            let paragraphStyle = AlbumParagraphStyleValue(
+                alignment: baseStyle.alignment,
+                lineSpacing: baseStyle.lineSpacing
+            )
+            let range = result.startIndex..<result.endIndex
+            result[range].albumParagraphStyle = paragraphStyle
+            result[range].alignment = attributedAlignment(paragraphStyle.alignment)
+            result[range].lineHeight = attributedLineHeight(paragraphStyle.lineSpacing)
+        }
+        return (result, containsEmphasis)
+    }
+
     static func font(for style: TextStyleDefaults, pageHeight: Double) -> Font {
         let pointSize = CGFloat(max(
             1,
@@ -478,6 +535,96 @@ enum AlbumTextAttributedBridge {
     }
 }
 
+@MainActor
+private enum AlbumTextPasteboardStyleRecovery {
+    struct Result {
+        let value: AttributedString
+        let insertionOffset: Int
+    }
+
+    private struct Representation {
+        let pasteboardType: String
+        let documentType: NSAttributedString.DocumentType
+    }
+
+    private static let representations = [
+        Representation(pasteboardType: "public.rtf", documentType: .rtf),
+        Representation(pasteboardType: "com.apple.flat-rtfd", documentType: .rtfd),
+        Representation(pasteboardType: "public.html", documentType: .html)
+    ]
+
+    static func recover(
+        oldValue: AttributedString,
+        newValue: AttributedString,
+        fallbackStyle: TextStyleDefaults,
+        pageHeight: Double
+    ) -> Result? {
+        let oldPlainText = String(oldValue.characters)
+        let newPlainText = String(newValue.characters)
+        guard let change = TextEditingPrototype.replacementChange(
+            from: oldPlainText,
+            to: newPlainText
+        ), change.insertedCount >= 2 else { return nil }
+
+        let pasteboard = UIPasteboard.general
+        guard let plainPaste = pasteboard.string,
+              sanitizedPasteText(plainPaste) == change.insertedText else { return nil }
+
+        let insertionStart = newValue.characters.index(
+            newValue.startIndex,
+            offsetBy: change.prefixCount
+        )
+        let baseStyle = newValue.runs.first {
+            $0.range.contains(insertionStart)
+        }?[AlbumTextStyleAttribute.self] ?? fallbackStyle
+
+        for representation in representations {
+            guard let data = pasteboard.data(
+                forPasteboardType: representation.pasteboardType
+            ), let source = try? NSAttributedString(
+                data: data,
+                options: [.documentType: representation.documentType],
+                documentAttributes: nil
+            ) else { continue }
+            let recovered = AlbumTextAttributedBridge.pastedAttributedString(
+                from: source,
+                baseStyle: baseStyle,
+                pageHeight: pageHeight
+            )
+            guard recovered.containsEmphasis,
+                  String(recovered.value.characters) == change.insertedText else { continue }
+
+            var value = newValue
+            let valueInsertionStart = value.characters.index(
+                value.startIndex,
+                offsetBy: change.prefixCount
+            )
+            let insertionEnd = value.characters.index(
+                valueInsertionStart,
+                offsetBy: change.insertedCount
+            )
+            value.replaceSubrange(
+                valueInsertionStart..<insertionEnd,
+                with: recovered.value
+            )
+            return Result(
+                value: value,
+                insertionOffset: change.prefixCount + change.insertedCount
+            )
+        }
+        return nil
+    }
+
+    private static func sanitizedPasteText(_ value: String) -> String {
+        TextEditingPrototype.sanitizedPlainText(
+            value
+                .replacingOccurrences(of: "\r\n", with: "\n")
+                .replacingOccurrences(of: "\r", with: "\n"),
+            maximumCharacters: Int.max
+        )
+    }
+}
+
 struct AlbumTextEditorView: View {
     private static let placeholder = "Votre texte"
 
@@ -569,30 +716,7 @@ struct AlbumTextEditorView: View {
                     .clipped()
                     .accessibilityLabel("Contenu de la zone de texte")
                     .onChange(of: text) { oldValue, newValue in
-                        if String(oldValue.characters) != String(newValue.characters) {
-                            retainedSelection = nil
-                            retainedSelectionText = nil
-                        }
-                        guard newValue.characters.count > 1_000 else {
-                            scheduleCheckpoint()
-                            return
-                        }
-                        if characterLimitRollback == nil {
-                            characterLimitRollback = oldValue
-                        }
-                        let limited = limitedText(oldValue: oldValue, newValue: newValue)
-                        text = limited.value
-                        selection = AttributedTextSelection(
-                            insertionPoint: text.characters.index(
-                                text.startIndex,
-                                offsetBy: limited.insertionOffset
-                            ),
-                            typingAttributes: AlbumTextAttributedBridge.typingAttributes(
-                                for: typingDefaults,
-                                pageHeight: request.previewPageHeight
-                            )
-                        )
-                        showsCharacterLimit = true
+                        handleTextChange(oldValue: oldValue, newValue: newValue)
                     }
                     .onChange(of: typingDefaults) { _, _ in scheduleCheckpoint() }
                     .onChange(of: opacity) { _, _ in scheduleCheckpoint() }
@@ -1073,6 +1197,58 @@ struct AlbumTextEditorView: View {
                 pageHeight: request.previewPageHeight
             )
         )
+    }
+
+    private func handleTextChange(
+        oldValue: AttributedString,
+        newValue: AttributedString
+    ) {
+        let charactersChanged = String(oldValue.characters) != String(newValue.characters)
+        if charactersChanged {
+            retainedSelection = nil
+            retainedSelectionText = nil
+        }
+        guard newValue.characters.count > 1_000 else {
+            if charactersChanged,
+               let recovered = AlbumTextPasteboardStyleRecovery.recover(
+                   oldValue: oldValue,
+                   newValue: newValue,
+                   fallbackStyle: typingDefaults,
+                   pageHeight: request.previewPageHeight
+               ) {
+                let recoveredText = recovered.value
+                let recoveredInsertionPoint = recoveredText.characters.index(
+                    recoveredText.startIndex,
+                    offsetBy: recovered.insertionOffset
+                )
+                text = recoveredText
+                selection = AttributedTextSelection(
+                    insertionPoint: recoveredInsertionPoint,
+                    typingAttributes: AlbumTextAttributedBridge.typingAttributes(
+                        for: typingDefaults,
+                        pageHeight: request.previewPageHeight
+                    )
+                )
+            }
+            scheduleCheckpoint()
+            return
+        }
+        if characterLimitRollback == nil {
+            characterLimitRollback = oldValue
+        }
+        let limited = limitedText(oldValue: oldValue, newValue: newValue)
+        text = limited.value
+        selection = AttributedTextSelection(
+            insertionPoint: text.characters.index(
+                text.startIndex,
+                offsetBy: limited.insertionOffset
+            ),
+            typingAttributes: AlbumTextAttributedBridge.typingAttributes(
+                for: typingDefaults,
+                pageHeight: request.previewPageHeight
+            )
+        )
+        showsCharacterLimit = true
     }
 
     /// The task is replaced on every local change, so exactly one checkpoint

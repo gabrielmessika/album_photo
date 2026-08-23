@@ -40,7 +40,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat de fin de développement Lot 2 rejeté à la compilation | `fce5d92879a5a654778b02ec17a3707590554cd7` — `IPAD-L2-039` échoue dans `AppModel` ligne 256, le type-checker ne résolvant pas la concaténation des cinq segments UUID ; `040…054` ⚫ `NON APPLICABLE`, remplacés par `056…070` |
 | Correctif de compilation Lot 2 testé | `64f53424a0fc479c4fdea79c401d0b227d52eebd` — construction UUID découpée en cinq `String` ; sources applicatives identiques dans le paquet documentaire `94deaf2937123fe22ab579c193543f547768fde9` ; 157 tests WSL réussis, puis campagne iPad reportée de `039…054` vers `055…070` : 12 réussites et 4 échecs (`058`, `061`, `062`, `065`) |
 | Candidat de régression des quatre échecs fonctionnels testé | `9bc11e7423178b66c48446c59abc5a912de5c26f` — `IPAD-L2-072…073` réussis ; `071` échoue uniquement sur la perte du gras/italique au collage et `074` sur la photo visible hors ouverture, l’ergonomie du contour et son placement extérieur ; les autres étapes sont déclarées conformes |
-| Second candidat de régression Lot 2 à tester | `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb` — fusion des styles collés, ouverture alpha commune photo/contour, trois épaisseurs nommées et interception des panneaux au-dessus du canevas zoomé ; 159 tests WSL, parse, 55 contrats et 16 empreintes réussis ; `IPAD-L2-075…077` à exécuter |
+| Second candidat de régression Lot 2 testé | `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb` — `IPAD-L2-077` réussi ; `075` échoue uniquement à l’étape 3 et `076` uniquement aux étapes 4 et 5 ; toutes les autres étapes sont déclarées conformes |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -196,7 +196,13 @@ Le second correctif est figé au commit exact
 `IPAD-L2-075…077` qualifient respectivement le collage riche, les ouvertures et
 contours décoratifs, puis la priorité tactile des panneaux sur une page zoomée.
 Les qualifications `APPLE-L2-014…017` remplacent `010…013` pour ce nouveau
-candidat ; aucun verdict historique n’est retargeté.
+candidat ; aucun verdict historique n’est retargeté. Le retour du 23 août 2026
+réussit globalement `077`. Il échoue `075` à la seule étape 3, car le gras et
+l’italique disparaissent encore, et `076` aux seules étapes 4 et 5 : libellés
+Fin/Moyen/Épais répartis sur plusieurs lignes, puis photo réduite/tronquée et
+contour bas masqué avec Photo instantanée. Les autres étapes sont explicitement
+conformes. `IMG_4218.jpeg` étaye le second constat et reste hors Git. Un
+troisième correctif est en cours de gel et recevra de nouveaux identifiants.
 
 ## Mode de réponse
 
@@ -494,9 +500,9 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-072` | Régression du dépôt, des commandes et de la miniature sticker | `3:STK-004`, `3:STK-005`, `3:STK-008`, `3:STK-015`, `3:STK-023`, `3:STK-024`, `3:ELM-002`, `3:ACC-003`, `3:COV-007`, `3:CAN-008` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-073` | Régression du remplacement réel d’un sticker | `3:STK-007`, `3:STK-014` à `3:STK-016`, `3:STK-022`, `3:ELM-008`, `3:UND-001` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-074` | Régression de l’alignement des cadres décoratifs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008` | 🔴 `ÉCHOUÉ` — étapes 1 à 4 : photo visible hors décor et contour extérieur/peu clair ; étapes 5 et 6 conformes |
-| `IPAD-L2-075` | Seconde régression du collage riche | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-076` | Ouvertures alpha, contours et trois épaisseurs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `3:EDT-001`, `3:EDT-002`, `3:EDT-012`, `3:ZOM-001`, `3:ZOM-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-075` | Seconde régression du collage riche | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — étape 3 seulement ; étapes 1, 2, 4, 5 et 6 conformes |
+| `IPAD-L2-076` | Ouvertures alpha, contours et trois épaisseurs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | 🔴 `ÉCHOUÉ` — étapes 4 et 5 seulement ; étapes 1, 2, 3 et 6 conformes |
+| `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `3:EDT-001`, `3:EDT-002`, `3:EDT-012`, `3:ZOM-001`, `3:ZOM-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 
 ## Fiches détaillées
 
@@ -4802,11 +4808,13 @@ répondre avec son identifiant ainsi que le numéro d’étape.
 | 5 | Noter l’état, coller l’extrait de plus de 1 000 caractères puis choisir Annuler dans l’alerte. | L’alerte apparaît et l’état précédent, y compris ses styles, est restauré sans texte tronqué résiduel. |
 | 6 | Refaire le collage long, choisir Conserver 1 000 caractères, terminer puis rouvrir. | Le compteur vaut 1 000 caractères Swift, seul l’excès est absent et l’état accepté persiste sans crash. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — résultat par étape, origine de l’extrait et capture
-  facultative des mots gras/italique avant et après réouverture.
-- Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7 ;
-  relever toute différence et le mode de transfert du candidat.
+- Résultat : 🔴 `ÉCHOUÉ` — étape 3 ; étapes 1, 2, 4, 5 et 6 déclarées
+  conformes.
+- Preuve : retour du 23 août 2026 : « le gras et l’italique ne sont toujours
+  pas conservés après collage ». Tout ce qui n’était pas mentionné a été
+  explicitement déclaré OK ; aucune capture jointe pour cette fiche.
+- Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7,
+  repris de la campagne sans différence ni mode de transfert redéclaré.
 
 ### `IPAD-L2-076` — Ouvertures alpha, contours et trois épaisseurs
 
@@ -4827,10 +4835,17 @@ répondre avec son identifiant ainsi que le numéro d’étape.
 | 5 | Avec chaque famille de décor, conserver un contour Épais contrasté et examiner son empilement. | Le contour est entièrement dans l’ouverture centrale, au-dessus de la photo et sous le décor ; il n’apparaît jamais sur le bord extérieur du cadre décoratif. |
 | 6 | Comparer éditeur, Vue globale et Prévisualiser, puis retirer le décor et utiliser Annuler/Rétablir. | Masque, contour, alpha et ordre restent identiques dans les trois rendus ; cadrage, point focal et orientation ne changent pas ; l’historique restaure exactement le style. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — cadres, rapports, couleurs, épaisseurs, résultats
-  VoiceOver et captures rapprochées de tout pixel extérieur inattendu.
-- Environnement : reprendre celui de `IPAD-L2-075`, sans différence déclarée.
+- Résultat : 🔴 `ÉCHOUÉ` — étapes 4 et 5 ; étapes 1, 2, 3 et 6 déclarées
+  conformes.
+- Preuve : retour du 23 août 2026. À l’étape 4, Aucun est lisible, mais Fin se
+  répartit sur deux lignes, Moyen sur trois et Épais sur quatre. À l’étape 5,
+  le contour reste intérieur avec les autres décors, mais sa bordure basse est
+  invisible avec Photo instantanée ; ce décor tronque et réduit aussi la photo
+  alors que son cadrage initial ne touche pas le bord. `IMG_4218.jpeg`,
+  examinée et conservée hors Git, compare la photo originale, Photo instantanée
+  avec contour vert épais, Photo instantanée seule et le contour seul. Tout ce
+  qui n’était pas mentionné a été explicitement déclaré OK.
+- Environnement : repris de `IPAD-L2-075`, sans différence déclarée.
 
 ### `IPAD-L2-077` — Priorité tactile des panneaux à fort zoom
 
@@ -4851,10 +4866,11 @@ répondre avec son identifiant ainsi que le numéro d’étape.
 | 5 | Revenir dans l’espace visible du canevas et sélectionner, déplacer puis tourner chaque type d’élément. | Les interactions normales du canevas restent fonctionnelles dans ses limites ; la correction n’a pas bloqué les objets visibles. |
 | 6 | Utiliser Ajuster, puis revenir à 200 % et parcourir le rail avec VoiceOver. | Ajuster recentre à 100 % ; le zoom suivant reste fonctionnel et VoiceOver annonce chaque menu dans un ordre cohérent sans focus sur un objet masqué. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — zooms, orientation, menu touché, sélection avant/après
-  et capture ou vidéo de toute interception résiduelle.
-- Environnement : reprendre celui de `IPAD-L2-075`, sans différence déclarée.
+- Résultat : 🟢 `RÉUSSI` — toutes les étapes déclarées conformes.
+- Preuve : retour global du 23 août 2026 selon la règle explicite « tout ce qui
+  n’est pas mentionné est considéré comme OK » ; sans capture ni détail par
+  étape.
+- Environnement : repris de `IPAD-L2-075`, sans différence déclarée.
 
 
 ## Qualification différée Apple/macOS/Xcode

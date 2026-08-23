@@ -966,31 +966,36 @@ Les insets source sont positifs ou nuls, leurs sommes horizontale et verticale
 sont strictement inférieures à la largeur et à la hauteur orientées du payload.
 Les insets destination sont finis, compris entre `0` et `0,5` exclus, et leurs
 sommes sur chaque axe sont strictement inférieures à `1`; ils expriment la
-fraction des limites non tournées de l'élément occupée par chaque bord. Les
+fraction des limites non tournées du rendu décoratif occupée par chaque bord. Les
 quatre coins source sont mis à l'échelle de leurs rectangles destination, les
 bords sont étirés seulement sur leur axe longitudinal et le centre sur les
-deux axes, avec interpolation bilinéaire. Le cadre remplit les limites de
-l'élément, conserve son alpha, est composé au-dessus de la photo masquée et du
-contour, puis suit la rotation et le rognage de l'élément. Les deux jeux
+deux axes, avec interpolation bilinéaire. Le cadre remplit les limites de son
+rendu décoratif calculées ci-dessous, conserve son alpha, est composé au-dessus
+de la photo masquée et du contour, puis suit la rotation de l'élément et le
+rognage de la page. Les deux jeux
 d'insets font partie du contrat versionné de `CAT-009` et garantissent le même
 rendu relatif à toute résolution.
 
-La photo placée sous un cadre décoratif DOIT être limitée à l’ouverture
-centrale réellement transparente du payload : le renderer calcule le plus
-grand rectangle entièrement transparent contenant le centre de l’image source,
-le transforme par les mêmes trois segments du neuf-zones et l’utilise comme
-limite interne. Les transparences situées à l’extérieur de cette ouverture
-révèlent donc la page, jamais des pixels de la photo. Un retrait minimal d’un
-demi-point de destination évite qu’une frange d’anticrénelage contrastée ne
-réapparaisse sur le bord intérieur.
+Le cadre photo, son masque, son contour et son cadrage conservent exactement les
+limites non tournées de l’élément avant et après application d’un cadre
+décoratif. Le renderer calcule le plus grand rectangle entièrement transparent
+contenant le centre du payload, le transforme par les mêmes trois segments du
+neuf-zones, puis agrandit et décale uniquement le rendu décoratif pour faire
+coïncider cette ouverture avec les limites existantes du cadre photo. Un décor,
+notamment Photo instantanée, PEUT donc dépasser visuellement ces limites, mais
+NE DOIT modifier ni le masque, ni la sélection, ni le `nativeScale`, ni le point
+focal, ni la partie visible de la photo. Il suit la transformation de l’élément
+et reste rogné aux limites de la page. Comme la photo demeure masquée aux
+limites de son propre cadre, les transparences situées à l’extérieur de
+l’ouverture révèlent la page, jamais des pixels de la photo.
 
 `SHR-014` — Un contour d'épaisseur non nulle DOIT être tracé entièrement à
 l'intérieur du chemin du masque, avec jointures et extrémités arrondies, en
-source-over au-dessus de la photo masquée et sous le cadre décoratif. Sans
-cadre décoratif, son bord extérieur coïncide avec le chemin du masque ; avec
-un cadre décoratif, il coïncide avec le même masque ramené à l’ouverture
-centrale calculée par `SHR-013`. Il NE DOIT donc ni apparaître à l’extérieur
-du décor, ni agrandir l’élément, ni modifier le cadrage.
+source-over au-dessus de la photo masquée et sous le cadre décoratif. Son bord
+extérieur coïncide toujours avec le chemin du masque et les limites existantes
+du cadre photo ; le décor de `SHR-013` est disposé autour de ce chemin. Le
+contour NE DOIT donc ni être réduit par un décor asymétrique, ni agrandir
+l’élément, ni modifier le cadrage.
 
 ---
 

@@ -85,6 +85,21 @@ final class TextEditingPrototypeTests: XCTestCase {
         )))
     }
 
+    // 3:TBX-007 — le pont presse-papiers localise l'insertion selon les
+    // Character Swift, y compris lorsqu'elle remplace une sélection avec emoji.
+    func testReplacementChangeLocatesRichPasteAtCharacterBoundaries() throws {
+        let change = try XCTUnwrap(TextEditingPrototype.replacementChange(
+            from: "Avant 👨‍👩‍👧‍👦 après",
+            to: "Avant gras et italique après"
+        ))
+
+        XCTAssertEqual(change.prefixCount, 6)
+        XCTAssertEqual(change.replacedCount, 1)
+        XCTAssertEqual(change.insertedText, "gras et italique")
+        XCTAssertEqual(change.insertedCount, 16)
+        XCTAssertNil(TextEditingPrototype.replacementChange(from: "stable", to: "stable"))
+    }
+
     // Lot 0, 3:TXA-005, 3:TBX-018...3:TBX-021
     func testManualResizePreservesFontAndDetectsOverflow() throws {
         let style = TextStyleDefaults(

@@ -224,6 +224,42 @@ final class CatalogContractTests: XCTestCase {
         ))
     }
 
+    // 3:SHR-013, 3:CRP-007 — un décor asymétrique entoure le cadre existant
+    // sans réduire, tronquer ni déplacer le rendu de la photo.
+    func testDecorativeFrameRenderBoundsAlignAsymmetricApertureWithPhoto() throws {
+        let bounds = try XCTUnwrap(
+            DecorativeFrameAlphaGeometry.renderBoundsAligningAperture(
+                CatalogRenderBounds(x: 0.1, y: 0.1, width: 0.8, height: 0.65),
+                contentWidth: 200,
+                contentHeight: 100
+            )
+        )
+
+        XCTAssertEqual(bounds.x, -25, accuracy: 0.000_001)
+        XCTAssertEqual(bounds.y, -100 / 6.5, accuracy: 0.000_001)
+        XCTAssertEqual(bounds.width, 250, accuracy: 0.000_001)
+        XCTAssertEqual(bounds.height, 100 / 0.65, accuracy: 0.000_001)
+        XCTAssertEqual(bounds.x + 0.1 * bounds.width, 0, accuracy: 0.000_001)
+        XCTAssertEqual(bounds.y + 0.1 * bounds.height, 0, accuracy: 0.000_001)
+        XCTAssertEqual(0.8 * bounds.width, 200, accuracy: 0.000_001)
+        XCTAssertEqual(0.65 * bounds.height, 100, accuracy: 0.000_001)
+    }
+
+    // 3:SHR-013 — une ouverture hors unité ou dégénérée ne doit pas produire
+    // de géométrie non finie dans le renderer Apple.
+    func testDecorativeFrameRenderBoundsRejectInvalidApertures() {
+        XCTAssertNil(DecorativeFrameAlphaGeometry.renderBoundsAligningAperture(
+            CatalogRenderBounds(x: 0.2, y: 0.2, width: 0, height: 0.6),
+            contentWidth: 200,
+            contentHeight: 100
+        ))
+        XCTAssertNil(DecorativeFrameAlphaGeometry.renderBoundsAligningAperture(
+            CatalogRenderBounds(x: 0.7, y: 0.2, width: 0.4, height: 0.6),
+            contentWidth: 200,
+            contentHeight: 100
+        ))
+    }
+
     private func jsonObject(_ relativePath: String) throws -> [String: Any] {
         let data = try Data(contentsOf: repositoryRoot.appendingPathComponent(relativePath))
         return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])

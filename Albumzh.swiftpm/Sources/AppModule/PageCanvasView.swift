@@ -409,15 +409,16 @@ private struct PhotoFrameRenderView: View {
                     maximumPixelSize: decorativeFrameMaximumPixelSize
                 )
             }
-            let photoBounds = definition.flatMap { definition in
+            let photoBounds = CGRect(origin: .zero, size: frameGeometry.size)
+            let decorativeFrameBounds = definition.flatMap { definition in
                 resolvedDecorativeFrameImage.map { image in
-                    DecorativeFrameGeometry.destinationPhotoAperture(
+                    DecorativeFrameGeometry.renderBounds(
                         definition: definition,
                         image: image,
-                        destinationSize: frameGeometry.size
+                        photoSize: frameGeometry.size
                     )
                 }
-            } ?? CGRect(origin: .zero, size: frameGeometry.size)
+            } ?? photoBounds
             ZStack {
                 if let placement, let metadata,
                    let render = try? PhotoCropGeometry.renderGeometry(
@@ -477,6 +478,14 @@ private struct PhotoFrameRenderView: View {
                         definition: definition,
                         image: resolvedDecorativeFrameImage,
                         didFinishLoading: didFinishDecorativeFrameLoading
+                    )
+                    .frame(
+                        width: max(0, decorativeFrameBounds.width),
+                        height: max(0, decorativeFrameBounds.height)
+                    )
+                    .position(
+                        x: decorativeFrameBounds.midX,
+                        y: decorativeFrameBounds.midY
                     )
                 }
             }
@@ -816,19 +825,42 @@ private enum CatalogImageAlphaGeometry {
 
 @MainActor
 private enum DecorativeFrameGeometry {
-    static func destinationPhotoAperture(
+    static func renderBounds(
         definition: DecorativeFrameCatalogDefinition,
         image: UIImage,
-        destinationSize: CGSize
+        photoSize: CGSize
+    ) -> CGRect {
+        let photoBounds = CGRect(origin: .zero, size: photoSize)
+        let aperture = normalizedPhotoAperture(definition: definition, image: image)
+        guard let bounds = DecorativeFrameAlphaGeometry.renderBoundsAligningAperture(
+            CatalogRenderBounds(
+                x: Double(aperture.minX),
+                y: Double(aperture.minY),
+                width: Double(aperture.width),
+                height: Double(aperture.height)
+            ),
+            contentWidth: Double(photoSize.width),
+            contentHeight: Double(photoSize.height)
+        ) else { return photoBounds }
+        return CGRect(
+            x: CGFloat(bounds.x),
+            y: CGFloat(bounds.y),
+            width: CGFloat(bounds.width),
+            height: CGFloat(bounds.height)
+        )
+    }
+
+    private static func normalizedPhotoAperture(
+        definition: DecorativeFrameCatalogDefinition,
+        image: UIImage
     ) -> CGRect {
         let analysis = CatalogImageAlphaGeometry.analysis(
             of: image,
             cacheKey: definition.contentHash
         )
         let sourceSize = image.size
-        guard sourceSize.width > 0, sourceSize.height > 0,
-              destinationSize.width > 0, destinationSize.height > 0 else {
-            return CGRect(origin: .zero, size: destinationSize)
+        guard sourceSize.width > 0, sourceSize.height > 0 else {
+            return CGRect(x: 0.2, y: 0.2, width: 0.6, height: 0.6)
         }
         let sourceInsets = definition.sourceCapInsetsPixels
         let destinationInsets = definition.destinationCapInsets
@@ -871,15 +903,15 @@ private enum DecorativeFrameGeometry {
         ]
         let destinationX = [
             CGFloat.zero,
-            destinationSize.width * CGFloat(destinationInsets.left),
-            destinationSize.width * CGFloat(1 - destinationInsets.right),
-            destinationSize.width
+            CGFloat(destinationInsets.left),
+            CGFloat(1 - destinationInsets.right),
+            CGFloat(1)
         ]
         let destinationY = [
             CGFloat.zero,
-            destinationSize.height * CGFloat(destinationInsets.top),
-            destinationSize.height * CGFloat(1 - destinationInsets.bottom),
-            destinationSize.height
+            CGFloat(destinationInsets.top),
+            CGFloat(1 - destinationInsets.bottom),
+            CGFloat(1)
         ]
         let aperture = analysis.centralTransparentBounds
         var result = CGRect(
@@ -892,14 +924,12 @@ private enum DecorativeFrameGeometry {
             - result.minX
         result.size.height = map(aperture.maxY, from: sourceY, to: destinationY)
             - result.minY
-        let safetyInset = max(0.5, min(destinationSize.width, destinationSize.height) * 0.002)
-        let safeResult = result.insetBy(dx: safetyInset, dy: safetyInset)
-            .intersection(CGRect(origin: .zero, size: destinationSize))
-        guard !safeResult.isNull, safeResult.width > 0, safeResult.height > 0 else {
-            return CGRect(origin: .zero, size: destinationSize)
-                .insetBy(dx: destinationSize.width * 0.2, dy: destinationSize.height * 0.2)
+        let unitBounds = CGRect(x: 0, y: 0, width: 1, height: 1)
+        let normalized = result.intersection(unitBounds)
+        guard !normalized.isNull, normalized.width > 0, normalized.height > 0 else {
+            return CGRect(x: 0.2, y: 0.2, width: 0.6, height: 0.6)
         }
-        return safeResult
+        return normalized
     }
 
     private static func map(

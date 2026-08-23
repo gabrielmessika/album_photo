@@ -12,8 +12,59 @@ public struct CatalogPixelBounds: Sendable, Equatable, Hashable {
     }
 }
 
+public struct CatalogRenderBounds: Sendable, Equatable, Hashable {
+    public let x: Double
+    public let y: Double
+    public let width: Double
+    public let height: Double
+
+    public init(x: Double, y: Double, width: Double, height: Double) {
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+    }
+}
+
 /// Pure alpha-mask geometry shared by the Apple renderer and Linux tests.
 public enum DecorativeFrameAlphaGeometry {
+    /// Expands a decorative-frame destination so its normalized transparent
+    /// aperture coincides exactly with the existing photo bounds. The photo,
+    /// crop and selection geometry therefore stay unchanged while asymmetric
+    /// decorations can extend around them (3:SHR-013, 3:CRP-007).
+    public static func renderBoundsAligningAperture(
+        _ aperture: CatalogRenderBounds,
+        contentWidth: Double,
+        contentHeight: Double
+    ) -> CatalogRenderBounds? {
+        let values = [
+            aperture.x,
+            aperture.y,
+            aperture.width,
+            aperture.height,
+            contentWidth,
+            contentHeight
+        ]
+        guard values.allSatisfy(\.isFinite),
+              aperture.x >= 0,
+              aperture.y >= 0,
+              aperture.width > 0,
+              aperture.height > 0,
+              aperture.x + aperture.width <= 1,
+              aperture.y + aperture.height <= 1,
+              contentWidth > 0,
+              contentHeight > 0 else { return nil }
+
+        let renderWidth = contentWidth / aperture.width
+        let renderHeight = contentHeight / aperture.height
+        return CatalogRenderBounds(
+            x: -aperture.x * renderWidth,
+            y: -aperture.y * renderHeight,
+            width: renderWidth,
+            height: renderHeight
+        )
+    }
+
     /// Returns the largest fully transparent rectangle containing the centre
     /// pixel. A row contributes only its contiguous transparent run through
     /// that centre, so irregular opaque decorations can never leak inside the

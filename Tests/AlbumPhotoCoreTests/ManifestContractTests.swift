@@ -313,6 +313,13 @@ final class ManifestContractTests: XCTestCase {
             "var style = container.albumTextStyle ?? fallbackStyle"
         ))
         XCTAssertFalse(textEditor.contains("guard container.albumTextStyle == nil"))
+        XCTAssertTrue(textEditor.contains("AlbumTextPasteboardStyleRecovery.recover("))
+        XCTAssertTrue(textEditor.contains("UIPasteboard.general"))
+        XCTAssertTrue(textEditor.contains("pasteboardType: \"public.rtf\""))
+        XCTAssertTrue(textEditor.contains("pasteboardType: \"com.apple.flat-rtfd\""))
+        XCTAssertTrue(textEditor.contains("pasteboardType: \"public.html\""))
+        XCTAssertTrue(textEditor.contains("TextEditingPrototype.replacementChange("))
+        XCTAssertTrue(textEditor.contains("attributes[.font] as? UIFont"))
         XCTAssertTrue(textEditor.contains("ApplyAlbumFont(pageHeight: pageHeight)"))
         XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute"
@@ -546,10 +553,12 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(framePanel.contains("Text(\"Contour\")"))
         XCTAssertTrue(framePanel.contains("Text(\"Cadre décoratif\")"))
         XCTAssertTrue(framePanel.contains("title: \"Aucun (rectangle)\""))
-        XCTAssertTrue(framePanel.contains("Button(\"Aucun\")"))
+        XCTAssertTrue(framePanel.contains("title: \"Aucun\""))
         XCTAssertTrue(framePanel.contains("title: \"Fin\", width: 0.01"))
         XCTAssertTrue(framePanel.contains("title: \"Moyen\", width: 0.02"))
         XCTAssertTrue(framePanel.contains("title: \"Épais\", width: 0.03"))
+        XCTAssertTrue(framePanel.contains("GridItem(.flexible(minimum: 100)"))
+        XCTAssertTrue(framePanel.contains(".lineLimit(1)"))
         XCTAssertTrue(framePanel.contains(".disabled(borderWidth == 0)"))
         XCTAssertFalse(framePanel.contains("Slider(value: $borderWidth"))
         XCTAssertTrue(framePanel.contains("BuiltInDecorativeFrameCatalog.definitions"))
@@ -580,7 +589,9 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(canvas.contains("(44 - resizeHandleVisualDiameter) / 2"))
         XCTAssertTrue(canvas.contains("(50 - rotationHandleVisualDiameter) / 2"))
         XCTAssertTrue(canvas.contains("CatalogImageAlphaGeometry.analysis("))
-        XCTAssertTrue(canvas.contains("DecorativeFrameGeometry.destinationPhotoAperture("))
+        XCTAssertTrue(canvas.contains("DecorativeFrameGeometry.renderBounds("))
+        XCTAssertTrue(canvas.contains("DecorativeFrameAlphaGeometry.renderBoundsAligningAperture("))
+        XCTAssertTrue(canvas.contains("let photoBounds = CGRect(origin: .zero"))
         XCTAssertTrue(canvas.contains("PhotoFrameMaskView("))
         XCTAssertTrue(canvas.contains("PhotoBorderRenderView("))
         XCTAssertTrue(canvas.contains(
