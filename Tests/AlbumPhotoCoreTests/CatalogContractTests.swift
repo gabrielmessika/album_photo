@@ -185,6 +185,45 @@ final class CatalogContractTests: XCTestCase {
         }
     }
 
+    // 3:SHR-013 — la photo utilise uniquement l'ouverture transparente
+    // centrale et ne traverse pas les transparences extérieures du décor.
+    func testDecorativeFrameApertureFindsLargestCentralTransparentRectangle() throws {
+        let width = 9
+        let height = 9
+        var alpha = [UInt8](repeating: 255, count: width * height)
+        for y in 1...7 {
+            for x in 1...7 {
+                alpha[y * width + x] = 0
+            }
+            alpha[y * width + 2] = 9
+        }
+        alpha[4 * width + 4] = 8
+
+        XCTAssertEqual(
+            DecorativeFrameAlphaGeometry.centralTransparentBounds(
+                alphaValues: alpha,
+                pixelWidth: width,
+                pixelHeight: height
+            ),
+            CatalogPixelBounds(x: 3, y: 1, width: 5, height: 7)
+        )
+    }
+
+    // 3:SHR-013 — une source incohérente ou sans centre transparent ne doit
+    // jamais produire une ouverture artificielle.
+    func testDecorativeFrameApertureRejectsInvalidOrOpaqueCentre() {
+        XCTAssertNil(DecorativeFrameAlphaGeometry.centralTransparentBounds(
+            alphaValues: [0, 0, 0],
+            pixelWidth: 2,
+            pixelHeight: 2
+        ))
+        XCTAssertNil(DecorativeFrameAlphaGeometry.centralTransparentBounds(
+            alphaValues: [0, 0, 0, 255],
+            pixelWidth: 2,
+            pixelHeight: 2
+        ))
+    }
+
     private func jsonObject(_ relativePath: String) throws -> [String: Any] {
         let data = try Data(contentsOf: repositoryRoot.appendingPathComponent(relativePath))
         return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])

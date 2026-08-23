@@ -92,16 +92,23 @@ quatre anomalies sans réattribuer leurs verdicts : conversion des traits natifs
 limite, dépôt unifié, remplacement à cible capturée, commandes adaptatives,
 préchargement du rendu de couverture et alignement alpha du neuf-zones. Elle
 passe 157 tests, le parse AppModule, les contrats et les seize empreintes sous
-WSL ; `IPAD-L2-071…074` et `APPLE-L2-010…013` portent ses nouvelles preuves.
+WSL. La campagne `IPAD-L2-071…074` réussit les deux parcours sticker `072` et
+`073`, échoue `071.3` sur le gras/italique collé et `074.1…4` sur la photo
+visible hors de l’ouverture ainsi que le contour. Les étapes restantes de ces
+deux fiches sont conformes. Un second correctif utilise l’ouverture alpha
+centrale comme masque commun photo/contour, trois épaisseurs nommées et la
+priorité tactile des panneaux à fort zoom ; il nécessite de nouvelles preuves.
+`APPLE-L2-010…013` reste non exécuté.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
 [`suivi_tests.md`](../../suivi_tests.md).
 
-Le candidat final possède désormais 12 scénarios iPad réussis sur les 16 fiches
-`055…070`. Les quatre écarts fonctionnels concernent le collage riche, les
-stickers et les cadres décoratifs ; leurs régressions `071…074` restent à
-exécuter. Les validations Apple `006…009` restent attachées à `64f5342…` et
+Le candidat final possède 12 scénarios iPad réussis sur les 16 fiches
+`055…070`, puis deux réussites (`072`, `073`) et deux échecs (`071`, `074`)
+dans la campagne corrective. Les stickers sont maintenant validés sur l’iPad
+déclaré ; collage riche, cadres/contours et chevauchement tactile du canevas
+zoomé attendent un nouveau candidat. Les validations Apple `006…009` restent attachées à `64f5342…` et
 leurs remplacements courants sont `010…013`. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
@@ -121,11 +128,11 @@ historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 | `A-L2-TEXT-UI` | `AlbumTextEditorView`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020…027`, `TXA-001…003` | Vérifie structurellement les libellés compacts, le menu Justifié, le délai 750 ms, le blocage de Prévisualiser et le renderer TextKit partagé ; parse seulement, sans type-check ni rendu Apple |
 | `A-L2-CATALOG` | `BuiltInAssetCatalogs`, `catalog-resources-v1.json`, `CatalogContractTests`, `ManifestContractTests.testPublishedCatalogMatchesRuntimePayloadContractsExactly`, `tools/validate_contracts.pl` | `CAT-001…009`, `STK-009…013`, `SHR-005`, `SHR-010…013` | Prouve 40 stickers/5 catégories, 6 cadres, 6 formes, hashes, PNG RGBA transparents, insets et goldens ; chargement du bundle Apple non prouvé |
 | `A-L2-STICKERS` | `StickerGeometryEngine`, `StickerPanelView`, `PageCanvasView`, tests de géométrie, validation et service | `STK-001…016`, `STK-021…024`, `DAT-041` | Prouve recherche/catalogue, récents, transactions, rapport intrinsèque, remplacement, opacité/retournement, ordre et avertissement structurel ; glisser-déposer, rendu et fluidité Apple manuels |
-| `A-L2-SHAPES-FRAMES` | `FrameAndShapePanelView`, `NineSliceDecorativeFrameView`, `AlbumApplicationServiceTests.testPhotoStyleScopesAreAtomicValidatedAndUndoable` | `SHR-001…014` | Prouve les trois portées et leur commande atomique, le contour canonique et les références ; masques/contours/neuf zones doivent être comparés sur Apple |
+| `A-L2-SHAPES-FRAMES` | `FrameAndShapePanelView`, `NineSliceDecorativeFrameView`, `DecorativeFrameAlphaGeometry`, `CatalogContractTests.testDecorativeFrameApertureFindsLargestCentralTransparentRectangle`, `AlbumApplicationServiceTests.testPhotoStyleScopesAreAtomicValidatedAndUndoable` | `SHR-001…014` | Prouve les trois portées et leur commande atomique, les trois épaisseurs UI, le contour canonique, les références et l’ouverture alpha centrale pure ; masque, contour et neuf-zones composés doivent encore être comparés sur Apple |
 | `A-L2-CLIPBOARD` | `AlbumApplicationServiceTests.testClipboardPreservesLot2TextAndStickerPayloads` et tests photo existants | `CLP-001…006`, `UND-001…012` | Prouve type, style, transform, nouveaux IDs, ordre, couper/coller et portée session/album pour photo, texte et sticker dans le Core ; commandes SwiftUI Apple à requalifier |
 | `A-L2-CANDIDATE` | `tools/create_ipad_candidate.sh`, `.github/workflows/ipad-candidate.yml`, `ManifestContractTests.testLibraryExposesVersionAndStampedCommitInformation` | `APP-012`, `ENV-001…005`, `DONE-005` | L’archive contrôlée contient le hash exact et refuse le marqueur brut ; téléchargement et exécution du nouvel artefact iPad non testés |
 
-La suite WSL complète compte 157 tests sans échec. Les contrats publiés des
+La suite WSL complète compte 159 tests sans échec. Les contrats publiés des
 55 ressources et leurs seize empreintes sont également valides, et toutes les
 sources AppModule passent l’analyse syntaxique. Ces résultats ne remplacent
 aucune fiche iPad.
@@ -204,10 +211,10 @@ aucune fiche iPad.
 | `IPAD-L2-068` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-069` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-070` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | 🟢 `RÉUSSI` — retour global sans détail par étape |
-| `IPAD-L2-071` | Régression collage riche et annulation de limite | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
-| `IPAD-L2-072` | Régression dépôt, petites commandes et miniature sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-002`, `ACC-003`, `COV-007`, `CAN-008` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
-| `IPAD-L2-073` | Régression remplacement réel d’un sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
-| `IPAD-L2-074` | Régression alignement des cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `IPAD-L2-071` | Régression collage riche et annulation de limite | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | 🔴 `ÉCHOUÉ` sur `9bc11e7…` — étape 3 seulement ; les cinq autres étapes sont conformes |
+| `IPAD-L2-072` | Régression dépôt, petites commandes et miniature sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-002`, `ACC-003`, `COV-007`, `CAN-008` | 🟢 `RÉUSSI` sur `9bc11e7…` — retour global sans capture ni détail par étape |
+| `IPAD-L2-073` | Régression remplacement réel d’un sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | 🟢 `RÉUSSI` sur `9bc11e7…` — retour global sans capture ni détail par étape |
+| `IPAD-L2-074` | Régression alignement des cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | 🔴 `ÉCHOUÉ` sur `9bc11e7…` — étapes 1 à 4 ; étapes 5 et 6 conformes |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne

@@ -309,6 +309,10 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("AttributeScopes.UIKitAttributes.FontAttribute"))
         XCTAssertTrue(textEditor.contains("intent.contains(.stronglyEmphasized)"))
         XCTAssertTrue(textEditor.contains("intent.contains(.emphasized)"))
+        XCTAssertTrue(textEditor.contains(
+            "var style = container.albumTextStyle ?? fallbackStyle"
+        ))
+        XCTAssertFalse(textEditor.contains("guard container.albumTextStyle == nil"))
         XCTAssertTrue(textEditor.contains("ApplyAlbumFont(pageHeight: pageHeight)"))
         XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute"
@@ -470,7 +474,7 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(service.contains("label: \"Modifier le texte\""))
     }
 
-    // 3:EDT-001, 3:EDT-010...014, 3:STK-001...024, 3:SHR-001...014
+    // 3:EDT-001, 3:EDT-010...014, 3:STK-001...024, 3:SHR-001...014, 3:ZOM-005
     func testLot2StickerAndFramePanelsUsePublishedCatalogAndSharedRenderer() throws {
         let appModule = repositoryRoot
             .appendingPathComponent("Albumzh.swiftpm/Sources/AppModule", isDirectory: true)
@@ -514,6 +518,12 @@ final class ManifestContractTests: XCTestCase {
             contentsOf: appModule.appendingPathComponent("AlbumCoverView.swift"),
             encoding: .utf8
         )
+        let alphaGeometry = try String(
+            contentsOf: repositoryRoot.appendingPathComponent(
+                "Albumzh.swiftpm/Sources/AlbumPhotoCore/DecorativeFrameAlphaGeometry.swift"
+            ),
+            encoding: .utf8
+        )
 
         XCTAssertFalse(stickerPanel.contains("Catalogue en préparation"))
         XCTAssertTrue(stickerPanel.contains("Récents"))
@@ -537,6 +547,11 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(framePanel.contains("Text(\"Cadre décoratif\")"))
         XCTAssertTrue(framePanel.contains("title: \"Aucun (rectangle)\""))
         XCTAssertTrue(framePanel.contains("Button(\"Aucun\")"))
+        XCTAssertTrue(framePanel.contains("title: \"Fin\", width: 0.01"))
+        XCTAssertTrue(framePanel.contains("title: \"Moyen\", width: 0.02"))
+        XCTAssertTrue(framePanel.contains("title: \"Épais\", width: 0.03"))
+        XCTAssertTrue(framePanel.contains(".disabled(borderWidth == 0)"))
+        XCTAssertFalse(framePanel.contains("Slider(value: $borderWidth"))
         XCTAssertTrue(framePanel.contains("BuiltInDecorativeFrameCatalog.definitions"))
         XCTAssertTrue(framePanel.contains("applySelectedDecorativeFrame"))
         XCTAssertTrue(framePanel.contains("PhotoFrameStyleApplicationScope.album"))
@@ -564,8 +579,21 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(canvas.contains("resizeHandleVisualDiameter"))
         XCTAssertTrue(canvas.contains("(44 - resizeHandleVisualDiameter) / 2"))
         XCTAssertTrue(canvas.contains("(50 - rotationHandleVisualDiameter) / 2"))
-        XCTAssertTrue(canvas.contains("CatalogImageAlphaBounds.visibleBounds("))
+        XCTAssertTrue(canvas.contains("CatalogImageAlphaGeometry.analysis("))
+        XCTAssertTrue(canvas.contains("DecorativeFrameGeometry.destinationPhotoAperture("))
+        XCTAssertTrue(canvas.contains("PhotoFrameMaskView("))
+        XCTAssertTrue(canvas.contains("PhotoBorderRenderView("))
+        XCTAssertTrue(canvas.contains(
+            "frame.border.width * min(pageSize.width, pageSize.height)"
+        ))
         XCTAssertTrue(canvas.contains("CGFloat(sourceInsets.left) * sourceScaleX"))
+        XCTAssertTrue(alphaGeometry.contains("public static func centralTransparentBounds("))
+        XCTAssertTrue(canvas.contains(
+            "DecorativeFrameAlphaGeometry.centralTransparentBounds("
+        ))
+        XCTAssertTrue(editor.contains("editorRail\n                        .zIndex(10)"))
+        XCTAssertTrue(editor.contains("pageWorkspace\n                    .clipped()"))
+        XCTAssertTrue(editor.contains(".contentShape(Rectangle())"))
         XCTAssertTrue(albumCover.contains("cover-480x360-v2-"))
         XCTAssertTrue(albumCover.contains("BuiltInStickerCatalog.definition("))
         XCTAssertTrue(albumCover.contains("BuiltInDecorativeFrameCatalog.definition("))

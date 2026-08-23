@@ -24,6 +24,19 @@ private struct PhotoShapeChoice: Identifiable {
     ]
 }
 
+private struct PhotoBorderThicknessChoice: Identifiable {
+    let title: String
+    let width: Double
+
+    var id: Double { width }
+
+    static let all = [
+        PhotoBorderThicknessChoice(title: "Fin", width: 0.01),
+        PhotoBorderThicknessChoice(title: "Moyen", width: 0.02),
+        PhotoBorderThicknessChoice(title: "Épais", width: 0.03)
+    ]
+}
+
 struct FrameAndShapePanelView: View {
     @ObservedObject var model: EditorViewModel
 
@@ -122,46 +135,43 @@ struct FrameAndShapePanelView: View {
 
     private func borderSection(_ frame: PhotoFrameElement) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("Contour")
-                    .font(.headline)
-                Spacer()
-                Text(borderWidth, format: .percent.precision(.fractionLength(1)))
-                    .font(.caption.monospacedDigit())
+            Text("Contour")
+                .font(.headline)
+
+            Text("Épaisseur")
+                .font(.subheadline.weight(.semibold))
+
+            HStack(spacing: 8) {
                 Button("Aucun") {
-                    borderWidth = 0
-                    Task {
-                        await model.applySelectedPhotoBorder(
-                            PhotoBorder(),
-                            scope: scope
-                        )
-                    }
+                    applyBorder(width: 0, color: frame.border.color)
                 }
-                .buttonStyle(.borderless)
                 .disabled(borderWidth == 0)
-            }
-            Slider(
-                value: $borderWidth,
-                in: 0...0.03,
-                step: 0.001,
-                onEditingChanged: { isEditing in
-                    guard !isEditing else { return }
-                    Task {
-                        await model.applySelectedPhotoBorder(
-                            PhotoBorder(width: borderWidth, color: frame.border.color),
-                            scope: scope
+                .accessibilityValue(borderWidth == 0 ? "Sélectionné" : "")
+
+                ForEach(PhotoBorderThicknessChoice.all) { choice in
+                    let selected = abs(borderWidth - choice.width) < 0.000_001
+                    Button {
+                        applyBorder(width: choice.width, color: frame.border.color)
+                    } label: {
+                        Label(
+                            choice.title,
+                            systemImage: selected ? "checkmark.circle.fill" : "circle"
                         )
                     }
+                    .labelStyle(.titleAndIcon)
+                    .accessibilityLabel("Contour \(choice.title)")
+                    .accessibilityValue(selected ? "Sélectionné" : "")
                 }
-            )
-            .accessibilityLabel("Épaisseur du contour")
-            .accessibilityValue(
-                borderWidth.formatted(.percent.precision(.fractionLength(1)))
-            )
+            }
+            .buttonStyle(.bordered)
+
+            Text("Couleur")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(borderWidth == 0 ? .secondary : .primary)
 
             HStack(spacing: 10) {
                 ForEach(AlbumTextColorOption.all) { option in
-                    let selected = frame.border.color == option.color
+                    let selected = borderWidth > 0 && frame.border.color == option.color
                     Button {
                         Task {
                             await model.applySelectedPhotoBorder(
@@ -185,6 +195,23 @@ struct FrameAndShapePanelView: View {
                     .accessibilityValue(selected ? "Sélectionné" : "")
                 }
             }
+            .disabled(borderWidth == 0)
+            .opacity(borderWidth == 0 ? 0.45 : 1)
+            .accessibilityHint(
+                borderWidth == 0
+                    ? "Choisissez d’abord Fin, Moyen ou Épais."
+                    : "Choisit la couleur du contour."
+            )
+        }
+    }
+
+    private func applyBorder(width: Double, color: SRGBAColor) {
+        borderWidth = width
+        Task {
+            await model.applySelectedPhotoBorder(
+                width == 0 ? PhotoBorder() : PhotoBorder(width: width, color: color),
+                scope: scope
+            )
         }
     }
 

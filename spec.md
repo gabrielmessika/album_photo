@@ -620,7 +620,7 @@ commande.
 | `ZOM-002` | Les commandes Zoom arrière, Ajuster et Zoom avant DOIVENT utiliser les symboles, libellés accessibles et états du tableau 7.2.1. Zoom arrière et Zoom avant parcourent respectivement les paliers `50`, `75`, `100`, `125`, `150`, `200`, `300` et `400 %`; à partir d’une valeur intermédiaire, elles choisissent le palier strictement inférieur ou supérieur. Ajuster fixe `100 %` et recentre la page. |
 | `ZOM-003` | Un pincement commencé sur une zone vide du canevas ou sur un élément non sélectionné DOIT modifier le zoom continûment autour de son point médian, avec limitation à la plage de `ZOM-001`, sans sélectionner cet élément. Le relâchement NE DOIT PAS arrondir à un palier. |
 | `ZOM-004` | Lorsque les limites visuelles de la page dépassent la fenêtre, un déplacement à deux doigts commencé sur une zone vide ou sur un élément non sélectionné DOIT déplacer le centre visible sans sélectionner cet élément ni permettre de perdre entièrement la page. Sur un axe où la page tient dans la fenêtre, elle reste centrée. |
-| `ZOM-005` | La priorité des gestes DOIT être déterministe : en mode cadrage, les gestes commencés dans le cadre sélectionné modifient le contenu selon `CRP-002` et `CRP-003`; hors cadrage, un geste à un doigt ou à deux doigts commencé dans l’élément sélectionné transforme cet élément selon `ELM-003`; un pincement ou déplacement à deux doigts commencé ailleurs dans la page, y compris sur un élément non sélectionné, agit sur la fenêtre selon `ZOM-003` et `ZOM-004`. La navigation de page ne commence que si `NAV-005` l’autorise. |
+| `ZOM-005` | La priorité des gestes DOIT être déterministe : en mode cadrage, les gestes commencés dans le cadre sélectionné modifient le contenu selon `CRP-002` et `CRP-003`; hors cadrage, un geste à un doigt ou à deux doigts commencé dans l’élément sélectionné transforme cet élément selon `ELM-003`; un pincement ou déplacement à deux doigts commencé ailleurs dans la page, y compris sur un élément non sélectionné, agit sur la fenêtre selon `ZOM-003` et `ZOM-004`. La navigation de page ne commence que si `NAV-005` l’autorise. À tout niveau de zoom, le canevas et ses éléments DOIVENT rester visuellement et tactilement bornés à leur espace de travail : une pression située dans le rail ou un panneau superposé agit uniquement sur ce rail ou ce panneau, même si la page zoomée serait géométriquement présente dessous. |
 | `ZOM-006` | Chaque scène d’édition DOIT conserver en mémoire de session, pour chaque `pageID`, le zoom continu et le centre visible normalisé. Passer en Vue globale ou en prévisualisation puis revenir restaure cet état ; supprimer la page le supprime. Une relance initialise toute page à `100 %` centrée. |
 | `ZOM-007` | Le zoom et le centre visible NE DOIVENT PAS être sérialisés dans l’album, modifier `updatedAt`, créer une commande Annuler/Rétablir, ni affecter éditeur logique, miniature, lecture, diaporama ou export. |
 | `ZOM-008` | Contours, poignées, boutons locaux et guides DOIVENT conserver une épaisseur et une cible tactile constantes en points écran pendant le zoom ; seule leur position suit la transformation du canevas. |
@@ -930,7 +930,7 @@ n’est rendue.
 | `SHR-001` | Le panneau Cadres et formes DOIT être actif pour un cadre photo sélectionné et distinguer trois groupes : Forme, Contour et Cadre décoratif. |
 | `SHR-002` | Une forme définit le masque de découpe. Le catalogue initial DOIT au minimum proposer Rectangle, Rectangle arrondi, Cercle, Ovale, Cœur et Étoile. |
 | `SHR-003` | Un seul masque et un seul cadre décoratif PEUVENT être actifs par cadre. Dans Forme, Aucun signifie le masque procédural Rectangle et se sérialise par sa référence enregistrée ; dans Cadre décoratif, Aucun signifie `nil`. |
-| `SHR-004` | Le contour DOIT proposer Aucun, une couleur sRGB avec alpha `1` et une épaisseur de `0` à `0,03` de la plus petite dimension de page. Aucun se sérialise canoniquement avec `width = 0` et la couleur noire opaque `(0, 0, 0, 1)`. |
+| `SHR-004` | Le contour DOIT proposer Aucun et exactement trois épaisseurs non nulles exprimées par des noms plutôt que par des pourcentages : Fin (`0,01`), Moyen (`0,02`) et Épais (`0,03`) de la plus petite dimension de page. Il propose une couleur sRGB avec alpha `1`, mais les choix de couleur DOIVENT être visiblement et fonctionnellement désactivés lorsque Aucun est actif. Aucun se sérialise canoniquement avec `width = 0` et la couleur noire opaque `(0, 0, 0, 1)`. |
 | `SHR-005` | La version 1.0 DOIT fournir au moins six cadres décoratifs provenant du registre versionné et d’assets dont les droits autorisent la distribution ; aucun asset Photoweb ne doit être copié sans licence. |
 | `SHR-006` | Changer de forme DOIT conserver exactement le `nativeScale`, le point focal et l’orientation du contenu. Il NE DOIT PAS augmenter le zoom pour couvrir le nouveau masque ; les parties non couvertes restent transparentes selon `CRP-001`. |
 | `SHR-007` | Les portées Sélection, Toutes les photos de la page et Toutes les photos de l’album DOIVENT être proposées pour une forme, un contour ou un cadre décoratif. |
@@ -975,11 +975,22 @@ contour, puis suit la rotation et le rognage de l'élément. Les deux jeux
 d'insets font partie du contrat versionné de `CAT-009` et garantissent le même
 rendu relatif à toute résolution.
 
+La photo placée sous un cadre décoratif DOIT être limitée à l’ouverture
+centrale réellement transparente du payload : le renderer calcule le plus
+grand rectangle entièrement transparent contenant le centre de l’image source,
+le transforme par les mêmes trois segments du neuf-zones et l’utilise comme
+limite interne. Les transparences situées à l’extérieur de cette ouverture
+révèlent donc la page, jamais des pixels de la photo. Un retrait minimal d’un
+demi-point de destination évite qu’une frange d’anticrénelage contrastée ne
+réapparaisse sur le bord intérieur.
+
 `SHR-014` — Un contour d'épaisseur non nulle DOIT être tracé entièrement à
 l'intérieur du chemin du masque, avec jointures et extrémités arrondies, en
-source-over au-dessus de la photo masquée et sous le cadre décoratif. Son bord
-extérieur coïncide avec le chemin du masque; il NE DOIT donc ni agrandir
-l'élément ni modifier le cadrage.
+source-over au-dessus de la photo masquée et sous le cadre décoratif. Sans
+cadre décoratif, son bord extérieur coïncide avec le chemin du masque ; avec
+un cadre décoratif, il coïncide avec le même masque ramené à l’ouverture
+centrale calculée par `SHR-013`. Il NE DOIT donc ni apparaître à l’extérieur
+du décor, ni agrandir l’élément, ni modifier le cadrage.
 
 ---
 

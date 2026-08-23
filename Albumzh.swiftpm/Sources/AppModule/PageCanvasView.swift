@@ -80,6 +80,7 @@ struct PageCompositionView: View {
                 PhotoFrameRenderView(
                     frame: frame,
                     geometry: elementGeometry,
+                    pageSize: pageSize,
                     placementOverride: placementOverride?.0 == frame.id
                         ? placementOverride?.1 : nil,
                     metadata: frame.content.flatMap { assets[$0.assetID] },
@@ -365,6 +366,7 @@ private struct AlbumRenderedTextView: UIViewRepresentable {
 private struct PhotoFrameRenderView: View {
     let frame: PhotoFrameElement
     let geometry: ElementGeometry
+    let pageSize: CGSize
     let placementOverride: PhotoPlacement?
     let metadata: PhotoAssetMetadata?
     let imageCache: PhotoImageCache
@@ -373,12 +375,49 @@ private struct PhotoFrameRenderView: View {
     let visualIndex: Int
     let visualCount: Int
 
+    @State private var decorativeFrameImage: UIImage?
+    @State private var didFinishDecorativeFrameLoading = false
+
     private var placement: PhotoPlacement? {
         placementOverride ?? frame.content
     }
 
+    private var decorativeFrameDefinition: DecorativeFrameCatalogDefinition? {
+        guard let reference = frame.decorativeFrame,
+              let definition = BuiltInDecorativeFrameCatalog.definition(
+                  id: reference.catalogID,
+                  version: reference.catalogVersion
+              ), definition.reference == reference else { return nil }
+        return definition
+    }
+
+    private var decorativeFrameMaximumPixelSize: Int {
+        purpose == .thumbnail ? 480 : 1_024
+    }
+
+    private var decorativeFrameTaskID: String {
+        guard let definition = decorativeFrameDefinition else { return "none" }
+        return "\(definition.catalogID)|\(decorativeFrameMaximumPixelSize)"
+    }
+
     var body: some View {
         GeometryReader { frameGeometry in
+            let definition = decorativeFrameDefinition
+            let resolvedDecorativeFrameImage = definition.flatMap {
+                decorativeFrameImage ?? imageCache.cachedCatalogImage(
+                    for: $0.contentHash,
+                    maximumPixelSize: decorativeFrameMaximumPixelSize
+                )
+            }
+            let photoBounds = definition.flatMap { definition in
+                resolvedDecorativeFrameImage.map { image in
+                    DecorativeFrameGeometry.destinationPhotoAperture(
+                        definition: definition,
+                        image: image,
+                        destinationSize: frameGeometry.size
+                    )
+                }
+            } ?? CGRect(origin: .zero, size: frameGeometry.size)
             ZStack {
                 if let placement, let metadata,
                    let render = try? PhotoCropGeometry.renderGeometry(
@@ -413,40 +452,46 @@ private struct PhotoFrameRenderView: View {
                 }
             }
             .frame(width: frameGeometry.size.width, height: frameGeometry.size.height)
-            .clipShape(AlbumCatalogShape(catalogID: frame.mask.shape.catalogID))
-            .overlay {
-                if frame.border.width > 0 {
-                    AlbumCatalogShape(catalogID: frame.mask.shape.catalogID)
-                        .strokeBorder(
-                            frame.border.color.swiftUIColor,
-                            style: StrokeStyle(
-                                lineWidth: max(
-                                    1,
-                                    frame.border.width
-                                        * min(
-                                            frameGeometry.size.width,
-                                            frameGeometry.size.height
-                                        )
-                                ),
-                                lineCap: .round,
-                                lineJoin: .round
-                            )
-                        )
-                }
+            .mask {
+                PhotoFrameMaskView(
+                    catalogID: frame.mask.shape.catalogID,
+                    bounds: photoBounds
+                )
             }
             .overlay {
-                if let reference = frame.decorativeFrame,
-                   let definition = BuiltInDecorativeFrameCatalog.definition(
-                       id: reference.catalogID,
-                       version: reference.catalogVersion
-                   ), definition.reference == reference {
-                    NineSliceDecorativeFrameView(
-                        definition: definition,
-                        imageCache: imageCache,
-                        maximumPixelSize: purpose == .thumbnail ? 480 : 1_024
+                if frame.border.width > 0 {
+                    PhotoBorderRenderView(
+                        catalogID: frame.mask.shape.catalogID,
+                        bounds: photoBounds,
+                        color: frame.border.color.swiftUIColor,
+                        lineWidth: max(
+                            1,
+                            frame.border.width * min(pageSize.width, pageSize.height)
+                        )
                     )
                 }
             }
+            .overlay {
+                if let definition {
+                    NineSliceDecorativeFrameView(
+                        definition: definition,
+                        image: resolvedDecorativeFrameImage,
+                        didFinishLoading: didFinishDecorativeFrameLoading
+                    )
+                }
+            }
+        }
+        .task(id: decorativeFrameTaskID) {
+            decorativeFrameImage = nil
+            didFinishDecorativeFrameLoading = false
+            guard let definition = decorativeFrameDefinition else { return }
+            decorativeFrameImage = await CatalogAssetImageLoader.image(
+                dataAssetName: definition.dataAssetName,
+                contentHash: definition.contentHash,
+                cache: imageCache,
+                maximumPixelSize: decorativeFrameMaximumPixelSize
+            )
+            didFinishDecorativeFrameLoading = true
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel)
@@ -481,29 +526,61 @@ private struct PhotoFrameRenderView: View {
     }
 }
 
+private struct PhotoFrameMaskView: View {
+    let catalogID: String
+    let bounds: CGRect
+
+    var body: some View {
+        GeometryReader { _ in
+            AlbumCatalogShape(catalogID: catalogID)
+                .fill(.white)
+                .frame(width: max(0, bounds.width), height: max(0, bounds.height))
+                .position(x: bounds.midX, y: bounds.midY)
+        }
+    }
+}
+
+private struct PhotoBorderRenderView: View {
+    let catalogID: String
+    let bounds: CGRect
+    let color: Color
+    let lineWidth: CGFloat
+
+    var body: some View {
+        GeometryReader { _ in
+            AlbumCatalogShape(catalogID: catalogID)
+                .strokeBorder(
+                    color,
+                    style: StrokeStyle(
+                        lineWidth: lineWidth,
+                        lineCap: .round,
+                        lineJoin: .round
+                    )
+                )
+                .frame(width: max(0, bounds.width), height: max(0, bounds.height))
+                .position(x: bounds.midX, y: bounds.midY)
+        }
+        .allowsHitTesting(false)
+    }
+}
+
 /// SHR-013 — deterministic nine-slice rendering with destination insets that
 /// remain proportional to the unrotated element at every output resolution.
 private struct NineSliceDecorativeFrameView: View {
     let definition: DecorativeFrameCatalogDefinition
-    let imageCache: PhotoImageCache
-    let maximumPixelSize: Int
-
-    @State private var image: UIImage?
-    @State private var didFinishLoading = false
+    let image: UIImage?
+    let didFinishLoading: Bool
 
     var body: some View {
         GeometryReader { geometry in
-            if let resolvedImage = image ?? imageCache.cachedCatalogImage(
-                for: definition.contentHash,
-                maximumPixelSize: maximumPixelSize
-            ) {
-                let visibleSource = CatalogImageAlphaBounds.visibleBounds(
-                    of: resolvedImage,
+            if let image {
+                let visibleSource = CatalogImageAlphaGeometry.analysis(
+                    of: image,
                     cacheKey: definition.contentHash
-                )
+                ).visibleBounds
                 Canvas { context, _ in
                     draw(
-                        image: resolvedImage,
+                        image: image,
                         visibleSource: visibleSource,
                         in: geometry.size,
                         context: &context
@@ -515,15 +592,6 @@ private struct NineSliceDecorativeFrameView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .accessibilityLabel("Cadre décoratif indisponible")
             }
-        }
-        .task(id: "\(definition.catalogID)|\(maximumPixelSize)") {
-            image = await CatalogAssetImageLoader.image(
-                dataAssetName: definition.dataAssetName,
-                contentHash: definition.contentHash,
-                cache: imageCache,
-                maximumPixelSize: maximumPixelSize
-            )
-            didFinishLoading = true
         }
         .allowsHitTesting(false)
     }
@@ -624,16 +692,34 @@ private struct NineSliceDecorativeFrameView: View {
     }
 }
 
+private final class CatalogImageAlphaAnalysis: NSObject {
+    let visibleBounds: CGRect
+    let centralTransparentBounds: CGRect
+
+    init(visibleBounds: CGRect, centralTransparentBounds: CGRect) {
+        self.visibleBounds = visibleBounds
+        self.centralTransparentBounds = centralTransparentBounds
+    }
+}
+
 @MainActor
-private enum CatalogImageAlphaBounds {
-    private static let cache = NSCache<NSString, NSValue>()
+private enum CatalogImageAlphaGeometry {
+    private static let cache = NSCache<NSString, CatalogImageAlphaAnalysis>()
     // Same visibility threshold as normalize_catalog_png.pl --trim-alpha.
     private static let minimumVisibleAlpha: UInt8 = 8
 
-    static func visibleBounds(of image: UIImage, cacheKey: String) -> CGRect {
+    static func analysis(of image: UIImage, cacheKey: String) -> CatalogImageAlphaAnalysis {
         let key = "\(cacheKey)|\(image.size.width)x\(image.size.height)" as NSString
-        if let cached = cache.object(forKey: key) { return cached.cgRectValue }
-        let fallback = CGRect(origin: .zero, size: image.size)
+        if let cached = cache.object(forKey: key) { return cached }
+        let fallback = CatalogImageAlphaAnalysis(
+            visibleBounds: CGRect(origin: .zero, size: image.size),
+            centralTransparentBounds: CGRect(
+                x: image.size.width * 0.25,
+                y: image.size.height * 0.25,
+                width: image.size.width * 0.5,
+                height: image.size.height * 0.5
+            )
+        )
         guard image.imageOrientation == .up, let source = image.cgImage else {
             return fallback
         }
@@ -642,7 +728,8 @@ private enum CatalogImageAlphaBounds {
         let height = source.height
         let alphaThreshold = minimumVisibleAlpha
         var pixels = [UInt8](repeating: 0, count: width * height * 4)
-        let pixelBounds = pixels.withUnsafeMutableBytes { bytes -> CGRect? in
+        let pixelAnalysis = pixels.withUnsafeMutableBytes {
+            bytes -> (visible: CGRect, aperture: CGRect)? in
             guard let context = CGContext(
                 data: bytes.baseAddress,
                 width: width,
@@ -653,15 +740,25 @@ private enum CatalogImageAlphaBounds {
                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
                     | CGBitmapInfo.byteOrder32Big.rawValue
             ) else { return nil }
+            // UIKit image coordinates start at the top-left. Normalize the
+            // bitmap rows to that convention before mapping the aperture into
+            // the nine-slice destination, notably for the asymmetric instant
+            // photo frame (3:SHR-013).
+            context.translateBy(x: 0, y: CGFloat(height))
+            context.scaleBy(x: 1, y: -1)
             context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
             let values = bytes.bindMemory(to: UInt8.self)
+
+            func alpha(x: Int, y: Int) -> UInt8 {
+                values[(y * width + x) * 4 + 3]
+            }
+
             var minimumX = width
             var minimumY = height
             var maximumX = -1
             var maximumY = -1
             for y in 0..<height {
-                for x in 0..<width
-                    where values[(y * width + x) * 4 + 3] > alphaThreshold {
+                for x in 0..<width where alpha(x: x, y: y) > alphaThreshold {
                     minimumX = min(minimumX, x)
                     minimumY = min(minimumY, y)
                     maximumX = max(maximumX, x)
@@ -669,22 +766,155 @@ private enum CatalogImageAlphaBounds {
                 }
             }
             guard maximumX >= minimumX, maximumY >= minimumY else { return nil }
-            return CGRect(
+            let visible = CGRect(
                 x: minimumX,
                 y: minimumY,
                 width: maximumX - minimumX + 1,
                 height: maximumY - minimumY + 1
             )
+
+            var alphaValues = [UInt8](repeating: 0, count: width * height)
+            for y in 0..<height {
+                for x in 0..<width {
+                    alphaValues[y * width + x] = alpha(x: x, y: y)
+                }
+            }
+            guard let aperture = DecorativeFrameAlphaGeometry.centralTransparentBounds(
+                alphaValues: alphaValues,
+                pixelWidth: width,
+                pixelHeight: height,
+                maximumTransparentAlpha: alphaThreshold
+            ) else { return nil }
+            return (
+                visible,
+                CGRect(
+                    x: CGFloat(aperture.x),
+                    y: CGFloat(aperture.y),
+                    width: CGFloat(aperture.width),
+                    height: CGFloat(aperture.height)
+                )
+            )
         }
-        guard let pixelBounds else { return fallback }
-        let pointBounds = CGRect(
-            x: pixelBounds.minX * image.size.width / CGFloat(width),
-            y: pixelBounds.minY * image.size.height / CGFloat(height),
-            width: pixelBounds.width * image.size.width / CGFloat(width),
-            height: pixelBounds.height * image.size.height / CGFloat(height)
+        guard let pixelAnalysis else { return fallback }
+
+        func pointBounds(_ bounds: CGRect) -> CGRect {
+            CGRect(
+                x: bounds.minX * image.size.width / CGFloat(width),
+                y: bounds.minY * image.size.height / CGFloat(height),
+                width: bounds.width * image.size.width / CGFloat(width),
+                height: bounds.height * image.size.height / CGFloat(height)
+            )
+        }
+        let result = CatalogImageAlphaAnalysis(
+            visibleBounds: pointBounds(pixelAnalysis.visible),
+            centralTransparentBounds: pointBounds(pixelAnalysis.aperture)
         )
-        cache.setObject(NSValue(cgRect: pointBounds), forKey: key)
-        return pointBounds
+        cache.setObject(result, forKey: key)
+        return result
+    }
+}
+
+@MainActor
+private enum DecorativeFrameGeometry {
+    static func destinationPhotoAperture(
+        definition: DecorativeFrameCatalogDefinition,
+        image: UIImage,
+        destinationSize: CGSize
+    ) -> CGRect {
+        let analysis = CatalogImageAlphaGeometry.analysis(
+            of: image,
+            cacheKey: definition.contentHash
+        )
+        let sourceSize = image.size
+        guard sourceSize.width > 0, sourceSize.height > 0,
+              destinationSize.width > 0, destinationSize.height > 0 else {
+            return CGRect(origin: .zero, size: destinationSize)
+        }
+        let sourceInsets = definition.sourceCapInsetsPixels
+        let destinationInsets = definition.destinationCapInsets
+        let sourceScaleX = sourceSize.width / CGFloat(definition.pixelWidth)
+        let sourceScaleY = sourceSize.height / CGFloat(definition.pixelHeight)
+        let visible = analysis.visibleBounds
+        let centerMinX = min(
+            visible.maxX,
+            max(visible.minX, CGFloat(sourceInsets.left) * sourceScaleX)
+        )
+        let centerMaxX = max(
+            centerMinX,
+            min(
+                visible.maxX,
+                sourceSize.width - CGFloat(sourceInsets.right) * sourceScaleX
+            )
+        )
+        let centerMinY = min(
+            visible.maxY,
+            max(visible.minY, CGFloat(sourceInsets.top) * sourceScaleY)
+        )
+        let centerMaxY = max(
+            centerMinY,
+            min(
+                visible.maxY,
+                sourceSize.height - CGFloat(sourceInsets.bottom) * sourceScaleY
+            )
+        )
+        let sourceX = [
+            visible.minX,
+            centerMinX,
+            centerMaxX,
+            visible.maxX
+        ]
+        let sourceY = [
+            visible.minY,
+            centerMinY,
+            centerMaxY,
+            visible.maxY
+        ]
+        let destinationX = [
+            CGFloat.zero,
+            destinationSize.width * CGFloat(destinationInsets.left),
+            destinationSize.width * CGFloat(1 - destinationInsets.right),
+            destinationSize.width
+        ]
+        let destinationY = [
+            CGFloat.zero,
+            destinationSize.height * CGFloat(destinationInsets.top),
+            destinationSize.height * CGFloat(1 - destinationInsets.bottom),
+            destinationSize.height
+        ]
+        let aperture = analysis.centralTransparentBounds
+        var result = CGRect(
+            x: map(aperture.minX, from: sourceX, to: destinationX),
+            y: map(aperture.minY, from: sourceY, to: destinationY),
+            width: 0,
+            height: 0
+        )
+        result.size.width = map(aperture.maxX, from: sourceX, to: destinationX)
+            - result.minX
+        result.size.height = map(aperture.maxY, from: sourceY, to: destinationY)
+            - result.minY
+        let safetyInset = max(0.5, min(destinationSize.width, destinationSize.height) * 0.002)
+        let safeResult = result.insetBy(dx: safetyInset, dy: safetyInset)
+            .intersection(CGRect(origin: .zero, size: destinationSize))
+        guard !safeResult.isNull, safeResult.width > 0, safeResult.height > 0 else {
+            return CGRect(origin: .zero, size: destinationSize)
+                .insetBy(dx: destinationSize.width * 0.2, dy: destinationSize.height * 0.2)
+        }
+        return safeResult
+    }
+
+    private static func map(
+        _ value: CGFloat,
+        from source: [CGFloat],
+        to destination: [CGFloat]
+    ) -> CGFloat {
+        for index in 0..<3 where value <= source[index + 1] {
+            let span = source[index + 1] - source[index]
+            guard span > 0 else { return destination[index] }
+            let progress = (value - source[index]) / span
+            return destination[index]
+                + progress * (destination[index + 1] - destination[index])
+        }
+        return destination[3]
     }
 }
 

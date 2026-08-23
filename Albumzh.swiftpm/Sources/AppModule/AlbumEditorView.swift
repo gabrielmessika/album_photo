@@ -398,13 +398,17 @@ private struct AlbumEditorScene: View {
             HStack(spacing: 0) {
                 if model.cropDraft == nil {
                     editorRail
+                        .zIndex(10)
                     Divider()
                 }
                 pageWorkspace
+                    .clipped()
+                    .zIndex(0)
                 if model.cropDraft == nil, showsInspector {
                     Divider()
                     regularInspector
                         .frame(width: 324)
+                        .zIndex(10)
                 }
             }
             .padding(.horizontal, 8)
@@ -617,6 +621,7 @@ private struct AlbumEditorScene: View {
         .padding(.vertical, 12)
         .frame(width: 78)
         .background(.bar)
+        .contentShape(Rectangle())
     }
 
     @ViewBuilder

@@ -64,7 +64,7 @@ struct HelpView: View {
             HelpSection(
                 title: "Cadres et formes",
                 symbol: "square.on.circle",
-                text: "Sélectionnez un cadre photo pour choisir son masque, son contour ou un cadre décoratif. La portée Sélection, Page ou Album annonce le nombre de cadres concernés et s’annule en une seule action."
+                text: "Sélectionnez un cadre photo pour choisir son masque, son contour ou un cadre décoratif. Le contour propose Aucun, Fin, Moyen et Épais ; choisissez une épaisseur avant sa couleur. La portée Sélection, Page ou Album annonce le nombre de cadres concernés et s’annule en une seule action."
             ),
             HelpSection(
                 title: "Ajouter et gérer les pages",

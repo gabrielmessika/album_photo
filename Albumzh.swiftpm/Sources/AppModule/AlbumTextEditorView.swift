@@ -190,12 +190,15 @@ private struct CapturePastedAlbumTextStyle: AttributedTextValueConstraint {
     let fallbackStyle: TextStyleDefaults
 
     func constrain(_ container: inout Attributes) {
-        guard container.albumTextStyle == nil else { return }
-        var style = fallbackStyle
+        // TextEditor may inherit the insertion point's model attribute onto a
+        // pasted run before this constraint sees UIKit/Foundation paste
+        // attributes. Merge the native traits into that inherited value rather
+        // than treating the model key as proof that conversion already ran.
+        var style = container.albumTextStyle ?? fallbackStyle
         if let pastedFont = container.pastedFont {
             let traits = pastedFont.fontDescriptor.symbolicTraits
-            style.weight = traits.contains(.traitBold) ? .bold : .regular
-            style.isItalic = traits.contains(.traitItalic)
+            if traits.contains(.traitBold) { style.weight = .bold }
+            if traits.contains(.traitItalic) { style.isItalic = true }
         }
         if let intent = container.inlinePresentationIntent {
             if intent.contains(.stronglyEmphasized) { style.weight = .bold }

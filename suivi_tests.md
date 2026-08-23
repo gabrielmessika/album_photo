@@ -39,7 +39,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat Info et correctifs texte testé | `60930587da16707dbb57eada9881f6fefcedd51e` — `IPAD-L2-037…038` réussis ; `IPAD-L2-036` échoue car Info affiche `Non estampillé` au lieu du commit exact |
 | Candidat de fin de développement Lot 2 rejeté à la compilation | `fce5d92879a5a654778b02ec17a3707590554cd7` — `IPAD-L2-039` échoue dans `AppModel` ligne 256, le type-checker ne résolvant pas la concaténation des cinq segments UUID ; `040…054` ⚫ `NON APPLICABLE`, remplacés par `056…070` |
 | Correctif de compilation Lot 2 testé | `64f53424a0fc479c4fdea79c401d0b227d52eebd` — construction UUID découpée en cinq `String` ; sources applicatives identiques dans le paquet documentaire `94deaf2937123fe22ab579c193543f547768fde9` ; 157 tests WSL réussis, puis campagne iPad reportée de `039…054` vers `055…070` : 12 réussites et 4 échecs (`058`, `061`, `062`, `065`) |
-| Candidat de régression des quatre échecs fonctionnels | `9bc11e7423178b66c48446c59abc5a912de5c26f` — collage riche et limite, dépôt/remplacement/miniature/commandes sticker et alignement des cadres ; 157 tests WSL, parse, 55 contrats et 16 empreintes réussis ; `IPAD-L2-071…074` à exécuter |
+| Candidat de régression des quatre échecs fonctionnels testé | `9bc11e7423178b66c48446c59abc5a912de5c26f` — `IPAD-L2-072…073` réussis ; `071` échoue uniquement sur la perte du gras/italique au collage et `074` sur la photo visible hors ouverture, l’ergonomie du contour et son placement extérieur ; les autres étapes sont déclarées conformes |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -181,7 +181,15 @@ validations Apple `006…009` restent attachées à ce correctif incomplet.
 Le correctif de ces quatre échecs est figé dans
 `9bc11e7423178b66c48446c59abc5a912de5c26f`. Les fiches courtes
 `IPAD-L2-071…074` et `APPLE-L2-010…013` le qualifient sans modifier les
-verdicts historiques ni rejouer les douze surfaces déjà réussies.
+verdicts historiques ni rejouer les douze surfaces déjà réussies. Le retour
+du 23 août 2026 réussit globalement `072` et `073`. Il échoue `071` à la seule
+étape 3, car gras et italique disparaissent encore lors du collage, tandis que
+les étapes 1, 2 et 4 à 6 sont déclarées conformes. Il échoue `074` aux étapes
+1 à 4 : la photo reste légèrement visible à l’extérieur des six décors, la
+couleur paraît disponible avec une épaisseur nulle, les pourcentages sont peu
+clairs et le contour apparaît à l’extérieur du décor ; les étapes 5 et 6 sont
+déclarées conformes. Les captures `image00.jpeg`, `image1.jpeg`, `image2.jpeg`
+et `IMG_4217.jpeg` ont été examinées et restent hors Git.
 
 ## Mode de réponse
 
@@ -475,10 +483,10 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-068` | Couper, annuler et invalider le presse-papiers | `3:CLP-002`, `3:CLP-004`, `3:CLP-006`, `3:UND-001`, `3:UND-002`, `3:SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-069` | Aide et accessibilité du périmètre Lot 2 | `3:EDT-019`, `3:STK-022`, `3:ACC-001` à `3:ACC-008`, `3:ACC-020`, `3:ACC-021` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-070` | Fluidité à vingt stickers et avertissement au-delà | `3:STK-021`, `3:PERF-005`, `3:PERF-015`, `3:PERF-017`, `3:ACC-002` | 🟢 `RÉUSSI` — retour global sans détail par étape |
-| `IPAD-L2-071` | Régression du collage riche et de l’annulation de limite | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-072` | Régression du dépôt, des commandes et de la miniature sticker | `3:STK-004`, `3:STK-005`, `3:STK-008`, `3:STK-015`, `3:STK-023`, `3:STK-024`, `3:ELM-002`, `3:ACC-003`, `3:COV-007`, `3:CAN-008` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-073` | Régression du remplacement réel d’un sticker | `3:STK-007`, `3:STK-014` à `3:STK-016`, `3:STK-022`, `3:ELM-008`, `3:UND-001` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-074` | Régression de l’alignement des cadres décoratifs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-071` | Régression du collage riche et de l’annulation de limite | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — étape 3 : gras et italique encore perdus au collage ; étapes 1, 2, 4, 5 et 6 conformes |
+| `IPAD-L2-072` | Régression du dépôt, des commandes et de la miniature sticker | `3:STK-004`, `3:STK-005`, `3:STK-008`, `3:STK-015`, `3:STK-023`, `3:STK-024`, `3:ELM-002`, `3:ACC-003`, `3:COV-007`, `3:CAN-008` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-073` | Régression du remplacement réel d’un sticker | `3:STK-007`, `3:STK-014` à `3:STK-016`, `3:STK-022`, `3:ELM-008`, `3:UND-001` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-074` | Régression de l’alignement des cadres décoratifs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008` | 🔴 `ÉCHOUÉ` — étapes 1 à 4 : photo visible hors décor et contour extérieur/peu clair ; étapes 5 et 6 conformes |
 
 ## Fiches détaillées
 
@@ -4671,11 +4679,13 @@ peut être exécutée indépendamment si sa précondition est reconstruite ; un
 | 5 | Sans terminer, noter l’état exact puis coller l’extrait de plus de 1 000 caractères et presser **Annuler** dans l’alerte Limite atteinte. | L’alerte apparaît ; Annuler restaure exactement le contenu et les styles présents juste avant ce collage, sans conserver le texte tronqué. |
 | 6 | Refaire le collage long et choisir **Conserver 1 000 caractères**, puis terminer et rouvrir. | Le compteur vaut exactement 1 000 caractères Swift ; seul l’excès est absent et l’état accepté persiste sans crash. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — résultat par étape, origine Notes, capture facultative
-  de l’alerte et des styles avant/après.
-- Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7 ;
-  relever toute différence et le mode de transfert du candidat.
+- Résultat : 🔴 `ÉCHOUÉ` — étape 3 ; étapes 1, 2, 4, 5 et 6 déclarées
+  conformes.
+- Preuve : retour du 23 août 2026 : « le format gras et italique disparaissent
+  encore en faisant le collage » ; tout ce qui n’était pas signalé a été
+  explicitement déclaré OK. Aucune capture jointe pour cette fiche.
+- Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7,
+  repris de la campagne sans différence ni mode de transfert redéclaré.
 
 ### `IPAD-L2-072` — Dépôt, petites commandes et miniature sticker
 
@@ -4696,11 +4706,11 @@ peut être exécutée indépendamment si sa précondition est reconstruite ; un
 | 5 | Sauvegarder, revenir à la Bibliothèque et attendre la miniature de `Lot2-Final`. | La miniature d’album rend le sticker superposé à la photo de couverture avec son alpha, sa rotation et son emplacement ; il ne disparaît pas pendant la composition. |
 | 6 | Rouvrir l’album puis revenir une seconde fois à la Bibliothèque. | Le sticker persiste et la miniature mise en cache reste identique, sans clignotement durable ni retour à une ancienne couverture. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — résultat par étape et, si possible, captures de la
-  petite sélection et de la miniature.
-- Environnement : reprendre celui de `IPAD-L2-071` ; préciser si la couverture
-  a dû être rechoisie.
+- Résultat : 🟢 `RÉUSSI` — toutes les étapes déclarées conformes.
+- Preuve : retour global du 23 août 2026 selon la règle explicite « tout ce qui
+  n’est pas marqué est considéré comme OK » ; sans capture ni détail par étape.
+- Environnement : repris de `IPAD-L2-071`, sans différence ni changement de
+  couverture déclaré.
 
 ### `IPAD-L2-073` — Remplacement réel d’un sticker
 
@@ -4721,10 +4731,10 @@ peut être exécutée indépendamment si sa précondition est reconstruite ; un
 | 5 | Presser Annuler puis Rétablir une fois. | Annuler restaure exactement l’ancien sticker transformé ; Rétablir remet exactement le remplacement, toujours sans changer le nombre. |
 | 6 | Sauvegarder, fermer puis rouvrir l’album. | Le remplacement final et toutes ses transformations persistent ; aucune copie supplémentaire n’apparaît après relance. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — identifiants visuels choisis, nombre avant/après et
-  résultat des transformations/historique.
-- Environnement : reprendre celui de `IPAD-L2-072`, sans différence déclarée.
+- Résultat : 🟢 `RÉUSSI` — toutes les étapes déclarées conformes.
+- Preuve : retour global du 23 août 2026 selon la règle explicite « tout ce qui
+  n’est pas marqué est considéré comme OK » ; sans capture ni détail par étape.
+- Environnement : repris de `IPAD-L2-072`, sans différence déclarée.
 
 ### `IPAD-L2-074` — Alignement des cadres décoratifs
 
@@ -4744,10 +4754,15 @@ peut être exécutée indépendamment si sa précondition est reconstruite ; un
 | 5 | Comparer la page, la vue globale et Prévisualiser. | Le même alignement, les mêmes coins, alpha et ordre apparaissent dans les trois rendus, y compris aux petites tailles. |
 | 6 | Choisir Aucun, vérifier les cadrages puis presser Annuler/Rétablir. | Aucun retire seulement le décor ; point focal, zoom, orientation et masque restent identiques ; Annuler/Rétablir restaure et retire le même décor en une commande. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — résultat pour les deux rapports et, si possible,
-  captures rapprochées d’au moins Bord blanc et Photo instantanée.
-- Environnement : reprendre celui de `IPAD-L2-071`, sans différence déclarée.
+- Résultat : 🔴 `ÉCHOUÉ` — étapes 1 à 4 ; étapes 5 et 6 déclarées conformes.
+- Preuve : retour du 23 août 2026. Aux étapes 1 à 3, une mince zone de photo
+  reste visible derrière Bord blanc, Bord noir et les cadres à motifs, surtout
+  avec des couleurs contrastées. À l’étape 4, la couleur paraît sélectionnable
+  lorsque le contour vaut 0 %, les pourcentages sont jugés peu clairs et le
+  contour est dessiné à l’extérieur du décor. Captures examinées :
+  `image00.jpeg`, `image1.jpeg`, `image2.jpeg`, `IMG_4217.jpeg`, conservées hors
+  Git. Tout élément non signalé a été explicitement déclaré OK.
+- Environnement : repris de `IPAD-L2-071`, sans différence déclarée.
 
 
 ## Qualification différée Apple/macOS/Xcode
