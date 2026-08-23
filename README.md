@@ -170,8 +170,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `fce5d92879a5a654778b02ec17a3707590554cd7`, mais `IPAD-L2-039` a échoué dès
   la compilation dans `AppModel` ligne 256 : l’expression de construction de
   l’UUID était trop complexe pour le type-checker de Swift Playgrounds. Les
-  fiches `040…054` n’ont pas été exécutées sur ce candidat et restent une
-  archive. Le correctif exact
+  fiches `040…054` n’ont pas été exécutées sur ce candidat et sont désormais
+  ⚫ `NON APPLICABLE`, car remplacées par `056…070`. Le correctif exact
   `64f53424a0fc479c4fdea79c401d0b227d52eebd` est validé sous WSL. La campagne
   iPad a ensuite été saisie avec les anciens libellés ; ses résultats sont
   reportés un pour un sur `IPAD-L2-055…070` : 12 réussites et 4 échecs
@@ -234,8 +234,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   vérification automatisées du paquet, mais sa régression est mise de côté à la
   demande de l’utilisateur. Le candidat `fce5d92…` passe les 157 tests WSL ;
   les contrats de 55 ressources et leurs 16 empreintes sont valides, mais
-  `IPAD-L2-039` est 🔴 `ÉCHOUÉ` à la compilation. Les fiches `040…054` n’ont
-  pas été exécutées sur ce candidat. Le correctif `64f5342…` passe à nouveau
+  `IPAD-L2-039` est 🔴 `ÉCHOUÉ` à la compilation. Les fiches `040…054` sont
+  ⚫ `NON APPLICABLE` et leurs remplacements sont `056…070`. Le correctif `64f5342…` passe à nouveau
   les 157 tests, la syntaxe, les contrats de 55 ressources et les 16
   empreintes. Sa campagne `055…070` prouve la compilation et 12 fiches
   globalement ; elle échoue sur la restauration et les styles du collage riche
@@ -802,8 +802,9 @@ Elle est explicitement autorisée pour `IPAD-L2-055…070`, puisque cette campag
 vise le correctif fonctionnel `64f53424a0fc479c4fdea79c401d0b227d52eebd` mais
 exclut le contrôle de la valeur Info. Cette campagne est maintenant exécutée ;
 les réponses fournies avec les anciens libellés ont été reportées avec un
-décalage de `+16`. Les fiches historiques `039…054` restent attachées au
-candidat précédent et ne doivent plus être exécutées.
+décalage de `+16`. `039` conserve son échec de compilation ; les fiches
+historiques `040…054` restent attachées au candidat précédent mais sont
+⚫ `NON APPLICABLE` et ne doivent plus être exécutées.
 
 Si le document est lié en tant que dépôt externe avec Working Copy Pro, le pull
 peut écrire directement dans le package. Swift Playgrounds doit être fermé

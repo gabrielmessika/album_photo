@@ -37,7 +37,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif groupé texte testé | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` — `IPAD-L2-031…032` réussissent ; `030` échoue uniquement sur les trois motifs intégrés et `033` sur la faible distinction Système/Arrondie ainsi que l’italique Arrondie ; les autres étapes déclarées conformes |
 | Second correctif texte testé | `3102cda0e6b2c483576585ec2f97fc947f87c96f` — `IPAD-L2-034…035` réussis globalement ; motifs, Arrondie/Italique, états actifs, persistance et VoiceOver déclarés conformes sans capture |
 | Candidat Info et correctifs texte testé | `60930587da16707dbb57eada9881f6fefcedd51e` — `IPAD-L2-037…038` réussis ; `IPAD-L2-036` échoue car Info affiche `Non estampillé` au lieu du commit exact |
-| Candidat de fin de développement Lot 2 rejeté à la compilation | `fce5d92879a5a654778b02ec17a3707590554cd7` — `IPAD-L2-039` échoue dans `AppModel` ligne 256, le type-checker ne résolvant pas la concaténation des cinq segments UUID ; `040…054` non exécutés |
+| Candidat de fin de développement Lot 2 rejeté à la compilation | `fce5d92879a5a654778b02ec17a3707590554cd7` — `IPAD-L2-039` échoue dans `AppModel` ligne 256, le type-checker ne résolvant pas la concaténation des cinq segments UUID ; `040…054` ⚫ `NON APPLICABLE`, remplacés par `056…070` |
 | Correctif de compilation Lot 2 testé | `64f53424a0fc479c4fdea79c401d0b227d52eebd` — construction UUID découpée en cinq `String` ; sources applicatives identiques dans le paquet documentaire `94deaf2937123fe22ab579c193543f547768fde9` ; 157 tests WSL réussis, puis campagne iPad reportée de `039…054` vers `055…070` : 12 réussites et 4 échecs (`058`, `061`, `062`, `065`) |
 | Candidat de régression des quatre échecs fonctionnels | `9bc11e7423178b66c48446c59abc5a912de5c26f` — collage riche et limite, dépôt/remplacement/miniature/commandes sticker et alignement des cadres ; 157 tests WSL, parse, 55 contrats et 16 empreintes réussis ; `IPAD-L2-071…074` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
@@ -166,7 +166,8 @@ directe Working Copy reste `Non estampillé`. Le candidat fonctionnel suivant a
 échoue dès la compilation : Swift Playgrounds ne parvient pas à type-checker la
 concaténation des cinq segments UUID dans `AppModel` ligne 256. Les fiches
 `040…054` n’ont donc pas été exécutées. Elles restent attachées à ce candidat
-rejeté et seront remplacées par de nouveaux identifiants sur le correctif. Les
+rejeté mais sont désormais ⚫ `NON APPLICABLE`, car remplacées un pour un par
+`056…070` sur le correctif. Les
 validations Apple hors Playgrounds sont décrites sous `APPLE-L2-002…005`.
 Le correctif exact `64f53424a0fc479c4fdea79c401d0b227d52eebd` est qualifié
 par `IPAD-L2-055…070`. Le retour du 21 août a utilisé par erreur les libellés
@@ -443,21 +444,21 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `3:CAN-003`, `3:BG-007`, `3:TBX-024`, `3:TBX-025` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `3:TBX-009` à `3:TBX-016`, `3:TBX-023`, `3:TBX-024`, `3:TBX-026`, `3:SAV-001`, `3:ACC-002`, `3:ACC-004` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-039` | Compilation, lancement et surface finale Lot 2 | `3:ENV-001` à `3:ENV-005`, `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:EDT-012`, `3:EDT-021`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — compilation impossible dans `AppModel` ligne 256 |
-| `IPAD-L2-040` | Boutons texte compacts et justification de page | `3:TBX-009` à `3:TBX-016`, `3:TBX-023` à `3:TBX-027`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` — archive ; remplacé par `056` |
-| `IPAD-L2-041` | Sessions de frappe, Annuler et historique à 750 ms | `3:TBX-002` à `3:TBX-005`, `3:TBX-022`, `3:TBX-025`, `3:UND-001`, `3:UND-008`, `3:SAV-001` | ⚪ `NON TESTÉ` — archive ; remplacé par `057` |
-| `IPAD-L2-042` | Limite et collage riche filtré | `3:TBX-006` à `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:ACC-002` | ⚪ `NON TESTÉ` — archive ; remplacé par `058` |
-| `IPAD-L2-043` | Débordement et blocage de la prévisualisation | `3:TBX-018` à `3:TBX-021`, `3:TBX-024`, `3:CAN-008`, `3:ACC-002`, `3:ACC-006` | ⚪ `NON TESTÉ` — archive ; remplacé par `059` |
-| `IPAD-L2-044` | Catalogue, catégories, recherche et récents des stickers | `3:STK-001` à `3:STK-003`, `3:STK-006`, `3:STK-009` à `3:STK-012`, `3:CAT-001`, `3:CAT-009` | ⚪ `NON TESTÉ` — archive ; remplacé par `060` |
-| `IPAD-L2-045` | Ajout, dépôt et géométrie des stickers | `3:STK-004`, `3:STK-005`, `3:STK-008`, `3:STK-015`, `3:STK-023`, `3:STK-024`, `3:ELM-001` à `3:ELM-004` | ⚪ `NON TESTÉ` — archive ; remplacé par `061` |
-| `IPAD-L2-046` | Remplacement et commandes d’un sticker | `3:STK-007`, `3:STK-014` à `3:STK-016`, `3:STK-022`, `3:ELM-008`, `3:UND-001` | ⚪ `NON TESTÉ` — archive ; remplacé par `062` |
-| `IPAD-L2-047` | Rendu, profondeur et persistance des stickers | `3:STK-009`, `3:STK-024`, `3:CAN-008`, `3:SAV-001`, `3:ACC-006` | ⚪ `NON TESTÉ` — archive ; remplacé par `063` |
-| `IPAD-L2-048` | Six formes et conservation du cadrage photo | `3:SHR-001` à `3:SHR-003`, `3:SHR-006`, `3:SHR-010`, `3:SHR-012`, `3:CRP-001`, `3:CRP-007` | ⚪ `NON TESTÉ` — archive ; remplacé par `064` |
-| `IPAD-L2-049` | Contours et six cadres décoratifs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008` | ⚪ `NON TESTÉ` — archive ; remplacé par `065` |
-| `IPAD-L2-050` | Portées Sélection, Page et Album | `3:SHR-007`, `3:SHR-008`, `3:UND-001`, `3:SAV-001`, `3:ACC-002` | ⚪ `NON TESTÉ` — archive ; remplacé par `066` |
-| `IPAD-L2-051` | Copier et coller photo, texte et sticker | `3:CLP-001`, `3:CLP-003`, `3:CLP-004`, `3:ELM-009`, `3:FRM-007`, `3:SAV-001` | ⚪ `NON TESTÉ` — archive ; remplacé par `067` |
-| `IPAD-L2-052` | Couper, annuler et invalider le presse-papiers | `3:CLP-002`, `3:CLP-004`, `3:CLP-006`, `3:UND-001`, `3:UND-002`, `3:SAV-001` | ⚪ `NON TESTÉ` — archive ; remplacé par `068` |
-| `IPAD-L2-053` | Aide et accessibilité du périmètre Lot 2 | `3:EDT-019`, `3:STK-022`, `3:ACC-001` à `3:ACC-008`, `3:ACC-020`, `3:ACC-021` | ⚪ `NON TESTÉ` — archive ; remplacé par `069` |
-| `IPAD-L2-054` | Fluidité à vingt stickers et avertissement au-delà | `3:STK-021`, `3:PERF-005`, `3:PERF-015`, `3:PERF-017`, `3:ACC-002` | ⚪ `NON TESTÉ` — archive ; remplacé par `070` |
+| `IPAD-L2-040` | Boutons texte compacts et justification de page | `3:TBX-009` à `3:TBX-016`, `3:TBX-023` à `3:TBX-027`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | ⚫ `NON APPLICABLE` — archive ; remplacé par `056` |
+| `IPAD-L2-041` | Sessions de frappe, Annuler et historique à 750 ms | `3:TBX-002` à `3:TBX-005`, `3:TBX-022`, `3:TBX-025`, `3:UND-001`, `3:UND-008`, `3:SAV-001` | ⚫ `NON APPLICABLE` — archive ; remplacé par `057` |
+| `IPAD-L2-042` | Limite et collage riche filtré | `3:TBX-006` à `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:ACC-002` | ⚫ `NON APPLICABLE` — archive ; remplacé par `058` |
+| `IPAD-L2-043` | Débordement et blocage de la prévisualisation | `3:TBX-018` à `3:TBX-021`, `3:TBX-024`, `3:CAN-008`, `3:ACC-002`, `3:ACC-006` | ⚫ `NON APPLICABLE` — archive ; remplacé par `059` |
+| `IPAD-L2-044` | Catalogue, catégories, recherche et récents des stickers | `3:STK-001` à `3:STK-003`, `3:STK-006`, `3:STK-009` à `3:STK-012`, `3:CAT-001`, `3:CAT-009` | ⚫ `NON APPLICABLE` — archive ; remplacé par `060` |
+| `IPAD-L2-045` | Ajout, dépôt et géométrie des stickers | `3:STK-004`, `3:STK-005`, `3:STK-008`, `3:STK-015`, `3:STK-023`, `3:STK-024`, `3:ELM-001` à `3:ELM-004` | ⚫ `NON APPLICABLE` — archive ; remplacé par `061` |
+| `IPAD-L2-046` | Remplacement et commandes d’un sticker | `3:STK-007`, `3:STK-014` à `3:STK-016`, `3:STK-022`, `3:ELM-008`, `3:UND-001` | ⚫ `NON APPLICABLE` — archive ; remplacé par `062` |
+| `IPAD-L2-047` | Rendu, profondeur et persistance des stickers | `3:STK-009`, `3:STK-024`, `3:CAN-008`, `3:SAV-001`, `3:ACC-006` | ⚫ `NON APPLICABLE` — archive ; remplacé par `063` |
+| `IPAD-L2-048` | Six formes et conservation du cadrage photo | `3:SHR-001` à `3:SHR-003`, `3:SHR-006`, `3:SHR-010`, `3:SHR-012`, `3:CRP-001`, `3:CRP-007` | ⚫ `NON APPLICABLE` — archive ; remplacé par `064` |
+| `IPAD-L2-049` | Contours et six cadres décoratifs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008` | ⚫ `NON APPLICABLE` — archive ; remplacé par `065` |
+| `IPAD-L2-050` | Portées Sélection, Page et Album | `3:SHR-007`, `3:SHR-008`, `3:UND-001`, `3:SAV-001`, `3:ACC-002` | ⚫ `NON APPLICABLE` — archive ; remplacé par `066` |
+| `IPAD-L2-051` | Copier et coller photo, texte et sticker | `3:CLP-001`, `3:CLP-003`, `3:CLP-004`, `3:ELM-009`, `3:FRM-007`, `3:SAV-001` | ⚫ `NON APPLICABLE` — archive ; remplacé par `067` |
+| `IPAD-L2-052` | Couper, annuler et invalider le presse-papiers | `3:CLP-002`, `3:CLP-004`, `3:CLP-006`, `3:UND-001`, `3:UND-002`, `3:SAV-001` | ⚫ `NON APPLICABLE` — archive ; remplacé par `068` |
+| `IPAD-L2-053` | Aide et accessibilité du périmètre Lot 2 | `3:EDT-019`, `3:STK-022`, `3:ACC-001` à `3:ACC-008`, `3:ACC-020`, `3:ACC-021` | ⚫ `NON APPLICABLE` — archive ; remplacé par `069` |
+| `IPAD-L2-054` | Fluidité à vingt stickers et avertissement au-delà | `3:STK-021`, `3:PERF-005`, `3:PERF-015`, `3:PERF-017`, `3:ACC-002` | ⚫ `NON APPLICABLE` — archive ; remplacé par `070` |
 | `IPAD-L2-055` | Compilation corrigée, lancement et surface finale Lot 2 | `3:ENV-001` à `3:ENV-005`, `3:EDT-001`, `3:EDT-002`, `3:EDT-006`, `3:EDT-012`, `3:EDT-021`, `3:DONE-005` | 🟢 `RÉUSSI` — retour fourni sous l’ancien libellé `039` |
 | `IPAD-L2-056` | Boutons texte compacts et justification de page | `3:TBX-009` à `3:TBX-016`, `3:TBX-023` à `3:TBX-027`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-057` | Sessions de frappe, Annuler et historique à 750 ms | `3:TBX-002` à `3:TBX-005`, `3:TBX-022`, `3:TBX-025`, `3:UND-001`, `3:UND-008`, `3:SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |
@@ -3863,7 +3864,8 @@ ce nouveau candidat et réutilisent l’album Texte-A.
 
 > **ARCHIVE — NE PLUS EXÉCUTER.** `IPAD-L2-039` a échoué à la compilation sur
 > le candidat ci-dessous et `040…054` n’ont pas été exécutés sur ce candidat.
-> Les procédures actives sont leurs remplacements `055…070`. Tout retour saisi
+> Ces quinze fiches sont ⚫ `NON APPLICABLE` : les procédures actives sont
+> leurs remplacements `056…070`. Tout retour saisi
 > avec un ancien libellé sur le paquet corrigé doit être reporté sur l’ID `+16`
 > sans modifier ce bloc historique.
 
@@ -3923,10 +3925,10 @@ atteignable.
 | 5 | Ouvrir l’inspecteur de la zone puis Prévisualiser. | L’inspecteur garde les libellés compacts et les valeurs accessibles ; le rendu de page et la prévisualisation ont la même justification, les mêmes styles et la même géométrie. |
 | 6 | Revenir en édition et parcourir les formats avec VoiceOver. | Chaque commande annonce son libellé court, sa valeur active et sa portée sans dépendre uniquement de la couleur. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — texte utilisé, portrait/paysage et éventuelle capture
-  comparative page/prévisualisation.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-056`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `056`.
+- Environnement : non applicable ; voir `IPAD-L2-056`.
 
 ### `IPAD-L2-041` — Sessions de frappe, Annuler et historique à 750 ms
 
@@ -3945,10 +3947,10 @@ atteignable.
 | 5 | Ajouter une nouvelle zone puis quitter avec Annuler sans remplacer `Votre texte`. | La zone provisoire est supprimée et ne crée aucune action ou donnée visible résiduelle. |
 | 6 | Fermer proprement l’album, le rouvrir et relire « Séquence ». | Le dernier état rétabli est durable et l’historique n’a produit ni texte dupliqué ni état partiel. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — chronologie approximative des pauses et contenu après
-  chaque Annuler/Rétablir.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-057`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `057`.
+- Environnement : non applicable ; voir `IPAD-L2-057`.
 
 ### `IPAD-L2-042` — Limite et collage riche filtré
 
@@ -3968,10 +3970,10 @@ atteignable.
 | 5 | Tenter d’ajouter un caractère, puis supprimer dix caractères et en saisir cinq. | L’ajout au maximum est refusé ; les suppressions restent possibles ; cinq nouveaux caractères sont ensuite acceptés sans dépasser 1 000. |
 | 6 | Terminer, fermer puis rouvrir l’album. | Le contenu filtré et le contenu borné persistent exactement, sans image cachée ni troncature supplémentaire. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — contenu source anonymisé, compteur observé et styles
-  conservés ou perdus.
-- Environnement : repris de `IPAD-L2-039`, version de Notes à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-058`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `058`.
+- Environnement : non applicable ; voir `IPAD-L2-058`.
 
 ### `IPAD-L2-043` — Débordement et blocage de la prévisualisation
 
@@ -3988,10 +3990,11 @@ atteignable.
 | 4 | Prévisualiser puis comparer le texte à la page et à la miniature de la vue globale. | Les trois rendus conservent contenu, styles, justification, opacité, rotation et géométrie ; les poignées et alertes d’édition sont absentes de la prévisualisation. |
 | 5 | Revenir en mode Créer. | La page et la sélection d’origine sont restaurées sans mutation du texte. |
 
-- Résultat : ⚪ `NON TESTÉ`. La commande Exporter n’est pas publique dans ce
-  candidat et sera testée avec un nouvel identifiant au Lot 3.
-- Preuve : à renseigner — message de blocage et comparaison des trois rendus.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-059`. La commande Exporter n’est pas publique dans ce candidat et
+  sera testée avec un nouvel identifiant au Lot 3.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `059`.
+- Environnement : non applicable ; voir `IPAD-L2-059`.
 
 ### `IPAD-L2-044` — Catalogue, catégories, recherche et récents des stickers
 
@@ -4010,9 +4013,10 @@ atteignable.
 | 5 | Ajouter successivement trois stickers différents, puis réutiliser le premier et ouvrir Récents. | Récents place le premier en tête, ne le duplique pas et conserve les identifiants distincts dans l’ordre du dernier usage. |
 | 6 | Inspecter toutes les actions du panneau. | Aucun import, Mes stickers, détourage, création personnalisée ou contenu animé n’est proposé. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — catégories comptées, recherches et ordre de Récents.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-060`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `060`.
+- Environnement : non applicable ; voir `IPAD-L2-060`.
 
 ### `IPAD-L2-045` — Ajout, dépôt et géométrie des stickers
 
@@ -4030,9 +4034,10 @@ atteignable.
 | 5 | Changer de catégorie, lancer une recherche puis fermer et rouvrir le panneau. | Aucun sticker déjà placé ne change de position, taille, rotation, opacité, miroir ou profondeur. |
 | 6 | Déplacer partiellement un sticker hors de page puis Prévisualiser. | Seule la partie hors page est rognée ; la partie visible conserve son alpha et son rapport sans bord opaque ajouté. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — stickers choisis, positions et toute déformation observée.
-- Environnement : repris de `IPAD-L2-039`, glisser-déposer iPad requis.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-061`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `061`.
+- Environnement : non applicable ; voir `IPAD-L2-061`.
 
 ### `IPAD-L2-046` — Remplacement et commandes d’un sticker
 
@@ -4051,9 +4056,10 @@ atteignable.
 | 5 | Dupliquer le sticker, déplacer la copie puis supprimer l’original. | La copie possède un nouvel élément indépendant avec le même style initial ; seule la cible choisie se déplace ou disparaît. |
 | 6 | Annuler puis rétablir la suppression. | Une action restaure uniquement l’original supprimé ; Rétablir le supprime à nouveau sans altérer la copie. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — ancien/nouveau sticker et état avant/après remplacement.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-062`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `062`.
+- Environnement : non applicable ; voir `IPAD-L2-062`.
 
 ### `IPAD-L2-047` — Rendu, profondeur et persistance des stickers
 
@@ -4071,9 +4077,10 @@ atteignable.
 | 4 | Modifier un sticker hors ligne, sauvegarder, fermer puis rouvrir. | La modification persiste et les autres éléments restent inchangés. |
 | 5 | Désactiver le mode avion. | Le retour du réseau ne remplace ni ne réordonne aucune ressource locale. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — comparaison des vues et comportement hors ligne.
-- Environnement : repris de `IPAD-L2-039`, état réseau à consigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-063`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `063`.
+- Environnement : non applicable ; voir `IPAD-L2-063`.
 
 ### `IPAD-L2-048` — Six formes et conservation du cadrage photo
 
@@ -4091,9 +4098,10 @@ atteignable.
 | 4 | Choisir Étoile puis Prévisualiser. | Les branches découpent la photo proprement et les zones sans pixel restent transparentes sur le fond. |
 | 5 | Choisir Aucun (rectangle). | La forme revient exactement au rectangle procédural ; aucune autre propriété du cadre ou de la photo ne change. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — photos des six formes et cadrage reconnaissable.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-064`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `064`.
+- Environnement : non applicable ; voir `IPAD-L2-064`.
 
 ### `IPAD-L2-049` — Contours et six cadres décoratifs
 
@@ -4112,9 +4120,10 @@ atteignable.
 | 5 | Comparer page, vue globale et Prévisualiser avec masque, contour et cadre combinés. | L’ordre est photo masquée, contour intérieur puis cadre décoratif ; le rendu relatif reste cohérent dans les trois vues. |
 | 6 | Choisir Aucun dans Cadre décoratif. | Seul le cadre décoratif disparaît ; masque, contour, photo et cadrage persistent. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — cadres essayés et comparaison entre deux rapports.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-065`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `065`.
+- Environnement : non applicable ; voir `IPAD-L2-065`.
 
 ### `IPAD-L2-050` — Portées Sélection, Page et Album
 
@@ -4134,9 +4143,10 @@ atteignable.
 | 5 | Presser Annuler une fois puis parcourir les trois pages. | Le cadre décoratif est retiré partout en une seule action et les styles antérieurs indépendants sont restaurés. |
 | 6 | Rétablir, sauvegarder, fermer puis rouvrir l’album. | L’application Album complète persiste exactement sur les trois pages. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — nombres annoncés, pages affectées et historique.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-066`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `066`.
+- Environnement : non applicable ; voir `IPAD-L2-066`.
 
 ### `IPAD-L2-051` — Copier et coller photo, texte et sticker
 
@@ -4155,9 +4165,10 @@ atteignable.
 | 5 | Modifier puis supprimer chacune des copies. | Les sources de page 1 restent inchangées ; aucune copie ne partage un état mutable avec sa source. |
 | 6 | Sans nouvelle copie compatible après réouverture de l’éditeur, observer Coller. | Coller reste désactivé et aucune donnée externe arbitraire n’est interprétée comme élément. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — source/copie de chaque type et indépendance observée.
-- Environnement : repris de `IPAD-L2-039`, différences à renseigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-067`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `067`.
+- Environnement : non applicable ; voir `IPAD-L2-067`.
 
 ### `IPAD-L2-052` — Couper, annuler et invalider le presse-papiers
 
@@ -4176,10 +4187,10 @@ atteignable.
 | 5 | Copier une photo, placer l’application en arrière-plan, revenir puis attendre la recharge. | La sauvegarde reste cohérente et le presse-papiers privé est invalidé ; Coller est désactivé. |
 | 6 | Copier un élément, fermer l’album, ouvrir un autre album puis revenir à `Lot2-Final`. | Aucun collage interalbum n’est possible et le contenu privé ne ressuscite pas dans l’album source. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — disponibilité de Coller à chaque transition et état
-  des éléments après Annuler/Rétablir.
-- Environnement : repris de `IPAD-L2-039`, transitions d’arrière-plan à noter.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-068`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `068`.
+- Environnement : non applicable ; voir `IPAD-L2-068`.
 
 ### `IPAD-L2-053` — Aide et accessibilité du périmètre Lot 2
 
@@ -4198,10 +4209,10 @@ atteignable.
 | 5 | Passer à une grande taille de texte puis tourner portrait/paysage. | Les libellés restent lisibles ou défilables, les contrôles tactiles restent atteignables et aucune information ne dépend uniquement de la couleur ou d’une icône. |
 | 6 | Désactiver VoiceOver et restaurer la taille de texte. | L’état de l’album et la sélection restent cohérents ; aucun format ni élément n’a été modifié par la navigation accessible. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — annonces VoiceOver ambiguës, taille de texte et
-  orientation de chaque défaut éventuel.
-- Environnement : repris de `IPAD-L2-039`, réglages d’accessibilité à consigner.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-069`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `069`.
+- Environnement : non applicable ; voir `IPAD-L2-069`.
 
 ### `IPAD-L2-054` — Fluidité à vingt stickers et avertissement au-delà
 
@@ -4220,11 +4231,10 @@ atteignable.
 | 5 | Continuer à déplacer un sticker puis en supprimer un pour revenir à vingt. | L’avertissement ne bloque aucune commande et disparaît lorsque le compte revient à vingt. |
 | 6 | Sauvegarder, fermer, relancer et rouvrir la page. | Les vingt stickers et leurs transformations persistent ; le lancement et l’ouverture n’échouent pas faute de mémoire. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — nombre exact, gels ou latences visibles, éventuel
-  redémarrage système et capture de l’avertissement.
-- Environnement : repris de `IPAD-L2-039`, espace libre et état thermique à
-  noter si un ralentissement est observé.
+- Résultat : ⚫ `NON APPLICABLE` — fiche obsolète, remplacée par
+  `IPAD-L2-070`.
+- Preuve : aucune exécution sur ce candidat ; procédure reprise sous `070`.
+- Environnement : non applicable ; voir `IPAD-L2-070`.
 
 
 ## Campagne corrigée du Lot 2 après `IPAD-L2-039`

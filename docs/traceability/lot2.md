@@ -73,8 +73,8 @@ révision a été figée dans le candidat fonctionnel
 `fce5d92879a5a654778b02ec17a3707590554cd7`. `IPAD-L2-039` échoue toutefois
 dès la compilation : le type-checker de Swift Playgrounds ne résout pas dans
 un délai raisonnable la concaténation des segments UUID d’`AppModel` ligne 256.
-Les fiches `040…054` n’ont pas été exécutées sur ce candidat et restent
-attachées au candidat rejeté ; de nouveaux identifiants qualifient le
+Les fiches `040…054` n’ont pas été exécutées sur ce candidat et deviennent
+⚫ `NON APPLICABLE`, car leurs remplacements `056…070` qualifient le
 correctif. Info demeure
 volontairement exclu. `APPLE-L2-002…005` couvrent ensuite largeur compacte,
 Xcode/Release, Instruments et TestFlight.
@@ -173,21 +173,21 @@ aucune fiche iPad.
 | `IPAD-L2-037` | Motifs strictement bornés sur le candidat Info | `CAN-003`, `BG-007`, `TBX-024`, `TBX-025` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-038` | Arrondie, italique et choix actifs sur le candidat Info | `TBX-009…016`, `TBX-023`, `TBX-024`, `TBX-026`, `SAV-001`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-039` | Compilation, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | 🔴 `ÉCHOUÉ` à la compilation sur `fce5d92…` (`AppModel` ligne 256) |
-| `IPAD-L2-040` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` — archive, remplacé par `056` |
-| `IPAD-L2-041` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | ⚪ `NON TESTÉ` — archive, remplacé par `057` |
-| `IPAD-L2-042` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | ⚪ `NON TESTÉ` — archive, remplacé par `058` |
-| `IPAD-L2-043` | Débordement et blocage Prévisualiser | `TBX-018…021`, `TBX-024`, `CAN-008`, `ACC-002`, `ACC-006` | ⚪ `NON TESTÉ` — archive, remplacé par `059` |
-| `IPAD-L2-044` | Catalogue, recherche et récents | `STK-001…003`, `STK-006`, `STK-009…012`, `CAT-001`, `CAT-009` | ⚪ `NON TESTÉ` — archive, remplacé par `060` |
-| `IPAD-L2-045` | Ajout, dépôt et géométrie sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-001…004` | ⚪ `NON TESTÉ` — archive, remplacé par `061` |
-| `IPAD-L2-046` | Remplacement et commandes sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚪ `NON TESTÉ` — archive, remplacé par `062` |
-| `IPAD-L2-047` | Rendu, profondeur et persistance sticker | `STK-009`, `STK-024`, `CAN-008`, `SAV-001`, `ACC-006` | ⚪ `NON TESTÉ` — archive, remplacé par `063` |
-| `IPAD-L2-048` | Six formes et conservation du cadrage | `SHR-001…003`, `SHR-006`, `SHR-010`, `SHR-012`, `CRP-001`, `CRP-007` | ⚪ `NON TESTÉ` — archive, remplacé par `064` |
-| `IPAD-L2-049` | Contours et six cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚪ `NON TESTÉ` — archive, remplacé par `065` |
-| `IPAD-L2-050` | Portées Sélection, Page et Album | `SHR-007`, `SHR-008`, `UND-001`, `SAV-001`, `ACC-002` | ⚪ `NON TESTÉ` — archive, remplacé par `066` |
-| `IPAD-L2-051` | Copier/coller photo, texte et sticker | `CLP-001`, `CLP-003`, `CLP-004`, `ELM-009`, `FRM-007`, `SAV-001` | ⚪ `NON TESTÉ` — archive, remplacé par `067` |
-| `IPAD-L2-052` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | ⚪ `NON TESTÉ` — archive, remplacé par `068` |
-| `IPAD-L2-053` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | ⚪ `NON TESTÉ` — archive, remplacé par `069` |
-| `IPAD-L2-054` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | ⚪ `NON TESTÉ` — archive, remplacé par `070` |
+| `IPAD-L2-040` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | ⚫ `NON APPLICABLE` — archive, remplacé par `056` |
+| `IPAD-L2-041` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | ⚫ `NON APPLICABLE` — archive, remplacé par `057` |
+| `IPAD-L2-042` | Limite et collage riche filtré | `TBX-006…010`, `TBX-017`, `TBX-023`, `CLP-005`, `ACC-002` | ⚫ `NON APPLICABLE` — archive, remplacé par `058` |
+| `IPAD-L2-043` | Débordement et blocage Prévisualiser | `TBX-018…021`, `TBX-024`, `CAN-008`, `ACC-002`, `ACC-006` | ⚫ `NON APPLICABLE` — archive, remplacé par `059` |
+| `IPAD-L2-044` | Catalogue, recherche et récents | `STK-001…003`, `STK-006`, `STK-009…012`, `CAT-001`, `CAT-009` | ⚫ `NON APPLICABLE` — archive, remplacé par `060` |
+| `IPAD-L2-045` | Ajout, dépôt et géométrie sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-001…004` | ⚫ `NON APPLICABLE` — archive, remplacé par `061` |
+| `IPAD-L2-046` | Remplacement et commandes sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | ⚫ `NON APPLICABLE` — archive, remplacé par `062` |
+| `IPAD-L2-047` | Rendu, profondeur et persistance sticker | `STK-009`, `STK-024`, `CAN-008`, `SAV-001`, `ACC-006` | ⚫ `NON APPLICABLE` — archive, remplacé par `063` |
+| `IPAD-L2-048` | Six formes et conservation du cadrage | `SHR-001…003`, `SHR-006`, `SHR-010`, `SHR-012`, `CRP-001`, `CRP-007` | ⚫ `NON APPLICABLE` — archive, remplacé par `064` |
+| `IPAD-L2-049` | Contours et six cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | ⚫ `NON APPLICABLE` — archive, remplacé par `065` |
+| `IPAD-L2-050` | Portées Sélection, Page et Album | `SHR-007`, `SHR-008`, `UND-001`, `SAV-001`, `ACC-002` | ⚫ `NON APPLICABLE` — archive, remplacé par `066` |
+| `IPAD-L2-051` | Copier/coller photo, texte et sticker | `CLP-001`, `CLP-003`, `CLP-004`, `ELM-009`, `FRM-007`, `SAV-001` | ⚫ `NON APPLICABLE` — archive, remplacé par `067` |
+| `IPAD-L2-052` | Couper, annuler et invalider le clipboard | `CLP-002`, `CLP-004`, `CLP-006`, `UND-001`, `UND-002`, `SAV-001` | ⚫ `NON APPLICABLE` — archive, remplacé par `068` |
+| `IPAD-L2-053` | Aide et accessibilité Lot 2 | `EDT-019`, `STK-022`, `ACC-001…008`, `ACC-020`, `ACC-021` | ⚫ `NON APPLICABLE` — archive, remplacé par `069` |
+| `IPAD-L2-054` | Fluidité à vingt stickers | `STK-021`, `PERF-005`, `PERF-015`, `PERF-017`, `ACC-002` | ⚫ `NON APPLICABLE` — archive, remplacé par `070` |
 | `IPAD-L2-055` | Compilation corrigée, lancement et surface finale | `ENV-001…005`, `EDT-001`, `EDT-002`, `EDT-006`, `EDT-012`, `EDT-021`, `DONE-005` | 🟢 `RÉUSSI` — retour fourni sous le libellé `039` |
 | `IPAD-L2-056` | Boutons texte compacts et justification | `TBX-009…016`, `TBX-023…027`, `CAN-008`, `ACC-002`, `ACC-004` | 🟢 `RÉUSSI` — retour global sans détail par étape |
 | `IPAD-L2-057` | Sessions de frappe et historique 750 ms | `TBX-002…005`, `TBX-022`, `TBX-025`, `UND-001`, `UND-008`, `SAV-001` | 🟢 `RÉUSSI` — retour global sans détail par étape |

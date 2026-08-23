@@ -15,7 +15,7 @@ résultats du prototype 2.1.
 | Information | Valeur |
 |---|---|
 | Produit | Album Photo 3.0 |
-| Date du suivi | 2026-08-21 |
+| Date du suivi | 2026-08-23 |
 | Phase courante | Lot 2 — candidat corrigé `9bc11e7…` figé et validé sous WSL ; régressions `IPAD-L2-071…074` à exécuter |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
@@ -41,7 +41,7 @@ résultats du prototype 2.1.
 | Correctif groupé Texte-B testé | `cb7786259cc85cbe5fd7017ed2f4c9ae3ba823aa` : `IPAD-L2-031…032` réussis ; `030` échoue uniquement sur les trois motifs intégrés et `033` sur la faible distinction Système/Arrondie ainsi que l’italique Arrondie ; les autres étapes sont déclarées conformes |
 | Second correctif texte testé | `3102cda0e6b2c483576585ec2f97fc947f87c96f` : arrière-plan strict des motifs, profil Arrondie incliné et états actifs `TBX-026` ; `IPAD-L2-034…035` 🟢 `RÉUSSI` globalement, sans capture ni détail par étape |
 | Candidat Info et correctifs texte testé | `60930587da16707dbb57eada9881f6fefcedd51e` : `IPAD-L2-037…038` 🟢 `RÉUSSI` globalement ; `IPAD-L2-036` 🔴 `ÉCHOUÉ`, car Info affiche `Non estampillé` au lieu du commit exact |
-| Candidat de fin de développement Lot 2 rejeté | `fce5d92879a5a654778b02ec17a3707590554cd7` : 157 tests WSL réussis, mais `IPAD-L2-039` 🔴 dès la compilation dans `AppModel` ligne 256 ; `040…054` non exécutés |
+| Candidat de fin de développement Lot 2 rejeté | `fce5d92879a5a654778b02ec17a3707590554cd7` : 157 tests WSL réussis, mais `IPAD-L2-039` 🔴 dès la compilation dans `AppModel` ligne 256 ; `040…054` ⚫ `NON APPLICABLE`, remplacés par `056…070` |
 | Correctif de compilation Lot 2 testé | `64f53424a0fc479c4fdea79c401d0b227d52eebd` : construction UUID découpée en cinq `String`, 157 tests, parse, 55 ressources et 16 empreintes réussis ; campagne iPad reportée des anciens libellés vers `IPAD-L2-055…070` : 12 🟢 et 4 🔴 (`058`, `061`, `062`, `065`) |
 | Candidat de régression fonctionnelle Lot 2 | `9bc11e7423178b66c48446c59abc5a912de5c26f` : traits gras/italique natifs convertis avant normalisation et annulation de dépassement transactionnelle ; dépôt photo/sticker unifié ; cible de remplacement conservée ; commandes de sélection adaptatives ; ressources de couverture préchargées ; décor aligné sur ses pixels visibles (`TBX-004`, `TBX-006`, `TBX-007`, `STK-004`, `STK-007`, `ELM-002`, `COV-007`, `CAN-008`, `SHR-013`) |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
@@ -186,7 +186,8 @@ déclaré conforme globalement, mais le hash absent ne peut être sélectionné 
 copié comme l’exige `APP-012`. Le correctif de compilation `64f5342…` compile
 et lance ensuite sur l’iPad déclaré. Le retour a repris par erreur les libellés
 historiques `039…054`; il est reporté sur `055…070` avec un décalage de `+16`,
-sans changer les verdicts du candidat rejeté. Douze fiches réussissent
+sans changer le verdict d’échec de `039`. Les doublons `040…054` sont
+⚫ `NON APPLICABLE`, leurs remplacements étant `056…070`. Douze fiches réussissent
 globalement. `058` échoue sur la restauration après collage et la conservation
 du gras/italique, `061` sur le dépôt, les poignées à petite taille et la
 miniature, `062` sur le remplacement, et `065` sur l’alignement des cadres
@@ -443,6 +444,7 @@ Lot 3 n’est rendu public.
 
 | Environnement | Commande ou contrôle | Résultat connu | Portée et limite |
 |---|---|---|---|
+| Dépôt, reclassement des doublons Lot 2, 2026-08-23 | Concordance des états synthétiques/détaillés et des remplacements `IPAD-L2-040…054` → `056…070`, puis `git diff --check` | **OK** : 15/15 synthèses et 15/15 fiches détaillées ⚫ `NON APPLICABLE`, avec le bon identifiant de remplacement ; traçabilité 15/15 concordante | Documentation uniquement ; `039` conserve son échec réel ; tests Swift et Apple non relancés |
 | Dépôt, registre du candidat `9bc11e7…`, 2026-08-21 | Unicité et correspondance des synthèses/fiches, en-têtes obligatoires de `IPAD-L2-071…074` et `APPLE-L2-010…013`, résolution des références normatives et `git diff --check` | **OK** : 74/74 IDs uniques `IPAD-L2`, 13/13 IDs `APPLE-L2`, aucune fiche détaillée dupliquée, colonnes conformes et 3 685 références explicites résolues dans les quatre documents contrôlés | Documentation uniquement ; les 157 tests, le parse, les contrats et empreintes restent ceux du commit applicatif parent ; nouvelles fiches Apple/iPad NON EXÉCUTÉES |
 | WSL, Swift 6.3.3 et frontend Swift, 2026-08-21 | Correctifs `TBX-004/006/007`, `STK-004/007`, `ELM-002`, `COV-007`, `CAN-008`, `SHR-013` : `swift test --parallel`, parse AppModule, `perl tools/validate_contracts.pl`, puis 16 empreintes depuis `docs/` | **157 tests, 0 échec** ; parse **OK** ; contrats **OK** pour 32 modèles/55 ressources ; empreintes **16/16** | Prouve le Core, les métadonnées de source et les contrats structurels ; sans type-check SwiftUI, rendu, dépôt tactile ni `ImageRenderer` Apple du correctif |
 | iPad 8e génération repris, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-21 | `IPAD-L2-055…070` sur `64f5342…`, réponses fournies sous les anciens libellés `039…054` puis reportées par correspondance `+16` | **12 réussites et 4 échecs** : `058`, `061`, `062`, `065` | Retour détaillé pour les quatre échecs et global pour toutes les autres fiches, sans capture ; paquet, transfert et orientations non redéclarés ; les sources applicatives de `94deaf2…` sont identiques à `64f5342…` |
@@ -557,7 +559,7 @@ Lot 3 n’est rendu public.
 | Validation | État | Motif |
 |---|---|---|
 | `IPAD-L2-039` sur `fce5d92…` | 🔴 Échec de compilation Apple | Type-checker en échec dans `AppModel` ligne 256 ; aucun parcours fonctionnel exécuté |
-| `IPAD-L2-040…054` sur `fce5d92…` | ⚪ Non exécutés | Le candidat n’a pas compilé ; ces fiches restent historiques et ne seront pas retargetées vers le correctif |
+| `IPAD-L2-040…054` sur `fce5d92…` | ⚫ Non applicables | Le candidat n’a pas compilé ; ces fiches historiques sont remplacées un pour un par `056…070` et ne doivent plus être exécutées |
 | `IPAD-L2-071…074` sur `9bc11e7…` | ⚪ Non testés | Les fiches ciblent le collage riche/limite, le dépôt/commandes/miniature sticker, le remplacement sticker et l’alignement des cadres décoratifs |
 | `APPLE-L2-002…005` sur `fce5d92…` | ⚪ Non exécutés | Le candidat a été rejeté ; ces fiches historiques sont remplacées sur le correctif |
 | `APPLE-L2-006…009` sur `64f5342…` | ⚪ Non testés | Largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
@@ -647,6 +649,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-23 | Codex | Reclassement demandé des quinze doublons historiques `IPAD-L2-040…054` de ⚪ `NON TESTÉ` vers ⚫ `NON APPLICABLE`, avec conservation de l’échec réel `039` et des remplacements `056…070` | `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; exigences des fiches `040…054` inchangées | 15/15 synthèses, 15/15 fiches détaillées et 15/15 lignes de traçabilité concordantes ; `git diff --check` OK ; documentation seule, tests Swift/Apple non relancés |
 | 2026-08-21 | Codex | Gel du candidat fonctionnel corrigé `9bc11e7423178b66c48446c59abc5a912de5c26f` et création des régressions `IPAD-L2-071…074` ainsi que des qualifications de remplacement `APPLE-L2-010…013`, sans retargeter les preuves historiques | `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `ENV`, `EDT`, `TBX`, `STK`, `ELM`, `SHR`, `COV`, `CAN`, `ACC`, `PERF`, `TST`, `DONE` applicables | Registre 74/74 `IPAD-L2`, 13/13 `APPLE-L2`, fiches uniques, colonnes conformes, 3 685 références explicites résolues et `git diff --check` OK ; tests Swift non relancés après cette édition documentaire seule ; nouvelles fiches NON EXÉCUTÉES |
 | 2026-08-21 | Codex | Correction des quatre échecs de la campagne finale : collage riche et annulation transactionnelle ; dépôt, remplacement, commandes adaptatives et miniature sticker ; alignement visible des cadres décoratifs | `BuiltInAssetCatalogs.swift`, `AlbumCoverView.swift`, `AlbumTextEditorView.swift`, `EditorViewModel.swift`, `MediaAssetStore.swift`, `PageCanvasView.swift`, `PhotosPanelView.swift`, `StickerPanelView.swift`, tests et `SUIVI_PROJET.md` ; `TBX-004`, `TBX-006`, `TBX-007`, `STK-004`, `STK-007`, `ELM-002`, `COV-007`, `CAN-008`, `SHR-013`, `ACC-003` | WSL : 157 tests, 0 échec ; parse AppModule, contrats 32 modèles/55 ressources, 16/16 empreintes et `git diff --check` OK ; type-check, rendu et gestes Apple NON TESTÉS ; commit candidat et nouvelles fiches à figer |
 | 2026-08-21 | Codex | Report un pour un des résultats fournis sous `IPAD-L2-039…054` vers leurs remplacements `055…070`, conservation des anciennes fiches comme archive et enregistrement de 12 réussites / 4 échecs | `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `TBX-004`, `TBX-006…010`, `CLP-005`, `STK-004`, `STK-007`, `ELM-002`, `COV-007`, `CAN-008`, `SHR-013` | Retour iPad sans capture : `055…057`, `059…060`, `063…064`, `066…070` 🟢 globalement ; `058`, `061`, `062`, `065` 🔴 ; registre 70/70 `IPAD-L2`, 9/9 `APPLE-L2`, 16/16 tableaux, verdicts concordants, 2 152 références résolues et `git diff --check` OK ; sources inchangées, tests Swift et Apple non relancés |
