@@ -95,10 +95,11 @@ passe 157 tests, le parse AppModule, les contrats et les seize empreintes sous
 WSL. La campagne `IPAD-L2-071…074` réussit les deux parcours sticker `072` et
 `073`, échoue `071.3` sur le gras/italique collé et `074.1…4` sur la photo
 visible hors de l’ouverture ainsi que le contour. Les étapes restantes de ces
-deux fiches sont conformes. Un second correctif utilise l’ouverture alpha
+deux fiches sont conformes. Le second correctif exact `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb` utilise l’ouverture alpha
 centrale comme masque commun photo/contour, trois épaisseurs nommées et la
-priorité tactile des panneaux à fort zoom ; il nécessite de nouvelles preuves.
-`APPLE-L2-010…013` reste non exécuté.
+priorité tactile des panneaux à fort zoom. `IPAD-L2-075…077` et
+`APPLE-L2-014…017` portent ses nouvelles preuves ; `APPLE-L2-010…013` reste
+attaché à `9bc11e7…`.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -108,8 +109,8 @@ Le candidat final possède 12 scénarios iPad réussis sur les 16 fiches
 `055…070`, puis deux réussites (`072`, `073`) et deux échecs (`071`, `074`)
 dans la campagne corrective. Les stickers sont maintenant validés sur l’iPad
 déclaré ; collage riche, cadres/contours et chevauchement tactile du canevas
-zoomé attendent un nouveau candidat. Les validations Apple `006…009` restent attachées à `64f5342…` et
-leurs remplacements courants sont `010…013`. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
+zoomé attendent la preuve du candidat `855ae27…`. Les validations Apple `006…009` restent attachées à `64f5342…` et
+leurs remplacements courants sont `014…017`. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
 
@@ -215,6 +216,9 @@ aucune fiche iPad.
 | `IPAD-L2-072` | Régression dépôt, petites commandes et miniature sticker | `STK-004`, `STK-005`, `STK-008`, `STK-015`, `STK-023`, `STK-024`, `ELM-002`, `ACC-003`, `COV-007`, `CAN-008` | 🟢 `RÉUSSI` sur `9bc11e7…` — retour global sans capture ni détail par étape |
 | `IPAD-L2-073` | Régression remplacement réel d’un sticker | `STK-007`, `STK-014…016`, `STK-022`, `ELM-008`, `UND-001` | 🟢 `RÉUSSI` sur `9bc11e7…` — retour global sans capture ni détail par étape |
 | `IPAD-L2-074` | Régression alignement des cadres décoratifs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008` | 🔴 `ÉCHOUÉ` sur `9bc11e7…` — étapes 1 à 4 ; étapes 5 et 6 conformes |
+| `IPAD-L2-075` | Seconde régression collage riche | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | ⚪ `NON TESTÉ` sur `855ae27…` |
+| `IPAD-L2-076` | Ouvertures alpha, contours et trois épaisseurs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` sur `855ae27…` |
+| `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `EDT-001`, `EDT-002`, `EDT-012`, `ZOM-001`, `ZOM-004`, `ZOM-005`, `ACC-002`, `ACC-003` | ⚪ `NON TESTÉ` sur `855ae27…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -255,6 +259,10 @@ suppression du formulaire défilant et de la hauteur fixe.
 | `APPLE-L2-011` | Debug/Release et tests Apple du candidat corrigé | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
 | `APPLE-L2-012` | Instruments et enveloppe maximale du candidat corrigé | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
 | `APPLE-L2-013` | TestFlight distinct du candidat corrigé | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `9bc11e7…` |
+| `APPLE-L2-014` | Interface finale, contours et panneaux en largeur compacte | `EDT-001…004`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-016`, `EDT-020`, `EDT-021`, `TBX-005`, `TBX-027`, `SHR-004`, `ZOM-005`, `ACC-002`, `ACC-003`, `ACC-021` | ⚪ `NON TESTÉ` sur `855ae27…` |
+| `APPLE-L2-015` | Debug/Release et tests Apple du second correctif | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `855ae27…` |
+| `APPLE-L2-016` | Instruments et enveloppe maximale du second correctif | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `855ae27…` |
+| `APPLE-L2-017` | TestFlight distinct du second correctif | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `855ae27…` |
 
 ## Écarts connus de l’incrément
 
@@ -269,7 +277,7 @@ suppression du formulaire défilant et de la hauteur fixe.
   valeur Commit `Non estampillé`. Le producteur d’artefact contrôlé corrige le
   transport ; ce contrôle est différé sur décision utilisateur. `TBX-027` est
   implémenté dans `fce5d92…`, dont la compilation a échoué avant le contrôle ;
-  `IPAD-L2-056` le confirme sur le correctif ; `APPLE-L2-010` garde la
+  `IPAD-L2-056` le confirme sur le correctif ; `APPLE-L2-014` garde la
   qualification compacte.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de

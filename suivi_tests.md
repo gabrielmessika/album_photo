@@ -40,6 +40,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat de fin de développement Lot 2 rejeté à la compilation | `fce5d92879a5a654778b02ec17a3707590554cd7` — `IPAD-L2-039` échoue dans `AppModel` ligne 256, le type-checker ne résolvant pas la concaténation des cinq segments UUID ; `040…054` ⚫ `NON APPLICABLE`, remplacés par `056…070` |
 | Correctif de compilation Lot 2 testé | `64f53424a0fc479c4fdea79c401d0b227d52eebd` — construction UUID découpée en cinq `String` ; sources applicatives identiques dans le paquet documentaire `94deaf2937123fe22ab579c193543f547768fde9` ; 157 tests WSL réussis, puis campagne iPad reportée de `039…054` vers `055…070` : 12 réussites et 4 échecs (`058`, `061`, `062`, `065`) |
 | Candidat de régression des quatre échecs fonctionnels testé | `9bc11e7423178b66c48446c59abc5a912de5c26f` — `IPAD-L2-072…073` réussis ; `071` échoue uniquement sur la perte du gras/italique au collage et `074` sur la photo visible hors ouverture, l’ergonomie du contour et son placement extérieur ; les autres étapes sont déclarées conformes |
+| Second candidat de régression Lot 2 à tester | `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb` — fusion des styles collés, ouverture alpha commune photo/contour, trois épaisseurs nommées et interception des panneaux au-dessus du canevas zoomé ; 159 tests WSL, parse, 55 contrats et 16 empreintes réussis ; `IPAD-L2-075…077` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -190,6 +191,12 @@ couleur paraît disponible avec une épaisseur nulle, les pourcentages sont peu
 clairs et le contour apparaît à l’extérieur du décor ; les étapes 5 et 6 sont
 déclarées conformes. Les captures `image00.jpeg`, `image1.jpeg`, `image2.jpeg`
 et `IMG_4217.jpeg` ont été examinées et restent hors Git.
+Le second correctif est figé au commit exact
+`855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`. Les régressions
+`IPAD-L2-075…077` qualifient respectivement le collage riche, les ouvertures et
+contours décoratifs, puis la priorité tactile des panneaux sur une page zoomée.
+Les qualifications `APPLE-L2-014…017` remplacent `010…013` pour ce nouveau
+candidat ; aucun verdict historique n’est retargeté.
 
 ## Mode de réponse
 
@@ -487,6 +494,9 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-072` | Régression du dépôt, des commandes et de la miniature sticker | `3:STK-004`, `3:STK-005`, `3:STK-008`, `3:STK-015`, `3:STK-023`, `3:STK-024`, `3:ELM-002`, `3:ACC-003`, `3:COV-007`, `3:CAN-008` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-073` | Régression du remplacement réel d’un sticker | `3:STK-007`, `3:STK-014` à `3:STK-016`, `3:STK-022`, `3:ELM-008`, `3:UND-001` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-074` | Régression de l’alignement des cadres décoratifs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008` | 🔴 `ÉCHOUÉ` — étapes 1 à 4 : photo visible hors décor et contour extérieur/peu clair ; étapes 5 et 6 conformes |
+| `IPAD-L2-075` | Seconde régression du collage riche | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-076` | Ouvertures alpha, contours et trois épaisseurs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `3:EDT-001`, `3:EDT-002`, `3:EDT-012`, `3:ZOM-001`, `3:ZOM-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -4764,6 +4774,88 @@ peut être exécutée indépendamment si sa précondition est reconstruite ; un
   Git. Tout élément non signalé a été explicitement déclaré OK.
 - Environnement : repris de `IPAD-L2-071`, sans différence déclarée.
 
+## Secondes régressions collage, cadres et panneaux
+
+Les trois fiches suivantes visent exactement
+`855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`. Récupérer ce commit sans édition
+locale et réutiliser `Lot2-Final`. Elles peuvent être exécutées séparément si
+leurs préconditions sont reconstruites. Arrêter une fiche au premier défaut et
+répondre avec son identifiant ainsi que le numéro d’étape.
+
+### `IPAD-L2-075` — Seconde régression du collage riche
+
+- Candidat : `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`.
+- Spécification : 3.0 incluse dans le candidat exact.
+- Préconditions : reprendre dans Notes l’extrait inférieur à 1 000 caractères
+  de `IPAD-L2-071`, avec au moins un mot gras, un mot italique, un lien, une
+  liste et une petite image ; conserver aussi l’extrait de plus de 1 000
+  caractères. Une zone de texte existante est disponible dans `Lot2-Final`.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à
+  `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler et lancer le candidat exact, puis ouvrir la zone de texte existante. | La compilation et l’ouverture réussissent sans diagnostic dans `AlbumTextEditorView` ; le texte initial est lisible. |
+| 2 | Remplacer le contenu par « Avant collage », mettre « Avant » en gras et « collage » en italique, puis placer le curseur à la fin. | Les deux styles sont visibles et constituent un état antérieur reconnaissable sous la limite. |
+| 3 | Coller l’extrait Notes inférieur à 1 000 caractères. | Les mots gras et italique de l’extrait restent distinctement formatés ; texte et retours à la ligne sont conservés ; image, pièce jointe, structure de liste, lien actif et métadonnées sont retirés sans perdre le libellé du lien. |
+| 4 | Presser Terminer, rouvrir la zone et comparer le passage collé. | Le texte filtré et ses styles gras/italique persistent exactement ; aucun contenu interdit ne réapparaît. |
+| 5 | Noter l’état, coller l’extrait de plus de 1 000 caractères puis choisir Annuler dans l’alerte. | L’alerte apparaît et l’état précédent, y compris ses styles, est restauré sans texte tronqué résiduel. |
+| 6 | Refaire le collage long, choisir Conserver 1 000 caractères, terminer puis rouvrir. | Le compteur vaut 1 000 caractères Swift, seul l’excès est absent et l’état accepté persiste sans crash. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — résultat par étape, origine de l’extrait et capture
+  facultative des mots gras/italique avant et après réouverture.
+- Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7 ;
+  relever toute différence et le mode de transfert du candidat.
+
+### `IPAD-L2-076` — Ouvertures alpha, contours et trois épaisseurs
+
+- Candidat : `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`.
+- Spécification : 3.0 incluse dans le candidat exact.
+- Préconditions : page contenant deux cadres photo remplis, l’un large et
+  l’autre haut, avec des photos très contrastées par rapport au fond ; cadrages
+  relevés avant test et panneau Cadres et formes disponible.
+- Exigences : `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`,
+  `3:SHR-013`, `3:SHR-014`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Appliquer successivement Bord blanc puis Bord noir aux deux rapports et examiner les quatre côtés en zoomant. | Le décor atteint les limites prévues et seule son ouverture centrale montre la photo ; aucune frange de photo n’est visible dans les transparences extérieures, même avec fort contraste. |
+| 2 | Parcourir Ruban kraft, Tampon voyage, Feuillage et Photo instantanée sur les deux cadres. | Chaque ouverture suit son alpha propre, y compris l’asymétrie de Photo instantanée ; les zones transparentes extérieures révèlent le fond de page et jamais la photo. |
+| 3 | Choisir Aucun dans Contour et examiner les couleurs visuellement, au toucher puis avec VoiceOver. | Aucun est indiqué comme actif ; toutes les couleurs sont atténuées, inactives et annoncées indisponibles jusqu’au choix d’une épaisseur. |
+| 4 | Activer tour à tour Fin, Moyen et Épais, puis choisir deux couleurs contrastées. | Exactement trois épaisseurs non nulles sont proposées sans pourcentage ; elles produisent trois largeurs croissantes et la couleur ne devient active qu’après leur sélection. |
+| 5 | Avec chaque famille de décor, conserver un contour Épais contrasté et examiner son empilement. | Le contour est entièrement dans l’ouverture centrale, au-dessus de la photo et sous le décor ; il n’apparaît jamais sur le bord extérieur du cadre décoratif. |
+| 6 | Comparer éditeur, Vue globale et Prévisualiser, puis retirer le décor et utiliser Annuler/Rétablir. | Masque, contour, alpha et ordre restent identiques dans les trois rendus ; cadrage, point focal et orientation ne changent pas ; l’historique restaure exactement le style. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — cadres, rapports, couleurs, épaisseurs, résultats
+  VoiceOver et captures rapprochées de tout pixel extérieur inattendu.
+- Environnement : reprendre celui de `IPAD-L2-075`, sans différence déclarée.
+
+### `IPAD-L2-077` — Priorité tactile des panneaux à fort zoom
+
+- Candidat : `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`.
+- Spécification : 3.0 incluse dans le candidat exact.
+- Préconditions : page contenant une photo, une zone de texte et un sticker à
+  des positions qui pourraient passer sous les panneaux après zoom/déplacement ;
+  relever la sélection initiale et rester hors mode cadrage.
+- Exigences : `3:EDT-001`, `3:EDT-002`, `3:EDT-012`, `3:ZOM-001`,
+  `3:ZOM-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Régler le canevas à 200 %, déplacer la page vers la gauche pour amener ses objets vers le rail, puis toucher successivement Photos, Texte, Stickers, Mise en page, Fonds et Cadres et formes. | Chaque pression active uniquement le menu demandé ; aucun objet sous-jacent n’est sélectionné, déplacé ou modifié et la page ne se dessine pas par-dessus le rail. |
+| 2 | Laisser le panneau droit ouvert, déplacer la page vers la droite puis utiliser plusieurs commandes, menus et champs de ce panneau. | Chaque commande du panneau reçoit la pression ; la page et ses objets situés géométriquement dessous ne l’interceptent jamais. |
+| 3 | Refaire les deux contrôles à 300 % puis 400 %. | La priorité tactile et les limites visuelles restent identiques aux trois forts niveaux de zoom, sans zone morte sur les panneaux. |
+| 4 | Tourner l’iPad en paysage et répéter l’ouverture des six menus à 200 %. | Rail, panneau, page et sélection restent cohérents ; aucun objet n’est sélectionné à travers l’interface dans la seconde orientation. |
+| 5 | Revenir dans l’espace visible du canevas et sélectionner, déplacer puis tourner chaque type d’élément. | Les interactions normales du canevas restent fonctionnelles dans ses limites ; la correction n’a pas bloqué les objets visibles. |
+| 6 | Utiliser Ajuster, puis revenir à 200 % et parcourir le rail avec VoiceOver. | Ajuster recentre à 100 % ; le zoom suivant reste fonctionnel et VoiceOver annonce chaque menu dans un ordre cohérent sans focus sur un objet masqué. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — zooms, orientation, menu touché, sélection avant/après
+  et capture ou vidéo de toute interception résiduelle.
+- Environnement : reprendre celui de `IPAD-L2-075`, sans différence déclarée.
+
 
 ## Qualification différée Apple/macOS/Xcode
 
@@ -4771,10 +4863,11 @@ Ces contrôles complètent les preuves que Swift Playgrounds ou un seul iPad ne
 peut pas fournir. `APPLE-L2-001` conserve la procédure historique du premier
 incrément ; `APPLE-L2-002…005` restent attachés au candidat `fce5d92…` rejeté
 à la compilation iPad et `APPLE-L2-006…009` au correctif `64f5342…` dont les
-quatre régressions fonctionnelles ont échoué. Les nouveaux contrôles
-`APPLE-L2-010…013` qualifient le candidat exact `9bc11e7…`. Ils restent tous
-⚪ `NON TESTÉ` jusqu’à une campagne séparée visant le candidat explicitement
-enregistré.
+quatre régressions fonctionnelles ont échoué. Les contrôles `APPLE-L2-010…013`
+restent attachés à `9bc11e7…`, dont deux régressions ont encore échoué. Les
+remplacements `APPLE-L2-014…017` qualifient le candidat exact `855ae27…`. Ils
+restent tous ⚪ `NON TESTÉ` jusqu’à une campagne séparée visant le candidat
+explicitement enregistré.
 
 | ID différé | Contrôle | Exigences | État | Motif du report |
 |---|---|---|---|---|
@@ -4804,6 +4897,10 @@ enregistré.
 | `APPLE-L2-011` | Debug/Release et tests Apple du candidat corrigé | `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`, `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-007` ; macOS, Xcode et SDK iOS approuvés requis |
 | `APPLE-L2-012` | Instruments et enveloppe maximale du candidat corrigé | `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à `3:PERF-017` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-008` ; Instruments et jeu synthétique de 100 pages requis |
 | `APPLE-L2-013` | Build TestFlight distincte du candidat corrigé | `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-009` ; build distincte de Swift Playgrounds |
+| `APPLE-L2-014` | Interface finale, contours et panneaux en largeur compacte | `3:EDT-001` à `3:EDT-004`, `3:EDT-008`, `3:EDT-012`, `3:EDT-014`, `3:EDT-016`, `3:EDT-020`, `3:EDT-021`, `3:TBX-005`, `3:TBX-027`, `3:SHR-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003`, `3:ACC-021` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-010` sur `855ae27…` ; iPhone réel ou Xcode compact requis |
+| `APPLE-L2-015` | Debug/Release et tests Apple du second correctif | `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`, `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-011` ; macOS, Xcode et SDK iOS approuvés requis |
+| `APPLE-L2-016` | Instruments et enveloppe maximale du second correctif | `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à `3:PERF-017` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-012` ; Instruments et jeu synthétique de 100 pages requis |
+| `APPLE-L2-017` | Build TestFlight distincte du second correctif | `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-013` ; build distincte de Swift Playgrounds |
 
 ### `APPLE-L2-001` — Barre compacte, confirmation et menu Plus
 
@@ -5139,6 +5236,109 @@ enregistré.
   propre/mise à jour, résultats par étape et rapports de crash.
 - Environnement : à renseigner.
 
+### `APPLE-L2-014` — Interface finale, contours et panneaux en largeur compacte
+
+- Candidat : `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : test manuel sur iPhone réel ou simulateur Xcode produisant une largeur
+  compacte réelle ; remplace `APPLE-L2-010` pour le candidat courant.
+- Exigences : `3:EDT-001` à `3:EDT-004`, `3:EDT-008`, `3:EDT-012`,
+  `3:EDT-014`, `3:EDT-016`, `3:EDT-020`, `3:EDT-021`, `3:TBX-005`,
+  `3:TBX-027`, `3:SHR-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003`,
+  `3:ACC-021`.
+- Préconditions : album contenant photo, texte, petit sticker et cadre
+  décoratif ; clavier, VoiceOver, zoom et presse-papiers disponibles.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Ouvrir l’éditeur en portrait compact et parcourir les six panneaux. | Barres, canevas et contenus de chaque panneau restent accessibles sans rognage ni superposition tactile. |
+| 2 | Modifier un texte avec le clavier visible et ouvrir chaque menu de format. | Curseur, sélection, Terminer et valeurs restent accessibles ; le clavier ne masque pas durablement le contenu. |
+| 3 | Choisir un cadre décoratif puis parcourir Aucun, Fin, Moyen, Épais et les couleurs. | Les quatre états d’épaisseur tiennent dans l’interface ; les couleurs sont inactives avec Aucun et actives sinon. |
+| 4 | Zoomer autant que la largeur compacte l’autorise puis utiliser les panneaux alors que la page approche leurs limites. | Les panneaux reçoivent les pressions et aucun objet de page sous-jacent n’est sélectionné à travers eux. |
+| 5 | Réduire un sticker au minimum et utiliser déplacement, rotation et deux poignées. | Le dessin n’occulte pas le sticker et toutes les cibles tactiles restent utilisables sans conflit. |
+| 6 | Passer en paysage et parcourir barres, menus, panneau Cadres et formes et petite sélection avec VoiceOver. | Page et sélection persistent ; ordre de focus, libellés, états désactivés et cibles restent cohérents. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — appareil/simulateur, dimensions, OS, Xcode,
+  orientations, clavier, VoiceOver et captures de tout rognage/interception.
+- Environnement : à renseigner.
+
+### `APPLE-L2-015` — Debug, Release et tests Apple du second correctif
+
+- Candidat : `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : validation reproductible macOS/Xcode avec SDK iOS approuvé ; remplace
+  `APPLE-L2-011`.
+- Exigences : `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`,
+  `3:DONE-005`.
+- Préconditions : checkout propre du commit exact, caches identifiés et
+  destinations iPhone/iPad disponibles.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Résoudre le package et compiler Debug pour iPhone et iPad. | Les deux destinations compilent sans erreur SwiftUI/UIKit, ressource absente ni avertissement bloquant. |
+| 2 | Exécuter tous les tests Core et Apple disponibles. | Tous réussissent ; nombre, durée, SDK et destinations sont enregistrés. |
+| 3 | Compiler Release, créer l’archive puis lancer sa validation Xcode. | Archive et validation réussissent sans API privée, ressource dupliquée, défaut de signature ni manifeste invalide. |
+| 4 | En Debug puis Release, rejouer `IPAD-L2-075…077`. | Collage riche, ouvertures/contours et priorité tactile des panneaux sont conformes dans les deux configurations. |
+| 5 | Sauvegarder, fermer et relancer après chaque configuration. | Le document persiste sans crash, perte, duplication ni divergence de rendu. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — Xcode/SDK, destinations, commandes, logs, nombre de
+  tests et rapport de validation de l’archive.
+- Environnement : à renseigner.
+
+### `APPLE-L2-016` — Instruments et enveloppe maximale du second correctif
+
+- Candidat : `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : campagne Instruments sur build Release et données synthétiques non
+  personnelles ; remplace `APPLE-L2-012`.
+- Exigences : `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à
+  `3:PERF-017`.
+- Préconditions : appareil documenté ; cent albums et un album de cent pages,
+  avec vingt photos, vingt textes et vingt stickers par page ; six décors
+  utilisés à plusieurs rapports ; miniatures générées et volume disque mesuré.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Mesurer lancements froid/chaud et ouverture de la première page. | Bibliothèque et première page locale affichent un premier contenu en moins de deux secondes. |
+| 2 | Parcourir rapidement vingt pages en surveillant mémoire et allocations. | Le préchauffage reste borné et le pic mémoire demeure inférieur à 500 Mo sans croissance persistante. |
+| 3 | Transformer photo, texte et petit sticker avec Core Animation et Time Profiler. | Les gestes visent 60 images/s sans décodage pleine résolution ni écriture durable par image. |
+| 4 | Appliquer les six cadres décoratifs à plusieurs rapports et tailles puis revenir plusieurs fois sur les pages. | Chaque alpha est analysé une fois au besoin puis réutilisé ; aucun calcul lourd répété ni blocage durable du thread principal n’apparaît. |
+| 5 | Revenir plusieurs fois à la Bibliothèque après modification de la couverture. | Cache et préchargement évitent les recompositions continues ; la miniature reste fidèle sans pic croissant. |
+| 6 | Examiner fuites, CPU, énergie, blocages et avertissement au vingt-et-unième sticker. | Aucune fuite, suspension ni crash mémoire ; seul l’avertissement prévu apparaît. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — trace Instruments, modèle, état thermique, tailles du
+  jeu, temps, FPS, pic mémoire et observations des caches alpha/image.
+- Environnement : à renseigner.
+
+### `APPLE-L2-017` — Build TestFlight distincte du second correctif
+
+- Candidat : `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : build TestFlight issue de l’archive Release validée par
+  `APPLE-L2-015`, séparée du package Swift Playgrounds ; remplace
+  `APPLE-L2-013`.
+- Exigences : `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à
+  `3:DONE-005`.
+- Préconditions : build/numéro exacts enregistrés ; installation propre puis
+  mise à jour depuis la build précédente si elle existe.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Installer la build sur iPhone et iPad puis lancer la Bibliothèque. | Installation, lancement et lecture réussissent sans dépendre de Swift Playgrounds. |
+| 2 | Créer ou ouvrir un album et parcourir photo, texte, sticker, forme, contour et cadre décoratif. | Toutes les fonctions publiques du Lot 2 sont présentes et correctement rendues. |
+| 3 | Rejouer les contrôles fonctionnels de `IPAD-L2-075…077`. | Collage riche, ouvertures/contours et panneaux à fort zoom restent conformes dans la build distribuée. |
+| 4 | Annuler/rétablir, sauvegarder, passer en arrière-plan, forcer la fermeture puis relancer hors ligne. | Données et ressources intégrées persistent ; aucun presse-papiers de session ne ressuscite. |
+| 5 | Tester portrait, paysage, grande taille de texte et VoiceOver sur les deux familles d’appareil. | Aucun contrôle essentiel n’est inaccessible et les libellés/états restent compréhensibles. |
+| 6 | Examiner journaux TestFlight et rapports de crash. | Aucun crash, blocage, corruption ni erreur répétée de catalogue n’est enregistré. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — version/build, appareils, OS, installation
+  propre/mise à jour, résultats par étape et rapports de crash.
+- Environnement : à renseigner.
+
 ### `APPLE-L1-010` — Fond manquant et repli validé
 
 - Candidat : `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a`.
@@ -5249,6 +5449,7 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
+| `IPAD-L2-071…074` sur `9bc11e7…` | 23 août 2026 | **2 réussites (`072`, `073`) et 2 échecs (`071`, `074`)** ; `071.3` et `074.1…4` non conformes, toutes les autres étapes explicitement considérées OK | Retour détaillé ; captures `image00.jpeg`, `image1.jpeg`, `image2.jpeg`, `IMG_4217.jpeg` examinées pour `074` et conservées hors Git | `071` : style métier hérité court-circuite le gras/italique natif ; `074` : photo hors ouverture alpha et contour extérieur/ambigu ; bug distinct de page zoomée interceptant le rail | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; mode de transfert et orientations non redéclarés |
 | `IPAD-L2-055…070` sur `64f5342…` (retour libellé `039…054`) | 21 août 2026 | **12 réussites et 4 échecs** : `058`, `061`, `062` et `065` ; toutes les autres fiches sont déclarées réussies globalement | Retour utilisateur détaillé pour les quatre échecs et phrase explicite « tous les autres tests dans `039…054` sont ok », sans capture ni observation par étape pour les réussites ; correspondance un pour un `+16` | `058` : restauration après collage et formats riches ; `061` : dépôt, poignées à petite taille et miniature ; `062` : remplacement ; `065` : alignement des cadres décoratifs | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paquet du correctif, mode de transfert et orientations non redéclarés ; sources applicatives `94deaf2…` identiques à `64f5342…` |
 | `IPAD-L2-039` sur `fce5d92…` | 21 août 2026 | **Échec de compilation à l’étape 1** ; lancement et étapes 2 à 6 non exécutés | Diagnostic exact transmis par l’utilisateur, sans capture : le compilateur ne peut pas type-checker l’expression d’`AppModel` ligne 256 dans un délai raisonnable | Concaténation trop complexe de cinq `Substring` pour former l’UUID stable du catalogue ; découper en sous-expressions `String`, puis créer de nouveaux IDs pour le candidat corrigé | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; transfert et orientation non redéclarés |
 | `IPAD-L2-038` sur `6093058…` | 20 août 2026 | **Réussi globalement** : Arrondie, italique, choix actifs, persistance et VoiceOver déclarés conformes | Retour saisi avec un backtick parasite entre `03` et `8`, interprété comme `IPAD-L2-038`, sans capture ni détail par étape | Aucun défaut supplémentaire signalé ; la compacité distincte des boutons reste suivie sous `TBX-027` | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paysage puis VoiceOver selon la fiche, non redéclarés séparément |

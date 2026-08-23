@@ -185,12 +185,14 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   empreintes. Le retour `IPAD-L2-071…074` réussit `072` et `073`, mais `071`
   échoue encore sur la conservation du gras/italique collé et `074` sur la
   photo visible hors de l’ouverture décorative ainsi que le contour. Le
-  correctif en cours fusionne les attributs natifs malgré le style hérité du
-  point d’insertion, masque photo et contour dans l’ouverture alpha centrale,
+  second correctif exact `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb`
+  fusionne les attributs natifs malgré le style hérité du point d’insertion,
+  masque photo et contour dans l’ouverture alpha centrale,
   remplace le pourcentage par Aucun/Fin/Moyen/Épais et protège les panneaux des
-  touches destinées à une page zoomée sous eux.
+  touches destinées à une page zoomée sous eux. Ses régressions sont
+  `IPAD-L2-075…077`.
   Les validations `APPLE-L2-006…009` restent attachées à `64f5342…` ; leurs
-  remplacements pour le candidat courant sont `APPLE-L2-010…013`.
+  remplacements pour le candidat courant sont `APPLE-L2-014…017`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : 159 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
@@ -252,10 +254,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   devient publique qu’au Lot 3. Le candidat `9bc11e7…` réussit désormais les
   parcours sticker `072…073` ; `071` et `074` restent échoués sur les écarts
   précités malgré leurs autres étapes conformes. Leur second correctif et celui
-  du chevauchement tactile à fort zoom doivent recevoir de nouveaux
-  identifiants avant qualification Apple.
+  du chevauchement tactile à fort zoom sont figés dans `855ae27…`; les fiches
+  `IPAD-L2-075…077` et `APPLE-L2-014…017` portent les nouvelles preuves.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
-  séparément par `APPLE-L2-010` sur iPhone ou Xcode. Les
+  séparément par `APPLE-L2-014` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur
