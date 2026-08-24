@@ -16,7 +16,7 @@ résultats du prototype 2.1.
 |---|---|
 | Produit | Album Photo 3.0 |
 | Date du suivi | 2026-08-24 |
-| Phase courante | Lot 2 — `IPAD-L2-080…081` réussis globalement sur `f483fa9…` ; incrément Cadre décoratif exclusif et éditeur texte Photoweb implémenté, candidat à figer |
+| Phase courante | Lot 2 — candidat ergonomique `331b5c3…` figé et validé sous WSL ; `IPAD-L2-082…083` à exécuter |
 | Base avant reconstruction | `06aaa59` |
 | Candidat de première campagne | implémentation `314cf07c1a5b4c87e8abab4e35595ad9031e4b9a` ; copie iPad `aeae5c439c461e7994117067d81a416591d348bd`, déclarée identique |
 | Candidat correctif rejeté | `06c30b93ca479a90a4cc4f3d90c0ba130bbb42e7` — deux erreurs de compilation Apple signalées |
@@ -48,7 +48,7 @@ résultats du prototype 2.1.
 | Troisième correctif Lot 2 figé | `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` : récupération des représentations publiques RTF/RTFD/HTML du collage pour convertir gras/italique ; sélecteur de contour en grille 2 × 2 ; cadre décoratif agrandi autour de la photo existante sans modifier masque, cadrage ni contour (`TBX-007`, `SHR-004`, `SHR-013`, `SHR-014`, `CRP-007`) |
 | Quatrième correctif Lot 2 figé | `f483fa902191e84edbc3b14f780fefca40b47a63` : la décision utilisateur remplace le collage riche externe par du texte brut adoptant le style local. Bord blanc/noir conservent l’ouverture alignée autour de la photo ; Ruban kraft, Tampon voyage, Feuillage et Photo instantanée sont superposés dans les limites exactes de la photo, sans modifier son cadrage (`TBX-007`, `SHR-013`, `SHR-014`, `CRP-007`) |
 | Quatrième correctif Lot 2 testé | `IPAD-L2-080…081` 🟢 globalement sur `f483fa9…`, selon « c'est ok pour les changements », sans capture ni détail par étape |
-| Incrément ergonomique Lot 2 à figer | Formes et motifs fusionnés en une sélection Cadre décoratif exclusive ; choix atomiques sur Sélection/Page/Album. Barre de texte bureautique au-dessus de la saisie et colonne Annuler/Valider à droite (`SHR-001`, `SHR-003`, `SHR-007`, `TBX-004`, `TBX-028`, `TBX-029`) |
+| Candidat ergonomique Lot 2 figé | `331b5c3f785db7b0901afe0ced8fa67f98a4bb24` : formes et motifs fusionnés en une sélection Cadre décoratif exclusive ; choix atomiques sur Sélection/Page/Album. Barre de texte bureautique au-dessus de la saisie et colonne Annuler/Valider à droite (`SHR-001`, `SHR-003`, `SHR-007`, `TBX-004`, `TBX-028`, `TBX-029`) |
 | Spécification de première campagne | `031d2e46c70128c7e633db1f04663949e4531309` |
 | Spécification de troisième campagne | `spec.md` inclus dans `7a0f2a442f5f13a98663c5c02a97b8110bd943d6` |
 | Spécification du correctif Lot 2 | `spec.md` dans `024a60bcd7b7a837497a5d6a00e8e42cacfd9366` précise `EDT-002`, `ELM-014` et `RND-001` conformément aux retours utilisateur du 17 août 2026 |
@@ -57,8 +57,8 @@ résultats du prototype 2.1.
 | Stockage 3.0 | Nouvelle génération `AlbumPhotoCanvasV1` ; aucun parcours de migration 2.1 |
 | Plateformes cibles | iPhone/iPad, iOS/iPadOS 26 minimum, portrait et paysage |
 | Validation disponible | Noyau Swift multiplateforme sous WSL |
-| Validation indispensable restante | Figer l’incrément ergonomique, créer ses nouveaux identifiants iPad/Apple, puis qualifier l’exclusivité des décors et la nouvelle fenêtre texte ; `APPLE-L2-022…025` restent attachés à `f483fa9…` |
-| État global | 🟡 **Le Lot 2 conserve les preuves iPad jusqu’à `081` ; la nouvelle sélection décorative exclusive et la fenêtre texte inspirée de Photoweb passent les contrôles portables mais restent à compiler et valider visuellement sur Apple** |
+| Validation indispensable restante | Exécuter `IPAD-L2-082…083` sur `331b5c3…`, puis qualifier largeur compacte, Xcode/Release, Instruments et TestFlight avec `APPLE-L2-026…029` ; `022…025` restent attachés à `f483fa9…` |
+| État global | 🟡 **Le Lot 2 conserve les preuves iPad jusqu’à `081` ; `331b5c3…` passe les contrôles portables mais sa sélection décorative exclusive et sa fenêtre texte inspirée de Photoweb restent à compiler et valider visuellement sur Apple** |
 
 ## Légende
 
@@ -117,7 +117,7 @@ gestes tactiles, ni l’accessibilité, conformément à `ENV-004` et
 | Spécification et architecture 3.0 | 🟡 | Zoom dynamique confirmé ; frontière des lots 1 à 3 arbitrée par `DEC-38` et spécification figée dans la campagne ; ADR, schémas, contrats et traçabilité présents | Qualifier le candidat sur Apple |
 | Lot 0 — Prototypes et contrats | 🟡 | Modèle, géométrie, texte, modèles/Auto, navigation, sérialisation, transaction, catalogue, schéma package et plan Cloud couverts par le Core ; intégration App Playground compilée | Prouver les capacités Apple encore bloquées et corriger les écarts fonctionnels du premier incrément Lot 2 |
 | Lot 1 — Création locale | 🟡 | Parcours métier validés et adaptation finale confirmée par `143…144` sur `101e294…` | Conserver le jalon iPad ; qualifications iPhone/Xcode et Apple différées empêchent encore l’état 🟢 |
-| Lot 2 — Parité de composition | 🟡 | `f483fa9…` réussit globalement `IPAD-L2-080…081`. L’incrément suivant impose une sélection exclusive forme/motif et une fenêtre texte avec barre supérieure et actions à droite ; tests métier et contrats passent sous WSL | Figer puis exécuter les nouvelles régressions iPad ; qualifications iPhone/Xcode/Instruments/TestFlight restent distinctes ; Info reste hors campagne à la demande de l’utilisateur |
+| Lot 2 — Parité de composition | 🟡 | `f483fa9…` réussit globalement `IPAD-L2-080…081`. `331b5c3…` impose une sélection exclusive forme/motif et une fenêtre texte avec barre supérieure et actions à droite ; 162 tests, parse, contrats et empreintes passent sous WSL | Exécuter `IPAD-L2-082…083`, puis les qualifications `APPLE-L2-026…029` ; Info reste hors campagne à la demande de l’utilisateur |
 | Lot 3 — Consultation/documents | ⏸️ | Schéma `.photoalbum` préparatoire seulement | Démarrer après le lot 2 |
 | Lots 4 à 6 | ⏸️ | Plan CloudKit pur uniquement ; aucune capacité publique | Versions ultérieures et qualification dédiée |
 
@@ -461,6 +461,7 @@ Lot 3 n’est rendu public.
 
 | Environnement | Commande ou contrôle | Résultat connu | Portée et limite |
 |---|---|---|---|
+| Dépôt, registre du candidat `331b5c3…`, 2026-08-24 | Unicité des synthèses/fiches, candidat exact, six tableaux aux colonnes obligatoires, traçabilité et `git diff --check` | **OK** : 83/83 fiches `IPAD-L2`, 29/29 fiches `APPLE-L2`, traçabilité 83/83 et 29/29, six nouveaux tableaux conformes | Documentation uniquement ; les 162 tests, le parse, les 55 contrats et 16 empreintes restent ceux du commit applicatif parent ; `IPAD-L2-082…083` et `APPLE-L2-026…029` NON EXÉCUTÉS. |
 | WSL, Swift 6.3.3 et frontend Swift, 2026-08-24 | Incrément `SHR-001`, `SHR-003`, `SHR-007`, `TBX-028`, `TBX-029` : `swift test --parallel`, parse de tout AppModule, contrats et 16 empreintes | **162 tests, 0 échec** ; parse **OK** ; contrats **OK** pour 32 modèles/55 ressources ; empreintes **16/16** | Prouve l’exclusivité atomique forme/motif, son annulation et les contrats structurels de la nouvelle fenêtre. Sans SDK Apple, type-check SwiftUI, disposition, toucher et VoiceOver restent NON TESTÉS. Une première suite a relevé deux attentes de contrat devenues obsolètes, corrigées avant la relance complète ; parse/contrats ont aussi été invoqués une fois depuis `docs/` par erreur puis relancés à la racine. |
 | iPad 8e génération repris, iPadOS 26.5.2, Swift Playgrounds 4.7, 2026-08-24 | Retour global `IPAD-L2-080…081` sur `f483fa9…` | **2 réussites globales** : texte brut, cadres superposés et Recadrer déclarés conformes | Retour « c'est ok pour les changements », sans capture ni détail par étape ; n’attribue pas de preuve individuelle aux douze lignes de contrôle. |
 | Dépôt, registre du candidat `f483fa9…`, 2026-08-24 | Unicité des fiches/synthèses, candidat exact, six tableaux aux colonnes obligatoires et `git diff --check` | **OK** : 81/81 fiches `IPAD-L2`, 25/25 fiches `APPLE-L2`, traçabilité 81/81 et 25/25, six nouveaux tableaux conformes | Documentation uniquement ; les 162 tests, le parse, les 55 contrats et 16 empreintes restent ceux du commit applicatif parent ; `IPAD-L2-080…081` et `APPLE-L2-022…025` NON EXÉCUTÉS |
@@ -591,12 +592,14 @@ Lot 3 n’est rendu public.
 | `IPAD-L2-075…077` sur `855ae27…` | `075/076` 🔴, `077` 🟢 | Campagne exécutée : seules `075.3`, `076.4` et `076.5` échouent ; les autres étapes sont conformes selon la règle explicite du retour |
 | `IPAD-L2-078…079` sur `92df51d…` | 🔴 Échecs ciblés | `078.3` perd encore gras/italique ; `079.2` et Bord blanc/noir sont conformes, mais les quatre motifs sont mal adaptés. Les autres étapes non détaillées restent sans preuve individuelle. |
 | `IPAD-L2-080…081` sur `f483fa9…` | 🟢 Réussis globalement | Retour « c'est ok pour les changements », sans capture ni détail par étape ; aucune réussite plus fine n’est extrapolée. |
+| `IPAD-L2-082…083` sur `331b5c3…` | ⚪ Non testés | Exclusivité forme/motif/Aucun, portées et nouvelle fenêtre texte exigent compilation, gestes et comparaison visuelle dans Swift Playgrounds. |
 | `APPLE-L2-002…005` sur `fce5d92…` | ⚪ Non exécutés | Le candidat a été rejeté ; ces fiches historiques sont remplacées sur le correctif |
 | `APPLE-L2-006…009` sur `64f5342…` | ⚪ Non testés | Largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
 | `APPLE-L2-010…013` sur `9bc11e7…` | ⚪ Non testés | Nouvelles qualifications du candidat corrigé ; largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
 | `APPLE-L2-014…017` sur `855ae27…` | ⚪ Non testés | Qualifications historiques du candidat précédent ; largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
 | `APPLE-L2-018…021` sur `92df51d…` | ⚪ Non testés | Remplacements du troisième correctif ; largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
-| `APPLE-L2-022…025` sur `f483fa9…` | ⚪ Non testés | Qualifications du candidat courant ; largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
+| `APPLE-L2-022…025` sur `f483fa9…` | ⚪ Non testés | Qualifications historiques du quatrième correctif ; remplacées pour le candidat courant sans retargeter leurs procédures |
+| `APPLE-L2-026…029` sur `331b5c3…` | ⚪ Non testés | Qualifications du candidat courant ; largeur compacte iPhone, Xcode Debug/Release, Instruments et TestFlight exigent des environnements Apple distincts |
 | `IPAD-L2-018`, Remplir l’album sur `7815396…` | 🟢 Réussi sur l’iPad déclaré | Retour global « les tests sont ok » sans capture ni détail par étape ; ne couvre pas la nouvelle interface compacte ni le cadrage couvrant demandés avec ce retour |
 | `IPAD-L2-019`, action compacte et cadrage sur `3944fae…` | 🟢 Réussi sur l’iPad déclaré | Retour global « tout est ok » sans capture ni détail par étape ; limité à cette fiche et à ce candidat |
 | `IPAD-L2-020`, zones de texte sur `d882183…` | 🔴 Échec de compilation Apple | Étape 1 échouée ; aucune étape fonctionnelle exécutée, preuve limitée aux diagnostics visibles dans les deux captures reçues |
@@ -669,13 +672,13 @@ Lot 3 n’est rendu public.
 
 ## Prochaines actions
 
-1. Figer le candidat de l’incrément Cadre décoratif/éditeur texte, puis créer et
-   exécuter ses fiches iPad avec de nouveaux identifiants stables.
+1. Exécuter `IPAD-L2-082…083` sur le candidat exact `331b5c3…` et enregistrer
+   chaque verdict sans extrapoler un retour global aux étapes individuelles.
 2. Conserver `IPAD-L2-077`, `080` et `081` comme
    preuve acquise tant qu’aucun changement ne touche l’arbitrage des panneaux.
-3. Créer les remplacements Apple du nouveau candidat pour la largeur compacte,
-   Debug/Release Xcode, Instruments et TestFlight ; conserver `022…025` sur
-   `f483fa9…` comme historique non exécuté.
+3. Qualifier `APPLE-L2-026…029` pour la largeur compacte, Debug/Release Xcode,
+   Instruments et TestFlight ; conserver `022…025` sur `f483fa9…` comme
+   historique non exécuté.
 4. La partie Exporter de `TBX-021` reste au Lot 3 ; le RAW reste hors de cette
    campagne immédiate.
 5. Reprendre le contrôle Info avec un nouvel identifiant seulement lorsque
@@ -688,6 +691,7 @@ dans Git à `06aaa59`. Les entrées les plus récentes doivent rester en haut.
 
 | Date | Auteur | Changement | Fichiers et exigences | Validation |
 |---|---|---|---|---|
+| 2026-08-24 | Codex | Gel du candidat ergonomique exact `331b5c3f785db7b0901afe0ced8fa67f98a4bb24` et création des régressions `IPAD-L2-082…083` ainsi que des qualifications de remplacement `APPLE-L2-026…029`, sans retargeter les preuves historiques | `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `ENV`, `EDT`, `TBX`, `SHR`, `ZOM`, `ACC`, `TST`, `PERF`, `DONE` applicables | Candidat parent : 162 tests, parse, 55 contrats et 16 empreintes OK ; registres/traçabilité 83/83 `IPAD-L2`, 29/29 `APPLE-L2`, six nouveaux tableaux conformes ; nouvelles fiches Apple/iPad NON EXÉCUTÉES |
 | 2026-08-24 | Codex | Enregistrement des réussites globales `IPAD-L2-080…081`, puis fusion exclusive Formes/Bordures et motifs sous Cadre décoratif et remaniement de la fenêtre texte à la manière de la référence `photoweb2.png` : barre bureautique supérieure, Annuler/Valider à droite | `AlbumApplicationService.swift`, `FrameAndShapePanelView.swift`, `AlbumTextEditorView.swift`, `HelpView.swift`, tests, `spec.md`, README, registre, traçabilité et `SUIVI_PROJET.md` ; `SHR-001`, `SHR-003`, `SHR-007`, `TBX-004`, `TBX-028`, `TBX-029` | Retour iPad global sans capture ; WSL : 162 tests, parse AppModule, contrats 32 modèles/55 ressources et 16/16 empreintes OK ; type-check et rendu Apple NON TESTÉS ; candidat à figer |
 | 2026-08-24 | Codex | Gel du quatrième correctif exact `f483fa902191e84edbc3b14f780fefca40b47a63` et création des régressions `IPAD-L2-080…081` ainsi que des qualifications de remplacement `APPLE-L2-022…025`, sans retargeter les preuves historiques | `suivi_tests.md`, `README.md`, `docs/traceability/lot2.md`, `SUIVI_PROJET.md` ; `ENV`, `EDT`, `TBX`, `SHR`, `CRP`, `ZOM`, `CAN`, `ACC`, `PERF`, `TST`, `DONE` applicables | Candidat parent : 162 tests, parse, 55 contrats et 16 empreintes OK ; registre/traçabilité 81/81 `IPAD-L2`, 25/25 `APPLE-L2`, six nouveaux tableaux conformes et `git diff --check` OK ; nouvelles fiches Apple/iPad NON EXÉCUTÉES |
 | 2026-08-24 | Codex | Enregistrement des échecs ciblés `IPAD-L2-078…079`, adoption explicite du collage externe en texte brut et séparation des cadres : Bord blanc/noir autour de la photo, quatre motifs superposés dans ses limites à la manière de la référence Photoweb | `BuiltInAssetCatalogs.swift`, `TextEditingPrototype.swift`, `AlbumTextEditorView.swift`, `PageCanvasView.swift`, tests, `spec.md`, `SUIVI_PROJET.md` ; `TBX-007`, `SHR-013`, `SHR-014`, `CRP-007` | Retour iPad et `IMG_4222.jpeg`/`photoweb1.png` examinés hors Git ; WSL : 162 tests, parse AppModule, contrats 32 modèles/55 ressources et 16/16 empreintes OK ; type-check, collage et rendu/recadrage Apple NON TESTÉS ; candidat alors à figer |

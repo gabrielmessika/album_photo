@@ -43,6 +43,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Second candidat de régression Lot 2 testé | `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb` — `IPAD-L2-077` réussi ; `075` échoue uniquement à l’étape 3 et `076` uniquement aux étapes 4 et 5 ; toutes les autres étapes sont déclarées conformes |
 | Troisième candidat de régression Lot 2 testé | `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` — `IPAD-L2-078` confirme encore la perte du gras/italique ; `079` confirme les libellés et Bord blanc/noir mais échoue sur les quatre cadres à motifs |
 | Quatrième candidat de régression Lot 2 testé | `f483fa902191e84edbc3b14f780fefca40b47a63` — collage externe converti en texte brut avec style local ; Bord blanc/noir autour de la photo et quatre motifs superposés dans ses limites ; `IPAD-L2-080…081` réussis globalement, sans capture ni détail par étape |
+| Candidat ergonomique Lot 2 à tester | `331b5c3f785db7b0901afe0ced8fa67f98a4bb24` — Cadre décoratif fusionne formes et motifs en une sélection exclusive ; barre de texte bureautique au-dessus de la saisie et Annuler/Valider à droite ; 162 tests WSL, parse AppModule, 55 contrats et 16 empreintes réussis ; `IPAD-L2-082…083` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -216,6 +217,10 @@ déplacer ou zoomer. Le quatrième correctif est figé dans
 globalement conformes les changements couverts par `IPAD-L2-080…081`, sans
 capture ni résultat individuel par étape. `APPLE-L2-022…025` restent les
 qualifications distinctes du candidat, sans retargeter aucun verdict historique.
+Le candidat ergonomique suivant est figé dans
+`331b5c3f785db7b0901afe0ced8fa67f98a4bb24`. `IPAD-L2-082…083` portent les
+deux nouvelles régressions iPad et `APPLE-L2-026…029` remplacent ses quatre
+qualifications Apple, sans modifier les verdicts historiques.
 
 ## Mode de réponse
 
@@ -520,6 +525,8 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-007`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | 🔴 `ÉCHOUÉ` — libellés et Bord blanc/noir conformes ; Ruban kraft, Tampon voyage, Feuillage et Photo instantanée mal adaptés |
 | `IPAD-L2-080` | Régression du collage externe en texte brut | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-001` à `3:CRP-007`, `3:CAN-008` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-082` | Cadre décoratif exclusif, portées et historique | `3:SHR-001` à `3:SHR-003`, `3:SHR-006` à `3:SHR-010`, `3:SAV-001`, `3:UND-001`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-083` | Fenêtre texte bureautique et actions à droite | `3:TBX-004`, `3:TBX-005`, `3:TBX-009` à `3:TBX-016`, `3:TBX-022`, `3:TBX-026` à `3:TBX-029`, `3:UND-001`, `3:ACC-002`, `3:ACC-004`, `3:ACC-021` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -5011,6 +5018,58 @@ panneaux.
   jointe ni détail individuel sur les six étapes.
 - Environnement : reprendre celui de `IPAD-L2-080`, sans différence déclarée.
 
+### `IPAD-L2-082` — Cadre décoratif exclusif, portées et historique
+
+- Candidat : `331b5c3f785db7b0901afe0ced8fa67f98a4bb24`.
+- Spécification : 3.0 incluse dans le candidat exact ; décision utilisateur du
+  24 août 2026 enregistrée sous `SHR-001`, `SHR-003` et `SHR-007`.
+- Préconditions : reprendre l’album de cadres validé sous `IPAD-L2-081`, avec
+  au moins deux cadres photo sur la page active et un troisième sur une autre
+  page. Relever le cadrage et appliquer un contour Épais contrasté au premier.
+- Exigences : `3:SHR-001` à `3:SHR-003`, `3:SHR-006` à `3:SHR-010`,
+  `3:SAV-001`, `3:UND-001`, `3:ACC-002`, `3:ACC-004`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler et lancer le candidat exact, sélectionner le premier cadre puis ouvrir Cadres et formes. | La compilation réussit ; le panneau montre Portée, une seule section Cadre décoratif avec Aucun puis les sous-sections Formes et Bordures et motifs, ainsi qu’une section Contour indépendante ; aucune section Forme séparée n’apparaît. |
+| 2 | En portée Sélection, choisir Cercle puis observer les coches et le cadre. | Cercle est le seul choix décoratif coché, la photo est masquée en cercle et le contour reste présent sans motif superposé ni changement du cadrage relevé. |
+| 3 | Choisir Ruban kraft sur le même cadre. | Ruban kraft remplace Cercle au lieu de s’y ajouter : le masque redevient rectangulaire, une seule coche décorative reste visible et le contour ainsi que le cadrage sont inchangés. |
+| 4 | Choisir Aucun. | Forme et motif disparaissent ensemble, Rectangle/Aucun devient l’unique état décoratif actif et le contour indépendant reste inchangé. |
+| 5 | En portée Page choisir Étoile, puis en portée Album choisir Feuillage. | Chaque commande annonce le bon nombre de cadres ; Étoile s’applique seulement à la page, puis Feuillage la remplace par un masque rectangulaire sur toutes les photos de l’album en une seule action. |
+| 6 | Utiliser Annuler puis Rétablir, fermer et rouvrir l’album, comparer éditeur/miniature/Prévisualiser et parcourir les choix avec VoiceOver. | Un seul Annuler restaure exactement les décors précédents de toute la portée et Rétablir les réapplique ; l’état exclusif persiste et concorde dans les sorties ; noms, états et cibles sont annoncés sans ambiguïté. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — résultat de chaque étape, nombres annoncés, captures
+  Cercle/Ruban kraft/Aucun et observations Annuler/Rétablir/VoiceOver.
+- Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7 ;
+  relever toute différence et le mode de transfert du candidat.
+
+### `IPAD-L2-083` — Fenêtre texte bureautique et actions à droite
+
+- Candidat : `331b5c3f785db7b0901afe0ced8fa67f98a4bb24`.
+- Spécification : 3.0 incluse dans le candidat exact ; ergonomie demandée à
+  partir de la référence `photoweb2.png`, sans copie d’asset Photoweb.
+- Préconditions : reprendre une zone contenant plusieurs mots et deux
+  paragraphes reconnaissables ; relever son contenu, ses styles et son opacité.
+  Préparer portrait, paysage, clavier logiciel et VoiceOver.
+- Exigences : `3:TBX-004`, `3:TBX-005`, `3:TBX-009` à `3:TBX-016`,
+  `3:TBX-022`, `3:TBX-026` à `3:TBX-029`, `3:UND-001`, `3:ACC-002`,
+  `3:ACC-004`, `3:ACC-021`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer, ouvrir Modifier le texte en portrait et observer la composition sans faire défiler. | La barre de formatage est immédiatement au-dessus du texte ; une colonne distincte à droite garde Annuler avec une croix et Valider avec une coche visibles simultanément. |
+| 2 | Parcourir la barre de gauche à droite. | La police courante et la taille en points sont lisibles ; Gras, Italique, Couleur, Alignement, Interligne et Opacité utilisent des icônes bureautiques reconnaissables dans cet ordre, sans titres Sélection, Paragraphe ou Zone. |
+| 3 | Sélectionner un mot, appliquer Gras et Italique, puis centrer le second paragraphe et changer l’opacité. | Les changements visent respectivement la sélection, le paragraphe et la zone ; les états actifs restent visibles autrement que par la couleur et le clavier ne masque pas durablement la sélection. |
+| 4 | Presser Annuler dans la colonne droite. | La fenêtre se ferme et restaure exactement le contenu, les styles et l’opacité relevés à l’ouverture, sans créer de commande Annuler dans l’album. |
+| 5 | Rouvrir, modifier un mot et sa taille, puis presser Valider dans la colonne droite et utiliser Annuler/Rétablir dans l’éditeur d’album. | Valider persiste le texte et le format comme une action cohérente ; Annuler/Rétablir restaure successivement les états sans fermer ni perdre la zone. |
+| 6 | Refaire les contrôles 1 à 3 en paysage, avec le clavier visible puis VoiceOver et une grande taille de texte système. | Barre, surface et deux actions restent accessibles sans chevauchement ni défilement vertical des actions ; ordre de focus, libellés, valeurs actives et cibles tactiles restent compréhensibles. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — captures portrait/paysage, résultat de chaque étape,
+  styles avant/après, comportement du clavier et annonces VoiceOver.
+- Environnement : reprendre celui de `IPAD-L2-082`, sans différence déclarée.
+
 
 ## Qualification différée Apple/macOS/Xcode
 
@@ -5023,8 +5082,9 @@ restent attachés à `9bc11e7…`, dont deux régressions ont encore échoué. L
 remplacements `APPLE-L2-014…017` restent attachés à `855ae27…`, dont deux
 régressions ont encore échoué. `APPLE-L2-018…021` restent attachés à
 `92df51d…`, dont les deux régressions ciblées ont également échoué.
-`APPLE-L2-022…025` qualifient le candidat exact `f483fa9…`. Ils restent tous ⚪
-`NON TESTÉ` jusqu’à une campagne séparée visant le candidat explicitement
+`APPLE-L2-022…025` restent attachés au candidat exact `f483fa9…`.
+`APPLE-L2-026…029` les remplacent pour `331b5c3…` et restent tous ⚪
+`NON TESTÉ` jusqu’à une campagne séparée visant ce candidat explicitement
 enregistré.
 
 | ID différé | Contrôle | Exigences | État | Motif du report |
@@ -5067,6 +5127,10 @@ enregistré.
 | `APPLE-L2-023` | Debug/Release et tests Apple du quatrième correctif | `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`, `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-019` ; macOS, Xcode et SDK iOS approuvés requis |
 | `APPLE-L2-024` | Instruments et enveloppe maximale du quatrième correctif | `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à `3:PERF-017` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-020` ; Instruments et jeu synthétique de 100 pages requis |
 | `APPLE-L2-025` | Build TestFlight distincte du quatrième correctif | `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-021` ; build distincte de Swift Playgrounds |
+| `APPLE-L2-026` | Cadre exclusif et nouvelle fenêtre texte en largeur compacte | `3:EDT-001` à `3:EDT-004`, `3:EDT-008`, `3:EDT-012`, `3:EDT-014`, `3:EDT-016`, `3:EDT-020`, `3:EDT-021`, `3:TBX-005`, `3:TBX-026` à `3:TBX-029`, `3:SHR-001`, `3:SHR-003`, `3:SHR-007`, `3:ACC-002`, `3:ACC-003`, `3:ACC-021` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-022` sur `331b5c3…` ; iPhone réel ou Xcode compact requis |
+| `APPLE-L2-027` | Debug/Release et tests Apple du candidat ergonomique | `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`, `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-023` ; macOS, Xcode et SDK iOS approuvés requis |
+| `APPLE-L2-028` | Instruments et enveloppe maximale du candidat ergonomique | `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à `3:PERF-017` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-024` ; Instruments et jeu synthétique de 100 pages requis |
+| `APPLE-L2-029` | Build TestFlight distincte du candidat ergonomique | `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-025` ; build distincte de Swift Playgrounds |
 
 ### `APPLE-L2-001` — Barre compacte, confirmation et menu Plus
 
@@ -5706,6 +5770,109 @@ enregistré.
 | 3 | Rejouer `IPAD-L2-080…081` puis le contrôle tactile de `077`. | Texte brut, cadres, recadrage et panneaux à fort zoom restent conformes dans la build distribuée. |
 | 4 | Annuler/rétablir, sauvegarder, passer en arrière-plan, forcer la fermeture puis relancer hors ligne. | Données et ressources intégrées persistent ; aucun presse-papiers de session ne ressuscite. |
 | 5 | Tester portrait, paysage, grande taille de texte et VoiceOver sur les deux familles d’appareil. | Aucun contrôle essentiel n’est inaccessible et les libellés/états restent compréhensibles. |
+| 6 | Examiner journaux TestFlight et rapports de crash. | Aucun crash, blocage, corruption ni erreur répétée de catalogue n’est enregistré. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — version/build, appareils, OS, installation
+  propre/mise à jour, résultats par étape et rapports de crash.
+- Environnement : à renseigner.
+
+### `APPLE-L2-026` — Cadre exclusif et fenêtre texte en largeur compacte
+
+- Candidat : `331b5c3f785db7b0901afe0ced8fa67f98a4bb24`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : test manuel sur iPhone réel ou simulateur Xcode produisant une largeur
+  compacte réelle ; remplace `APPLE-L2-022` pour le candidat courant.
+- Exigences : `3:EDT-001` à `3:EDT-004`, `3:EDT-008`, `3:EDT-012`,
+  `3:EDT-014`, `3:EDT-016`, `3:EDT-020`, `3:EDT-021`, `3:TBX-005`,
+  `3:TBX-026` à `3:TBX-029`, `3:SHR-001`, `3:SHR-003`, `3:SHR-007`,
+  `3:ACC-002`, `3:ACC-003`, `3:ACC-021`.
+- Préconditions : album de `IPAD-L2-082…083`, clavier, VoiceOver et tailles de
+  texte système disponibles ; largeur compacte confirmée dans l’environnement.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Ouvrir l’éditeur en portrait compact et parcourir les six panneaux avec une photo sélectionnée. | Rails, canevas, Cadre décoratif exclusif et Contour restent accessibles sans rognage, chevauchement ni interception par la page. |
+| 2 | Ouvrir Modifier le texte avec le clavier visible. | Barre supérieure, surface de saisie et colonne droite restent utilisables ; Annuler et Valider sont tous deux visibles sans défilement vertical. |
+| 3 | Sélectionner un mot puis appliquer successivement chaque format de la barre. | La sélection reste visible, les menus s’ouvrent dans l’écran et chaque état actif possède une indication visuelle et une valeur accessible. |
+| 4 | Rejouer les étapes 2 à 5 de `IPAD-L2-082` sur plusieurs cadres. | Formes et motifs se remplacent sans cumul sur Sélection/Page/Album ; Aucun efface les deux et le contour reste indépendant. |
+| 5 | Passer en paysage compact, zoomer le canevas puis rouvrir les panneaux et la fenêtre texte. | Les changements d’orientation conservent page, sélection et saisie ; aucun objet sous-jacent n’intercepte les actions. |
+| 6 | Parcourir le tout avec VoiceOver et une grande taille de texte système. | Ordre de focus, libellés, valeurs, coches et cibles restent cohérents ; les deux actions de texte et Aucun restent atteignables. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — appareil/simulateur, dimensions, OS, Xcode,
+  orientations, captures, clavier, taille de texte et annonces VoiceOver.
+- Environnement : à renseigner.
+
+### `APPLE-L2-027` — Debug, Release et tests Apple du candidat ergonomique
+
+- Candidat : `331b5c3f785db7b0901afe0ced8fa67f98a4bb24`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : validation reproductible macOS/Xcode avec SDK iOS approuvé ; remplace
+  `APPLE-L2-023`.
+- Exigences : `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`,
+  `3:DONE-005`.
+- Préconditions : checkout propre du commit exact, caches identifiés et
+  destinations iPhone/iPad disponibles.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Résoudre le package et compiler Debug pour iPhone et iPad. | Les deux destinations compilent sans erreur de type-check SwiftUI/UIKit, ressource absente ni avertissement bloquant. |
+| 2 | Exécuter tous les tests Core et Apple disponibles. | Tous réussissent ; nombre, durée, SDK et destinations sont enregistrés. |
+| 3 | Compiler Release, créer l’archive puis lancer sa validation Xcode. | Archive et validation réussissent sans API privée, ressource dupliquée, défaut de signature ni manifeste invalide. |
+| 4 | En Debug puis Release, rejouer `IPAD-L2-082…083` et le contrôle tactile de `077`. | Exclusivité des décors, nouvelle fenêtre texte et priorité tactile sont conformes dans les deux configurations. |
+| 5 | Sauvegarder, fermer et relancer après chaque configuration. | Décors, contours, textes et historique persistent sans crash, perte, cumul forme/motif ni divergence de rendu. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — Xcode/SDK, destinations, commandes, logs, nombre de
+  tests et rapport de validation de l’archive.
+- Environnement : à renseigner.
+
+### `APPLE-L2-028` — Instruments et enveloppe du candidat ergonomique
+
+- Candidat : `331b5c3f785db7b0901afe0ced8fa67f98a4bb24`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : campagne Instruments sur build Release et données synthétiques non
+  personnelles ; remplace `APPLE-L2-024`.
+- Exigences : `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à
+  `3:PERF-017`.
+- Préconditions : appareil documenté ; cent albums et un album de cent pages,
+  avec vingt photos, vingt textes et vingt stickers par page ; formes, motifs
+  et fenêtre texte utilisés de manière répétée.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Mesurer lancements froid/chaud et ouverture de la première page. | Bibliothèque et première page locale affichent un premier contenu en moins de deux secondes. |
+| 2 | Parcourir rapidement vingt pages en surveillant mémoire et allocations. | Le préchauffage reste borné et le pic mémoire demeure inférieur à 500 Mo sans croissance persistante. |
+| 3 | Transformer photo, texte et petit sticker avec Core Animation et Time Profiler. | Les gestes visent 60 images/s sans décodage pleine résolution ni écriture durable par image. |
+| 4 | Alterner formes, motifs et Aucun sur les trois portées puis annuler/rétablir. | Chaque portée crée une mutation atomique sans recomposition continue, blocage durable du thread principal ni croissance de l’historique au-delà d’une commande par action. |
+| 5 | Ouvrir, formater, annuler et valider successivement vingt zones de texte. | Barre et colonne d’actions ne provoquent ni fuite, ni boucle de mise en page, ni croissance persistante après fermeture des feuilles. |
+| 6 | Examiner fuites, CPU, énergie, blocages et avertissement au vingt-et-unième sticker. | Aucune fuite, suspension ni crash mémoire ; seul l’avertissement prévu apparaît. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — trace Instruments, modèle, état thermique, tailles du
+  jeu, temps, FPS, pic mémoire et observations des allocations.
+- Environnement : à renseigner.
+
+### `APPLE-L2-029` — Build TestFlight distincte du candidat ergonomique
+
+- Candidat : `331b5c3f785db7b0901afe0ced8fa67f98a4bb24`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : build TestFlight issue de l’archive Release validée par
+  `APPLE-L2-027`, séparée du package Swift Playgrounds ; remplace
+  `APPLE-L2-025`.
+- Exigences : `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à
+  `3:DONE-005`.
+- Préconditions : build/numéro exacts enregistrés ; installation propre puis
+  mise à jour depuis la build précédente si elle existe.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Installer la build sur iPhone et iPad puis lancer la Bibliothèque. | Installation, lancement et lecture réussissent sans dépendre de Swift Playgrounds. |
+| 2 | Créer ou ouvrir un album et parcourir toutes les fonctions publiques du Lot 2. | Photos, textes, stickers, modèles, fonds, décors exclusifs et contours sont présents et correctement rendus. |
+| 3 | Rejouer `IPAD-L2-082…083` puis le contrôle tactile de `077`. | Décors exclusifs, fenêtre texte et panneaux à fort zoom restent conformes dans la build distribuée. |
+| 4 | Annuler/rétablir, sauvegarder, passer en arrière-plan, forcer la fermeture puis relancer hors ligne. | Données et ressources intégrées persistent ; aucun état combiné ou presse-papiers de session ne ressuscite. |
+| 5 | Tester portrait, paysage, grande taille de texte et VoiceOver sur iPhone et iPad. | Aucun contrôle essentiel n’est inaccessible et les libellés/états restent compréhensibles. |
 | 6 | Examiner journaux TestFlight et rapports de crash. | Aucun crash, blocage, corruption ni erreur répétée de catalogue n’est enregistré. |
 
 - Résultat : ⚪ `NON TESTÉ`.

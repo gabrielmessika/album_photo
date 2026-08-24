@@ -111,6 +111,10 @@ dans ses limites sans modifier Recadrer. `IPAD-L2-080…081` et
 `APPLE-L2-022…025` portent ses nouvelles preuves. Les deux fiches iPad sont
 réussies globalement selon le retour utilisateur, sans capture ni détail par
 étape ; les identifiants historiques restent attachés à leurs candidats.
+Le candidat ergonomique `331b5c3f785db7b0901afe0ced8fa67f98a4bb24`
+fusionne formes et motifs en une sélection Cadre décoratif exclusive et place
+la barre de texte au-dessus de la saisie avec Annuler/Valider à droite. Ses
+preuves nouvelles sont `IPAD-L2-082…083` et `APPLE-L2-026…029`.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -121,8 +125,9 @@ Le candidat final possède 12 scénarios iPad réussis sur les 16 fiches
 dans la première campagne corrective. `077` ajoute la réussite du chevauchement
 tactile sur `855ae27…`; `078…079` sont deux échecs ciblés sur `92df51d…`.
 Le texte brut et les deux compositions de cadres sont réussis globalement sous
-`080…081` sur `f483fa9…`. Les validations Apple `006…021` restent attachées à
-leurs candidats historiques et leurs remplacements courants sont `022…025`.
+`080…081` sur `f483fa9…`. Le candidat `331b5c3…` attend `082…083`. Les
+validations Apple `006…025` restent attachées à leurs candidats historiques et
+leurs remplacements courants sont `026…029`.
 `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
@@ -236,6 +241,8 @@ aucune fiche iPad.
 | `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-007`, `CAN-008`, `ACC-002`, `ACC-004` | 🔴 `ÉCHOUÉ` sur `92df51d…` — libellés et bordures simples conformes, quatre motifs incorrects |
 | `IPAD-L2-080` | Collage externe en texte brut | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-010`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | 🟢 `RÉUSSI` globalement sur `f483fa9…`, sans capture ni détail par étape |
 | `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-001…007`, `CAN-008` | 🟢 `RÉUSSI` globalement sur `f483fa9…`, sans capture ni détail par étape |
+| `IPAD-L2-082` | Cadre décoratif exclusif, portées et historique | `SHR-001…003`, `SHR-006…010`, `SAV-001`, `UND-001`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` sur `331b5c3…` |
+| `IPAD-L2-083` | Fenêtre texte bureautique et actions à droite | `TBX-004`, `TBX-005`, `TBX-009…016`, `TBX-022`, `TBX-026…029`, `UND-001`, `ACC-002`, `ACC-004`, `ACC-021` | ⚪ `NON TESTÉ` sur `331b5c3…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -288,6 +295,10 @@ suppression du formulaire défilant et de la hauteur fixe.
 | `APPLE-L2-023` | Debug/Release et tests Apple du quatrième correctif | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `f483fa9…` |
 | `APPLE-L2-024` | Instruments et enveloppe maximale du quatrième correctif | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `f483fa9…` |
 | `APPLE-L2-025` | TestFlight distinct du quatrième correctif | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `f483fa9…` |
+| `APPLE-L2-026` | Cadre exclusif et fenêtre texte en largeur compacte | `EDT-001…004`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-016`, `EDT-020`, `EDT-021`, `TBX-005`, `TBX-026…029`, `SHR-001`, `SHR-003`, `SHR-007`, `ACC-002`, `ACC-003`, `ACC-021` | ⚪ `NON TESTÉ` sur `331b5c3…` |
+| `APPLE-L2-027` | Debug/Release et tests Apple du candidat ergonomique | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `331b5c3…` |
+| `APPLE-L2-028` | Instruments et enveloppe maximale du candidat ergonomique | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `331b5c3…` |
+| `APPLE-L2-029` | TestFlight distinct du candidat ergonomique | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `331b5c3…` |
 
 ## Écarts connus de l’incrément
 
@@ -328,7 +339,9 @@ suppression du formulaire défilant et de la hauteur fixe.
   préchargent la couverture, conservent la cible de remplacement et alignent
   le décor visible. Après les défauts résiduels de `079`, `f483fa9…` conserve
   Bord blanc/noir autour de la photo et superpose les quatre motifs dans ses
-  limites ; `IPAD-L2-081` doit qualifier ce rendu et Recadrer sur iPad.
+  limites ; `IPAD-L2-081` réussit globalement ce rendu et Recadrer. Le candidat
+  `331b5c3…` rend ensuite forme et motif exclusifs ; `IPAD-L2-082` doit
+  qualifier la nouvelle sélection et la normalisation des états précédents.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
 - Le candidat initial gardait un rail et un inspecteur légèrement rognés en

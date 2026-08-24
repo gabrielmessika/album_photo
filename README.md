@@ -205,6 +205,11 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   limites inchangées de la photo, que Recadrer permet toujours d’ajuster.
   `IPAD-L2-080…081` sont réussis globalement, sans capture ni détail par étape ;
   `APPLE-L2-022…025` restent à exécuter séparément.
+  Le candidat ergonomique exact
+  `331b5c3f785db7b0901afe0ced8fa67f98a4bb24` fusionne ensuite formes et
+  motifs dans une sélection Cadre décoratif exclusive et remanie la fenêtre
+  texte avec une barre bureautique supérieure et Annuler/Valider à droite.
+  Ses contrôles courants sont `IPAD-L2-082…083` et `APPLE-L2-026…029`.
   Les validations `APPLE-L2-006…021` restent attachées à leurs candidats
   historiques ; les remplacements courants sont `APPLE-L2-022…025`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
@@ -276,7 +281,7 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `080…081` sont réussies globalement. L’incrément suivant fusionne formes et
   motifs en une sélection décorative exclusive (`SHR-001`, `SHR-003`) et
   remanie la fenêtre texte selon `TBX-028…029` ; sa validation Apple doit porter
-  de nouveaux identifiants.
+  les nouveaux identifiants `082…083` sur `331b5c3…`.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-022` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
