@@ -1649,6 +1649,7 @@ public actor AlbumApplicationService {
             commandID: commandID
         ) { frame in
             frame.mask = PhotoMask(shape: mask)
+            frame.decorativeFrame = nil
         }
     }
 
@@ -1711,6 +1712,7 @@ public actor AlbumApplicationService {
             now: now,
             commandID: commandID
         ) { frame in
+            frame.mask = PhotoMask()
             frame.decorativeFrame = decorativeFrame
         }
     }

@@ -136,7 +136,9 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `IPAD-L2-034…035`, liées à `3102cda…`, sont réussies globalement sur l'iPad
   déclaré, sans capture ni détail par étape. Les boutons de format ont depuis
   reçu les libellés courts de `TBX-027`; la valeur active reste visible dans le
-  menu et dans la valeur accessible.
+  menu et dans la valeur accessible. Le nouvel incrément `TBX-028…029` place
+  une barre bureautique compacte au-dessus de la saisie et fixe Annuler/Valider
+  dans une colonne à droite de la fenêtre.
   La Bibliothèque expose aussi un bouton `Info` dans sa barre principale. Sa
   fiche affiche la version marketing, le numéro de build et le hash Git complet
   du candidat, sélectionnable. Le hash est estampillé automatiquement dans les
@@ -201,7 +203,8 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   `f483fa902191e84edbc3b14f780fefca40b47a63` retire le décodage riche et pose
   Ruban kraft, Tampon voyage, Feuillage et Photo instantanée par-dessus les
   limites inchangées de la photo, que Recadrer permet toujours d’ajuster.
-  Ses preuves sont `IPAD-L2-080…081` puis `APPLE-L2-022…025`.
+  `IPAD-L2-080…081` sont réussis globalement, sans capture ni détail par étape ;
+  `APPLE-L2-022…025` restent à exécuter séparément.
   Les validations `APPLE-L2-006…021` restent attachées à leurs candidats
   historiques ; les remplacements courants sont `APPLE-L2-022…025`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
@@ -270,7 +273,10 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   emphases externes et `079` confirme la grille et les bordures simples, mais
   échoue sur les quatre motifs. Le correctif `f483fa9…` passe 162 tests WSL,
   l’analyse syntaxique, les contrats et les empreintes ; ses deux fiches iPad
-  `080…081` restent à exécuter.
+  `080…081` sont réussies globalement. L’incrément suivant fusionne formes et
+  motifs en une sélection décorative exclusive (`SHR-001`, `SHR-003`) et
+  remanie la fenêtre texte selon `TBX-028…029` ; sa validation Apple doit porter
+  de nouveaux identifiants.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
   séparément par `APPLE-L2-022` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,

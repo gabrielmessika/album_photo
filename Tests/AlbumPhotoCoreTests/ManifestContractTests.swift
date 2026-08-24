@@ -259,7 +259,7 @@ final class ManifestContractTests: XCTestCase {
     }
 
     // 3:EDT-008, 3:EDT-014, 3:TPL-012, 3:TBX-002...006,
-    // 3:TBX-009...017, 3:TBX-020...022, 3:TBX-024...027,
+    // 3:TBX-009...017, 3:TBX-020...022, 3:TBX-024...029,
     // 3:TXA-001...004
     func testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates() throws {
         let appModule = repositoryRoot
@@ -338,9 +338,11 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains(
             ".textInputFormattingControlVisibility(.hidden, for: .all)"
         ))
-        XCTAssertTrue(textEditor.contains("Label(\"Police\", systemImage: \"textformat\")"))
-        XCTAssertTrue(textEditor.contains("Label(\"Taille\", systemImage: \"textformat.size\")"))
-        XCTAssertTrue(textEditor.contains("Label(\"Couleur\", systemImage: \"paintpalette\")"))
+        XCTAssertTrue(textEditor.contains("Image(systemName: \"textformat\")"))
+        XCTAssertTrue(textEditor.contains("Text(currentFontName)"))
+        XCTAssertTrue(textEditor.contains("Image(systemName: \"textformat.size\")"))
+        XCTAssertTrue(textEditor.contains("Text(\"\\(currentFontSize) pt\")"))
+        XCTAssertTrue(textEditor.contains("Image(systemName: \"paintpalette\")"))
         XCTAssertTrue(textEditor.contains(".accessibilityValue(currentFontName)"))
         XCTAssertFalse(textEditor.contains("Label(\"Police : "))
         XCTAssertFalse(textEditor.contains("Label(\"Taille : "))
@@ -370,16 +372,32 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains(".frame(maxHeight: 320)"))
         XCTAssertTrue(textEditor.contains("retainedSelection: AttributedTextSelection?"))
         XCTAssertTrue(textEditor.contains("retainSelectionForFormatting()"))
-        XCTAssertTrue(textEditor.contains("Sélection conservée"))
-        XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Sélection\""))
-        XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Paragraphe\""))
-        XCTAssertTrue(textEditor.contains("formattingScopeLabel(\"Zone\""))
+        XCTAssertTrue(textEditor.contains("Sélection de texte conservée"))
+        XCTAssertFalse(textEditor.contains("formattingScopeLabel"))
+        XCTAssertFalse(textEditor.contains("Text(\"Sélection\")"))
+        XCTAssertFalse(textEditor.contains("Text(\"Paragraphe\")"))
+        XCTAssertFalse(textEditor.contains("Text(\"Zone\")"))
         XCTAssertTrue(textEditor.contains("Masquer le clavier"))
+        XCTAssertTrue(textEditor.contains("private var editorActionRail"))
+        XCTAssertTrue(textEditor.contains("Image(systemName: \"xmark\")"))
+        XCTAssertTrue(textEditor.contains("Text(\"Annuler\")"))
+        XCTAssertTrue(textEditor.contains("Image(systemName: \"checkmark\")"))
+        XCTAssertTrue(textEditor.contains("Text(\"Valider\")"))
+        XCTAssertFalse(textEditor.contains("Button(\"Terminer\")"))
+        let formattingBarOffset = try XCTUnwrap(textEditor.range(of: "formattingBar"))
+        let textEditorOffset = try XCTUnwrap(textEditor.range(
+            of: "TextEditor(text: $text, selection: $selection)"
+        ))
+        XCTAssertLessThan(formattingBarOffset.lowerBound, textEditorOffset.lowerBound)
         XCTAssertTrue(textEditor.contains("struct AlbumTextMenuChoiceLabel"))
         XCTAssertTrue(textEditor.contains("isSelected: currentStyle.fontID == font.id"))
         XCTAssertTrue(textEditor.contains("isSelected: currentFontSize == points"))
-        XCTAssertTrue(textEditor.contains("isSelected: currentStyle.weight == .bold"))
-        XCTAssertTrue(textEditor.contains("isSelected: currentStyle.isItalic"))
+        XCTAssertTrue(textEditor.contains(
+            "currentStyle.weight == .bold ? \"Sélectionné\" : \"Non sélectionné\""
+        ))
+        XCTAssertTrue(textEditor.contains(
+            "currentStyle.isItalic ? \"Sélectionné\" : \"Non sélectionné\""
+        ))
         XCTAssertTrue(textEditor.contains("isSelected: currentStyle.color == option.color"))
         XCTAssertTrue(textEditor.contains(
             "isSelected: currentParagraphStyle.alignment == choice.value"
@@ -414,7 +432,8 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("flushCheckpoint()"))
         XCTAssertTrue(textEditor.contains("await onCheckpoint("))
         let orderedCommands = [
-            "fontMenu", "sizeMenu", "title: \"Gras\"", "title: \"Italique\"",
+            "fontMenu", "sizeMenu", ".accessibilityLabel(\"Gras\")",
+            ".accessibilityLabel(\"Italique\")",
             "colorMenu", "alignmentMenu", "lineSpacingMenu", "opacityMenu"
         ]
         var commandOffset = textEditor.startIndex
@@ -544,10 +563,15 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertFalse(mediaStore.contains("PhotoAssetDragPayload"))
         XCTAssertFalse(stickerPanel.contains("StickerDragPayload"))
 
-        XCTAssertTrue(framePanel.contains("Text(\"Forme\")"))
+        XCTAssertFalse(framePanel.contains("Text(\"Forme\")"))
+        XCTAssertTrue(framePanel.contains("Text(\"Formes\")"))
         XCTAssertTrue(framePanel.contains("Text(\"Contour\")"))
         XCTAssertTrue(framePanel.contains("Text(\"Cadre décoratif\")"))
-        XCTAssertTrue(framePanel.contains("title: \"Aucun (rectangle)\""))
+        XCTAssertTrue(framePanel.contains("Text(\"Une forme ou un motif à la fois\")"))
+        XCTAssertFalse(framePanel.contains("title: \"Aucun (rectangle)\""))
+        XCTAssertTrue(framePanel.contains("noneDecorationButton(frame)"))
+        XCTAssertTrue(framePanel.contains("applySelectedPhotoMask(.rectangleShape"))
+        XCTAssertTrue(framePanel.contains("frame.decorativeFrame == nil"))
         XCTAssertTrue(framePanel.contains("title: \"Aucun\""))
         XCTAssertTrue(framePanel.contains("title: \"Fin\", width: 0.01"))
         XCTAssertTrue(framePanel.contains("title: \"Moyen\", width: 0.02"))

@@ -101,11 +101,39 @@ final class AlbumApplicationServiceTests: XCTestCase {
             album.pages[0].elements.compactMap(\.photoFrame).map(\.decorativeFrame),
             [botanical.reference, botanical.reference]
         )
+        XCTAssertEqual(
+            album.pages[0].elements.compactMap(\.photoFrame).map(\.mask.shape),
+            [.rectangleShape, .rectangleShape]
+        )
         XCTAssertNil(album.pages[1].element(id: thirdFrameID)?.photoFrame?.decorativeFrame)
+
+        album = try await service.applyPhotoMask(
+            circle,
+            scope: .page,
+            selectedElementID: firstFrameID,
+            on: firstPageID,
+            in: album.id
+        )
+        XCTAssertTrue(
+            album.pages[0].elements.compactMap(\.photoFrame)
+                .allSatisfy { $0.mask.shape == circle && $0.decorativeFrame == nil }
+        )
+
+        album = try await service.undo(albumID: album.id)
+        XCTAssertTrue(
+            album.pages[0].elements.compactMap(\.photoFrame).allSatisfy {
+                $0.mask.shape == .rectangleShape
+                    && $0.decorativeFrame == botanical.reference
+            }
+        )
         album = try await service.undo(albumID: album.id)
         XCTAssertTrue(
             album.pages.flatMap(\.elements).compactMap(\.photoFrame)
                 .allSatisfy { $0.decorativeFrame == nil }
+        )
+        XCTAssertEqual(
+            album.pages[0].elements.compactMap(\.photoFrame).map(\.mask.shape),
+            [circle, .rectangleShape]
         )
 
         let nonCanonicalNone = PhotoBorder(

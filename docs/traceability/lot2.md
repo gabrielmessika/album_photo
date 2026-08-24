@@ -108,8 +108,9 @@ alors le collage externe en texte brut. Le quatrième correctif exact
 `f483fa902191e84edbc3b14f780fefca40b47a63` retire la récupération riche,
 conserve les deux bordures autour de la photo et superpose les quatre motifs
 dans ses limites sans modifier Recadrer. `IPAD-L2-080…081` et
-`APPLE-L2-022…025` portent ses nouvelles preuves, tandis que les anciens
-identifiants restent attachés à leurs candidats historiques.
+`APPLE-L2-022…025` portent ses nouvelles preuves. Les deux fiches iPad sont
+réussies globalement selon le retour utilisateur, sans capture ni détail par
+étape ; les identifiants historiques restent attachés à leurs candidats.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -119,7 +120,7 @@ Le candidat final possède 12 scénarios iPad réussis sur les 16 fiches
 `055…070`, puis deux réussites (`072`, `073`) et deux échecs (`071`, `074`)
 dans la première campagne corrective. `077` ajoute la réussite du chevauchement
 tactile sur `855ae27…`; `078…079` sont deux échecs ciblés sur `92df51d…`.
-Le texte brut et les deux compositions de cadres attendent maintenant
+Le texte brut et les deux compositions de cadres sont réussis globalement sous
 `080…081` sur `f483fa9…`. Les validations Apple `006…021` restent attachées à
 leurs candidats historiques et leurs remplacements courants sont `022…025`.
 `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
@@ -138,10 +139,10 @@ historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 | `A-L2-UI-CONTRACT` | `ManifestContractTests.testPageWorkspaceUsesConfirmedAppendAndExplicitPageManagementLabel`, `testPhotosPanelExposesConfirmedAlbumFillWithEveryDensity` | `EDT-001`, `EDT-003`, `EDT-008`, `EDT-016`, `EDT-020`, `PAG-002`, `PAG-013`, `PAG-017`, `AUT-009…011` | Vérifie le bouton compact, l’absence de groupe permanent, le dialogue interne, les trois densités, Annuler/Valider et le service de remplissage ; pas le rendu Apple |
 | `A-L2-SELECTION-LABEL` | `ElementSelectionLabelFormatter`, `ElementSelectionLabelFormatterTests` | `ELM-014`, `ACC-002` | Prouve que seule la partie nom/extrait est bornée et que le libellé accessible reste complet ; rendu du menu Apple manuel |
 | `A-L2-TEXT-DOMAIN` | `BuiltInTextFontCatalog`, `TextPrototypeEngine`, `TextInitialStyleEngine`, `TextEditingPrototypeTests`, dont `testReplacementChangeLocatesRichPasteAtCharacterBoundaries`, et `AlbumApplicationServiceTests.testTextEditingSequencesAreIndividuallyUndoableAndCancelRestoresBaseline` | `TBX-001…020`, `TBX-022…025`, `TXA-004`, `TXA-005`, `TPL-012`, `TPL-013`, `TPL-017`, `UND-008` | Prouve les primitives, styles persistants, limite, localisation d’une insertion riche en `Character`, hauteur/débordement et checkpoints durables ; pas la lecture du presse-papiers Notes ni l’éditeur Apple complet |
-| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020…027`, `TXA-001…003` | Vérifie structurellement les libellés compacts, le menu Justifié, le délai 750 ms, le blocage de Prévisualiser et le renderer TextKit partagé ; parse seulement, sans type-check ni rendu Apple |
+| `A-L2-TEXT-UI` | `AlbumTextEditorView`, `TextPanelView`, `PageCanvasView`, `EditorViewModel`, `ManifestContractTests.testTextEditorUsesNativeAttributedSelectionAndActivatesTextTemplates` | `EDT-001`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-021`, `TBX-002…017`, `TBX-020…029`, `TXA-001…003` | Vérifie structurellement la barre bureautique au-dessus du texte, les actions fixes à droite, le menu Justifié, le délai 750 ms, le blocage de Prévisualiser et le renderer TextKit partagé ; parse seulement, sans type-check ni rendu Apple |
 | `A-L2-CATALOG` | `BuiltInAssetCatalogs`, `catalog-resources-v1.json`, `CatalogContractTests`, `ManifestContractTests.testPublishedCatalogMatchesRuntimePayloadContractsExactly`, `tools/validate_contracts.pl` | `CAT-001…009`, `STK-009…013`, `SHR-005`, `SHR-010…013` | Prouve 40 stickers/5 catégories, 6 cadres, 6 formes, hashes, PNG RGBA transparents, insets et goldens ; chargement du bundle Apple non prouvé |
 | `A-L2-STICKERS` | `StickerGeometryEngine`, `StickerPanelView`, `PageCanvasView`, tests de géométrie, validation et service | `STK-001…016`, `STK-021…024`, `DAT-041` | Prouve recherche/catalogue, récents, transactions, rapport intrinsèque, remplacement, opacité/retournement, ordre et avertissement structurel ; glisser-déposer, rendu et fluidité Apple manuels |
-| `A-L2-SHAPES-FRAMES` | `FrameAndShapePanelView`, `NineSliceDecorativeFrameView`, `DecorativeFrameAlphaGeometry`, tests de l’ouverture et de l’alignement asymétrique, `AlbumApplicationServiceTests.testPhotoStyleScopesAreAtomicValidatedAndUndoable` | `SHR-001…014`, `CRP-007` | Prouve les trois portées, les trois épaisseurs UI, le contour canonique, l’ouverture alpha et le calcul pur qui aligne un décor asymétrique autour d’une photo inchangée ; composition Apple encore à comparer |
+| `A-L2-SHAPES-FRAMES` | `FrameAndShapePanelView`, `NineSliceDecorativeFrameView`, `DecorativeFrameAlphaGeometry`, tests de l’ouverture et de l’alignement asymétrique, `AlbumApplicationServiceTests.testPhotoStyleScopesAreAtomicValidatedAndUndoable` | `SHR-001…014`, `CRP-007` | Prouve les trois portées, la sélection exclusive forme/motif et son annulation atomique, les trois épaisseurs UI, le contour canonique, l’ouverture alpha et l’alignement pur ; composition Apple encore à comparer |
 | `A-L2-CLIPBOARD` | `AlbumApplicationServiceTests.testClipboardPreservesLot2TextAndStickerPayloads` et tests photo existants | `CLP-001…006`, `UND-001…012` | Prouve type, style, transform, nouveaux IDs, ordre, couper/coller et portée session/album pour photo, texte et sticker dans le Core ; commandes SwiftUI Apple à requalifier |
 | `A-L2-CANDIDATE` | `tools/create_ipad_candidate.sh`, `.github/workflows/ipad-candidate.yml`, `ManifestContractTests.testLibraryExposesVersionAndStampedCommitInformation` | `APP-012`, `ENV-001…005`, `DONE-005` | L’archive contrôlée contient le hash exact et refuse le marqueur brut ; téléchargement et exécution du nouvel artefact iPad non testés |
 
@@ -233,8 +234,8 @@ aucune fiche iPad.
 | `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `EDT-001`, `EDT-002`, `EDT-012`, `ZOM-001`, `ZOM-004`, `ZOM-005`, `ACC-002`, `ACC-003` | 🟢 `RÉUSSI` sur `855ae27…` — retour global sans capture ni détail par étape |
 | `IPAD-L2-078` | Troisième régression collage riche Notes | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | 🔴 `ÉCHOUÉ` sur `92df51d…` — emphases toujours perdues ; exigence retirée ensuite |
 | `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-007`, `CAN-008`, `ACC-002`, `ACC-004` | 🔴 `ÉCHOUÉ` sur `92df51d…` — libellés et bordures simples conformes, quatre motifs incorrects |
-| `IPAD-L2-080` | Collage externe en texte brut | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-010`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | ⚪ `NON TESTÉ` sur `f483fa9…` |
-| `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-001…007`, `CAN-008` | ⚪ `NON TESTÉ` sur `f483fa9…` |
+| `IPAD-L2-080` | Collage externe en texte brut | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-010`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | 🟢 `RÉUSSI` globalement sur `f483fa9…`, sans capture ni détail par étape |
+| `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-001…007`, `CAN-008` | 🟢 `RÉUSSI` globalement sur `f483fa9…`, sans capture ni détail par étape |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne

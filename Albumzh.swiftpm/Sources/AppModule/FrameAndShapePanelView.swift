@@ -8,11 +8,6 @@ private struct PhotoShapeChoice: Identifiable {
 
     static let all = [
         PhotoShapeChoice(
-            id: "shape.rectangle",
-            title: "Aucun (rectangle)",
-            symbol: "rectangle"
-        ),
-        PhotoShapeChoice(
             id: "shape.roundedRectangle",
             title: "Rectangle arrondi",
             symbol: "rectangle.roundedtop"
@@ -48,11 +43,9 @@ struct FrameAndShapePanelView: View {
             if let frame = model.selectedPhotoFrame {
                 VStack(alignment: .leading, spacing: 16) {
                     scopePicker
-                    shapeSection(frame)
+                    decorationSection(frame)
                     Divider()
                     borderSection(frame)
-                    Divider()
-                    decorativeFrameSection
                 }
                 .padding(12)
                 .onAppear { borderWidth = frame.border.width }
@@ -67,7 +60,7 @@ struct FrameAndShapePanelView: View {
                     "Sélectionnez une photo",
                     systemImage: "rectangle.on.rectangle.slash",
                     description: Text(
-                        "Les formes, contours et cadres décoratifs s’appliquent aux cadres photo."
+                        "Les cadres décoratifs et les contours s’appliquent aux cadres photo."
                     )
                 )
                 .padding(12)
@@ -92,45 +85,92 @@ struct FrameAndShapePanelView: View {
         }
     }
 
-    private func shapeSection(_ frame: PhotoFrameElement) -> some View {
+    private func decorationSection(_ frame: PhotoFrameElement) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Forme")
+            Text("Cadre décoratif")
                 .font(.headline)
+
+            Text("Une forme ou un motif à la fois")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            noneDecorationButton(frame)
+
+            Text("Formes")
+                .font(.subheadline.weight(.semibold))
+
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 74))], spacing: 8) {
                 ForEach(PhotoShapeChoice.all) { choice in
-                    let selected = frame.mask.shape.catalogID == choice.id
-                    Button {
-                        Task {
-                            await model.applySelectedPhotoMask(
-                                CatalogResourceReference(catalogID: choice.id),
-                                scope: scope
-                            )
-                        }
-                    } label: {
-                        VStack(spacing: 5) {
-                            Image(systemName: choice.symbol)
-                                .font(.title2)
-                            Text(choice.title)
-                                .font(.caption2)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                            if selected {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.tint)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 72)
-                        .background(
-                            selected ? Color.accentColor.opacity(0.12) : Color.clear,
-                            in: RoundedRectangle(cornerRadius: 9)
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Forme \(choice.title)")
-                    .accessibilityValue(selected ? "Sélectionnée" : "")
+                    shapeButton(choice, frame: frame)
+                }
+            }
+
+            Text("Bordures et motifs")
+                .font(.subheadline.weight(.semibold))
+                .padding(.top, 4)
+
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 82))], spacing: 8) {
+                ForEach(BuiltInDecorativeFrameCatalog.definitions) { definition in
+                    decorativeFrameButton(definition, frame: frame)
                 }
             }
         }
+    }
+
+    private func noneDecorationButton(_ frame: PhotoFrameElement) -> some View {
+        let selected = frame.mask.shape == .rectangleShape
+            && frame.decorativeFrame == nil
+        return Button {
+            Task {
+                await model.applySelectedPhotoMask(.rectangleShape, scope: scope)
+            }
+        } label: {
+            Label(
+                "Aucun",
+                systemImage: selected ? "checkmark.circle.fill" : "square.slash"
+            )
+            .frame(maxWidth: .infinity, minHeight: 36)
+        }
+        .buttonStyle(.bordered)
+        .accessibilityLabel("Aucun cadre décoratif")
+        .accessibilityValue(selected ? "Sélectionné" : "")
+    }
+
+    private func shapeButton(
+        _ choice: PhotoShapeChoice,
+        frame: PhotoFrameElement
+    ) -> some View {
+        let selected = frame.decorativeFrame == nil
+            && frame.mask.shape.catalogID == choice.id
+        return Button {
+            Task {
+                await model.applySelectedPhotoMask(
+                    CatalogResourceReference(catalogID: choice.id),
+                    scope: scope
+                )
+            }
+        } label: {
+            VStack(spacing: 5) {
+                Image(systemName: choice.symbol)
+                    .font(.title2)
+                Text(choice.title)
+                    .font(.caption2)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                if selected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.tint)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 72)
+            .background(
+                selected ? Color.accentColor.opacity(0.12) : Color.clear,
+                in: RoundedRectangle(cornerRadius: 9)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Cadre décoratif, forme \(choice.title)")
+        .accessibilityValue(selected ? "Sélectionnée" : "")
     }
 
     private func borderSection(_ frame: PhotoFrameElement) -> some View {
@@ -234,48 +274,29 @@ struct FrameAndShapePanelView: View {
         .accessibilityValue(selected ? "Sélectionné" : "")
     }
 
-    private var decorativeFrameSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Cadre décoratif")
-                .font(.headline)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 82))], spacing: 8) {
-                decorativeFrameButton(nil)
-                ForEach(BuiltInDecorativeFrameCatalog.definitions) { definition in
-                    decorativeFrameButton(definition)
-                }
-            }
-        }
-    }
-
     private func decorativeFrameButton(
-        _ definition: DecorativeFrameCatalogDefinition?
+        _ definition: DecorativeFrameCatalogDefinition,
+        frame: PhotoFrameElement
     ) -> some View {
-        let selected = model.selectedPhotoFrame?.decorativeFrame == definition?.reference
-        let title = definition?.localizedName ?? "Aucun"
+        let selected = frame.decorativeFrame == definition.reference
+        let title = definition.localizedName
         return Button {
             Task {
                 await model.applySelectedDecorativeFrame(
-                    definition?.reference,
+                    definition.reference,
                     scope: scope
                 )
             }
         } label: {
             VStack(spacing: 5) {
-                if let definition {
-                    BundledCatalogImage(
-                        dataAssetName: definition.dataAssetName,
-                        contentHash: definition.contentHash,
-                        cache: model.imageCache,
-                        maximumPixelSize: 256
-                    )
-                    .scaledToFit()
-                    .aspectRatio(1, contentMode: .fit)
-                } else {
-                    Image(systemName: "square.slash")
-                        .font(.title2)
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(1, contentMode: .fit)
-                }
+                BundledCatalogImage(
+                    dataAssetName: definition.dataAssetName,
+                    contentHash: definition.contentHash,
+                    cache: model.imageCache,
+                    maximumPixelSize: 256
+                )
+                .scaledToFit()
+                .aspectRatio(1, contentMode: .fit)
                 Text(title)
                     .font(.caption2)
                     .lineLimit(2)

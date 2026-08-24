@@ -42,7 +42,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Candidat de régression des quatre échecs fonctionnels testé | `9bc11e7423178b66c48446c59abc5a912de5c26f` — `IPAD-L2-072…073` réussis ; `071` échoue uniquement sur la perte du gras/italique au collage et `074` sur la photo visible hors ouverture, l’ergonomie du contour et son placement extérieur ; les autres étapes sont déclarées conformes |
 | Second candidat de régression Lot 2 testé | `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb` — `IPAD-L2-077` réussi ; `075` échoue uniquement à l’étape 3 et `076` uniquement aux étapes 4 et 5 ; toutes les autres étapes sont déclarées conformes |
 | Troisième candidat de régression Lot 2 testé | `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` — `IPAD-L2-078` confirme encore la perte du gras/italique ; `079` confirme les libellés et Bord blanc/noir mais échoue sur les quatre cadres à motifs |
-| Quatrième candidat de régression Lot 2 à tester | `f483fa902191e84edbc3b14f780fefca40b47a63` — collage externe converti en texte brut avec style local ; Bord blanc/noir autour de la photo et quatre motifs superposés dans ses limites ; 162 tests WSL, parse AppModule, 55 contrats et 16 empreintes réussis ; `IPAD-L2-080…081` à exécuter |
+| Quatrième candidat de régression Lot 2 testé | `f483fa902191e84edbc3b14f780fefca40b47a63` — collage externe converti en texte brut avec style local ; Bord blanc/noir autour de la photo et quatre motifs superposés dans ses limites ; `IPAD-L2-080…081` réussis globalement, sans capture ni détail par étape |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -212,9 +212,10 @@ référence `photoweb1.png` restent hors Git. L’utilisateur décide alors que 
 collage externe est du texte brut et demande une composition à la Photoweb :
 les motifs sont posés au-dessus de la photo, que Recadrer permet toujours de
 déplacer ou zoomer. Le quatrième correctif est figé dans
-`f483fa902191e84edbc3b14f780fefca40b47a63`. `IPAD-L2-080…081` portent ses
-régressions ciblées et `APPLE-L2-022…025` remplacent les qualifications du
-candidat précédent, sans retargeter aucun verdict historique.
+`f483fa902191e84edbc3b14f780fefca40b47a63`. L’utilisateur déclare ensuite
+globalement conformes les changements couverts par `IPAD-L2-080…081`, sans
+capture ni résultat individuel par étape. `APPLE-L2-022…025` restent les
+qualifications distinctes du candidat, sans retargeter aucun verdict historique.
 
 ## Mode de réponse
 
@@ -517,8 +518,8 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `3:EDT-001`, `3:EDT-002`, `3:EDT-012`, `3:ZOM-001`, `3:ZOM-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 | `IPAD-L2-078` | Troisième régression du collage riche Notes | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — étape 3 : gras et italique encore perdus ; exigence retirée ensuite par décision utilisateur |
 | `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-007`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | 🔴 `ÉCHOUÉ` — libellés et Bord blanc/noir conformes ; Ruban kraft, Tampon voyage, Feuillage et Photo instantanée mal adaptés |
-| `IPAD-L2-080` | Régression du collage externe en texte brut | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-001` à `3:CRP-007`, `3:CAN-008` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-080` | Régression du collage externe en texte brut | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
+| `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-001` à `3:CRP-007`, `3:CAN-008` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
 
 ## Fiches détaillées
 
@@ -4978,9 +4979,10 @@ panneaux.
 | 5 | Presser Terminer, rouvrir la zone, puis utiliser Annuler/Rétablir autour de l’édition. | Texte filtré et styles locaux persistent ; Annuler/Rétablir restaure chaque état sans contenu interdit ni dépendance au presse-papiers système. |
 | 6 | Coller l’extrait de plus de 1 000 caractères, choisir Annuler, puis recommencer avec Conserver 1 000 caractères et rouvrir la zone. | Annuler restaure exactement l’état précédent ; le second choix conserve exactement 1 000 `Character` Swift et persiste sans crash. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — résultat de chaque étape, extrait Notes utilisé,
-  capture avant/après et éventuel message système.
+- Résultat : 🟢 `RÉUSSI` globalement.
+- Preuve : retour utilisateur du 24 août 2026, « c'est ok pour les
+  changements », interprété comme une validation globale de cette fiche et de
+  `IPAD-L2-081` ; aucune capture, aucun extrait Notes et aucun détail par étape.
 - Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7 ;
   relever toute différence et le mode de transfert du candidat.
 
@@ -5004,9 +5006,9 @@ panneaux.
 | 5 | Avec Feuillage puis Photo instantanée actifs, ouvrir Recadrer, déplacer la photo et zoomer pour replacer le sujet, puis valider. | Les gestes modifient seulement le placement de la photo sous le motif ; le cadre décoratif reste fixe, la prévisualisation suit immédiatement et le nouveau cadrage persiste. |
 | 6 | Comparer éditeur, Vue globale, miniature et Prévisualiser, puis utiliser Aucun, Annuler et Rétablir. | Photo, contour, alpha et motif concordent dans les sorties ; Aucun retire seulement le décor et l’historique restaure exactement cadre et cadrage sans fuite ni saut. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures avant/après sur rapports large et haut,
-  observations de Recadrer et résultat de chaque sortie.
+- Résultat : 🟢 `RÉUSSI` globalement.
+- Preuve : même retour global que `IPAD-L2-080`, sans capture, comparaison
+  jointe ni détail individuel sur les six étapes.
 - Environnement : reprendre celui de `IPAD-L2-080`, sans différence déclarée.
 
 
@@ -5821,6 +5823,7 @@ identifiants lors du Lot 2.
 
 | ID exécuté | Date/heure | Résultat observé | Preuve | Anomalie liée | Appareil / OS / Playgrounds |
 |---|---|---|---|---|---|
+| `IPAD-L2-080…081` sur `f483fa9…` | 24 août 2026 | **2 réussites globales** : collage externe en texte brut, compositions de cadres à motifs et recadrage déclarés conformes | Retour « c'est ok pour les changements », sans capture ni détail par étape | Aucun défaut supplémentaire signalé ; la preuve ne permet pas d’attribuer un verdict distinct à chaque ligne des deux fiches | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; mode de transfert et orientations non redéclarés |
 | `IPAD-L2-071…074` sur `9bc11e7…` | 23 août 2026 | **2 réussites (`072`, `073`) et 2 échecs (`071`, `074`)** ; `071.3` et `074.1…4` non conformes, toutes les autres étapes explicitement considérées OK | Retour détaillé ; captures `image00.jpeg`, `image1.jpeg`, `image2.jpeg`, `IMG_4217.jpeg` examinées pour `074` et conservées hors Git | `071` : style métier hérité court-circuite le gras/italique natif ; `074` : photo hors ouverture alpha et contour extérieur/ambigu ; bug distinct de page zoomée interceptant le rail | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; mode de transfert et orientations non redéclarés |
 | `IPAD-L2-055…070` sur `64f5342…` (retour libellé `039…054`) | 21 août 2026 | **12 réussites et 4 échecs** : `058`, `061`, `062` et `065` ; toutes les autres fiches sont déclarées réussies globalement | Retour utilisateur détaillé pour les quatre échecs et phrase explicite « tous les autres tests dans `039…054` sont ok », sans capture ni observation par étape pour les réussites ; correspondance un pour un `+16` | `058` : restauration après collage et formats riches ; `061` : dépôt, poignées à petite taille et miniature ; `062` : remplacement ; `065` : alignement des cadres décoratifs | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; paquet du correctif, mode de transfert et orientations non redéclarés ; sources applicatives `94deaf2…` identiques à `64f5342…` |
 | `IPAD-L2-039` sur `fce5d92…` | 21 août 2026 | **Échec de compilation à l’étape 1** ; lancement et étapes 2 à 6 non exécutés | Diagnostic exact transmis par l’utilisateur, sans capture : le compilateur ne peut pas type-checker l’expression d’`AppModel` ligne 256 dans un délai raisonnable | Concaténation trop complexe de cinq `Substring` pour former l’UUID stable du catalogue ; découper en sous-expressions `String`, puis créer de nouveaux IDs pour le candidat corrigé | Environnement repris : iPad 8e génération / iPadOS 26.5.2 / Swift Playgrounds 4.7 ; transfert et orientation non redéclarés |

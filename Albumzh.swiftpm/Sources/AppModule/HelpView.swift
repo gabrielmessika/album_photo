@@ -49,7 +49,7 @@ struct HelpView: View {
             HelpSection(
                 title: "Zones de texte",
                 symbol: "textformat",
-                text: "Le panneau Texte ajoute une zone centrée. L’inspecteur affiche le texte sélectionné et les formats applicables à toute la zone. Modifier le texte et le format ouvre l’éditeur pour agir sur une sélection de caractères. La fenêtre reprend le fond et l’échelle de la page ; Terminer enregistre une seule action et Annuler restaure le contenu initial."
+                text: "Le panneau Texte ajoute une zone centrée. L’inspecteur affiche le texte sélectionné et les formats applicables à toute la zone. Modifier le texte et le format ouvre l’éditeur avec sa barre de mise en forme au-dessus du texte. À droite, Valider enregistre une seule action et Annuler restaure le contenu initial."
             ),
             HelpSection(
                 title: "Stickers",
@@ -64,7 +64,7 @@ struct HelpView: View {
             HelpSection(
                 title: "Cadres et formes",
                 symbol: "square.on.circle",
-                text: "Sélectionnez un cadre photo pour choisir son masque, son contour ou un cadre décoratif. Le contour propose Aucun, Fin, Moyen et Épais ; choisissez une épaisseur avant sa couleur. La portée Sélection, Page ou Album annonce le nombre de cadres concernés et s’annule en une seule action."
+                text: "Sélectionnez un cadre photo pour choisir un seul cadre décoratif : Aucun, une forme ou une bordure à motif. Choisir une forme retire le motif, et choisir un motif rétablit la forme rectangulaire. Le contour reste indépendant et propose Aucun, Fin, Moyen et Épais ; choisissez une épaisseur avant sa couleur. La portée Sélection, Page ou Album annonce le nombre de cadres concernés et s’annule en une seule action."
             ),
             HelpSection(
                 title: "Ajouter et gérer les pages",
@@ -154,7 +154,7 @@ private struct HelpSection: Identifiable {
             return HelpSection(
                 title: "Panneau Cadres et formes",
                 symbol: "square.on.circle",
-                text: "Ce panneau s’active pour un cadre photo sélectionné. Choisissez d’abord la portée, puis une forme, un contour ou un cadre décoratif ; chaque application multiple reste une seule commande."
+                text: "Ce panneau s’active pour un cadre photo sélectionné. Choisissez d’abord la portée, puis un cadre décoratif exclusif — Aucun, forme ou motif — et éventuellement un contour indépendant ; chaque application multiple reste une seule commande."
             )
         case .crop:
             return HelpSection(

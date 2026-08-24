@@ -515,81 +515,25 @@ struct AlbumTextEditorView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                TextEditor(text: $text, selection: $selection)
-                    .attributedTextFormattingDefinition(
-                        AlbumTextFormattingDefinition(
-                            pageHeight: request.previewPageHeight,
-                            fallbackStyle: typingDefaults
-                        )
-                    )
-                    .textInputFormattingControlVisibility(.hidden, for: .all)
-                    .scrollContentBackground(.hidden)
-                    .focused($editorIsFocused)
-                    .scrollDismissesKeyboard(.interactively)
-                    .padding(12)
-                    .opacity(opacity)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background {
-                        AlbumPageBackground(
-                            selection: request.pageBackground,
-                            imageCache: imageCache,
-                            maximumPixelSize: 1_200
-                        )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .clipped()
-                        .allowsHitTesting(false)
-                    }
-                    .clipped()
-                    .accessibilityLabel("Contenu de la zone de texte")
-                    .onChange(of: text) { oldValue, newValue in
-                        handleTextChange(oldValue: oldValue, newValue: newValue)
-                    }
-                    .onChange(of: typingDefaults) { _, _ in scheduleCheckpoint() }
-                    .onChange(of: opacity) { _, _ in scheduleCheckpoint() }
-                    .onChange(of: selection) { _, newValue in
-                        if isInsertionPoint(newValue) {
-                            if editorIsFocused {
-                                retainedSelection = nil
-                                retainedSelectionText = nil
-                            }
-                        } else {
-                            retainSelection(newValue)
-                        }
-                    }
+            HStack(spacing: 0) {
+                VStack(spacing: 0) {
+                    formattingBar
+
+                    Divider()
+
+                    textEditingSurface
+
+                    Divider()
+
+                    editorFooter
+                }
 
                 Divider()
 
-                formattingBar
-
-                HStack {
-                    Text("\(text.characters.count) / 1 000 caractères")
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Label(
-                        "Le contenu collé est converti en texte brut.",
-                        systemImage: "doc.plaintext"
-                    )
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 10)
+                editorActionRail
             }
             .navigationTitle(request.isNew ? "Ajouter du texte" : "Modifier le texte")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { cancel() }
-                        .disabled(isResolving)
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Terminer") { commit() }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(isResolving)
-                }
-            }
         }
         .interactiveDismissDisabled()
         .onAppear {
@@ -631,15 +575,114 @@ struct AlbumTextEditorView: View {
         }
     }
 
+    private var textEditingSurface: some View {
+        TextEditor(text: $text, selection: $selection)
+            .attributedTextFormattingDefinition(
+                AlbumTextFormattingDefinition(
+                    pageHeight: request.previewPageHeight,
+                    fallbackStyle: typingDefaults
+                )
+            )
+            .textInputFormattingControlVisibility(.hidden, for: .all)
+            .scrollContentBackground(.hidden)
+            .focused($editorIsFocused)
+            .scrollDismissesKeyboard(.interactively)
+            .padding(12)
+            .opacity(opacity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background {
+                AlbumPageBackground(
+                    selection: request.pageBackground,
+                    imageCache: imageCache,
+                    maximumPixelSize: 1_200
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .allowsHitTesting(false)
+            }
+            .clipped()
+            .accessibilityLabel("Contenu de la zone de texte")
+            .onChange(of: text) { oldValue, newValue in
+                handleTextChange(oldValue: oldValue, newValue: newValue)
+            }
+            .onChange(of: typingDefaults) { _, _ in scheduleCheckpoint() }
+            .onChange(of: opacity) { _, _ in scheduleCheckpoint() }
+            .onChange(of: selection) { _, newValue in
+                handleSelectionChange(newValue)
+            }
+    }
+
+    private func handleSelectionChange(_ newValue: AttributedTextSelection) {
+        if isInsertionPoint(newValue) {
+            if editorIsFocused {
+                retainedSelection = nil
+                retainedSelectionText = nil
+            }
+        } else {
+            retainSelection(newValue)
+        }
+    }
+
+    private var editorFooter: some View {
+        HStack {
+            Text("\(text.characters.count) / 1 000 caractères")
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+            Spacer()
+            Label(
+                "Le contenu collé est converti en texte brut.",
+                systemImage: "doc.plaintext"
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+    }
+
+    private var editorActionRail: some View {
+        VStack(spacing: 16) {
+            Button { cancel() } label: {
+                VStack(spacing: 5) {
+                    Image(systemName: "xmark")
+                        .font(.title3.weight(.semibold))
+                    Text("Annuler")
+                        .font(.caption)
+                }
+                .frame(maxWidth: .infinity, minHeight: 52)
+            }
+            .buttonStyle(.bordered)
+            .tint(.secondary)
+            .disabled(isResolving)
+            .accessibilityLabel("Annuler la modification du texte")
+
+            Spacer(minLength: 16)
+
+            Button { commit() } label: {
+                VStack(spacing: 5) {
+                    Image(systemName: "checkmark")
+                        .font(.title3.weight(.bold))
+                    Text("Valider")
+                        .font(.caption.weight(.semibold))
+                }
+                .frame(maxWidth: .infinity, minHeight: 52)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(isResolving)
+            .accessibilityLabel("Valider la modification du texte")
+        }
+        .padding(10)
+        .frame(width: 86)
+        .background(.bar)
+    }
+
     private var formattingBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                formattingScopeLabel("Sélection", systemImage: "character.cursor.ibeam")
                 if !editorIsFocused, validRetainedSelection != nil {
-                    Label("Sélection conservée", systemImage: "checkmark.circle.fill")
-                        .font(.caption.weight(.semibold))
+                    Image(systemName: "character.cursor.ibeam")
                         .foregroundStyle(.green)
-                        .fixedSize()
+                        .accessibilityLabel("Sélection de texte conservée")
                 }
                 fontMenu
                 sizeMenu
@@ -647,62 +690,70 @@ struct AlbumTextEditorView: View {
                 Button {
                     applyCharacterStyle { $0.weight = $0.weight == .bold ? .regular : .bold }
                 } label: {
-                    AlbumTextToggleLabel(
-                        title: "Gras",
-                        systemImage: "bold",
-                        isSelected: currentStyle.weight == .bold
-                    )
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "bold")
+                            .frame(width: 24)
+                        if currentStyle.weight == .bold {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.caption2)
+                                .offset(x: 7, y: -7)
+                        }
+                    }
                 }
                 .tint(currentStyle.weight == .bold ? Color.accentColor : nil)
+                .accessibilityLabel("Gras")
+                .accessibilityValue(
+                    currentStyle.weight == .bold ? "Sélectionné" : "Non sélectionné"
+                )
 
                 Button {
                     applyCharacterStyle { $0.isItalic.toggle() }
                 } label: {
-                    AlbumTextToggleLabel(
-                        title: "Italique",
-                        systemImage: "italic",
-                        isSelected: currentStyle.isItalic
-                    )
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "italic")
+                            .frame(width: 24)
+                        if currentStyle.isItalic {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.caption2)
+                                .offset(x: 7, y: -7)
+                        }
+                    }
                 }
                 .tint(currentStyle.isItalic ? Color.accentColor : nil)
+                .accessibilityLabel("Italique")
+                .accessibilityValue(
+                    currentStyle.isItalic ? "Sélectionné" : "Non sélectionné"
+                )
 
                 colorMenu
-                formattingScopeDivider
-                formattingScopeLabel("Paragraphe", systemImage: "paragraph")
+                toolbarDivider
                 alignmentMenu
                 lineSpacingMenu
-                formattingScopeDivider
-                formattingScopeLabel("Zone", systemImage: "rectangle.dashed")
+                toolbarDivider
                 opacityMenu
 
-                Button(
-                    editorIsFocused ? "Masquer le clavier" : "Afficher le clavier",
-                    systemImage: editorIsFocused
-                        ? "keyboard.chevron.compact.down" : "keyboard"
-                ) {
+                Button {
                     toggleKeyboard()
+                } label: {
+                    Image(systemName: editorIsFocused
+                        ? "keyboard.chevron.compact.down" : "keyboard")
+                        .frame(width: 24)
                 }
+                .accessibilityLabel(
+                    editorIsFocused ? "Masquer le clavier" : "Afficher le clavier"
+                )
             }
             .buttonStyle(.bordered)
-            .controlSize(.large)
+            .controlSize(.regular)
             .padding(.horizontal)
-            .padding(.vertical, 10)
+            .padding(.vertical, 8)
         }
+        .background(.bar)
     }
 
-    private func formattingScopeLabel(
-        _ title: String,
-        systemImage: String
-    ) -> some View {
-        Label(title, systemImage: systemImage)
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-            .fixedSize()
-    }
-
-    private var formattingScopeDivider: some View {
+    private var toolbarDivider: some View {
         Divider()
-            .frame(height: 32)
+            .frame(height: 28)
             .accessibilityHidden(true)
     }
 
@@ -719,7 +770,14 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Police", systemImage: "textformat")
+            HStack(spacing: 5) {
+                Image(systemName: "textformat")
+                Text(currentFontName)
+                    .lineLimit(1)
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+            }
+            .frame(minWidth: 108, alignment: .leading)
         }
         .accessibilityLabel("Police du texte")
         .accessibilityValue(currentFontName)
@@ -741,7 +799,13 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Taille", systemImage: "textformat.size")
+            HStack(spacing: 5) {
+                Image(systemName: "textformat.size")
+                Text("\(currentFontSize) pt")
+                    .monospacedDigit()
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+            }
         }
         .accessibilityLabel("Taille du texte")
         .accessibilityValue("\(currentFontSize) points")
@@ -752,7 +816,13 @@ struct AlbumTextEditorView: View {
             retainSelectionForFormatting()
             showsColorPalette = true
         } label: {
-            Label("Couleur", systemImage: "paintpalette")
+            VStack(spacing: 2) {
+                Image(systemName: "paintpalette")
+                Capsule()
+                    .fill(currentStyle.color.swiftUIColor)
+                    .frame(width: 24, height: 3)
+            }
+            .frame(width: 28)
         }
         .popover(isPresented: $showsColorPalette) {
             VStack(alignment: .leading, spacing: 6) {
@@ -804,7 +874,8 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Alignement", systemImage: "text.alignleft")
+            Image(systemName: "text.alignleft")
+                .frame(width: 24)
         }
         .accessibilityLabel("Alignement des paragraphes")
         .accessibilityValue(currentAlignmentName)
@@ -825,7 +896,8 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Interligne", systemImage: "line.3.horizontal")
+            Image(systemName: "line.3.horizontal")
+                .frame(width: 24)
         }
         .accessibilityLabel("Interligne des paragraphes")
         .accessibilityValue(currentLineSpacingName)
@@ -845,7 +917,8 @@ struct AlbumTextEditorView: View {
                 }
             }
         } label: {
-            Label("Opacité", systemImage: "circle.lefthalf.filled")
+            Image(systemName: "circle.lefthalf.filled")
+                .frame(width: 24)
         }
         .accessibilityLabel("Opacité de la zone de texte")
         .accessibilityValue(currentOpacityName)
