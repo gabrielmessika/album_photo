@@ -41,7 +41,8 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Correctif de compilation Lot 2 testé | `64f53424a0fc479c4fdea79c401d0b227d52eebd` — construction UUID découpée en cinq `String` ; sources applicatives identiques dans le paquet documentaire `94deaf2937123fe22ab579c193543f547768fde9` ; 157 tests WSL réussis, puis campagne iPad reportée de `039…054` vers `055…070` : 12 réussites et 4 échecs (`058`, `061`, `062`, `065`) |
 | Candidat de régression des quatre échecs fonctionnels testé | `9bc11e7423178b66c48446c59abc5a912de5c26f` — `IPAD-L2-072…073` réussis ; `071` échoue uniquement sur la perte du gras/italique au collage et `074` sur la photo visible hors ouverture, l’ergonomie du contour et son placement extérieur ; les autres étapes sont déclarées conformes |
 | Second candidat de régression Lot 2 testé | `855ae271dcec348ddf5dc4e04ba40fa2f47ab0cb` — `IPAD-L2-077` réussi ; `075` échoue uniquement à l’étape 3 et `076` uniquement aux étapes 4 et 5 ; toutes les autres étapes sont déclarées conformes |
-| Troisième candidat de régression Lot 2 à tester | `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` — récupération RTF/RTFD/HTML du collage, grille 2 × 2 et décor aligné autour de la photo inchangée ; 162 tests WSL, parse AppModule, 55 contrats et 16 empreintes réussis ; `IPAD-L2-078…079` à exécuter |
+| Troisième candidat de régression Lot 2 testé | `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` — `IPAD-L2-078` confirme encore la perte du gras/italique ; `079` confirme les libellés et Bord blanc/noir mais échoue sur les quatre cadres à motifs |
+| Quatrième candidat de régression Lot 2 à tester | `f483fa902191e84edbc3b14f780fefca40b47a63` — collage externe converti en texte brut avec style local ; Bord blanc/noir autour de la photo et quatre motifs superposés dans ses limites ; 162 tests WSL, parse AppModule, 55 contrats et 16 empreintes réussis ; `IPAD-L2-080…081` à exécuter |
 | App Playground | `Albumzh.swiftpm` |
 | Copie testée lors de la première campagne | `aeae5c439c461e7994117067d81a416591d348bd` ; sources applicatives identiques au commit d’implémentation initial |
 | Copie validée après la nouvelle adaptation | `101e2948252f51991933b8d61f767f52aa6b629d` |
@@ -50,7 +51,7 @@ prototype 2.1. Ils restent consultables dans l’historique Git au commit
 | Swift Playgrounds | 4.7 |
 | Orientation initiale | Portrait |
 | Réseau initial | Connecté, sauf test hors ligne |
-| Date et lieu de la campagne | Début le 16 août 2026 — Paris, France ; campagne finale Lot 2 préparée le 21 août 2026, lieu d’exécution à confirmer |
+| Date et lieu de la campagne | Début le 16 août 2026 — Paris, France ; régressions courantes Lot 2 préparées le 24 août 2026, lieu d’exécution à confirmer |
 | Langue et région | Français — France |
 
 Le code de la première campagne reste figé par l’empreinte Git exacte
@@ -204,9 +205,16 @@ Fin/Moyen/Épais répartis sur plusieurs lignes, puis photo réduite/tronquée e
 contour bas masqué avec Photo instantanée. Les autres étapes sont explicitement
 conformes. `IMG_4218.jpeg` étaye le second constat et reste hors Git. Un
 troisième correctif est figé dans
-`92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44`. `IPAD-L2-078…079` portent ses
-deux régressions ciblées ; `APPLE-L2-018…021` remplacent les qualifications du
-candidat précédent.
+`92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44`. `IPAD-L2-078` échoue encore sur
+le gras/italique externe. `IPAD-L2-079` confirme la grille et Bord blanc/noir,
+mais les quatre cadres à motifs restent incorrects ; `IMG_4222.jpeg` et la
+référence `photoweb1.png` restent hors Git. L’utilisateur décide alors que le
+collage externe est du texte brut et demande une composition à la Photoweb :
+les motifs sont posés au-dessus de la photo, que Recadrer permet toujours de
+déplacer ou zoomer. Le quatrième correctif est figé dans
+`f483fa902191e84edbc3b14f780fefca40b47a63`. `IPAD-L2-080…081` portent ses
+régressions ciblées et `APPLE-L2-022…025` remplacent les qualifications du
+candidat précédent, sans retargeter aucun verdict historique.
 
 ## Mode de réponse
 
@@ -507,8 +515,10 @@ Playgrounds sur cet iPad.
 | `IPAD-L2-075` | Seconde régression du collage riche | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — étape 3 seulement ; étapes 1, 2, 4, 5 et 6 conformes |
 | `IPAD-L2-076` | Ouvertures alpha, contours et trois épaisseurs | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | 🔴 `ÉCHOUÉ` — étapes 4 et 5 seulement ; étapes 1, 2, 3 et 6 conformes |
 | `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `3:EDT-001`, `3:EDT-002`, `3:EDT-012`, `3:ZOM-001`, `3:ZOM-004`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003` | 🟢 `RÉUSSI` — retour global sans capture ni détail par étape |
-| `IPAD-L2-078` | Troisième régression du collage riche Notes | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | ⚪ `NON TESTÉ` |
-| `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-007`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-078` | Troisième régression du collage riche Notes | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | 🔴 `ÉCHOUÉ` — étape 3 : gras et italique encore perdus ; exigence retirée ensuite par décision utilisateur |
+| `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-007`, `3:CAN-008`, `3:ACC-002`, `3:ACC-004` | 🔴 `ÉCHOUÉ` — libellés et Bord blanc/noir conformes ; Ruban kraft, Tampon voyage, Feuillage et Photo instantanée mal adaptés |
+| `IPAD-L2-080` | Régression du collage externe en texte brut | `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`, `3:DONE-005` | ⚪ `NON TESTÉ` |
+| `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`, `3:SHR-013`, `3:SHR-014`, `3:CRP-001` à `3:CRP-007`, `3:CAN-008` | ⚪ `NON TESTÉ` |
 
 ## Fiches détaillées
 
@@ -4907,9 +4917,13 @@ panneaux.
 | 5 | Sélectionner un mot existant, recopier dans Notes un fragment riche différent puis le coller à la place de la sélection. | Le remplacement porte uniquement sur la sélection, conserve les emphases du nouveau fragment et n’altère pas les styles avant/après. |
 | 6 | Coller l’extrait de plus de 1 000 caractères, choisir Annuler, puis recommencer avec Conserver 1 000 caractères et rouvrir la zone. | Annuler restaure exactement l’état précédent ; le second choix conserve exactement 1 000 `Character` Swift et persiste sans crash. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — origine Notes, résultat de chaque étape, capture avant
-  et après collage, et tout message système relatif au presse-papiers.
+- Résultat : 🔴 `ÉCHOUÉ` — l’étape 3 perd encore le gras et l’italique de
+  Notes. Les autres étapes n’ont pas été décrites individuellement et ne sont
+  pas transformées en réussite. Après ce constat, l’utilisateur retire
+  explicitement la conservation des styles externes et retient le texte brut.
+- Preuve : retour utilisateur du 24 août 2026 : « toujours ko pour la copie du
+  gras/italique » ; aucune nouvelle capture. La décision normative est portée
+  par `TBX-007` dans le candidat suivant.
 - Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7 ;
   relever toute différence et le mode de transfert du candidat.
 
@@ -4934,10 +4948,66 @@ panneaux.
 | 5 | Répéter avec Bord blanc, Bord noir, Ruban kraft, Tampon voyage et Feuillage sur un cadre large puis haut. | Chaque ouverture s’aligne aux limites inchangées de la photo ; aucune frange de photo ne traverse les transparences extérieures et aucun décor ne modifie le cadrage. |
 | 6 | Comparer éditeur, Vue globale et Prévisualiser, puis utiliser Aucun, Annuler et Rétablir. | Alpha, contour, cadrage et ordre sont identiques dans les trois sorties ; Aucun retire seulement le décor et l’historique restaure exactement le même style sans déplacement. |
 
-- Résultat : ⚪ `NON TESTÉ`.
-- Preuve : à renseigner — captures rapprochées des quatre côtés, comparaison
-  avant/après, rapports des cadres et résultats VoiceOver des quatre choix.
+- Résultat : 🔴 `ÉCHOUÉ` — l’étape 2 est conforme et Bord blanc/Bord noir sont
+  corrects. Ruban kraft, Tampon voyage, Feuillage et Photo instantanée ne
+  s’adaptent pas correctement ; les autres contrôles n’ont pas reçu de verdict
+  individuel.
+- Preuve : retour utilisateur du 24 août 2026, `IMG_4222.jpeg` montrant les
+  cadres déformés/décalés et `photoweb1.png` fourni comme comportement de
+  référence ; fichiers conservés hors Git.
 - Environnement : reprendre celui de `IPAD-L2-078`, sans différence déclarée.
+
+### `IPAD-L2-080` — Régression du collage externe en texte brut
+
+- Candidat : `f483fa902191e84edbc3b14f780fefca40b47a63`.
+- Spécification : 3.0 incluse dans le candidat exact ; `TBX-007` applique la
+  décision utilisateur du 24 août 2026.
+- Préconditions : reprendre la zone reconnaissable de `IPAD-L2-078` et les deux
+  extraits Notes, l’un inférieur et l’autre supérieur à 1 000 caractères. Le
+  premier contient gras, italique, lien, liste, retours à la ligne et image.
+- Exigences : `3:ENV-001` à `3:ENV-005`, `3:TBX-004`, `3:TBX-006` à
+  `3:TBX-008`, `3:TBX-010`, `3:TBX-017`, `3:TBX-023`, `3:CLP-005`,
+  `3:DONE-005`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler et lancer le candidat exact, ouvrir la zone existante puis vérifier le message au bas de l’éditeur. | La compilation et l’ouverture réussissent ; le message annonce que le contenu collé est converti en texte brut. |
+| 2 | Placer le curseur dans un passage local régulier, non gras et non italique, puis coller l’extrait Notes inférieur à 1 000 caractères. | Tous les caractères collés prennent uniformément le style régulier local ; aucun gras, italique, police, taille, couleur ni autre format source n’est conservé. |
+| 3 | Examiner le texte, les retours à la ligne, le lien, la liste et l’image de l’extrait collé. | Le texte et les retours utiles restent éditables ; l’URL n’est pas active et image, pièce jointe, puces, structure de liste, tableau et métadonnées disparaissent sans créer d’élément. |
+| 4 | Activer Gras comme style de frappe local, placer le curseur à la fin puis recoller le même extrait. | Tout le nouvel extrait adopte uniformément le gras local, y compris les mots qui étaient italiques ou réguliers dans Notes ; aucun contraste de style source ne réapparaît. |
+| 5 | Presser Terminer, rouvrir la zone, puis utiliser Annuler/Rétablir autour de l’édition. | Texte filtré et styles locaux persistent ; Annuler/Rétablir restaure chaque état sans contenu interdit ni dépendance au presse-papiers système. |
+| 6 | Coller l’extrait de plus de 1 000 caractères, choisir Annuler, puis recommencer avec Conserver 1 000 caractères et rouvrir la zone. | Annuler restaure exactement l’état précédent ; le second choix conserve exactement 1 000 `Character` Swift et persiste sans crash. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — résultat de chaque étape, extrait Notes utilisé,
+  capture avant/après et éventuel message système.
+- Environnement : iPad 8e génération, iPadOS 26.5.2, Swift Playgrounds 4.7 ;
+  relever toute différence et le mode de transfert du candidat.
+
+### `IPAD-L2-081` — Deux compositions de cadres et recadrage sous motif
+
+- Candidat : `f483fa902191e84edbc3b14f780fefca40b47a63`.
+- Spécification : 3.0 incluse dans le candidat exact.
+- Préconditions : reprendre la photo et les rapports large/haut de
+  `IPAD-L2-079`, ou créer six occurrences strictement identiques dont le sujet
+  est proche d’un bord. Conserver `IMG_4222.jpeg` et `photoweb1.png` comme
+  comparaisons visuelles, sans les importer dans le projet.
+- Exigences : `3:SHR-004`, `3:SHR-005`, `3:SHR-009`, `3:SHR-011`,
+  `3:SHR-013`, `3:SHR-014`, `3:CRP-001` à `3:CRP-007`, `3:CAN-008`.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Compiler, lancer, ouvrir la page de comparaison et relever le contenu visible, le zoom, le point focal et l’orientation de chaque occurrence. | Le candidat compile ; les occurrences ont au départ un placement et un contenu visible comparables. |
+| 2 | Appliquer Bord blanc puis Bord noir sur des cadres large et haut. | Les deux bordures entourent la photo comme dans le candidat précédent, sans frange de photo à l’extérieur, déformation, réduction ni changement de cadrage. |
+| 3 | Appliquer successivement Ruban kraft, Tampon voyage, Feuillage et Photo instantanée sur des cadres large et haut. | Chaque motif remplit exactement les limites du cadre, est posé au-dessus de la photo et en cache une partie par ses pixels opaques ; il ne s’agrandit pas autour de l’ouverture et ne reproduit pas le défaut de `IMG_4222.jpeg`. |
+| 4 | Ajouter un contour Épais contrasté sous chaque famille de cadre, puis retirer seulement le décor. | Le contour reste géométriquement intérieur ; un motif peut le cacher là où il le recouvre. Retirer le décor révèle le contour intact sur quatre côtés et ne déplace pas la photo. |
+| 5 | Avec Feuillage puis Photo instantanée actifs, ouvrir Recadrer, déplacer la photo et zoomer pour replacer le sujet, puis valider. | Les gestes modifient seulement le placement de la photo sous le motif ; le cadre décoratif reste fixe, la prévisualisation suit immédiatement et le nouveau cadrage persiste. |
+| 6 | Comparer éditeur, Vue globale, miniature et Prévisualiser, puis utiliser Aucun, Annuler et Rétablir. | Photo, contour, alpha et motif concordent dans les sorties ; Aucun retire seulement le décor et l’historique restaure exactement cadre et cadrage sans fuite ni saut. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — captures avant/après sur rapports large et haut,
+  observations de Recadrer et résultat de chaque sortie.
+- Environnement : reprendre celui de `IPAD-L2-080`, sans différence déclarée.
 
 
 ## Qualification différée Apple/macOS/Xcode
@@ -4949,9 +5019,11 @@ incrément ; `APPLE-L2-002…005` restent attachés au candidat `fce5d92…` rej
 quatre régressions fonctionnelles ont échoué. Les contrôles `APPLE-L2-010…013`
 restent attachés à `9bc11e7…`, dont deux régressions ont encore échoué. Les
 remplacements `APPLE-L2-014…017` restent attachés à `855ae27…`, dont deux
-régressions ont encore échoué. `APPLE-L2-018…021` qualifient le candidat exact
-`92df51d…`. Ils restent tous ⚪ `NON TESTÉ` jusqu’à une campagne séparée visant
-le candidat explicitement enregistré.
+régressions ont encore échoué. `APPLE-L2-018…021` restent attachés à
+`92df51d…`, dont les deux régressions ciblées ont également échoué.
+`APPLE-L2-022…025` qualifient le candidat exact `f483fa9…`. Ils restent tous ⚪
+`NON TESTÉ` jusqu’à une campagne séparée visant le candidat explicitement
+enregistré.
 
 | ID différé | Contrôle | Exigences | État | Motif du report |
 |---|---|---|---|---|
@@ -4989,6 +5061,10 @@ le candidat explicitement enregistré.
 | `APPLE-L2-019` | Debug/Release et tests Apple du troisième correctif | `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`, `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-015` ; macOS, Xcode et SDK iOS approuvés requis |
 | `APPLE-L2-020` | Instruments et enveloppe maximale du troisième correctif | `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à `3:PERF-017` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-016` ; Instruments et jeu synthétique de 100 pages requis |
 | `APPLE-L2-021` | Build TestFlight distincte du troisième correctif | `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-017` ; build distincte de Swift Playgrounds |
+| `APPLE-L2-022` | Texte brut et cadres superposés en largeur compacte | `3:EDT-001` à `3:EDT-004`, `3:EDT-008`, `3:EDT-012`, `3:EDT-014`, `3:EDT-016`, `3:EDT-020`, `3:EDT-021`, `3:TBX-005`, `3:TBX-007`, `3:TBX-027`, `3:SHR-004`, `3:SHR-013`, `3:CRP-007`, `3:ZOM-005`, `3:ACC-002`, `3:ACC-003`, `3:ACC-021` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-018` sur `f483fa9…` ; iPhone réel ou Xcode compact requis |
+| `APPLE-L2-023` | Debug/Release et tests Apple du quatrième correctif | `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`, `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-019` ; macOS, Xcode et SDK iOS approuvés requis |
+| `APPLE-L2-024` | Instruments et enveloppe maximale du quatrième correctif | `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à `3:PERF-017` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-020` ; Instruments et jeu synthétique de 100 pages requis |
+| `APPLE-L2-025` | Build TestFlight distincte du quatrième correctif | `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à `3:DONE-005` | ⚪ `NON TESTÉ` | Remplace `APPLE-L2-021` ; build distincte de Swift Playgrounds |
 
 ### `APPLE-L2-001` — Barre compacte, confirmation et menu Plus
 
@@ -5525,6 +5601,110 @@ le candidat explicitement enregistré.
 | 4 | Annuler/rétablir, sauvegarder, passer en arrière-plan, forcer la fermeture puis relancer hors ligne. | Données et ressources intégrées persistent ; aucun presse-papiers de session ne ressuscite. |
 | 5 | Tester portrait, paysage, grande taille de texte et VoiceOver sur les deux familles d’appareil. | Aucun contrôle essentiel n’est inaccessible et les libellés/états restent compréhensibles. |
 | 6 | Examiner journaux TestFlight et rapports de crash. | Aucun crash, blocage, corruption ni erreur répétée de catalogue ou presse-papiers n’est enregistré. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — version/build, appareils, OS, installation
+  propre/mise à jour, résultats par étape et rapports de crash.
+- Environnement : à renseigner.
+
+### `APPLE-L2-022` — Texte brut et cadres superposés en largeur compacte
+
+- Candidat : `f483fa902191e84edbc3b14f780fefca40b47a63`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : test manuel sur iPhone réel ou simulateur Xcode produisant une largeur
+  compacte réelle ; remplace `APPLE-L2-018` pour le candidat courant.
+- Exigences : `3:EDT-001` à `3:EDT-004`, `3:EDT-008`, `3:EDT-012`,
+  `3:EDT-014`, `3:EDT-016`, `3:EDT-020`, `3:EDT-021`, `3:TBX-005`,
+  `3:TBX-007`, `3:TBX-027`, `3:SHR-004`, `3:SHR-013`, `3:CRP-007`,
+  `3:ZOM-005`, `3:ACC-002`, `3:ACC-003`, `3:ACC-021`.
+- Préconditions : album contenant photo, texte, petit sticker, une bordure
+  simple et un cadre à motif ; extrait Notes riche, clavier, VoiceOver, zoom et
+  Recadrer disponibles.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Ouvrir l’éditeur en portrait compact et parcourir les six panneaux. | Barres, canevas et contenus restent accessibles sans rognage ni interception par une page sous-jacente. |
+| 2 | Modifier un texte avec le clavier visible, puis coller l’extrait Notes dans un style local régulier et dans un style local gras. | Curseur, sélection et Terminer restent accessibles ; tout format source disparaît et chaque collage adopte uniformément son style local. |
+| 3 | Ouvrir Cadres et formes puis appliquer Bord blanc/noir et chacun des quatre motifs sur une photo. | Les bordures entourent la photo ; les motifs remplissent exactement ses limites au-dessus d’elle, sans changer son placement ni déformer l’interface. |
+| 4 | Avec un motif actif, ouvrir Recadrer, déplacer et zoomer la photo puis valider. | La photo se déplace sous le cadre fixe et le nouveau cadrage persiste sans rendre les commandes inaccessibles. |
+| 5 | Zoomer le canevas puis utiliser les panneaux alors que la page approche leurs limites. | Les panneaux reçoivent les pressions et aucun objet sous-jacent n’est sélectionné à travers eux. |
+| 6 | Passer en paysage et parcourir formats, cadres, recadrage et petite sélection avec VoiceOver. | Page et sélection persistent ; ordre de focus, libellés, états et cibles restent cohérents. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — appareil/simulateur, dimensions, OS, Xcode,
+  orientations, clavier, VoiceOver, collages et captures des deux modes.
+- Environnement : à renseigner.
+
+### `APPLE-L2-023` — Debug, Release et tests Apple du quatrième correctif
+
+- Candidat : `f483fa902191e84edbc3b14f780fefca40b47a63`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : validation reproductible macOS/Xcode avec SDK iOS approuvé ; remplace
+  `APPLE-L2-019`.
+- Exigences : `3:ENV-006` à `3:ENV-009`, `3:TST-014` à `3:TST-016`,
+  `3:DONE-005`.
+- Préconditions : checkout propre du commit exact, caches identifiés et
+  destinations iPhone/iPad disponibles.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Résoudre le package et compiler Debug pour iPhone et iPad. | Les deux destinations compilent sans erreur SwiftUI/UIKit, ressource absente ni avertissement bloquant. |
+| 2 | Exécuter tous les tests Core et Apple disponibles. | Tous réussissent ; nombre, durée, SDK et destinations sont enregistrés. |
+| 3 | Compiler Release, créer l’archive puis lancer sa validation Xcode. | Archive et validation réussissent sans API privée, ressource dupliquée, défaut de signature ni manifeste invalide. |
+| 4 | En Debug puis Release, rejouer `IPAD-L2-080…081` et le contrôle de panneaux de `077`. | Collage texte brut, cadres/recadrage et priorité tactile sont conformes dans les deux configurations. |
+| 5 | Sauvegarder, fermer et relancer après chaque configuration. | Le document persiste sans crash, perte, duplication, changement de cadrage ni divergence de rendu. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — Xcode/SDK, destinations, commandes, logs, nombre de
+  tests et rapport de validation de l’archive.
+- Environnement : à renseigner.
+
+### `APPLE-L2-024` — Instruments et enveloppe maximale du quatrième correctif
+
+- Candidat : `f483fa902191e84edbc3b14f780fefca40b47a63`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : campagne Instruments sur build Release et données synthétiques non
+  personnelles ; remplace `APPLE-L2-020`.
+- Exigences : `3:STK-021`, `3:PERF-001` à `3:PERF-009`, `3:PERF-015` à
+  `3:PERF-017`.
+- Préconditions : appareil documenté ; cent albums et un album de cent pages,
+  avec vingt photos, vingt textes et vingt stickers par page ; six décors
+  utilisés à plusieurs rapports ; miniatures générées et volume disque mesuré.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Mesurer lancements froid/chaud et ouverture de la première page. | Bibliothèque et première page locale affichent un premier contenu en moins de deux secondes. |
+| 2 | Parcourir rapidement vingt pages en surveillant mémoire et allocations. | Le préchauffage reste borné et le pic mémoire demeure inférieur à 500 Mo sans croissance persistante. |
+| 3 | Transformer photo, texte et petit sticker avec Core Animation et Time Profiler. | Les gestes visent 60 images/s sans décodage pleine résolution ni écriture durable par image. |
+| 4 | Appliquer les six cadres à plusieurs rapports, recadrer sous les quatre motifs puis revenir plusieurs fois sur les pages. | Les motifs superposés n’ajoutent aucun calcul alpha lourd ; les deux bordures réutilisent leur analyse et aucun blocage durable du thread principal n’apparaît. |
+| 5 | Répéter des collages Notes courts puis revenir plusieurs fois à la Bibliothèque. | La conversion en texte brut ne lit pas de représentation riche et ne crée ni fuite, ni croissance persistante, ni recomposition continue. |
+| 6 | Examiner fuites, CPU, énergie, blocages et avertissement au vingt-et-unième sticker. | Aucune fuite, suspension ni crash mémoire ; seul l’avertissement prévu apparaît. |
+
+- Résultat : ⚪ `NON TESTÉ`.
+- Preuve : à renseigner — trace Instruments, modèle, état thermique, tailles du
+  jeu, temps, FPS, pic mémoire et observations des caches.
+- Environnement : à renseigner.
+
+### `APPLE-L2-025` — Build TestFlight distincte du quatrième correctif
+
+- Candidat : `f483fa902191e84edbc3b14f780fefca40b47a63`.
+- Spécification : 3.0 incluse dans ce commit.
+- Type : build TestFlight issue de l’archive Release validée par
+  `APPLE-L2-023`, séparée du package Swift Playgrounds ; remplace
+  `APPLE-L2-021`.
+- Exigences : `3:TST-003`, `3:TST-005`, `3:TST-015`, `3:DONE-001` à
+  `3:DONE-005`.
+- Préconditions : build/numéro exacts enregistrés ; installation propre puis
+  mise à jour depuis la build précédente si elle existe.
+
+| ID | Description | Résultat attendu |
+|---:|---|---|
+| 1 | Installer la build sur iPhone et iPad puis lancer la Bibliothèque. | Installation, lancement et lecture réussissent sans dépendre de Swift Playgrounds. |
+| 2 | Créer ou ouvrir un album et parcourir photo, texte, sticker, forme, contour et cadre décoratif. | Toutes les fonctions publiques du Lot 2 sont présentes et correctement rendues. |
+| 3 | Rejouer `IPAD-L2-080…081` puis le contrôle tactile de `077`. | Texte brut, cadres, recadrage et panneaux à fort zoom restent conformes dans la build distribuée. |
+| 4 | Annuler/rétablir, sauvegarder, passer en arrière-plan, forcer la fermeture puis relancer hors ligne. | Données et ressources intégrées persistent ; aucun presse-papiers de session ne ressuscite. |
+| 5 | Tester portrait, paysage, grande taille de texte et VoiceOver sur les deux familles d’appareil. | Aucun contrôle essentiel n’est inaccessible et les libellés/états restent compréhensibles. |
+| 6 | Examiner journaux TestFlight et rapports de crash. | Aucun crash, blocage, corruption ni erreur répétée de catalogue n’est enregistré. |
 
 - Résultat : ⚪ `NON TESTÉ`.
 - Preuve : à renseigner — version/build, appareils, OS, installation

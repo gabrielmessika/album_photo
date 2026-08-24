@@ -194,10 +194,16 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   ainsi qu’une photo réduite avec Photo instantanée. Le troisième correctif lit
   la représentation riche publique du presse-papiers, dispose les épaisseurs
   en grille 2 × 2 et agrandit seulement le décor autour de la photo inchangée.
-  Il est figé dans `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` et ses preuves
-  sont `IPAD-L2-078…079` puis `APPLE-L2-018…021`.
-  Les validations `APPLE-L2-006…017` restent attachées à leurs candidats
-  historiques ; les remplacements courants sont `APPLE-L2-018…021`.
+  Il est figé dans `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44`, mais
+  `IPAD-L2-078` confirme encore la perte du gras/italique et `079` que seuls
+  Bord blanc/noir sont correctement adaptés. La décision produit retient donc
+  un collage externe en texte brut. Le quatrième correctif exact
+  `f483fa902191e84edbc3b14f780fefca40b47a63` retire le décodage riche et pose
+  Ruban kraft, Tampon voyage, Feuillage et Photo instantanée par-dessus les
+  limites inchangées de la photo, que Recadrer permet toujours d’ajuster.
+  Ses preuves sont `IPAD-L2-080…081` puis `APPLE-L2-022…025`.
+  Les validations `APPLE-L2-006…021` restent attachées à leurs candidats
+  historiques ; les remplacements courants sont `APPLE-L2-022…025`.
   Lecture, diaporama, package et PDF relèvent du Lot 3.
 - Validation actuelle : 162 tests du noyau multiplateforme, les contrats et la
   syntaxe AppModule sont validés sous WSL. La campagne `IPAD-L2-001…008` sur
@@ -260,11 +266,13 @@ effectuer et leurs résultats détaillés sont enregistrés dans
   parcours sticker `072…073` ; `071` et `074` restent échoués sur les écarts
   précités malgré leurs autres étapes conformes. Sur `855ae27…`, `077` réussit,
   tandis que `075` et `076` échouent uniquement sur les trois contrôles
-  résiduels décrits plus haut. Le troisième correctif `92df51d…` passe 162
-  tests WSL, l’analyse syntaxique, les contrats et les empreintes ; ses deux
-  fiches iPad `078…079` restent à exécuter.
+  résiduels décrits plus haut. Sur `92df51d…`, `078` échoue encore sur les
+  emphases externes et `079` confirme la grille et les bordures simples, mais
+  échoue sur les quatre motifs. Le correctif `f483fa9…` passe 162 tests WSL,
+  l’analyse syntaxique, les contrats et les empreintes ; ses deux fiches iPad
+  `080…081` restent à exécuter.
   Le menu Plus n’est attendu qu’en largeur compacte et sera repris
-  séparément par `APPLE-L2-018` sur iPhone ou Xcode. Les
+  séparément par `APPLE-L2-022` sur iPhone ou Xcode. Les
   campagnes iPad Lot 1 `063…093`, puis `102`,
   `109…131` et `133` sont enregistrées ; la seconde compte 19 réussites,
   4 échecs et 2 blocages de procédure sur `638c659…`. La campagne suivante sur

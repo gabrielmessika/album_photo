@@ -102,8 +102,14 @@ candidat ; `075.3` et `076.4…5` échouent encore. Le troisième correctif lit
 RTF/RTFD/HTML au moment de l’insertion, place les épaisseurs en grille 2 × 2 et
 agrandit seulement le décor pour aligner son ouverture aux limites inchangées
 de la photo. Il est figé dans `92df51ddaab5798a3d4a5aac2c7ede2a3b9bfa44` ;
-`IPAD-L2-078…079` et `APPLE-L2-018…021` portent ses nouvelles preuves, tandis
-que les anciens identifiants restent attachés à leurs candidats historiques.
+`078` échoue encore sur les emphases externes et `079` confirme la grille et
+Bord blanc/noir mais échoue sur les quatre motifs. La décision produit retient
+alors le collage externe en texte brut. Le quatrième correctif exact
+`f483fa902191e84edbc3b14f780fefca40b47a63` retire la récupération riche,
+conserve les deux bordures autour de la photo et superpose les quatre motifs
+dans ses limites sans modifier Recadrer. `IPAD-L2-080…081` et
+`APPLE-L2-022…025` portent ses nouvelles preuves, tandis que les anciens
+identifiants restent attachés à leurs candidats historiques.
 La source normative reste
 [`spec.md`](../../spec.md), le statut opérationnel
 [`SUIVI_PROJET.md`](../../SUIVI_PROJET.md) et les procédures manuelles
@@ -112,10 +118,11 @@ La source normative reste
 Le candidat final possède 12 scénarios iPad réussis sur les 16 fiches
 `055…070`, puis deux réussites (`072`, `073`) et deux échecs (`071`, `074`)
 dans la première campagne corrective. `077` ajoute la réussite du chevauchement
-tactile sur `855ae27…`, tandis que collage riche et Photo instantanée attendent
-la preuve du troisième correctif. Les validations Apple `006…017` restent
-attachées à leurs candidats historiques et leurs remplacements courants sont
-`018…021`. `IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
+tactile sur `855ae27…`; `078…079` sont deux échecs ciblés sur `92df51d…`.
+Le texte brut et les deux compositions de cadres attendent maintenant
+`080…081` sur `f483fa9…`. Les validations Apple `006…021` restent attachées à
+leurs candidats historiques et leurs remplacements courants sont `022…025`.
+`IPAD-L2-008` reste bloqué pour la seule largeur compacte. Les échecs
 historiques `IPAD-L2-002` et `004` sont couverts par les régressions réussies
 `010` et `011`.
 
@@ -224,8 +231,10 @@ aucune fiche iPad.
 | `IPAD-L2-075` | Seconde régression collage riche | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | 🔴 `ÉCHOUÉ` sur `855ae27…` — étape 3 seulement ; cinq autres étapes conformes |
 | `IPAD-L2-076` | Ouvertures alpha, contours et trois épaisseurs | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CAN-008`, `ACC-002`, `ACC-004` | 🔴 `ÉCHOUÉ` sur `855ae27…` — étapes 4 et 5 seulement ; quatre autres étapes conformes |
 | `IPAD-L2-077` | Priorité tactile des panneaux à fort zoom | `EDT-001`, `EDT-002`, `EDT-012`, `ZOM-001`, `ZOM-004`, `ZOM-005`, `ACC-002`, `ACC-003` | 🟢 `RÉUSSI` sur `855ae27…` — retour global sans capture ni détail par étape |
-| `IPAD-L2-078` | Troisième régression collage riche Notes | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | ⚪ `NON TESTÉ` sur `92df51d…` |
-| `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-007`, `CAN-008`, `ACC-002`, `ACC-004` | ⚪ `NON TESTÉ` sur `92df51d…` |
+| `IPAD-L2-078` | Troisième régression collage riche Notes | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | 🔴 `ÉCHOUÉ` sur `92df51d…` — emphases toujours perdues ; exigence retirée ensuite |
+| `IPAD-L2-079` | Grille de contour et Photo instantanée sans recadrage | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-007`, `CAN-008`, `ACC-002`, `ACC-004` | 🔴 `ÉCHOUÉ` sur `92df51d…` — libellés et bordures simples conformes, quatre motifs incorrects |
+| `IPAD-L2-080` | Collage externe en texte brut | `ENV-001…005`, `TBX-004`, `TBX-006…008`, `TBX-010`, `TBX-017`, `TBX-023`, `CLP-005`, `DONE-005` | ⚪ `NON TESTÉ` sur `f483fa9…` |
+| `IPAD-L2-081` | Deux compositions de cadres et recadrage sous motif | `SHR-004`, `SHR-005`, `SHR-009`, `SHR-011`, `SHR-013`, `SHR-014`, `CRP-001…007`, `CAN-008` | ⚪ `NON TESTÉ` sur `f483fa9…` |
 
 Les réponses attendues sont `IPAD-L2-nnn OK`, `BLOQUÉ : …` ou `BUG : …`.
 Une réussite fonctionnelle peut prouver la compilation indirectement, mais ne
@@ -274,6 +283,10 @@ suppression du formulaire défilant et de la hauteur fixe.
 | `APPLE-L2-019` | Debug/Release et tests Apple du troisième correctif | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `92df51d…` |
 | `APPLE-L2-020` | Instruments et enveloppe maximale du troisième correctif | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `92df51d…` |
 | `APPLE-L2-021` | TestFlight distinct du troisième correctif | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `92df51d…` |
+| `APPLE-L2-022` | Texte brut et cadres superposés en largeur compacte | `EDT-001…004`, `EDT-008`, `EDT-012`, `EDT-014`, `EDT-016`, `EDT-020`, `EDT-021`, `TBX-005`, `TBX-007`, `TBX-027`, `SHR-004`, `SHR-013`, `CRP-007`, `ZOM-005`, `ACC-002`, `ACC-003`, `ACC-021` | ⚪ `NON TESTÉ` sur `f483fa9…` |
+| `APPLE-L2-023` | Debug/Release et tests Apple du quatrième correctif | `ENV-006…009`, `TST-014…016`, `DONE-005` | ⚪ `NON TESTÉ` sur `f483fa9…` |
+| `APPLE-L2-024` | Instruments et enveloppe maximale du quatrième correctif | `STK-021`, `PERF-001…009`, `PERF-015…017` | ⚪ `NON TESTÉ` sur `f483fa9…` |
+| `APPLE-L2-025` | TestFlight distinct du quatrième correctif | `TST-003`, `TST-005`, `TST-015`, `DONE-001…005` | ⚪ `NON TESTÉ` sur `f483fa9…` |
 
 ## Écarts connus de l’incrément
 
@@ -288,19 +301,19 @@ suppression du formulaire défilant et de la hauteur fixe.
   valeur Commit `Non estampillé`. Le producteur d’artefact contrôlé corrige le
   transport ; ce contrôle est différé sur décision utilisateur. `TBX-027` est
   implémenté dans `fce5d92…`, dont la compilation a échoué avant le contrôle ;
-  `IPAD-L2-056` le confirme sur le correctif ; `APPLE-L2-014` garde la
+  `IPAD-L2-056` le confirme sur le correctif ; `APPLE-L2-022` garde la
   qualification compacte.
 - Remplir l’album (`AUT-009…011`) de `7815396…` est validé globalement par
   `IPAD-L2-018`. Sa nouvelle présentation compacte et le cadrage couvrant de
   `3944fae…` sont qualifiés sous `IPAD-L2-019`, mais `ACPT-125` demeure
   incomplet jusqu’aux autres sorties et qualifications Apple applicables.
 - L’ADR-003 isole la limite SwiftUI : la saisie prévisualise Justifié à gauche,
-  tandis que le renderer de page TextKit public le compose réellement. Le
-  collage riche externe de `TBX-007` échoue sous `IPAD-L2-058`, qui constate
-  la perte du gras et de l’italique filtrés ainsi qu’une annulation sans retour
-  à l’état précédent au-delà de 1 000 caractères. Le correctif convertit les
-  traits natifs avant normalisation et mémorise l’ancienne valeur, mais sa
-  preuve Apple reste à créer. La partie Exporter de
+  tandis que le renderer de page TextKit public le compose réellement. Après
+  les échecs répétés `058`, `071`, `075` et `078`, la décision utilisateur
+  remplace la conservation des styles externes de `TBX-007` par du texte brut
+  adoptant le style local ; l’annulation transactionnelle au-delà de 1 000
+  caractères reste acquise. `IPAD-L2-080` doit confirmer le nouveau contrat.
+  La partie Exporter de
   `TBX-021`, prévue au Lot 3, reste partielle ; le regroupement `TBX-022` est
   implémenté et validé globalement par `057`.
 - Les 40 stickers et 6 cadres décoratifs sont persistables après validation des
@@ -312,7 +325,9 @@ suppression du formulaire défilant et de la hauteur fixe.
   et `065` un décor en retrait du bord laissant voir la photo. Les corrections
   unifient la destination, réduisent seulement le dessin des commandes,
   préchargent la couverture, conservent la cible de remplacement et alignent
-  le décor visible ; leur qualification iPad reste à exécuter.
+  le décor visible. Après les défauts résiduels de `079`, `f483fa9…` conserve
+  Bord blanc/noir autour de la photo et superpose les quatre motifs dans ses
+  limites ; `IPAD-L2-081` doit qualifier ce rendu et Recadrer sur iPad.
 - Les textes français sont encore codés dans les vues ; `L10N-002` reste
   ouvert jusqu’au catalogue de chaînes du lot Qualité.
 - Le candidat initial gardait un rail et un inspecteur légèrement rognés en
