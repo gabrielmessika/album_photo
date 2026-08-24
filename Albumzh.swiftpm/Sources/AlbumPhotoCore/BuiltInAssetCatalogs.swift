@@ -508,6 +508,15 @@ public struct CatalogFractionalInsets: Sendable, Equatable, Hashable {
     public let right: Double
 }
 
+public enum DecorativeFrameCompositionMode: Sendable, Equatable, Hashable {
+    /// The transparent opening is aligned with the existing photo bounds, so
+    /// the decorative asset may extend beyond the element.
+    case surroundsPhoto
+    /// The asset fills the existing element and covers the photo wherever its
+    /// pixels are opaque, like a physical patterned frame laid over a print.
+    case overlaysPhoto
+}
+
 public struct DecorativeFrameCatalogDefinition: Sendable, Equatable, Hashable, Identifiable {
     public let catalogID: String
     public let localizedName: String
@@ -520,6 +529,14 @@ public struct DecorativeFrameCatalogDefinition: Sendable, Equatable, Hashable, I
     public let destinationCapInsets: CatalogFractionalInsets
 
     public var id: String { catalogID }
+    public var compositionMode: DecorativeFrameCompositionMode {
+        switch catalogID {
+        case "frame.whiteBorder", "frame.blackBorder":
+            .surroundsPhoto
+        default:
+            .overlaysPhoto
+        }
+    }
     public var reference: CatalogResourceReference {
         CatalogResourceReference(catalogID: catalogID, fallbackContentHash: contentHash)
     }

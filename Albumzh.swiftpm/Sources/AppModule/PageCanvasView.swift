@@ -831,6 +831,9 @@ private enum DecorativeFrameGeometry {
         photoSize: CGSize
     ) -> CGRect {
         let photoBounds = CGRect(origin: .zero, size: photoSize)
+        guard definition.compositionMode == .surroundsPhoto else {
+            return photoBounds
+        }
         let aperture = normalizedPhotoAperture(definition: definition, image: image)
         guard let bounds = DecorativeFrameAlphaGeometry.renderBoundsAligningAperture(
             CatalogRenderBounds(

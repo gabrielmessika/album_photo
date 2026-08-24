@@ -62,7 +62,13 @@ final class TextEditingPrototypeTests: XCTestCase {
     }
 
     // Lot 0, 3:TXA-005, 3:TBX-006, 3:TBX-007
-    func testFilteredPasteKeepsURLAndSupportedStyleButDropsAttachmentAndMetadata() throws {
+    func testFilteredPasteKeepsURLAsPlainTextAndDropsSourceStyleAttachmentAndMetadata() throws {
+        let localStyle = TextStyleDefaults(
+            fontID: "system-serif",
+            weight: .regular,
+            isItalic: false,
+            color: SRGBAColor(red: 0.2, green: 0.3, blue: 0.4)
+        )
         let pasted = try TextEditingPrototype.filteredPaste(
             TextPastePrototypePayload(
                 text: "https://example.test\u{fffc}\u{0007}\nFin",
@@ -70,12 +76,16 @@ final class TextEditingPrototypeTests: XCTestCase {
                 discardedAttributeNames: ["link", "list", "table", "highlight"],
                 containsAttachment: true
             ),
-            typingDefaults: TextStyleDefaults()
+            typingDefaults: localStyle
         )
         XCTAssertEqual(pasted.plainText, "https://example.test\nFin")
         XCTAssertEqual(pasted.paragraphs.count, 2)
-        XCTAssertTrue(pasted.paragraphs.allSatisfy { $0.runs[0].weight == .bold })
-        XCTAssertTrue(pasted.paragraphs.allSatisfy { $0.runs[0].isItalic })
+        XCTAssertTrue(pasted.paragraphs.allSatisfy { $0.runs[0].weight == .regular })
+        XCTAssertTrue(pasted.paragraphs.allSatisfy { !$0.runs[0].isItalic })
+        XCTAssertTrue(pasted.paragraphs.allSatisfy {
+            $0.runs[0].fontID == localStyle.fontID
+                && $0.runs[0].color == localStyle.color
+        })
         XCTAssertEqual(
             TextEditingPrototype.sanitizedPlainText("A\u{fffc}\u{0007}\tB\nC"),
             "A\tB\nC"
@@ -83,21 +93,6 @@ final class TextEditingPrototypeTests: XCTestCase {
         XCTAssertThrowsError(try DomainValidator.validate(TextBoxElement(
             content: content("Pièce\u{fffc}jointe")
         )))
-    }
-
-    // 3:TBX-007 — le pont presse-papiers localise l'insertion selon les
-    // Character Swift, y compris lorsqu'elle remplace une sélection avec emoji.
-    func testReplacementChangeLocatesRichPasteAtCharacterBoundaries() throws {
-        let change = try XCTUnwrap(TextEditingPrototype.replacementChange(
-            from: "Avant 👨‍👩‍👧‍👦 après",
-            to: "Avant gras et italique après"
-        ))
-
-        XCTAssertEqual(change.prefixCount, 6)
-        XCTAssertEqual(change.replacedCount, 1)
-        XCTAssertEqual(change.insertedText, "gras et italique")
-        XCTAssertEqual(change.insertedCount, 16)
-        XCTAssertNil(TextEditingPrototype.replacementChange(from: "stable", to: "stable"))
     }
 
     // Lot 0, 3:TXA-005, 3:TBX-018...3:TBX-021

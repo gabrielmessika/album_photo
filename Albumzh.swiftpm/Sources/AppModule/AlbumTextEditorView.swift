@@ -150,9 +150,6 @@ private extension AttributeScopes {
 
     struct AlbumTextAttributes: AttributeScope {
         let model: AlbumTextModelAttributes
-        let pastedFont: AttributeScopes.UIKitAttributes.FontAttribute
-        let inlinePresentationIntent:
-            AttributeScopes.FoundationAttributes.InlinePresentationIntentAttribute
         let font: AttributeScopes.SwiftUIAttributes.FontAttribute
         let foregroundColor: AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute
         let alignment: AttributeScopes.CoreTextAttributes.TextAlignmentAttribute
@@ -174,37 +171,10 @@ private struct AlbumTextFormattingDefinition: AttributedTextFormattingDefinition
     let fallbackStyle: TextStyleDefaults
 
     var body: some AttributedTextFormattingDefinition<Scope> {
-        CapturePastedAlbumTextStyle(fallbackStyle: fallbackStyle)
-        ApplyAlbumFont(pageHeight: pageHeight)
-        ApplyAlbumForegroundColor()
-        ApplyAlbumAlignment()
-        ApplyAlbumLineHeight()
-    }
-}
-
-/// Converts the two supported native emphasis traits into the persisted album
-/// style before the rendering constraints replace a pasted font (3:TBX-007).
-private struct CapturePastedAlbumTextStyle: AttributedTextValueConstraint {
-    typealias Scope = AlbumTextFormattingDefinition.Scope
-    typealias AttributeKey = AlbumTextStyleAttribute
-    let fallbackStyle: TextStyleDefaults
-
-    func constrain(_ container: inout Attributes) {
-        // TextEditor may inherit the insertion point's model attribute onto a
-        // pasted run before this constraint sees UIKit/Foundation paste
-        // attributes. Merge the native traits into that inherited value rather
-        // than treating the model key as proof that conversion already ran.
-        var style = container.albumTextStyle ?? fallbackStyle
-        if let pastedFont = container.pastedFont {
-            let traits = pastedFont.fontDescriptor.symbolicTraits
-            if traits.contains(.traitBold) { style.weight = .bold }
-            if traits.contains(.traitItalic) { style.isItalic = true }
-        }
-        if let intent = container.inlinePresentationIntent {
-            if intent.contains(.stronglyEmphasized) { style.weight = .bold }
-            if intent.contains(.emphasized) { style.isItalic = true }
-        }
-        container.albumTextStyle = style
+        ApplyAlbumFont(pageHeight: pageHeight, fallbackStyle: fallbackStyle)
+        ApplyAlbumForegroundColor(fallbackStyle: fallbackStyle)
+        ApplyAlbumAlignment(fallbackStyle: fallbackStyle)
+        ApplyAlbumLineHeight(fallbackStyle: fallbackStyle)
     }
 }
 
@@ -212,9 +182,10 @@ private struct ApplyAlbumFont: AttributedTextValueConstraint {
     typealias Scope = AlbumTextFormattingDefinition.Scope
     typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute
     let pageHeight: Double
+    let fallbackStyle: TextStyleDefaults
 
     func constrain(_ container: inout Attributes) {
-        let style = container.albumTextStyle ?? TextStyleDefaults()
+        let style = container.albumTextStyle ?? fallbackStyle
         container.font = AlbumTextAttributedBridge.font(
             for: style,
             pageHeight: pageHeight
@@ -225,9 +196,10 @@ private struct ApplyAlbumFont: AttributedTextValueConstraint {
 private struct ApplyAlbumForegroundColor: AttributedTextValueConstraint {
     typealias Scope = AlbumTextFormattingDefinition.Scope
     typealias AttributeKey = AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute
+    let fallbackStyle: TextStyleDefaults
 
     func constrain(_ container: inout Attributes) {
-        let style = container.albumTextStyle ?? TextStyleDefaults()
+        let style = container.albumTextStyle ?? fallbackStyle
         container.foregroundColor = style.color.swiftUIColor
     }
 }
@@ -235,9 +207,10 @@ private struct ApplyAlbumForegroundColor: AttributedTextValueConstraint {
 private struct ApplyAlbumAlignment: AttributedTextValueConstraint {
     typealias Scope = AlbumTextFormattingDefinition.Scope
     typealias AttributeKey = AttributeScopes.CoreTextAttributes.TextAlignmentAttribute
+    let fallbackStyle: TextStyleDefaults
 
     func constrain(_ container: inout Attributes) {
-        let defaults = container.albumTextStyle ?? TextStyleDefaults()
+        let defaults = container.albumTextStyle ?? fallbackStyle
         let style = container.albumParagraphStyle ?? AlbumParagraphStyleValue(
             alignment: defaults.alignment,
             lineSpacing: defaults.lineSpacing
@@ -249,9 +222,10 @@ private struct ApplyAlbumAlignment: AttributedTextValueConstraint {
 private struct ApplyAlbumLineHeight: AttributedTextValueConstraint {
     typealias Scope = AlbumTextFormattingDefinition.Scope
     typealias AttributeKey = AttributeScopes.CoreTextAttributes.LineHeightAttribute
+    let fallbackStyle: TextStyleDefaults
 
     func constrain(_ container: inout Attributes) {
-        let defaults = container.albumTextStyle ?? TextStyleDefaults()
+        let defaults = container.albumTextStyle ?? fallbackStyle
         let style = container.albumParagraphStyle ?? AlbumParagraphStyleValue(
             alignment: defaults.alignment,
             lineSpacing: defaults.lineSpacing
@@ -359,63 +333,6 @@ enum AlbumTextAttributedBridge {
         attributes.alignment = attributedAlignment(style.alignment)
         attributes.lineHeight = attributedLineHeight(style.lineSpacing)
         return attributes
-    }
-
-    /// Converts the system rich representation to the album allow-list. Font
-    /// family, size, links, lists, attachments and metadata are discarded;
-    /// only native bold and italic traits augment the insertion style
-    /// (3:TBX-007).
-    static func pastedAttributedString(
-        from source: NSAttributedString,
-        baseStyle: TextStyleDefaults,
-        pageHeight: Double
-    ) -> (value: AttributedString, containsEmphasis: Bool) {
-        var result = AttributedString()
-        var containsEmphasis = false
-        source.enumerateAttributes(
-            in: NSRange(location: 0, length: source.length),
-            options: []
-        ) { attributes, range, _ in
-            let rawText = source.attributedSubstring(from: range).string
-                .replacingOccurrences(of: "\r\n", with: "\n")
-                .replacingOccurrences(of: "\r", with: "\n")
-            let sanitized = TextEditingPrototype.sanitizedPlainText(
-                rawText,
-                maximumCharacters: Int.max
-            )
-            guard !sanitized.isEmpty else { return }
-
-            var style = baseStyle
-            if let font = attributes[.font] as? UIFont {
-                let traits = font.fontDescriptor.symbolicTraits
-                if traits.contains(.traitBold) {
-                    style.weight = .bold
-                    containsEmphasis = true
-                }
-                if traits.contains(.traitItalic) {
-                    style.isItalic = true
-                    containsEmphasis = true
-                }
-            }
-            if let obliqueness = attributes[.obliqueness] as? NSNumber,
-               abs(obliqueness.doubleValue) > 0.000_001 {
-                style.isItalic = true
-                containsEmphasis = true
-            }
-            result += styledRun(sanitized, style: style, pageHeight: pageHeight)
-        }
-
-        if result.startIndex < result.endIndex {
-            let paragraphStyle = AlbumParagraphStyleValue(
-                alignment: baseStyle.alignment,
-                lineSpacing: baseStyle.lineSpacing
-            )
-            let range = result.startIndex..<result.endIndex
-            result[range].albumParagraphStyle = paragraphStyle
-            result[range].alignment = attributedAlignment(paragraphStyle.alignment)
-            result[range].lineHeight = attributedLineHeight(paragraphStyle.lineSpacing)
-        }
-        return (result, containsEmphasis)
     }
 
     static func font(for style: TextStyleDefaults, pageHeight: Double) -> Font {
@@ -535,96 +452,6 @@ enum AlbumTextAttributedBridge {
     }
 }
 
-@MainActor
-private enum AlbumTextPasteboardStyleRecovery {
-    struct Result {
-        let value: AttributedString
-        let insertionOffset: Int
-    }
-
-    private struct Representation {
-        let pasteboardType: String
-        let documentType: NSAttributedString.DocumentType
-    }
-
-    private static let representations = [
-        Representation(pasteboardType: "public.rtf", documentType: .rtf),
-        Representation(pasteboardType: "com.apple.flat-rtfd", documentType: .rtfd),
-        Representation(pasteboardType: "public.html", documentType: .html)
-    ]
-
-    static func recover(
-        oldValue: AttributedString,
-        newValue: AttributedString,
-        fallbackStyle: TextStyleDefaults,
-        pageHeight: Double
-    ) -> Result? {
-        let oldPlainText = String(oldValue.characters)
-        let newPlainText = String(newValue.characters)
-        guard let change = TextEditingPrototype.replacementChange(
-            from: oldPlainText,
-            to: newPlainText
-        ), change.insertedCount >= 2 else { return nil }
-
-        let pasteboard = UIPasteboard.general
-        guard let plainPaste = pasteboard.string,
-              sanitizedPasteText(plainPaste) == change.insertedText else { return nil }
-
-        let insertionStart = newValue.characters.index(
-            newValue.startIndex,
-            offsetBy: change.prefixCount
-        )
-        let baseStyle = newValue.runs.first {
-            $0.range.contains(insertionStart)
-        }?[AlbumTextStyleAttribute.self] ?? fallbackStyle
-
-        for representation in representations {
-            guard let data = pasteboard.data(
-                forPasteboardType: representation.pasteboardType
-            ), let source = try? NSAttributedString(
-                data: data,
-                options: [.documentType: representation.documentType],
-                documentAttributes: nil
-            ) else { continue }
-            let recovered = AlbumTextAttributedBridge.pastedAttributedString(
-                from: source,
-                baseStyle: baseStyle,
-                pageHeight: pageHeight
-            )
-            guard recovered.containsEmphasis,
-                  String(recovered.value.characters) == change.insertedText else { continue }
-
-            var value = newValue
-            let valueInsertionStart = value.characters.index(
-                value.startIndex,
-                offsetBy: change.prefixCount
-            )
-            let insertionEnd = value.characters.index(
-                valueInsertionStart,
-                offsetBy: change.insertedCount
-            )
-            value.replaceSubrange(
-                valueInsertionStart..<insertionEnd,
-                with: recovered.value
-            )
-            return Result(
-                value: value,
-                insertionOffset: change.prefixCount + change.insertedCount
-            )
-        }
-        return nil
-    }
-
-    private static func sanitizedPasteText(_ value: String) -> String {
-        TextEditingPrototype.sanitizedPlainText(
-            value
-                .replacingOccurrences(of: "\r\n", with: "\n")
-                .replacingOccurrences(of: "\r", with: "\n"),
-            maximumCharacters: Int.max
-        )
-    }
-}
-
 struct AlbumTextEditorView: View {
     private static let placeholder = "Votre texte"
 
@@ -741,7 +568,7 @@ struct AlbumTextEditorView: View {
                         .foregroundStyle(.secondary)
                     Spacer()
                     Label(
-                        "Les liens et pièces jointes collés sont convertis en texte.",
+                        "Le contenu collé est converti en texte brut.",
                         systemImage: "doc.plaintext"
                     )
                     .font(.caption)
@@ -1209,27 +1036,6 @@ struct AlbumTextEditorView: View {
             retainedSelectionText = nil
         }
         guard newValue.characters.count > 1_000 else {
-            if charactersChanged,
-               let recovered = AlbumTextPasteboardStyleRecovery.recover(
-                   oldValue: oldValue,
-                   newValue: newValue,
-                   fallbackStyle: typingDefaults,
-                   pageHeight: request.previewPageHeight
-               ) {
-                let recoveredText = recovered.value
-                let recoveredInsertionPoint = recoveredText.characters.index(
-                    recoveredText.startIndex,
-                    offsetBy: recovered.insertionOffset
-                )
-                text = recoveredText
-                selection = AttributedTextSelection(
-                    insertionPoint: recoveredInsertionPoint,
-                    typingAttributes: AlbumTextAttributedBridge.typingAttributes(
-                        for: typingDefaults,
-                        pageHeight: request.previewPageHeight
-                    )
-                )
-            }
             scheduleCheckpoint()
             return
         }

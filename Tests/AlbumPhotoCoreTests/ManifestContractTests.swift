@@ -304,23 +304,18 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains("AlbumTextFormattingDefinition"))
         XCTAssertTrue(textEditor.contains("struct AlbumTextModelAttributes: AttributeScope"))
         XCTAssertTrue(textEditor.contains("private struct ApplyAlbumFont"))
-        XCTAssertTrue(textEditor.contains("private struct CapturePastedAlbumTextStyle"))
-        XCTAssertTrue(textEditor.contains("CapturePastedAlbumTextStyle(fallbackStyle:"))
-        XCTAssertTrue(textEditor.contains("AttributeScopes.UIKitAttributes.FontAttribute"))
-        XCTAssertTrue(textEditor.contains("intent.contains(.stronglyEmphasized)"))
-        XCTAssertTrue(textEditor.contains("intent.contains(.emphasized)"))
+        XCTAssertFalse(textEditor.contains("CapturePastedAlbumTextStyle"))
+        XCTAssertFalse(textEditor.contains("AlbumTextPasteboardStyleRecovery"))
+        XCTAssertFalse(textEditor.contains("pastedFont"))
+        XCTAssertFalse(textEditor.contains("inlinePresentationIntent"))
+        XCTAssertFalse(textEditor.contains("UIPasteboard.general"))
+        XCTAssertFalse(textEditor.contains("pasteboardType: \"public.rtf\""))
+        XCTAssertFalse(textEditor.contains("TextEditingPrototype.replacementChange("))
+        XCTAssertTrue(textEditor.contains("Le contenu collé est converti en texte brut."))
         XCTAssertTrue(textEditor.contains(
-            "var style = container.albumTextStyle ?? fallbackStyle"
+            "ApplyAlbumFont(pageHeight: pageHeight, fallbackStyle: fallbackStyle)"
         ))
-        XCTAssertFalse(textEditor.contains("guard container.albumTextStyle == nil"))
-        XCTAssertTrue(textEditor.contains("AlbumTextPasteboardStyleRecovery.recover("))
-        XCTAssertTrue(textEditor.contains("UIPasteboard.general"))
-        XCTAssertTrue(textEditor.contains("pasteboardType: \"public.rtf\""))
-        XCTAssertTrue(textEditor.contains("pasteboardType: \"com.apple.flat-rtfd\""))
-        XCTAssertTrue(textEditor.contains("pasteboardType: \"public.html\""))
-        XCTAssertTrue(textEditor.contains("TextEditingPrototype.replacementChange("))
-        XCTAssertTrue(textEditor.contains("attributes[.font] as? UIFont"))
-        XCTAssertTrue(textEditor.contains("ApplyAlbumFont(pageHeight: pageHeight)"))
+        XCTAssertTrue(textEditor.contains("container.albumTextStyle ?? fallbackStyle"))
         XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AttributeScopes.SwiftUIAttributes.FontAttribute"
         ))
@@ -334,7 +329,7 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(textEditor.contains(
             "typealias AttributeKey = AttributeScopes.CoreTextAttributes.LineHeightAttribute"
         ))
-        XCTAssertTrue(textEditor.contains(
+        XCTAssertFalse(textEditor.contains(
             "typealias AttributeKey = AlbumTextStyleAttribute"
         ))
         XCTAssertFalse(textEditor.contains(
@@ -591,6 +586,7 @@ final class ManifestContractTests: XCTestCase {
         XCTAssertTrue(canvas.contains("CatalogImageAlphaGeometry.analysis("))
         XCTAssertTrue(canvas.contains("DecorativeFrameGeometry.renderBounds("))
         XCTAssertTrue(canvas.contains("DecorativeFrameAlphaGeometry.renderBoundsAligningAperture("))
+        XCTAssertTrue(canvas.contains("definition.compositionMode == .surroundsPhoto"))
         XCTAssertTrue(canvas.contains("let photoBounds = CGRect(origin: .zero"))
         XCTAssertTrue(canvas.contains("PhotoFrameMaskView("))
         XCTAssertTrue(canvas.contains("PhotoBorderRenderView("))

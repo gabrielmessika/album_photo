@@ -260,6 +260,23 @@ final class CatalogContractTests: XCTestCase {
         ))
     }
 
+    // 3:SHR-013 — les bordures simples entourent la photo, tandis que les
+    // quatre motifs sont posés par-dessus ses limites sans changer le cadrage.
+    func testDecorativeFrameCompositionModesMatchCatalogContract() {
+        let modes = Dictionary(uniqueKeysWithValues:
+            BuiltInDecorativeFrameCatalog.definitions.map {
+                ($0.catalogID, $0.compositionMode)
+            }
+        )
+
+        XCTAssertEqual(modes["frame.whiteBorder"], .surroundsPhoto)
+        XCTAssertEqual(modes["frame.blackBorder"], .surroundsPhoto)
+        XCTAssertEqual(modes["frame.kraftTape"], .overlaysPhoto)
+        XCTAssertEqual(modes["frame.travelStamp"], .overlaysPhoto)
+        XCTAssertEqual(modes["frame.botanical"], .overlaysPhoto)
+        XCTAssertEqual(modes["frame.instantPhoto"], .overlaysPhoto)
+    }
+
     private func jsonObject(_ relativePath: String) throws -> [String: Any] {
         let data = try Data(contentsOf: repositoryRoot.appendingPathComponent(relativePath))
         return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])

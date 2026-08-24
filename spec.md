@@ -978,24 +978,35 @@ rendu relatif à toute résolution.
 
 Le cadre photo, son masque, son contour et son cadrage conservent exactement les
 limites non tournées de l’élément avant et après application d’un cadre
-décoratif. Le renderer calcule le plus grand rectangle entièrement transparent
-contenant le centre du payload, le transforme par les mêmes trois segments du
-neuf-zones, puis agrandit et décale uniquement le rendu décoratif pour faire
-coïncider cette ouverture avec les limites existantes du cadre photo. Un décor,
-notamment Photo instantanée, PEUT donc dépasser visuellement ces limites, mais
-NE DOIT modifier ni le masque, ni la sélection, ni le `nativeScale`, ni le point
-focal, ni la partie visible de la photo. Il suit la transformation de l’élément
-et reste rogné aux limites de la page. Comme la photo demeure masquée aux
-limites de son propre cadre, les transparences situées à l’extérieur de
-l’ouverture révèlent la page, jamais des pixels de la photo.
+décoratif. Deux compositions sont imposées par le catalogue version `1` :
+
+- Bord blanc et Bord noir entourent la photo. Le renderer calcule le plus grand
+  rectangle entièrement transparent contenant le centre du payload, le
+  transforme par les mêmes trois segments du neuf-zones, puis agrandit et
+  décale uniquement le rendu décoratif pour faire coïncider cette ouverture
+  avec les limites existantes du cadre photo ;
+- Ruban kraft, Tampon voyage, Feuillage et Photo instantanée sont posés
+  par-dessus la photo, dans les limites exactes de l’élément. Leurs pixels
+  opaques ou semi-transparents PEUVENT cacher une partie de la photo et du
+  contour, tandis que leurs pixels transparents révèlent la photo. Leur rendu
+  NE DOIT PAS être agrandi pour aligner leur ouverture transparente.
+
+Dans les deux compositions, le décor NE DOIT modifier ni le masque, ni la
+sélection, ni le `nativeScale`, ni le point focal, ni l’orientation du contenu.
+L’utilisateur PEUT ensuite déplacer ou zoomer la photo avec le recadrage de
+`CRP-001` à `CRP-007`. Le décor suit la transformation de l’élément et reste
+rogné aux limites de la page. Pour les deux bordures qui entourent la photo, les
+transparences situées à l’extérieur de l’ouverture révèlent la page, jamais des
+pixels de la photo.
 
 `SHR-014` — Un contour d'épaisseur non nulle DOIT être tracé entièrement à
 l'intérieur du chemin du masque, avec jointures et extrémités arrondies, en
 source-over au-dessus de la photo masquée et sous le cadre décoratif. Son bord
 extérieur coïncide toujours avec le chemin du masque et les limites existantes
-du cadre photo ; le décor de `SHR-013` est disposé autour de ce chemin. Le
-contour NE DOIT donc ni être réduit par un décor asymétrique, ni agrandir
-l’élément, ni modifier le cadrage.
+du cadre photo. Le contour NE DOIT donc ni être réduit par un décor asymétrique,
+ni agrandir l’élément, ni modifier le cadrage. Un décor à motif posé par-dessus
+la photo selon `SHR-013` PEUT en revanche recouvrir visuellement une partie de
+ce contour sans modifier sa géométrie.
 
 ---
 
@@ -1011,7 +1022,7 @@ l’élément, ni modifier le cadrage.
 | `TBX-004` | Une pression sélectionne la zone ; une seconde pression ou un double toucher place le curseur. Terminer valide la saisie et Annuler restaure le contenu et le style à l’ouverture. |
 | `TBX-005` | Le clavier et sa barre d’outils NE DOIVENT PAS masquer durablement le curseur ni la sélection sur iPhone ou iPad. |
 | `TBX-006` | Une zone DOIT être limitée à mille `Character` Swift, espaces et sauts de ligne compris. La limite atteinte DOIT être annoncée et empêcher seulement les caractères supplémentaires. |
-| `TBX-007` | Le collage DOIT conserver le texte et les seuls attributs pris en charge ; images, pièces jointes, listes, tableaux, liens actifs et métadonnées DOIVENT être retirés. Une URL reste du texte non cliquable. |
+| `TBX-007` | Le collage externe DOIT être converti en texte brut : aucun attribut de mise en forme de la source, y compris gras et italique, n’est conservé. Les caractères collés adoptent le style de frappe local au point d’insertion. Images, pièces jointes, listes, tableaux, liens actifs et métadonnées DOIVENT être retirés ; une URL reste du texte non cliquable. |
 | `TBX-008` | Le correcteur et la dictée iOS PEUVENT être utilisés ; aucune correction NE DOIT être appliquée sans action ou réglage système de l’utilisateur. |
 
 ## 12.2 Mise en forme Photoweb
